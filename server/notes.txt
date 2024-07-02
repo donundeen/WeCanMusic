@@ -1,0 +1,30 @@
+preset good synth tones - DONE, NEED TO TEST
+allow setting by typing in the value, not just the slider - DONE
+web interfaces gets current voice values? - DONE, for range, channel, and voice
+
+
+TO BRING: 
+bring bucket of scissors, 
+silicone wire
+
+make a handout
+
+
+
+bring teh max/min closer together over time 
+- will need to re-upload code to all devices, do I want to do this?
+
+chorus and reverb on the notes - not sure if this is working, hard to tell...
+
+
+
+pi not charging will, wtf, need more power to screen
+
+make sure everything is charging
+
+
+
+thread1 device not remembering name
+
+look up cumulus conferenec thing in mexico, monterey
+

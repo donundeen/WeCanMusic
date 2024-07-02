@@ -1,0 +1,57 @@
+{
+	"pattrstorage" : 	{
+		"name" : "impr121cap12",
+		"slots" : 		{
+			"1" : 			{
+				"id" : 1,
+				"data" : 				{
+					"pmidimin" : [ 20 ],
+					"pmidimax" : [ 100 ],
+					"pnoteoutm" : [ 1 ],
+					"pchannel" : [ 9 ],
+					"pnotesel" : [ 1 ],
+					"pskiptheory" : [ 0 ],
+					"ploudshape" : [ 1.0, 0.0, 1.0, 0.0, 0.0, 0, 0.130265696568692, 0.0, 0, 0.140903994441032, 0.760000017484029, 0, 1.0, 1.0, 0, "linear" ],
+					"pnoteshape" : [ 1.0, 0.0, 1.0, 0.0, 0.0, 0, 1.0, 1.0, 0, "linear" ],
+					"ptriggersensitivity" : [ 6 ]
+				}
+
+			}
+,
+			"2" : 			{
+				"id" : 2,
+				"data" : 				{
+					"pmidimin" : [ 20 ],
+					"pmidimax" : [ 100 ],
+					"pnoteoutm" : [ 1 ],
+					"pchannel" : [ 3 ],
+					"pnotesel" : [ 1 ],
+					"pskiptheory" : [ 0 ],
+					"ploudshape" : [ 1.0, 0.0, 1.0, 0.0, 0.0, 0, 1.0, 1.0, 0, "linear" ],
+					"pnoteshape" : [ 1.0, 0.0, 1.0, 0.0, 0.0, 0, 1.0, 1.0, 0, "linear" ],
+					"ptriggersensitivity" : [ 7 ]
+				}
+
+			}
+,
+			"3" : 			{
+				"id" : 3,
+				"data" : 				{
+					"pmidimin" : [ 20 ],
+					"pmidimax" : [ 100 ],
+					"pnoteoutm" : [ 1 ],
+					"pchannel" : [ 2 ],
+					"pnotesel" : [ 1 ],
+					"pskiptheory" : [ 0 ],
+					"ploudshape" : [ 1.0, 0.0, 1.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0.037234042553191, 0.0, 0, 0.132978723404255, 0.333333333333333, 0, 1.0, 1.0, 0, "linear" ],
+					"pnoteshape" : [ 1.0, 0.0, 1.0, 0.0, 1.0, 0, 1.0, 0.0, 0, "linear" ],
+					"ptriggersensitivity" : [  ]
+				}
+
+			}
+
+		}
+
+	}
+
+}

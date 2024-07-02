@@ -1,0 +1,59 @@
+div{
+    /* border:1px solid red; */
+}
+
+.container{
+    display:flex;
+    width: 95%;
+    height: 95%;
+    margin: auto;
+    justify-content: space-evenly;
+}
+
+.transport {
+    display: flex;
+    width: 65%;
+    max-height: 50px;
+    justify-content: space-evenly;   
+}
+
+.transport .item{
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: .5em;
+}
+
+.score {
+    font-family:sans;
+    font-size:1.2em;
+    border: 2px solid blue;
+    border-radius: 10x;
+    height: 80%;
+    width:400px;
+    caret-color: rgb(0, 0, 255);
+}
+  
+.line { 
+    display:block;
+}
+
+.highlight {
+    border: 1px solid #f00
+}
+
+.curbeat {
+    border: 1px solid rgb(0, 0, 255);
+    background-color: rgb(199, 199, 248);
+    font-weight: bold;
+}
+
+.instruments{
+    display:flex;
+    flex-wrap: wrap;
+
+}
+.instrument {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: .5em;
+}
