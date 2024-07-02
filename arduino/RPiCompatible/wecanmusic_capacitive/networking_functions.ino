@@ -120,7 +120,7 @@ void announceCreation(){
     thisarduinoip.toCharArray(ipbuffer, 20);
     Serial.println(ipbuffer);
     OSCMessage oscmsg("/announceUDPInstrument");  
-    oscmsg.add(DEVICE_NAME).add(midi_voice).add(midimin).add(midimax);
+    oscmsg.add(DEVICE_NAME).add((int32_t)midi_voice).add((int32_t)midimin).add((int32_t)midimax);
  //   udp.beginPacket(UDPReceiverIP, UDPPort);
     udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...
  
@@ -141,7 +141,7 @@ void sendMakeNote(int pitch, int velocity, int duration){
     return;
   }
   OSCMessage oscmsg("/makenote");  
-  oscmsg.add(DEVICE_NAME).add(pitch).add(velocity).add(duration);
+  oscmsg.add(DEVICE_NAME).add((int32_t)pitch).add((int32_t)velocity).add((int32_t)duration);
   //   udp.beginPacket(UDPReceiverIP, UDPPort);
   udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...
 

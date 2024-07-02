@@ -48,10 +48,14 @@ void config_webpage_setup() {
         auto deserializeError = deserializeJson(json, buf.get());
         serializeJson(json, Serial);
         if ( ! deserializeError ) {
-          Serial.println("\nparsed json");
+          Serial.println("\nparsed json 1s ");
           strcpy(wecanmusic_server_ip, json["wecanmusic_server_ip"]);
+          Serial.println("\nparsed json 1a ");
           strcpy(wecanmusic_port, json["wecanmusic_port"]);
+          Serial.println("\nparsed json 1b ");
           strcpy(this_device_name, json["this_device_name"]);
+          Serial.println("\nparsed json 1c ");
+
         } else {
           Serial.println("failed to load json config");
         }
@@ -224,7 +228,7 @@ void setStoredConfigVal(String varname, int valuetostore){
         auto deserializeError = deserializeJson(json, buf.get());
         serializeJson(json, Serial);
         if ( ! deserializeError ) {
-          Serial.println("\nparsed json");
+          Serial.println("\nparsed json 2");
         } else {
           Serial.println("failed to load json config");
         }
@@ -284,7 +288,7 @@ int getStoredConfigValInt(String varname){
         auto deserializeError = deserializeJson(json, buf.get());
         serializeJson(json, Serial);
         if ( ! deserializeError ) {
-          Serial.println("\nparsed json");
+          Serial.println("\nparsed json 3");
         } else {
           Serial.println("failed to load json config");
         }

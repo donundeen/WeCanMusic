@@ -1,7 +1,8 @@
 
 
 
-
+// I think this isn't used..
+/*
 
 //////////////////////////
 // TIMING FUNCTIONS
@@ -26,3 +27,4 @@ void onClockStartCallback(){
 }
 // END TIMING FUNCTIONS
 //////////////////////////
+*/

@@ -26,7 +26,7 @@
 
 // TIMING INCLUDES
 #include <AsyncTimer.h> //https://github.com/Aasim-A/AsyncTimer
-#include "uClock.h"
+//#include "uClock.h"
 // END TIMING INCLUDES
 
 ////////////////////////
@@ -136,7 +136,7 @@ OSCErrorCode error;
 
 ////////////////
 // Define the number of pulses per beat
-umodular::clock::uClockClass::PPQNResolution PPQNr = uClock.PPQN_96;
+//umodular::clock::uClockClass::PPQNResolution PPQNr = uClock.PPQN_96;
 int PPQN = 96;
 
 // number of pulses for different common note values.
@@ -373,7 +373,7 @@ int derive_duration(float val){
 
 // NETWORK+SENSOR CODE
 // sending data over OSC/UDP.
-void sendOSCUDP(int flexVal){
+void sendOSCUDP(int32_t flexVal){
   /* egs
    *  '/perifit/1', valueInt1, valueInt2, device.name);
    *  28:ec:9a:14:2b:b3 l 180
@@ -448,7 +448,7 @@ void setup() {
   }
 
   midi_setup();
-  clock_setup();
+//  clock_setup();
   test_setup();
   sensor_setup();
   config_setup();
