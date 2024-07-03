@@ -8,7 +8,7 @@ Type=simple
 PIDFile=/var/run/wecanmusic.pid
 Restart=on-failure
 RestartSec=4
-ExecStart=/home/pi/wecanmusicprojects/server/runwecanmusic.sh
+ExecStart=/home/pi/wecanmusic/server/runwecanmusic.sh
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
