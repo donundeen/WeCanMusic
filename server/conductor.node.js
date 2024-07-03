@@ -28,7 +28,7 @@ let bad_tiny_voices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,
 
 
 // midi hardward setup:
-let use_midi_out = false; // whether or not to send midi values through a hardware output, via easymidi
+let use_midi_out = true; // whether or not to send midi values through a hardware output, via easymidi
 let midi_hardware_engine = false;
 let midi_out_portname = "FLUID"; // FLUID for on-baord synth, UM-ONE for the midi cable, or other things"; 
 if(use_midi_out){
