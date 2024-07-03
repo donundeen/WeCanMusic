@@ -9,7 +9,7 @@ and shows how messages are routed from one to the other.
 // LOAD DEBUGGING FRAMEWORK
 const db = require('./modules/debugging.module.js').Debugging;
 // TURN DEBUGGING ON/OFF HERE
-db.active = true;
+db.active = false;
 db.log("starting");
 
 
@@ -273,6 +273,7 @@ socket.setMessageReceivedCallback(function(msg){
 
         if(db.active){
             // TESTING THINGS HERE
+            /*
             let instrument = orchestra.create_udp_instrument("thread1", "TEST");
             let props = instrument.get_config_props();
             props.push({name: "instrtype", value: "udp"});
@@ -284,6 +285,7 @@ socket.setMessageReceivedCallback(function(msg){
             props2.push({name: "instrtype", value: "udp"});
             socket.sendMessage("addinstrument", props2);
             instrument2.start();  
+            */
         }
 
     });

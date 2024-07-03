@@ -270,7 +270,7 @@ $(function() {
         //***** Setting up instrument nodes,  */
         let midimin = options_object.midimin  ? options_object.midimin : 32;
         let midimax = options_object.midimax  ? options_object.midimax : 100;
-        let midi_voice = options_object.midi_voice  ? options_object.midi_voice : 1;
+        let midi_voice = options_object.midi_voice  ? options_object.midi_voice + 1: 1;
         let midi_channel = options_object.midi_channel  ? options_object.midi_channel : 0;
         let device_name = options_object.device_name  ? options_object.device_name : "BAD_NAME";
         let instrtype = options_object.type ? options_object.type : "UNKNOWNTYPE";
