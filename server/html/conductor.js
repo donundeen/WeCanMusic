@@ -380,7 +380,7 @@ $(function() {
                 let data = {id:id, 
                             instrtype: instrtype,
                             var: "midi_voice",
-                            val: ui.value,
+                            val: ui.value - 1,
                             foo: "bar1" };
                 message(address, data);                
             }
@@ -412,7 +412,7 @@ $(function() {
             let data = {id:id, 
                 instrtype: instrtype,
                 var: "midi_voice",
-                val: voiceval,
+                val: voiceval - 1,
                 foo: "bar2" };
             message(address, data);             
         }
