@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd /home/pi/wecanmusicprojects/server
+cd /home/pi/wecanmusic/server
 /home/pi/hotspotup.sh
-/usr/bin/node /home/pi/wecanmusicprojects/server/conductor.node.js
+/usr/bin/node /home/pi/wecanmusic/server/conductor.node.js
