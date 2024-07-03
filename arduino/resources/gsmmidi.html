@@ -1,56 +1,4 @@
-<html>
-    <head>
-        <script src="./jquery-3.7.1.min.js" defer></script>
-        <script src="./jquery-ui.js" defer></script>
-        <script src="./conductor.js" defer></script>
-        <link rel="stylesheet" href="./conductor.css">
-        <link rel="stylesheet" href="./jquery-ui.css">
-        <link rel="stylesheet" href="./jquery-ui.theme.css">
-    </head>
-    <body>
-    
-    <div class="container">
-        <div class="column column1">
-
-            <div class="transport container">
-                <div class="item"><a href="aiselector.html">live</a></div>
-                <div class="item stop">Stop</div>
-                <div class="item play">Play</div>            
-                <div class="item pause">Pause</div>
-                <div class="item getscore">Get Score</div>
-                <div class="item sendscore">Send Score</div>
-                <div class="item reset">RESET</div>
-                <div class="item position"></div>
-            </div>
-            <div class="scoreeditor">
-                <pre contentEditable="true" class="score"></pre>
-            </div>
-        </div>
-
-        <div class="column column2">
-            <div class="instruments">
-
-                <div class="instrument copyme">
-                    <div class="device_name"><label>Name:</label><span>DEFAULT_BAD</span></div>
-                    <div class="instr_ip"><label>IP:</label><span>10.0.0.xxx</span></div>
-                    <div class="sensor_val"><label>Sensor:</label><span></span></div>
-                    <div class="makenote"><label>Makenote:</label><span></span></div>
-                    <div class="midi-channel-controller">
-                        <label >MIDI Channel:</label>
-                        <input type=text class="channel_display" >
-                        <div class="midi-channel"></div>
-                    </div>
-                    <!--
-                    <div class="midi-voice-controller">
-                        <label >MIDI Voice:</label>
-                        <input type=text class="voice_display">
-                        <div class="midi-voice"></div>
-                    </div>
-                -->
-                    <div class="midi-voice-controller">
-                        <label >MIDI Voice:</label>
-                        <select class="voice_display" name="midi_voice">
-                            <option value="1">1:Acoustic Grand Piano</option>
+<option value="1">1:Acoustic Grand Piano</option>
 <option value="2">2:Bright Acoustic Piano</option>
 <option value="3">3:Electric Grand Piano</option>
 <option value="4">4:Honky-tonk Piano</option>
@@ -178,23 +126,3 @@
 <option value="126">126:Helicopter</option>
 <option value="127">127:Applause</option>
 <option value="128">128:Gunshot</option>
-                        </select>
-                        <div class="midi-voice"></div>
-                    </div>
-
-                    <div class="midi-range-controller">
-                        <label >MIDI Range:</label>
-                        <input type=text class="range_display" readonly>
-                        <div class="midi-range"></div>
-                    </div>
-                    <div class="resetbutton"><button>RESET</button></div>
-                </div>
-
-              
-
-
-            </div>
-        </div>  
-    </div>      
-    </body>
-</html>

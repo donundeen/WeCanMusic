@@ -386,18 +386,17 @@ $(function() {
             }
         });
         $( ".voice_display",instr ).val( midi_voice );
-        $( ".voice_display",instr ).keyup(function(event){
-            console.log(event.which);
-            if(event.which == 13) {
-                let voiceval = parseInt($(event.target).val());
-                parseVoiceVal(voiceval, instr);
-            }
+        $( ".voice_display",instr ).change(function(event){
+            console.log($(event.target).val());
+            let voiceval = parseInt($(event.target).val());
+            parseVoiceVal(voiceval, instr);
         });
+        /*
         $( ".voice_display",instr ).blur(function(event){
             let voiceval = parseInt($(event.target).val());
             parseVoiceVal(voiceval, instr);
         });
-
+*/
         function parseVoiceVal(val, instr){
             console.log("voice value", val);
             if(!isNaN(val)){

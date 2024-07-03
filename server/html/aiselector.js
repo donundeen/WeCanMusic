@@ -42,13 +42,20 @@ let prevnlStroke = false;
 let prevnlFill = false;
 
 let wsready = false;  
+
+
+let prevChords = [];
+let prevChordIndex = 0;
+let numPrevChords = 5;
+
   // Browser WebSockets have slightly different syntax than `ws`.
   // Instead of EventEmitter syntax `on('open')`, you assign a callback
   // to the `onopen` property.
 ws.onopen = function() {
     wsready = true;
     console.log("opened " + ws.readyState);
-    ws.send("READY NOW");    
+    message("ready", "READY NOW");
+
 };
 
 ws.onerror = function(msg){
@@ -175,6 +182,10 @@ function setChord(root, value, obj){
     let chord = note+"6 "+value;
     console.log(chord);
     sendChord(chord);
+    // update prevChordsList
+
+    updatePrevChords(chord);
+
 }
 
 function setTransposedChord(){
@@ -190,11 +201,41 @@ function sendChord(chord){
     console.log("sending: " + chord);
     console.log(ws.readyState);
     if(wsready){
-        ws.send("chord " + chord);
+        message("chord", chord);
+//        ws.send("chord", chord);
     }else{
         console.log("ws not ready");
     }
 }
+
+function updatePrevChords(chord){
+    // move all chords back one
+    // add new chord to last position
+    chord = chord.replace("♭","b");
+    chord = chord.replace(/[0-9]/,"");
+    $(".selectedprevchord").removeClass("selectedprevchord");
+
+
+    $(".prevchord:nth(0)").text($(".prevchord:nth(1)").text());
+    $(".prevchord:nth(1)").text($(".prevchord:nth(2)").text());
+    $(".prevchord:nth(2)").text($(".prevchord:nth(3)").text());
+    $(".prevchord:nth(3)").text($(".prevchord:nth(4)").text());
+    $(".prevchord:nth(4)").text(chord);
+    $(".prevchord:nth(4)").addClass("selectedprevchord");
+}
+
+$(".prevchord").click(function(target){
+
+    if(selectedElem){
+        selectedElem.style.stroke = prevStroke;
+        selectedElem.style.fill = prevFill;
+    }
+
+    $(".selectedprevchord").removeClass("selectedprevchord");
+    $(this).addClass("selectedprevchord");
+    console.log($(this).text());
+    sendChord($(this).text());
+});
 
 function sendNoteLength(notelength, notefract){
     if(wsready){
@@ -283,7 +324,7 @@ function doLoadStuff(){
 
 
 
-
+/*
 function noteLengthSelected(nlindex, obj){
     console.log("note lenght selected " + nlindex);
     let curnotelength = notelengths[nlindex];
@@ -304,6 +345,7 @@ function markselectednotelength(obj){
     obj.style.fill = selectedFill;
     obj.style.stroke = selectedStroke;
 }
+    */
 
 function sendMoveCursor(direction, obj){
     console.log("move cursor " + direction);
@@ -338,9 +380,22 @@ function setupFormElements(){
     selectednotelengthobj = false;
     prevnlStroke = false;
     prevnlFill = false;    
-    noteLengthSelected(4, nlelem)
+//    noteLengthSelected(4, nlelem)
 
 }
+
+
+function message(address, data){
+    let msg = {address : address,
+        data: data};  
+    if(wsready){
+    //    var buf = new Buffer.from(JSON.stringify(msg));
+        ws.send(JSON.stringify(msg));
+    }else{
+        console.log("ws not ready");
+    }
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOMCONTENTLOADED...");

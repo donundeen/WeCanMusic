@@ -20,7 +20,7 @@ bluetooth.deviceID = "40:EF:4C:6F:C8:45"; //relay: 40:EF:4C:6F:C8:45, oontz 74:F
 bluetooth.keepUp();
 
 ////////////////// CONFIG VARIABLES //////////////////////////
-let env = "rpi"; // "rpi" or "mac" -- how to determine this from code?
+let env = "mac"; // "rpi" or "mac" -- how to determine this from code?
 
 let synthtype = false; // tiny or fluidsynth or false
 // tiny can't handle too many notes at once, and some don't sound good:
@@ -28,8 +28,8 @@ let bad_tiny_voices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,
 
 
 // midi hardward setup:
+let use_midi_out = false; // whether or not to send midi values through a hardware output, via easymidi
 let midi_hardware_engine = false;
-let use_midi_out = true; // whether or not to send midi values through a hardware output, via easymidi
 let midi_out_portname = "FLUID"; // FLUID for on-baord synth, UM-ONE for the midi cable, or other things"; 
 if(use_midi_out){
     const midi = require('midi');
@@ -271,20 +271,20 @@ socket.setMessageReceivedCallback(function(msg){
             socket.sendMessage("addinstrument", props);    
         });
 
-/*
-        // TESTING THINGS HERE
-        let instrument = orchestra.create_udp_instrument("thread1", "TEST");
-        let props = instrument.get_config_props();
-        props.push({name: "instrtype", value: "udp"});
-        socket.sendMessage("addinstrument", props);
-        instrument.start();        
+        if(db.active){
+            // TESTING THINGS HERE
+            let instrument = orchestra.create_udp_instrument("thread1", "TEST");
+            let props = instrument.get_config_props();
+            props.push({name: "instrtype", value: "udp"});
+            socket.sendMessage("addinstrument", props);
+            instrument.start();        
 
-        let instrument2 = orchestra.create_udp_instrument("thread2", "2TEST2");
-        let props2 = instrument2.get_config_props();
-        props2.push({name: "instrtype", value: "udp"});
-        socket.sendMessage("addinstrument", props2);
-        instrument2.start();  
-*/
+            let instrument2 = orchestra.create_udp_instrument("thread2", "2TEST2");
+            let props2 = instrument2.get_config_props();
+            props2.push({name: "instrtype", value: "udp"});
+            socket.sendMessage("addinstrument", props2);
+            instrument2.start();  
+        }
 
     });
     routeFromWebsocket(msg, "score", function(text){
