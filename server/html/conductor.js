@@ -27,6 +27,7 @@ $(function() {
         wsready = true;
         console.log("opened " + ws.readyState);
         message("ready", "READY NOW")
+        message("getvoicelist",1);
     };
 
     ws.onerror = function(msg){
@@ -58,6 +59,9 @@ $(function() {
         }
         if(msg.address =="makenote"){
             updateInstrumentMakenote(msg.data.device_name, msg.data);
+        }
+        if(msg.address == "voicelist"){
+            updateVoicelist(msg.data);
         }
 
         // add message about adding a new instrument here
@@ -94,6 +98,10 @@ $(function() {
         }
     }
 
+    function updateVoicelist(voicelist){
+        console.log("got voicelist");
+        console.log(voicelist);
+    }
 
     function updateBeat(position, bar, beat){
         $(".position").text(bar+":"+beat);

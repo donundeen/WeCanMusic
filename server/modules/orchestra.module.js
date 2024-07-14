@@ -20,14 +20,12 @@ class Orchestra{
 
     voicelist_ready = true;
 
-
     // instr, pitch, velocity, duration
     _makenote_callback = false;
 
     set soundfont_voicelist_file(filename){
         this._soundfont_voicelist_file = filename;
     }
-
 
     set soundfont_file(filename){
         this._soundfont_file = filename;
