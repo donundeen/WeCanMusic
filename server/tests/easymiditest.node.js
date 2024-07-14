@@ -53,7 +53,7 @@ function midiSetInstrument(midi_channel, midi_voice){
 
 function midiMakeNote(midi_channel, note, velocity, duration){
     // if there's a hardware midi device attached to this instrument
-    if(this.midi_hardware_engine){
+    if(midi_hardware_engine){
         console.log("HARDWARE NOTE");
         midi_hardware_engine.send('noteon', {
             note: note,
