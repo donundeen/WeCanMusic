@@ -1,0 +1,546 @@
+[
+    [
+        127,
+        "Space Flute"
+    ],
+    [
+        126,
+        "Wonderland Xylo"
+    ],
+    [
+        125,
+        "Gated Screamer"
+    ],
+    [
+        124,
+        "New Age Organ"
+    ],
+    [
+        7,
+        "TR-808 Drumset 2"
+    ],
+    [
+        6,
+        "Electronic Drumset"
+    ],
+    [
+        5,
+        "Kraftwerk Drumset"
+    ],
+    [
+        4,
+        "Analog Drumset"
+    ],
+    [
+        3,
+        "TR-909 Drumset"
+    ],
+    [
+        2,
+        "TR-808 Drumset"
+    ],
+    [
+        1,
+        "CR-78 Drumset"
+    ],
+    [
+        0,
+        "TR-101 Drumset"
+    ],
+    [
+        123,
+        "TX81Z Sqncr Bass 2"
+    ],
+    [
+        122,
+        "Filtered Stack"
+    ],
+    [
+        121,
+        "Woody Bass"
+    ],
+    [
+        120,
+        "Delicate Marimba"
+    ],
+    [
+        119,
+        "Delicate Bells"
+    ],
+    [
+        118,
+        "Wind Down"
+    ],
+    [
+        117,
+        "Warbling Bird 2"
+    ],
+    [
+        116,
+        "Warbling Bird 1"
+    ],
+    [
+        115,
+        "Laser Pops"
+    ],
+    [
+        114,
+        "Wind Blast"
+    ],
+    [
+        113,
+        "Warble"
+    ],
+    [
+        112,
+        "Singing Strings"
+    ],
+    [
+        111,
+        "Distorted Lead"
+    ],
+    [
+        110,
+        "Heavy Square"
+    ],
+    [
+        109,
+        "Cheap Synth"
+    ],
+    [
+        108,
+        "Polysynth 2"
+    ],
+    [
+        107,
+        "Ping-Pong"
+    ],
+    [
+        106,
+        "Venus Violin Hit"
+    ],
+    [
+        105,
+        "Polysynth Hit"
+    ],
+    [
+        104,
+        "Mono Analog Bass"
+    ],
+    [
+        102,
+        "Cheesy Pad"
+    ],
+    [
+        103,
+        "New Life 2"
+    ],
+    [
+        101,
+        "Monster Strings"
+    ],
+    [
+        100,
+        "Stab Bass Strings"
+    ],
+    [
+        99,
+        "Killer Bass"
+    ],
+    [
+        98,
+        "Thunder"
+    ],
+    [
+        97,
+        "Zippy Bass"
+    ],
+    [
+        96,
+        "Yazoo Bass Hit"
+    ],
+    [
+        95,
+        "Yazoo Zips"
+    ],
+    [
+        94,
+        "Oingo-Boingo"
+    ],
+    [
+        93,
+        "Sawtooth Hit"
+    ],
+    [
+        92,
+        "Warehouse Percussion"
+    ],
+    [
+        91,
+        "Breath Pad"
+    ],
+    [
+        90,
+        "Dreamy Pad"
+    ],
+    [
+        89,
+        "Techno Bells"
+    ],
+    [
+        88,
+        "Rough Strings"
+    ],
+    [
+        87,
+        "Awesome Strings"
+    ],
+    [
+        86,
+        "Sustained Harp"
+    ],
+    [
+        85,
+        "Bonky Organ"
+    ],
+    [
+        84,
+        "House Organ"
+    ],
+    [
+        83,
+        "Noisy Pops"
+    ],
+    [
+        82,
+        "Ethnic Bow"
+    ],
+    [
+        81,
+        "Panned Stack"
+    ],
+    [
+        80,
+        "Monster Stack Lead"
+    ],
+    [
+        79,
+        "Acid Bass 2"
+    ],
+    [
+        78,
+        "Echo Pop Bass"
+    ],
+    [
+        77,
+        "Acid Sub Bass"
+    ],
+    [
+        76,
+        "TX81Z Sqncr Bass"
+    ],
+    [
+        75,
+        "Yazoo Blips"
+    ],
+    [
+        74,
+        "Warble Pad"
+    ],
+    [
+        73,
+        "Spudge Bass"
+    ],
+    [
+        72,
+        "Undulating Pad"
+    ],
+    [
+        71,
+        "Banshee Pad"
+    ],
+    [
+        70,
+        "Long Bass"
+    ],
+    [
+        69,
+        "New Life"
+    ],
+    [
+        68,
+        "Xylophone"
+    ],
+    [
+        67,
+        "Click Pops"
+    ],
+    [
+        66,
+        "Blistering Bells"
+    ],
+    [
+        65,
+        "Wah"
+    ],
+    [
+        64,
+        "Twips Ring"
+    ],
+    [
+        63,
+        "Melodic Vibrato"
+    ],
+    [
+        62,
+        "Screaming Wavepad"
+    ],
+    [
+        61,
+        "Stacked Mega-Phaser"
+    ],
+    [
+        60,
+        "Pop Bass 2"
+    ],
+    [
+        21,
+        "Pop Bass 1"
+    ],
+    [
+        59,
+        "Wavepad"
+    ],
+    [
+        58,
+        "Polysynth Warp"
+    ],
+    [
+        57,
+        "Rubber Bass"
+    ],
+    [
+        56,
+        "China Voices"
+    ],
+    [
+        55,
+        "FM Clang"
+    ],
+    [
+        54,
+        "Phasing Choir"
+    ],
+    [
+        53,
+        "Singing Bells"
+    ],
+    [
+        52,
+        "Harsh FM Bass"
+    ],
+    [
+        51,
+        "Gated FM Bass"
+    ],
+    [
+        50,
+        "Dream Hit"
+    ],
+    [
+        49,
+        "FM Bass Hit"
+    ],
+    [
+        48,
+        "Faerie Chorale"
+    ],
+    [
+        47,
+        "Metallic Clink"
+    ],
+    [
+        46,
+        "Oink Grind"
+    ],
+    [
+        45,
+        "Wailing Hit"
+    ],
+    [
+        44,
+        "Casio VL-1 Pops"
+    ],
+    [
+        34,
+        "Square Pop Flute"
+    ],
+    [
+        43,
+        "Lead Synth 3"
+    ],
+    [
+        42,
+        "Lead Synth 2"
+    ],
+    [
+        41,
+        "Lead Synth 1"
+    ],
+    [
+        40,
+        "Aluminium Plate"
+    ],
+    [
+        39,
+        "Space Warp"
+    ],
+    [
+        38,
+        "Sine Bongos"
+    ],
+    [
+        37,
+        "Sine Whistle"
+    ],
+    [
+        36,
+        "Vatican Bell"
+    ],
+    [
+        35,
+        "Phasing Strings"
+    ],
+    [
+        23,
+        "Square Flute"
+    ],
+    [
+        33,
+        "Water Triangle"
+    ],
+    [
+        32,
+        "Cosmic Vibraphone"
+    ],
+    [
+        31,
+        "Bass Dragon Choir"
+    ],
+    [
+        30,
+        "Vatican Pipes"
+    ],
+    [
+        29,
+        "Fantasy"
+    ],
+    [
+        28,
+        "Electric Slap Bass"
+    ],
+    [
+        27,
+        "Bingo Bells"
+    ],
+    [
+        26,
+        "D50-ish Bells"
+    ],
+    [
+        25,
+        "Breezy Calliope"
+    ],
+    [
+        24,
+        "Chorale"
+    ],
+    [
+        22,
+        "Distorted Sweep Bass"
+    ],
+    [
+        20,
+        "TX81Z Lately Bass"
+    ],
+    [
+        19,
+        "FM Electric Bass"
+    ],
+    [
+        18,
+        "Smooth Strings 1"
+    ],
+    [
+        17,
+        "Smooth Flute"
+    ],
+    [
+        16,
+        "Triangle Simple"
+    ],
+    [
+        15,
+        "Triangle Dream Flute"
+    ],
+    [
+        14,
+        "Thin Sawtooth"
+    ],
+    [
+        13,
+        "Classic FM Bass"
+    ],
+    [
+        12,
+        "Church Organ"
+    ],
+    [
+        11,
+        "Meat Grinder"
+    ],
+    [
+        10,
+        "FM Christmas Bells"
+    ],
+    [
+        9,
+        "Hard Grunge Bass"
+    ],
+    [
+        8,
+        "Resonating Pad"
+    ],
+    [
+        7,
+        "Sheet Bass"
+    ],
+    [
+        6,
+        "Dragon Sweep"
+    ],
+    [
+        5,
+        "El Cheapo Organ"
+    ],
+    [
+        4,
+        "Detuned Saws"
+    ],
+    [
+        3,
+        "Grungy Ramp Bass"
+    ],
+    [
+        2,
+        "Simple Square Floot"
+    ],
+    [
+        1,
+        "FM Carillion"
+    ],
+    [
+        0,
+        "FM Bells 1"
+    ]
+]
