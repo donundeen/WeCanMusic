@@ -20,7 +20,7 @@ if(use_midi_out){
         }
     }
 }
-midiSetBankProgram(1, "013", 10);
+midiSetBankProgram(1, 13, 10);
 
 
 setTimeout(function(){
@@ -42,7 +42,7 @@ setTimeout(function(){
 function midiSetBankProgram(midi_channel, MSB, midi_voice){
     if(midi_hardware_engine){
         midi_hardware_engine.send('cc',{
-            controller: "000",
+            controller: 0,
             value: MSB, 
             channel: midi_channel
         }); 
