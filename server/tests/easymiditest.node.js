@@ -39,11 +39,11 @@ setTimeout(function(){
 
 
 
-function midiSetBankProgram(midi_channel, MSB, midi_voice){
+function midiSetBankProgram(midi_channel, bank, midi_voice){
     if(midi_hardware_engine){
         midi_hardware_engine.send('cc',{
             controller: 0,
-            value: MSB, 
+            value: bank, 
             channel: midi_channel
         }); 
         /*

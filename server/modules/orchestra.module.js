@@ -14,10 +14,40 @@ class Orchestra{
     bpm = 120;
 
     notelist = [];
+    _soundfont_file = false;
+    _soundfont_voicelist_file = false;
+    _soundfont_voicelist = [];
+
+    voicelist_ready = true;
 
 
     // instr, pitch, velocity, duration
     _makenote_callback = false;
+
+    set soundfont_voicelist_file(filename){
+        this._soundfont_voicelist_file = filename;
+    }
+
+
+    set soundfont_file(filename){
+        this._soundfont_file = filename;
+    }
+
+    get_voicelist(callback){
+        this.voicelist_ready = false;
+        fs.readFile(this._soundfont_voicelist_file, 'utf8', (err, data) => {
+            if (err) {
+                console.error(err);
+                this.voicelist_ready = true;
+                return;
+            }
+            this.soundfont_voicelist = JSON.parse(data);
+            if(callback){
+                this.voicelist_ready = true;
+                callback(this.soundfont_voicelist);
+            }
+        });
+    }
 
     set makenote_callback(callback){
         console.log("set makenote callback")

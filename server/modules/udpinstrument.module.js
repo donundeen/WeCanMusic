@@ -28,6 +28,7 @@ const UDPInstrument = class{
     _wecanmusic_port = "7002";
 
     // midi vars
+    _midi_bank = 0; // bank and voice together select the tone.
     _midi_voice = 1;
     _midi_channel = 1;
     _rootMidi = 0;
@@ -158,10 +159,20 @@ const UDPInstrument = class{
     set midi_voice(voice){
         console.log("setting voice to :: " + voice);
         this._midi_voice = voice;
-        this.midiSetInstrument();
+        this.midiSetBankProgram();
     }
     get midi_voice(){
         return this._midi_voice;
+    }
+
+    set midi_bank(bank){
+        console.log("setting bank to :: " + bank);
+        this._midi_bank = bank;
+//        this.midiSetBankProgram(); // use the voice set to trigger the midi message to change voice.
+    }
+
+    get midi_bank(){
+        return this._midi_bank;
     }
 
     // what to do when a new sensor value is received. Need to trigger a note here
@@ -414,6 +425,23 @@ const UDPInstrument = class{
             }); 
         }
     }
+
+
+    midiSetBankProgram(){
+        if(this.midi_hardware_engine){
+            this.midi_hardware_engine.send('cc',{
+                controller: 0,
+                value: this._midi_bank, 
+                channel: this._midi_channel
+            }); 
+            this.midi_hardware_engine.send('program',{
+                number: this._midi_voice, 
+                channel: this._midi_channel
+            }); 
+        }    
+    }
+    
+
 
     // we might care about this, for mono things
     midiNoteOn(channel, pitch, velocity){

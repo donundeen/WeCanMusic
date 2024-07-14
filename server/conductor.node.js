@@ -150,7 +150,10 @@ socket = Object.create(socketServer);
 
 // intialize the midi synth (fluid or tiny)
 let synth = false;
-let soundfont = './soundfonts/GeneralUserGS/GeneralUserGS.sf2'
+//let soundfont = './soundfonts/GeneralUserGS/GeneralUserGS.sf2'
+//let soundfont_instrument_list = './soundfonts/GeneralUserGS/GeneralUserGS.sf2'
+let soundfont = './soundfonts/141-Compleet bank synth.sf2'
+let soundfont_instrument_list = './soundfonts/141-Compleet bank synth.sf2.voicelist.json'
 let fluidpath = '/usr/bin/fluidsynth';
 let fluidargs = ["a", "pulseaudio","-R", 1, "-C", 1];
 if(synthtype == "fluidsynth"){
@@ -163,6 +166,10 @@ if(synthtype == "fluidsynth"){
                     sf: soundfont,
                     args: fluidargs });
 }
+orchestra.soundfont_file = soundfont_file;
+orchestra.soundfont_voicelist_file = soundfont_instrument_list;
+
+
 
 if(synthtype == "tiny"){
     synth = JZZ.synth.Tiny({quality:0, useReverb:0, voices:32});
@@ -216,6 +223,15 @@ socket.setMessageReceivedCallback(function(msg){
             socket.sendMessage("scorelist", list);    
         });
     });
+
+    routeFromWebsocket(msg, "getvoicelist", function(msg){
+        // get voicelist and send as socket.sendMessage("voicelist", voicelist);
+        orchestra.soundfont_file = soundfont_file;
+        orchestra.get_voicelist(function(voicelist){    
+            socket.sendMessage("voicelist", voicelist);             //  trans.start();
+        });        
+    });
+
     routeFromWebsocket(msg,"loadscore", function(msg){
         score.scoreFilename = msg;
         score.openscore(function(scoreText){    

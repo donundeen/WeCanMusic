@@ -18,8 +18,10 @@ def parsesf2file(filename):
         sf2 = Sf2File(sf2_file)
         for preset in sf2.presets:
             if(hasattr(preset,"preset")):
-#                print(str(preset.preset) +":"+preset.name)
-                data.append((preset.preset, preset.name))
+#                for property, value in vars(preset).items():
+#                    print(property)                
+                print(str(preset.bank) + " : " + str(preset.preset) +":"+preset.name  )
+                data.append((preset.bank, preset.preset, preset.name))
     return data
 
 

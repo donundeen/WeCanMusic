@@ -1,1077 +1,1346 @@
 [
     [
+        0,
         12,
         "Marimba"
     ],
     [
+        8,
         6,
         "Coupled Harpsichord"
     ],
     [
+        0,
         6,
         "Harpsichord"
     ],
     [
+        120,
         56,
         "SFX Kit"
     ],
     [
+        120,
         48,
         "Orchestral Perc."
     ],
     [
+        120,
         40,
         "Brush Drums"
     ],
     [
+        120,
         32,
         "Jazz Drums"
     ],
     [
+        120,
         26,
         "Dance Drums"
     ],
     [
+        120,
         25,
         "808/909 Drums"
     ],
     [
+        120,
         24,
         "Electronic Drums"
     ],
     [
+        120,
         16,
         "Power Drums"
     ],
     [
+        120,
         8,
         "Room Drums"
     ],
     [
+        120,
         1,
         "Standard 2 Drums"
     ],
     [
+        120,
         0,
         "Standard Drums"
     ],
     [
+        128,
         0,
         "Standard"
     ],
     [
+        0,
         59,
         "Muted Trumpet"
     ],
     [
+        0,
         57,
         "Trombone"
     ],
     [
+        0,
         56,
         "Trumpet"
     ],
     [
+        0,
         109,
         "Bagpipes"
     ],
     [
+        128,
         25,
         "808/909"
     ],
     [
+        0,
         88,
         "Fantasia"
     ],
     [
+        0,
         116,
         "Taiko Drum"
     ],
     [
+        0,
         52,
         "Concert Choir"
     ],
     [
+        0,
         61,
         "Brass Section"
     ],
     [
+        0,
         10,
         "Music Box"
     ],
     [
+        12,
         0,
         "Bell Piano"
     ],
     [
+        12,
         4,
         "Bell Tine EP"
     ],
     [
+        11,
         4,
         "Tine & FM EPs"
     ],
     [
+        11,
         5,
         "Piano & FM EP"
     ],
     [
+        13,
         48,
         "Woodwind Choir"
     ],
     [
+        12,
         48,
         "Full Orchestra"
     ],
     [
+        11,
         61,
         "Brass Section 3"
     ],
     [
+        11,
         1,
         "Piano & Str.-Sus"
     ],
     [
+        11,
         0,
         "Piano & Str.-Fade"
     ],
     [
+        8,
         39,
         "Synth Bass 4"
     ],
     [
+        8,
         61,
         "Brass Section 2"
     ],
     [
+        8,
         48,
         "Orchestra Pad"
     ],
     [
+        8,
         30,
         "Feedback Guitar"
     ],
     [
+        8,
         27,
         "Chorused Clean Gt."
     ],
     [
+        8,
         25,
         "12-String Guitar"
     ],
     [
+        8,
         17,
         "Detuned Perc. Organ"
     ],
     [
+        8,
         16,
         "Detuned Tnwl. Organ"
     ],
     [
+        8,
         5,
         "Chorused FM EP"
     ],
     [
+        8,
         4,
         "Chorused Tine EP"
     ],
     [
+        0,
         60,
         "French Horns"
     ],
     [
+        1,
         60,
         "Solo French Horn"
     ],
     [
+        128,
         26,
         "Dance"
     ],
     [
+        0,
         65,
         "Alto Sax"
     ],
     [
+        0,
         30,
         "Distortion Guitar"
     ],
     [
+        0,
         110,
         "Fiddle"
     ],
     [
+        0,
         89,
         "Warm Pad"
     ],
     [
+        0,
         87,
         "Bass & Lead"
     ],
     [
+        0,
         81,
         "Saw Lead"
     ],
     [
+        13,
         80,
         "Square Lead 3"
     ],
     [
+        0,
         73,
         "Flute"
     ],
     [
+        0,
         63,
         "Synth Brass 2"
     ],
     [
+        0,
         39,
         "Synth Bass 2"
     ],
     [
+        0,
         42,
         "Cello"
     ],
     [
+        0,
         40,
         "Violin"
     ],
     [
+        0,
         38,
         "Synth Bass 1"
     ],
     [
+        0,
         37,
         "Slap Bass 2"
     ],
     [
+        0,
         20,
         "Reed Organ"
     ],
     [
+        1,
         44,
         "Mono Strings Trem"
     ],
     [
+        0,
         44,
         "Stereo Strings Trem"
     ],
     [
+        12,
         49,
         "Mono Strings Velo"
     ],
     [
+        1,
         49,
         "Mono Strings Slow"
     ],
     [
+        1,
         48,
         "Mono Strings Fast"
     ],
     [
+        11,
         49,
         "Stereo Strings Velo"
     ],
     [
+        0,
         49,
         "Stereo Strings Slow"
     ],
     [
+        0,
         48,
         "Stereo Strings Fast"
     ],
     [
+        128,
         56,
         "SFX"
     ],
     [
+        128,
         48,
         "Orchestral"
     ],
     [
+        128,
         40,
         "Brush"
     ],
     [
+        128,
         32,
         "Jazz"
     ],
     [
+        128,
         24,
         "Electronic"
     ],
     [
+        128,
         16,
         "Power"
     ],
     [
+        128,
         8,
         "Room"
     ],
     [
+        128,
         1,
         "Standard 2"
     ],
     [
+        0,
         5,
         "FM Electric Piano"
     ],
     [
+        0,
         4,
         "Tine Electric Piano"
     ],
     [
         0,
+        0,
         "Stereo Grand"
     ],
     [
+        0,
         3,
         "Honky-Tonk"
     ],
     [
+        0,
         1,
         "Bright Grand"
     ],
     [
+        12,
         127,
         "Shooting Star"
     ],
     [
+        13,
         88,
         "Night Vision"
     ],
     [
+        12,
         38,
         "Mean Saw Bass"
     ],
     [
+        11,
         39,
         "Pulse Bass"
     ],
     [
+        11,
         100,
         "Bright Saw Stack"
     ],
     [
+        12,
         80,
         "Square Lead 2"
     ],
     [
+        0,
         80,
         "Square Lead"
     ],
     [
+        11,
         88,
         "Harpsi Pad"
     ],
     [
+        8,
         50,
         "Synth Strings 3"
     ],
     [
+        0,
         94,
         "Halo Pad"
     ],
     [
+        13,
         81,
         "Saw Lead 3"
     ],
     [
+        0,
         62,
         "Synth Brass 1"
     ],
     [
+        0,
         50,
         "Synth Strings 1"
     ],
     [
+        0,
         68,
         "Oboe"
     ],
     [
+        8,
         81,
         "Doctor Solo"
     ],
     [
+        11,
         119,
         "Cymbal Crash"
     ],
     [
+        11,
         98,
         "Synth Chime"
     ],
     [
+        11,
         51,
         "Synth Strings 5"
     ],
     [
+        11,
         50,
         "Synth Strings 4"
     ],
     [
+        12,
         27,
         "Clean Guitar 2"
     ],
     [
+        9,
         125,
         "Burst Noise"
     ],
     [
+        9,
         14,
         "Carillon"
     ],
     [
+        8,
         63,
         "Synth Brass 4"
     ],
     [
+        8,
         62,
         "Synth Brass 3"
     ],
     [
+        12,
         89,
         "Solar Wind 2"
     ],
     [
+        12,
         88,
         "Fantasia 2"
     ],
     [
+        12,
         10,
         "Christmas Bells"
     ],
     [
+        11,
         127,
         "Interference"
     ],
     [
+        11,
         87,
         "Doctor's Solo"
     ],
     [
+        11,
         8,
         "Tinkling Bells"
     ],
     [
+        8,
         118,
         "808 Tom"
     ],
     [
+        8,
         115,
         "Castanets"
     ],
     [
+        12,
         122,
         "White Noise Wave"
     ],
     [
+        8,
         117,
         "Melodic Tom 2"
     ],
     [
+        8,
         116,
         "Concert Bass Drum"
     ],
     [
+        8,
         38,
         "Synth Bass 3"
     ],
     [
+        8,
         19,
         "Pipe Organ 2"
     ],
     [
+        11,
         14,
         "Bell Tower"
     ],
     [
+        2,
         102,
         "Echo Pan"
     ],
     [
+        8,
         28,
         "Funk Guitar"
     ],
     [
+        8,
         31,
         "Guitar Feedback"
     ],
     [
+        8,
         107,
         "Taisho Koto"
     ],
     [
+        3,
         123,
         "Bird 2"
     ],
     [
+        4,
         125,
         "Car-Crash"
     ],
     [
+        12,
         119,
         "Tambourine"
     ],
     [
+        11,
         121,
         "Filter Snap"
     ],
     [
+        11,
         81,
         "Sawtooth Stab"
     ],
     [
+        1,
         98,
         "Synth Mallet"
     ],
     [
+        1,
         80,
         "Square Wave"
     ],
     [
+        1,
         81,
         "Saw Wave"
     ],
     [
+        1,
         38,
         "Synth Bass 101"
     ],
     [
+        4,
         123,
         "Scratch"
     ],
     [
+        0,
         123,
         "Birds"
     ],
     [
+        12,
         81,
         "Saw Lead 2"
     ],
     [
+        2,
         127,
         "Lasergun"
     ],
     [
+        0,
         98,
         "Crystal"
     ],
     [
+        4,
         122,
         "Stream"
     ],
     [
+        0,
         46,
         "Orchestral Harp"
     ],
     [
+        0,
         32,
         "Acoustic Bass"
     ],
     [
+        0,
         43,
         "Double Bass"
     ],
     [
+        0,
         118,
         "Synth Drum"
     ],
     [
+        0,
         106,
         "Shamisen"
     ],
     [
+        0,
         114,
         "Steel Drums"
     ],
     [
+        1,
         121,
         "Fl. Key Click"
     ],
     [
+        16,
         25,
         "Mandolin"
     ],
     [
+        3,
         127,
         "Explosion"
     ],
     [
+        3,
         126,
         "Punch"
     ],
     [
+        0,
         79,
         "Ocarina"
     ],
     [
+        0,
         101,
         "Goblin"
     ],
     [
+        0,
         17,
         "Percussive Organ"
     ],
     [
+        0,
         127,
         "Gun Shot"
     ],
     [
+        8,
         125,
         "Starship"
     ],
     [
+        7,
         125,
         "Jet Plane"
     ],
     [
+        6,
         125,
         "Train"
     ],
     [
+        5,
         126,
         "Footsteps"
     ],
     [
+        5,
         125,
         "Siren"
     ],
     [
+        5,
         124,
         "Windchime"
     ],
     [
+        5,
         122,
         "Bubbles"
     ],
     [
+        4,
         126,
         "Heart Beat"
     ],
     [
+        3,
         125,
         "Car-Pass"
     ],
     [
+        3,
         124,
         "Door"
     ],
     [
+        2,
         126,
         "Scream"
     ],
     [
+        2,
         125,
         "Car-Stop"
     ],
     [
+        2,
         124,
         "Door Creaking"
     ],
     [
+        2,
         123,
         "Horse Gallop"
     ],
     [
+        2,
         122,
         "Thunder"
     ],
     [
+        2,
         120,
         "String Slap"
     ],
     [
+        1,
         127,
         "Machine Gun"
     ],
     [
+        1,
         126,
         "Laughing"
     ],
     [
+        1,
         125,
         "Car-Engine"
     ],
     [
+        1,
         124,
         "Telephone 2"
     ],
     [
+        1,
         123,
         "Dog"
     ],
     [
+        1,
         122,
         "Rain"
     ],
     [
+        1,
         120,
         "Cut Noise"
     ],
     [
+        1,
         52,
         "Concert Choir Mono"
     ],
     [
+        0,
         2,
         "Electric Grand"
     ],
     [
+        0,
         22,
         "Harmonica"
     ],
     [
+        0,
         8,
         "Celeste"
     ],
     [
+        0,
         85,
         "Solo Vox"
     ],
     [
+        0,
         11,
         "Vibraphone"
     ],
     [
+        0,
         13,
         "Xylophone"
     ],
     [
+        0,
         7,
         "Clavinet"
     ],
     [
+        1,
         56,
         "Trumpet 2"
     ],
     [
+        0,
         36,
         "Slap Bass 1"
     ],
     [
+        0,
         26,
         "Jazz Guitar"
     ],
     [
+        0,
         54,
         "Synth Voice"
     ],
     [
+        0,
         107,
         "Koto"
     ],
     [
+        0,
         105,
         "Banjo"
     ],
     [
+        0,
         23,
         "Bandoneon"
     ],
     [
+        0,
         21,
         "Accordian"
     ],
     [
+        8,
         21,
         "Italian Accordian"
     ],
     [
+        0,
         55,
         "Orchestra Hit"
     ],
     [
+        0,
         47,
         "Timpani"
     ],
     [
+        0,
         18,
         "Rock Organ"
     ],
     [
+        1,
         57,
         "Trombone 2"
     ],
     [
+        0,
         77,
         "Shakuhachi"
     ],
     [
+        0,
         78,
         "Irish Tin Whistle"
     ],
     [
+        0,
         76,
         "Bottle Blow"
     ],
     [
+        0,
         75,
         "Pan Flute"
     ],
     [
+        0,
         69,
         "English Horn"
     ],
     [
+        0,
         70,
         "Bassoon"
     ],
     [
+        0,
         41,
         "Viola"
     ],
     [
+        0,
         35,
         "Fretless Bass"
     ],
     [
+        0,
         16,
         "Tonewheel Organ"
     ],
     [
+        0,
         103,
         "Star Theme"
     ],
     [
+        0,
         97,
         "Soundtrack"
     ],
     [
+        0,
         95,
         "Sweep Pad"
     ],
     [
+        0,
         92,
         "Bowed Glass"
     ],
     [
+        0,
         90,
         "Polysynth"
     ],
     [
+        0,
         25,
         "Steel Guitar"
     ],
     [
+        8,
         26,
         "Hawaiian Guitar"
     ],
     [
+        0,
         104,
         "Sitar"
     ],
     [
+        8,
         80,
         "Sine Wave"
     ],
     [
+        0,
         28,
         "Muted Guitar"
     ],
     [
+        0,
         24,
         "Nylon Guitar"
     ],
     [
+        8,
         14,
         "Church Bells"
     ],
     [
+        0,
         126,
         "Applause"
     ],
     [
+        0,
         124,
         "Telephone 1"
     ],
     [
+        0,
         122,
         "Seashore"
     ],
     [
+        0,
         99,
         "Atmosphere"
     ],
     [
+        0,
         83,
         "Chiffer Lead"
     ],
     [
+        0,
         86,
         "5th Saw Wave"
     ],
     [
+        0,
         82,
         "Synth Calliope"
     ],
     [
+        0,
         71,
         "Clarinet"
     ],
     [
+        0,
         74,
         "Recorder"
     ],
     [
+        0,
         66,
         "Tenor Sax"
     ],
     [
+        0,
         64,
         "Soprano Sax"
     ],
     [
+        0,
         72,
         "Piccolo"
     ],
     [
+        0,
         58,
         "Tuba"
     ],
     [
+        1,
         59,
         "Muted Trumpet 2"
     ],
     [
+        0,
         45,
         "Pizzicato Strings"
     ],
     [
+        0,
         19,
         "Pipe Organ"
     ],
     [
+        1,
         61,
         "Brass Section Mono"
     ],
     [
+        0,
         34,
         "Pick Bass"
     ],
     [
+        0,
         33,
         "Finger Bass"
     ],
     [
+        0,
         15,
         "Dulcimer"
     ],
     [
+        0,
         51,
         "Synth Strings 2"
     ],
     [
+        0,
         29,
         "Overdrive Guitar"
     ],
     [
+        0,
         27,
         "Clean Guitar"
     ],
     [
+        0,
         67,
         "Baritone Sax"
     ],
     [
+        3,
         122,
         "Howling Winds"
     ],
     [
+        11,
         96,
         "Mystery Pad"
     ],
     [
+        11,
         89,
         "Solar Wind"
     ],
     [
+        11,
         78,
         "Whistlin'"
     ],
     [
+        11,
         38,
         "Techno Bass"
     ],
     [
+        8,
         24,
         "Ukulele"
     ],
     [
+        0,
         9,
         "Glockenspiel"
     ],
     [
+        0,
         14,
         "Tubular Bells"
     ],
     [
+        0,
         31,
         "Guitar Harmonics"
     ],
     [
+        0,
         53,
         "Voice Oohs"
     ],
     [
+        0,
         84,
         "Charang"
     ],
     [
+        0,
         91,
         "Space Voice"
     ],
     [
+        0,
         93,
         "Metal Pad"
     ],
     [
+        0,
         96,
         "Ice Rain"
     ],
     [
+        0,
         100,
         "Brightness"
     ],
     [
+        0,
         102,
         "Echo Drops"
     ],
     [
+        0,
         108,
         "Kalimba"
     ],
     [
+        0,
         111,
         "Shenai"
     ],
     [
+        0,
         112,
         "Tinker Bell"
     ],
     [
+        0,
         113,
         "Agogo"
     ],
     [
+        0,
         115,
         "Wood Block"
     ],
     [
+        0,
         117,
         "Melodic Tom"
     ],
     [
+        0,
         119,
         "Reverse Cymbal"
     ],
     [
+        0,
         120,
         "Fret Noise"
     ],
     [
+        0,
         121,
         "Breath Noise"
     ],
     [
+        0,
         125,
         "Helicopter"
     ]
