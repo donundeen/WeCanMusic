@@ -23,14 +23,14 @@ if(use_midi_out){
 
 
 setTimeout(function(){
-    midiSetBankProgram(1, "000", "001", 6);
+    midiSetBankProgram(1, "000", 3);
     midiMakeNote(1, 65, 120, 500);
     midiMakeNote(1, 69, 120, 500);
     midiMakeNote(1, 73, 120, 500);
 }, 10);
 
 setTimeout(function(){
-    midiSetBankProgram(1, "000", "002", 3);
+    midiSetBankProgram(1, "001", 3);
     midiMakeNote(1, 65, 120, 500);
     midiMakeNote(1, 69, 120, 500);
     midiMakeNote(1, 73, 120, 500);
@@ -38,8 +38,14 @@ setTimeout(function(){
 
 
 
-function midiSetBankProgram(midi_channel, MSB, LSB, midi_voice){
+function midiSetBankProgram(midi_channel, MSB, midi_voice){
     if(midi_hardware_engine){
+        midi_hardware_engine.send('select',{
+            controller: "000",
+            value: MSB, 
+            channel: midi_channel
+        }); 
+        /*
         midi_hardware_engine.send('cc',{
             controller: "000",
             value: MSB, 
@@ -50,11 +56,11 @@ function midiSetBankProgram(midi_channel, MSB, LSB, midi_voice){
             value: LSB, 
             channel: midi_channel
         }); 
+        */
         midi_hardware_engine.send('program',{
             number: midi_voice, 
             channel: midi_channel
         }); 
-
     }    
 }
 
