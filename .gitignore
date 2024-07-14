@@ -132,3 +132,7 @@ dist
 # other stuff
 .vscode
 .DS_Store
+node_modules
+.DS_Store
+*.sf2
+.sf2
