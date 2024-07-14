@@ -20,7 +20,7 @@ if(use_midi_out){
         }
     }
 }
-midiSetBankProgram(1, 12, 81);
+midiSetBankProgram(1, 120, 56);
 
 
 setTimeout(function(){
