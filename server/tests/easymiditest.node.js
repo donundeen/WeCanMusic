@@ -20,18 +20,18 @@ if(use_midi_out){
         }
     }
 }
-midiSetBankProgram(1, 0, 3);
+midiSetBankProgram(1, 120, 3);
 
 
 setTimeout(function(){
-    midiSetBankProgram(1, 1, 3);
+//    midiSetBankProgram(1, 1, 3);
     midiMakeNote(1, 65, 120, 500);
     midiMakeNote(1, 69, 120, 500);
     midiMakeNote(1, 73, 120, 500);
 }, 10);
 
 setTimeout(function(){
-    midiSetBankProgram(1, 0, 3);
+ //   midiSetBankProgram(1, 0, 3);
     midiMakeNote(1, 65, 120, 500);
     midiMakeNote(1, 69, 120, 500);
     midiMakeNote(1, 73, 120, 500);
