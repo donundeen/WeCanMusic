@@ -23,7 +23,7 @@ if(use_midi_out){
 
 
 setTimeout(function(){
-    midiSetBankProgram(1, "000", "000", 6);
+    midiSetBankProgram(1, "000", "001", 6);
     midiMakeNote(1, 65, 120, 500);
     midiMakeNote(1, 69, 120, 500);
     midiMakeNote(1, 73, 120, 500);
