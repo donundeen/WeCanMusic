@@ -1,7 +1,7 @@
 let message = "C m";
 
 // thoeryEngine generates lists of notes from theory terms (eg A MINORPENTATONIC)
-const TheoryEngine = require("./modules/theoryengine.module.js").TheoryEngine;
+const TheoryEngine = require("../modules/theoryengine.module.js").TheoryEngine;
 
 theory = Object.create(TheoryEngine);
 
