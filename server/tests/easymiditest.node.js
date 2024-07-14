@@ -41,7 +41,7 @@ setTimeout(function(){
 
 function midiSetBankProgram(midi_channel, MSB, midi_voice){
     if(midi_hardware_engine){
-        midi_hardware_engine.send('select',{
+        midi_hardware_engine.send('cc',{
             controller: "000",
             value: MSB, 
             channel: midi_channel
