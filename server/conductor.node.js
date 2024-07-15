@@ -14,6 +14,7 @@ let config = require("./conductor.config.js");
 let machine_config = require("./"+env+".conductor.config.js");
 config.env = env;
 config = merge(config, machine_config);
+config = merge(config, env_config);
 console.log(config);
 
 
@@ -24,21 +25,23 @@ const db = require('./modules/debugging.module.js').Debugging;
 db.active = false;
 db.log("starting");
 
-const bluetooth = require('./modules/bluetooth.module.js').Bluetooth;
-bluetooth.active = false;
-bluetooth.deviceID = "40:EF:4C:6F:C8:45"; //relay: 40:EF:4C:6F:C8:45, oontz 74:F0:F0:AB:D5:21
-bluetooth.keepUp();
-
+let bluetooth = false;
+if(config["bluetooth.active"]){
+    bluetooth = require('./modules/bluetooth.module.js').Bluetooth;
+    bluetooth.active = config["bluetooth.active"];
+    bluetooth.deviceID = config["bluetooth.deviceID"]; 
+    bluetooth.keepUp();
+}
 ////////////////// CONFIG VARIABLES //////////////////////////
-let synthtype = false; // tiny or fluidsynth or false
+let synthtype = config.synthtype; // tiny or fluidsynth or false
 // tiny can't handle too many notes at once, and some don't sound good:
 let bad_tiny_voices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,65,66,67,68,69,71,72, 84, 90, 105,110,118,119,120,121,122,123,124,125,126,127];
 
 
 // midi hardward setup:
-let use_midi_out = false; // whether or not to send midi values through a hardware output, via easymidi
+let use_midi_out = config.use_midi_out; // whether or not to send midi values through a hardware output, via easymidi
 let midi_hardware_engine = false;
-let midi_out_portname = "FLUID"; // FLUID for on-baord synth, UM-ONE for the midi cable, or other things"; 
+let midi_out_portname = config.midi_out_portname; // FLUID for on-baord synth, UM-ONE for the midi cable, or other things"; 
 if(use_midi_out){
     const midi = require('midi');
     const easymidi = require('easymidi');
@@ -62,14 +65,14 @@ if(use_midi_out){
 
 let bpm = 120;
 // defining some note lengths
-let scorename = "./scores/simplescore.txt";
-let UDPSENDIP = "10.0.0.255";
+let scorename = config.scorename; //"./scores/simplescore.txt";
+let UDPSENDIP = config.UDPSENDIP; //"10.0.0.255";
 //let UDPSENDIP = "10.0.0.131";
-let UDPSENDPORT = 7004;
-let UDPLISTENPORT = 7005;
+let UDPSENDPORT = config.UDPSENDPORT;//7004;
+let UDPLISTENPORT = config.UDPLISTENPORT;//7005;
 
-let WEBSOCKET_PORT = 8001;
-let WEBSERVER_PORT = 8002;
+let WEBSOCKET_PORT = config.WEBSOCKET_PORT //8001;
+let WEBSERVER_PORT = config.WEBSERVER_PORT //8002;
 
 let default_webpage = "conductor.html";
 
