@@ -52,6 +52,10 @@ with whatever mthod you use to clone repos, eg
 
 `npm install`
 
+`cp env.config.js.template env.config.js `
+
+Then edit env.config.js to set your environment to 'rpi' or 'mac', and any other config settings you want to NOT be changed when the repo changes (more on config values later as they develop)
+
 ### Setup up WIFI AP / Regular WIFI connect modes
 
 following these instructions: **Following this: [Turn Your Raspberry Pi into an Access Point ](https://raspberrytips.com/access-point-setup-raspberry-pi/)**
@@ -90,6 +94,8 @@ fluidsynth is the local midi synth, for playing midi notes through an audio out,
 
 `sudo apt install fluidsynth`
 
+or on mac: `brew install fluidsynth`
+
 ### get fluidsynth running with high priority:
 
 I followed the instructions here: **[How do I configure my linux system to allow JACK to use realtime scheduling? | JACK Audio Connection Kit](https://jackaudio.org/faq/linux_rt_config.html)**  - even though I'm not using JACK
@@ -126,11 +132,13 @@ Connect your screen devices (laptop, tablet, etc) to the wecanmusic wifi.
 
 The web interface for controlling the score and the devices is at
 
-`http://10.0.0.1:8002`
+`http://localhost:8002`
 
 ## Connect to Bluetooth Speakers
 
 The rpi audio out is pretty crap, you'll get much better performance from bluetooth audio. Here's how to get it working.
+
+(Alternatively, get a hardware DAC fro RPI)
 
 **
 
