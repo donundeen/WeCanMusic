@@ -22,7 +22,7 @@ console.log(config);
 // LOAD DEBUGGING FRAMEWORK
 const db = require('./modules/debugging.module.js').Debugging;
 // TURN DEBUGGING ON/OFF HERE
-db.active = false;
+db.active = config["db.active"];
 db.log("starting");
 
 let bluetooth = false;
@@ -287,6 +287,11 @@ socket.setMessageReceivedCallback(function(msg){
         data = score.scoreText;
         socket.sendMessage("score", data);
         //send all the instruments if there are currently any running:
+        orchestra.get_voicelist(function(voicelist){    
+            socket.sendMessage("voicelist", voicelist);             //  trans.start();
+        }); 
+
+
         orchestra.allLocalInstruments(function(instrument){
             let props = instrument.get_config_props();
             props.push({name: "instrtype", value: "local"});
@@ -298,9 +303,10 @@ socket.setMessageReceivedCallback(function(msg){
             socket.sendMessage("addinstrument", props);    
         });
 
+
         if(db.active){
             // TESTING THINGS HERE
-            /*
+            
             let instrument = orchestra.create_udp_instrument("thread1", "TEST");
             let props = instrument.get_config_props();
             props.push({name: "instrtype", value: "udp"});
@@ -312,7 +318,7 @@ socket.setMessageReceivedCallback(function(msg){
             props2.push({name: "instrtype", value: "udp"});
             socket.sendMessage("addinstrument", props2);
             instrument2.start();  
-            */
+            
         }
 
     });

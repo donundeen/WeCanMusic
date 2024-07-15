@@ -1,5 +1,6 @@
 const WEBSOCKET_PORT = 8001;
 const WEBSERVER_PORT = 8002;
+let voicelist = [[1,79,"nodata"],[0,78,"nodata"]];
 
 $(function() {
 
@@ -10,6 +11,8 @@ $(function() {
     host = host.replace(/:[0-9]+/,"");
     // remove port
     console.log(host);
+
+
 
     // some note characters: 
     // ♭ 𝅘𝅥𝅮𝅗𝅥°♭𝅘𝅥𝅗𝅥𝅗 𝄼 𝄽 
@@ -26,8 +29,8 @@ $(function() {
     ws.onopen = function() {
         wsready = true;
         console.log("opened " + ws.readyState);
+        message("getvoicelist",1);        
         message("ready", "READY NOW")
-        message("getvoicelist",1);
     };
 
     ws.onerror = function(msg){
@@ -44,6 +47,7 @@ $(function() {
 //        console.log("got message "+ event);
         msg = JSON.parse(event.data);
 //        console.log(msg.address);
+
         if(msg.address == "score"){
             updateScore(msg.data);
         }
@@ -98,9 +102,11 @@ $(function() {
         }
     }
 
-    function updateVoicelist(voicelist){
+    function updateVoicelist(rvoicelist){
         console.log("got voicelist");
-        console.log(voicelist);
+      //  console.log(rvoicelist);
+        voicelist = rvoicelist;
+        buildVoicelistOptions();
     }
 
     function updateBeat(position, bar, beat){
@@ -278,12 +284,25 @@ $(function() {
         //***** Setting up instrument nodes,  */
         let midimin = options_object.midimin  ? options_object.midimin : 32;
         let midimax = options_object.midimax  ? options_object.midimax : 100;
-        let midi_voice = options_object.midi_voice  ? options_object.midi_voice + 1: 1;
+        // voice is bank:program
+        let midi_voice_index = 0;
+        let [midi_bank, midi_program] = [0,0];
+        let midi_voice = options_object.midi_voice  ? options_object.midi_voice: "0:0";
+        try{
+            [midi_bank, midi_program] = midi_voice.split(":");
+            // figure out midi_voice index in voicelist
+            midi_voice_index = voicelist.findIndex((v)=>{
+                return (midi_bank == v[0] && midi_program == v[1]);
+            });
+        }catch(e){}
+        midi_voice_index = (midi_voice_index >=0 ? midi_voice_index : 0);
+        console.log(midi_voice, midi_bank, midi_voice_index);
         let midi_channel = options_object.midi_channel  ? options_object.midi_channel : 0;
         let device_name = options_object.device_name  ? options_object.device_name : "BAD_NAME";
         let instrtype = options_object.type ? options_object.type : "UNKNOWNTYPE";
         $(instr).data("device_name", device_name);
         $(instr).data("instrtype", instrtype);
+        $(instr).data("midi_voice", midi_voice);
         $(instr).attr("id", device_name);
         $( ".device_name span",instr ).text(device_name);
         $( ".midi-range",instr ).slider({
@@ -348,11 +367,11 @@ $(function() {
         });
         $( ".channel_display",instr ).blur(function(event){
             let voiceval = parseInt($(event.target).val());
-            parseVoiceVal(voiceval, instr);
+            parseChannelVal(voiceval, instr);
         });
 
         function parseChannelVal(val, instr){
-            console.log("voice value", val);
+            console.log("channel value", val);
             if(!isNaN(val)){
                 $( ".midi-channel",instr ).slider("value", val);
                 $( ".channel_display",instr ).val(val);
@@ -368,27 +387,32 @@ $(function() {
             message(address, data);             
         }
 
-
+   
         $( ".midi-voice",instr ).slider({
             range: false,
             min: 0,
-            max: 127,
-            value: midi_voice,
+            max: 127,// (voicelist.length > 0 ? voicelist.length : 127),//voicelist.length - 1,
+            value: 0,//(midi_voice_index >=0 ? midi_voice_index : 0),// midi_voice,
+            
             slide: function( event, ui ) {
-                $(event.target).closest(".instrument").attr("id")                
-                $( ".voice_display",instr ).val(  ui.value );
+                
+                $(event.target).closest(".instrument").attr("id");     
+                $('.voice_display option:eq('+ui.value+')',instr).attr('selected', 'selected');          
+             //   $( ".voice_display",instr ).val(  ui.value );
             },
             
             stop: function( event, ui ) {
-                $(event.target).closest(".instrument").attr("id")                
-                $( ".voice_display",instr ).val(  ui.value );
+                
+                $(event.target).closest(".instrument").attr("id");         
+                $('.voice_display option:eq('+ui.value+')',instr).attr('selected', 'selected');
                 let address = "instrval";
                 let instrtype = $(instr).data("instrtype"); // local or udp
-                console.log("sending " + ui.value + instrtype);
+                let value = $('.voice_display option:eq('+ui.value+')',instr).val();
+                console.log("sending " + value + instrtype);
                 let data = {id:id, 
                             instrtype: instrtype,
                             var: "midi_voice",
-                            val: ui.value - 1,
+                            val: value,
                             foo: "bar1" };
                 message(address, data);                
             }
@@ -396,8 +420,9 @@ $(function() {
         $( ".voice_display",instr ).val( midi_voice );
         $( ".voice_display",instr ).change(function(event){
             console.log($(event.target).val());
+            let selectedIndex = $(event.target).prop('selectedIndex');
             let voiceval = parseInt($(event.target).val());
-            parseVoiceVal(voiceval, instr);
+            parseVoiceVal(voiceval, instr, selectedIndex);
         });
         /*
         $( ".voice_display",instr ).blur(function(event){
@@ -405,10 +430,10 @@ $(function() {
             parseVoiceVal(voiceval, instr);
         });
 */
-        function parseVoiceVal(val, instr){
+        function parseVoiceVal(val, instr, selectedIndex){
             console.log("voice value", val);
             if(!isNaN(val)){
-                $( ".midi-voice",instr ).slider("value", val);
+                $( ".midi-voice",instr ).slider("value", selectedIndex);
                 $( ".voice_display",instr ).val(val);
                 let instrtype = $(instr).data("instrtype");
                 let id = $(instr).attr("id");               
@@ -420,7 +445,7 @@ $(function() {
             let data = {id:id, 
                 instrtype: instrtype,
                 var: "midi_voice",
-                val: voiceval - 1,
+                val: voiceval,
                 foo: "bar2" };
             message(address, data);             
         }
@@ -455,6 +480,45 @@ $(function() {
         let text = data_obj.pitch + ":"+data_obj.velocity+":"+data_obj.duration;
         console.log(text);
         $( ".makenote span",instr ).text(text);
+    }
+
+
+    function buildVoicelistOptions(){
+        
+        let voptions = $("<select class='voice_display' name='midi_voice'>");
+        console.log(voicelist);
+        for (var i = 0; i< voicelist.length; i++){
+            let [bank, program, name] = voicelist[i];
+           // console.log(bank, program, name);
+            let id = bank.toString()+":"+program.toString(); 
+            let elem = $("<option value='"+id+"'>"+id+" "+name+"</option>");
+            $(voptions).append(elem);
+        }
+        $(".voice_display").replaceWith(voptions);    
+        // also need to update the voice slider to link with the new select options...
+        $(".instrument").not(".copyme").each(function(index){
+            let midi_voice = $(this).data("midi_voice");
+            console.log("voice", midi_voice);
+            let midi_voice_index = 0;
+            let [midi_bank, midi_program] = [0,0];
+            try{
+                [midi_bank, midi_program] = midi_voice.split(":");
+                // figure out midi_voice index in voicelist
+                midi_voice_index = voicelist.findIndex((v)=>{
+                    return (midi_bank == v[0] && midi_program == v[1]);
+                });
+            }catch(e){}
+            midi_voice_index = (midi_voice_index >=0 ? midi_voice_index : 0);
+            console.log(midi_voice, midi_bank, midi_program, midi_voice_index); 
+            $( ".midi-voice",this ).slider({
+                max: (voicelist.length > 0 ? voicelist.length - 1 : 127),//voicelist.length - 1,
+                value: midi_voice_index,//(midi_voice_index >=0 ? midi_voice_index : 0),// midi_voice,
+            });
+            $('.voice_display',this).val(midi_voice);
+
+        });
+        
+
     }
 
 
