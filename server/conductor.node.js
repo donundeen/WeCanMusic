@@ -5,6 +5,18 @@ holds the configuration variables
 and shows how messages are routed from one to the other.
 */
 
+////////////////////////
+// LOAD MAIN CONFIG FILE
+const merge = require('deepmerge')
+let env_config = require("./env.config.js");
+let env = env_config.env;
+let config = require("./conductor.config.js");
+let machine_config = require("./"+env+".conductor.config.js");
+config.env = env;
+config = merge(config, machine_config);
+console.log(config);
+
+
 ////////////////////////////////
 // LOAD DEBUGGING FRAMEWORK
 const db = require('./modules/debugging.module.js').Debugging;
@@ -12,23 +24,19 @@ const db = require('./modules/debugging.module.js').Debugging;
 db.active = false;
 db.log("starting");
 
-
-
 const bluetooth = require('./modules/bluetooth.module.js').Bluetooth;
 bluetooth.active = false;
 bluetooth.deviceID = "40:EF:4C:6F:C8:45"; //relay: 40:EF:4C:6F:C8:45, oontz 74:F0:F0:AB:D5:21
 bluetooth.keepUp();
 
 ////////////////// CONFIG VARIABLES //////////////////////////
-let env = "mac"; // "rpi" or "mac" -- how to determine this from code?
-
 let synthtype = false; // tiny or fluidsynth or false
 // tiny can't handle too many notes at once, and some don't sound good:
 let bad_tiny_voices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,65,66,67,68,69,71,72, 84, 90, 105,110,118,119,120,121,122,123,124,125,126,127];
 
 
 // midi hardward setup:
-let use_midi_out = true; // whether or not to send midi values through a hardware output, via easymidi
+let use_midi_out = false; // whether or not to send midi values through a hardware output, via easymidi
 let midi_hardware_engine = false;
 let midi_out_portname = "FLUID"; // FLUID for on-baord synth, UM-ONE for the midi cable, or other things"; 
 if(use_midi_out){
@@ -166,7 +174,7 @@ if(synthtype == "fluidsynth"){
                     sf: soundfont,
                     args: fluidargs });
 }
-orchestra.soundfont_file = soundfont_file;
+orchestra.soundfont_file = soundfont;
 orchestra.soundfont_voicelist_file = soundfont_instrument_list;
 
 
@@ -226,7 +234,7 @@ socket.setMessageReceivedCallback(function(msg){
 
     routeFromWebsocket(msg, "getvoicelist", function(msg){
         // get voicelist and send as socket.sendMessage("voicelist", voicelist);
-        orchestra.soundfont_file = soundfont_file;
+        orchestra.soundfont_file = soundfont;
         orchestra.get_voicelist(function(voicelist){    
             socket.sendMessage("voicelist", voicelist);             //  trans.start();
         });        
