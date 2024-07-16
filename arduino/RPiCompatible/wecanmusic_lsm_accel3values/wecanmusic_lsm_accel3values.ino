@@ -515,7 +515,7 @@ void sensor_setup(){
 }
 
 
-note_loop_multivalue(){
+void note_loop_multivalue(){
   for (int = 0 ; i < NUM_MULTIVALUES; i++){
     note_loop(i);
   }

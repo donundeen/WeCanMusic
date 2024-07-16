@@ -16,7 +16,7 @@ etc...]
 // int midimin
 // int midimax
 
-config_setup_multivalue(){
+void config_setup_multivalue(){
   for (int = 0 ; i < NUM_MULTIVALUES; i++){
     config_setup(i);
   }
