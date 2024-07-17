@@ -28,15 +28,21 @@
 ////////////////////////////
 // MIDI FUNCTIONS
 void midi_setup(){
+  for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
+    midi_setup(vindex);
+  }
+}
+
+void midi_setup(int vindex){
   VS1053_MIDI.begin(31250); // MIDI uses a 'strange baud rate'
   
-  midiSetChannelBank(0, VS1053_BANK_MELODY);
-  midiSetChannelVolume(0, 127);
-  midiSetInstrument(0, midi_voice);
+  midiSetChannelBank(vindex, VS1053_BANK_MELODY);
+  midiSetChannelVolume(vindex, 127);
+  midiSetInstrument(vindex, midi_voice[vindex]);
 }
 
 // Makenote: pith, velocity, duration
-void midiMakeNote(int pitch, int vel, int durationms){
+void midiMakeNote(int vindex, int pitch, int vel, int durationms){
   /*
   Serial.print("MKNOTE: ");
   Serial.print(pitch);

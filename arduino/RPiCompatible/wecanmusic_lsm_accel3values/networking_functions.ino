@@ -10,10 +10,6 @@
 // NETWORKING FUNCTIONS
 void network_setup() {
 
-  strcat(DEVICE_ID, DEVICE_NAME);  //MULTIVALUE UPDATE REQUIRED
-  strcat(DEVICE_ID, DEVICE_ID_SUFFIX); //MULTIVALUE UPDATE REQUIRED
-  Serial.print("DEVICE_ID ");
-  Serial.println(DEVICE_ID);  //MULTIVALUE UPDATE REQUIRED
   delay(1000);
   Serial.println("setup");
 

@@ -152,14 +152,21 @@ void config_webpage_setup() {
   UDPReceiverIP = presetip;
 
   UDPPort = atoi(wecanmusic_port); // convert to int //  7002; // the UDP port that Max is listening on
-  DEVICE_NAME = this_device_name;
-  strcpy(DEVICE_ID, "/");
-  strcat(DEVICE_ID, DEVICE_NAME);
-  strcat(DEVICE_ID, DEVICE_ID_SUFFIX);
+  for (int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
+    char vindexchar[2];
+    String str = String(vindex);
+    str.toCharArray(vindexchar, 2);
+    DEVICE_NAME[vindex] = this_device_name;
+    strcat(DEVICE_NAME[vindex], "_");
+    strcat(DEVICE_NAME[vindex], vindexchar);
+    strcpy(DEVICE_ID[vindex], "/");
+    strcat(DEVICE_ID[vindex], DEVICE_NAME[vindex]);
+    strcat(DEVICE_ID[vindex], DEVICE_ID_SUFFIX);
+    Serial.println("\tDEVICE_ID : " + String(DEVICE_ID[vindex]));
+  }
 
   Serial.print("\t UDPPort ");
   Serial.println(UDPPort);
-  Serial.println("\tDEVICE_ID : " + String(DEVICE_ID));
 
   //save the custom parameters to FS
   if (shouldSaveConfig) {
@@ -260,6 +267,13 @@ void setStoredConfigVal(String varname, int valuetostore){  //MULTIVALUE UPDATE 
 
   Serial.println("local ip");
   Serial.println(WiFi.localIP());
+}
+
+int getStoredConfigValInt(int vindex, String varname){
+    char vindexchar[2];
+    String str = String(vindex);
+    varname = varname + "_"+vindexchar;
+    return getStoredConfigValInt(varname);
 }
 
 int getStoredConfigValInt(String varname){  //MULTIVALUE UPDATE REQUIRED

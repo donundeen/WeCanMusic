@@ -23,6 +23,10 @@
 ////////////////////////
 
 
+// REGEX LIBRARY FOR COMPLEX STRING PARSING
+#include <Regexp.h>
+
+
 // TIMING INCLUDES
 #include <AsyncTimer.h> //https://github.com/Aasim-A/AsyncTimer
 #include "uClock.h"
@@ -209,8 +213,8 @@ int notelengths[] = {WN, HN, HN3, QN, QN3, N8, N83, N16};
 /// NETWORK CONFIGS  
 const boolean HARDCODE_SSID = false; //true; //false;
 
-const char *WIFI_SSID = "wecanmusic";// "wecanmusic"; //"JJandJsKewlPad";
-const char *WIFI_PASSWORD = "";//"wecanmusic";//"wecanmusic"; //"WeL0veLettuce";
+char *WIFI_SSID = "wecanmusic";// "wecanmusic"; //"JJandJsKewlPad";
+char *WIFI_PASSWORD = "";//"wecanmusic";//"wecanmusic"; //"WeL0veLettuce";
 char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
 char *presetip = "10.0.0.255"; // in case we just want to force it for testing
 int UDPPort = 7005; // the UDP port that Max is listening on
@@ -219,12 +223,12 @@ int UDPINPort = 7004; // the UDP port that Max is listening on
 ////////////////////////
 
 // NETWORK+SENSOR CONFIGS
-const char *DEVICE_NAME = "flex1";  //MULTIVALUE UPDATE REQUIRED: each value shows as DEVICE_NAME_[index]
-const char *DEVICE_ID_SUFFIX = "/val";
-char DEVICE_ID[40] = "/";  //MULTIVALUE UPDATE REQUIRED: see above
+char *DEVICE_NAME[6] = {"flex1", "flex1", "flex1", "flex1", "flex1", "flex1"};  //MULTIVALUE UPDATE REQUIRED: each value shows as DEVICE_NAME_[index]
+char *DEVICE_ID_SUFFIX = "/val";
+char DEVICE_ID[][40] = {"/","/","/","/","/","/"};  //MULTIVALUE UPDATE REQUIRED: see above
 
 // NO NETWORK MODE? for testing sensor without network
-const bool no_network = false;
+bool no_network = false;
 
 
 /////////// MIDI DEFINITIONS /////////////////////
@@ -232,9 +236,9 @@ const bool no_network = false;
 //#define VS1053_GM1_OCARINA 81
 #define VS1053_GM1_OCARINA 12 // change this for other sounds
 // See http://www.vlsi.fi/fileadmin/datasheets/vs1053.pdf Pg 32 for more!
-int midi_voice = 12; // see define_configs //MULTIVALUE UPDATE REQUIRED . Also update to bank/program for 
-int midi_bank = 0; //MULTIVALUE UPDATE REQUIRED
-int midi_program = 1; //MULTIVALUE UPDATE REQUIRED
+int midi_voice[6] = {12,12,12,12,12,12}; // see define_configs //MULTIVALUE UPDATE REQUIRED . Also update to bank/program for 
+int midi_bank[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
+int midi_program[6] = {1,1,1,1,1,1}; //MULTIVALUE UPDATE REQUIRED
 
 ///  END MIDI DEFINITIONS
 /////////////////////////////////////////
@@ -245,9 +249,9 @@ int midi_program = 1; //MULTIVALUE UPDATE REQUIRED
 // MUSIC PERFORMANCE VARIABLES
 
 // These might get changed at start, or during play
-int rootMidi = 0;  //MULTIVALUE UPDATE REQUIRED
-int midimin = 32;  //MULTIVALUE UPDATE REQUIRED
-int midimax = 100; //MULTIVALUE UPDATE REQUIRED
+int rootMidi[6] = {0,0,0,0,0,0};  //MULTIVALUE UPDATE REQUIRED
+int midimin[6] = {32,32,32,32,32,32};  //MULTIVALUE UPDATE REQUIRED
+int midimax[6] = {100,100,100,100,100,100}; //MULTIVALUE UPDATE REQUIRED
 ////// END MUSIC PERFORMANCE VARIABLES  
 ///////////////////////////////////////
 
@@ -514,9 +518,8 @@ void sensor_setup(){
                           true); // enabled!
 }
 
-
-void note_loop_multivalue(){
-  for (int = 0 ; i < NUM_MULTIVALUES; i++){
+void note_loop(){
+  for (int i = 0 ; i < NUM_MULTIVALUES; i++){
     note_loop(i);
   }
 }
@@ -533,9 +536,9 @@ void note_loop(int vindex){
   float value = dyn_rescale(ADCRaw[vindex], &minVal[vindex], &maxVal[vindex], 0.0, 1.0);  //MULTIVALUE UPDATE REQUIRED
   sprintf(pbuf, "loop: in:%d scaled:%f min %f max %f", ADCRaw, value, minVal, maxVal);
 //  Serial.println(pbuf);
-  int midipitch    = derive_pitch(value);  //MULTIVALUE UPDATE REQUIRED
-  int midivelocity = derive_velocity(ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
-  int mididuration = derive_duration(value);    //MULTIVALUE UPDATE REQUIRED
+  int midipitch    = derive_pitch(vindex, value);  //MULTIVALUE UPDATE REQUIRED
+  int midivelocity = derive_velocity(vindex, ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
+  int mididuration = derive_duration(vindex, value);    //MULTIVALUE UPDATE REQUIRED
   sprintf(pbuf, "      in:%d scaled:%f p:%d v:%d d:%d", ADCRaw[vindex], value, midipitch, midivelocity, mididuration);
 //  Serial.println(pbuf);
   // this will also make it monophonic:
@@ -547,6 +550,11 @@ void note_loop(int vindex){
   t.setTimeout(note_loop, mididuration); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
 }
 
+void sensor_loop_multivalue(){
+  for(int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
+    sensor_loop(vindex);
+  }
+}
 
 void sensor_loop(int vindex){
 
@@ -669,8 +677,8 @@ float get_changerate(int vindex, int ival){   //MULTIVALUE UPDATE REQUIRED
   float change = dyn_rescale(ochange, &changeMin[vindex], &changeMax[vindex], 0, 1.0);
 
   // readjust changemin and max based on elasticMinMaxScale
-  changeMin = changeMin[vindex] + (changeMin[vindex] * elasticMinMaxScale); //MULTIVALUE UPDATE REQUIRED
-  changeMax = changeMax[vindex] - (changeMax[vindex] * elasticMinMaxScale); //MULTIVALUE UPDATE REQUIRED
+  changeMin[vindex] = changeMin[vindex] + (changeMin[vindex] * elasticMinMaxScale); //MULTIVALUE UPDATE REQUIRED
+  changeMax[vindex] = changeMax[vindex] - (changeMax[vindex] * elasticMinMaxScale); //MULTIVALUE UPDATE REQUIRED
 
  // Serial.println(pbuf);
   prevChangeVal[vindex] = val;          //MULTIVALUE UPDATE REQUIRED
@@ -682,7 +690,7 @@ float get_changerate(int vindex, int ival){   //MULTIVALUE UPDATE REQUIRED
 }
 
 int derive_pitch(int vindex, float val){   //MULTIVALUE UPDATE REQUIRED
-  int pitch = noteFromFloat(val, midimin[vindex], midimax[vindex]);  //MULTIVALUE UPDATE REQUIRED
+  int pitch = noteFromFloat(vindex, val, midimin[vindex], midimax[vindex]);  //MULTIVALUE UPDATE REQUIRED
   return pitch;
 }
 
@@ -702,7 +710,8 @@ int derive_duration(int vindex, float val){  //MULTIVALUE UPDATE REQUIRED
 */
 }
 
-unsigned long lastNoteTime = millis();  //MULTIVALUE UPDATE REQUIRED
+unsigned long millisecs = millis();
+unsigned long lastNoteTime[6] = {millisecs,millisecs,millisecs,millisecs,millisecs,millisecs};  //MULTIVALUE UPDATE REQUIRED
 unsigned long updateLastNoteTime(int vindex){  //MULTIVALUE UPDATE REQUIRED
   unsigned long now = millis();
   unsigned long raw_duration = now - lastNoteTime[vindex];  //MULTIVALUE UPDATE REQUIRED
@@ -830,7 +839,7 @@ void setup() {
   sensor_loop_multivalue();  //MULTIVALUE UPDATE REQUIRED
 //  t.setInterval(changerate_loop, 100);
   changerate_loop_multivalue();  //MULTIVALUE UPDATE REQUIRED
-  note_loop_multivalue();  //MULTIVALUE UPDATE REQUIRED
+  note_loop();  //MULTIVALUE UPDATE REQUIRED
 
   config_setup_multivalue();  //MULTIVALUE UPDATE REQUIRED
 
