@@ -13,8 +13,7 @@ let env = env_config.env;
 let config = require("./conductor.config.js");
 let machine_config = require("./"+env+".conductor.config.js");
 config.env = env;
-config = merge(config, machine_config);
-config = merge(config, env_config);
+config = {...config, ...machine_config, ...env_config};
 console.log(config);
 
 

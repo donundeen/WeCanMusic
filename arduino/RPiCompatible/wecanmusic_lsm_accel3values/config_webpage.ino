@@ -155,14 +155,17 @@ void config_webpage_setup() {
   for (int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
     char vindexchar[2];
     String str = String(vindex);
+    Serial.println(vindex);
     str.toCharArray(vindexchar, 2);
-    DEVICE_NAME[vindex] = this_device_name;
+    strcpy(DEVICE_NAME[vindex], this_device_name);
+    Serial.println(DEVICE_NAME[vindex]);
     strcat(DEVICE_NAME[vindex], "_");
     strcat(DEVICE_NAME[vindex], vindexchar);
+    Serial.println(DEVICE_ID[vindex]);
     strcpy(DEVICE_ID[vindex], "/");
     strcat(DEVICE_ID[vindex], DEVICE_NAME[vindex]);
     strcat(DEVICE_ID[vindex], DEVICE_ID_SUFFIX);
-    Serial.println("\tDEVICE_ID : " + String(DEVICE_ID[vindex]));
+    Serial.println("\tDEVICE_ID : " + String(DEVICE_ID[vindex]) + " : "+ this_device_name);
   }
 
   Serial.print("\t UDPPort ");

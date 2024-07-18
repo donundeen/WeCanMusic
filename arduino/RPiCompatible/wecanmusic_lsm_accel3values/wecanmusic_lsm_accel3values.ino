@@ -134,7 +134,7 @@ int resetButtonPin = A0;
 
 char wecanmusic_server_ip[40] = "10.0.0.255";
 char wecanmusic_port[6] = "7005";
-char this_device_name[34] = "RENAME_ME";
+char this_device_name[16] = "RENAME_ME";
 //flag for saving data
 bool shouldSaveConfig = true;
 /// END SETTING UP CONFIG WEBPAGE VARS
@@ -223,7 +223,8 @@ int UDPINPort = 7004; // the UDP port that Max is listening on
 ////////////////////////
 
 // NETWORK+SENSOR CONFIGS
-char *DEVICE_NAME[6] = {"flex1", "flex1", "flex1", "flex1", "flex1", "flex1"};  //MULTIVALUE UPDATE REQUIRED: each value shows as DEVICE_NAME_[index]
+// max size of device name is 19 characters, same as this_device_name, which is the ROOT of the name+ 3 for the number
+char DEVICE_NAME[][20] = {"RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx"};  //MULTIVALUE UPDATE REQUIRED: each value shows as DEVICE_NAME_[index]
 char *DEVICE_ID_SUFFIX = "/val";
 char DEVICE_ID[][40] = {"/","/","/","/","/","/"};  //MULTIVALUE UPDATE REQUIRED: see above
 
