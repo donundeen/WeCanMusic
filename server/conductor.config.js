@@ -9,6 +9,8 @@ var config = {
     "use_midi_out" : true,
     "midi_out_portname" : "FLUID",
     "scorename" : "./scores/simplescore.txt",
+    "fluidpath" : '/usr/bin/fluidsynth', // OS-specific, overrider in [mac/rpi].conductor.config.js
+    "fluidargs" : ["a", "pulseaudio","-R", 1, "-C", 1], // OS-specific, overrider in [mac/rpi].conductor.config.js
     "UDPSENDPORT" : 7004,
     "UDPLISTENPORT" : 7005,
     "WEBSOCKET_PORT" : 8001,

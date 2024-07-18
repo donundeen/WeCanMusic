@@ -163,16 +163,11 @@ socket = Object.create(socketServer);
 let synth = false;
 //let soundfont = './soundfonts/GeneralUserGS/GeneralUserGS.sf2'
 //let soundfont_instrument_list = './soundfonts/GeneralUserGS/GeneralUserGS.sf2'
-let soundfont = './soundfonts/141-Compleet bank synth.sf2'
-let soundfont_instrument_list = './soundfonts/141-Compleet bank synth.sf2.voicelist.json'
-let fluidpath = '/usr/bin/fluidsynth';
-let fluidargs = ["a", "pulseaudio","-R", 1, "-C", 1];
+let soundfont = config.soundfont;//'./soundfonts/141-Compleet bank synth.sf2'
+let soundfont_instrument_list = config.soundfont_instrument_list; //'./soundfonts/141-Compleet bank synth.sf2.voicelist.json'
+let fluidpath = config.fluidpath; //'/usr/bin/fluidsynth';
+let fluidargs = config.fluidargs; // ["a", "pulseaudio","-R", 1, "-C", 1];
 if(synthtype == "fluidsynth"){
-    if(env == "mac"){
-        fluidpath = '/opt/homebrew/bin/fluidsynth';
-        soundfont = '/Users/donundeen/Documents/htdocs/wecanmusicprojects/server/soundfonts/GeneralUserGS/GeneralUserGS.sf2'
-        fluidargs = ["a", "coreaudio"];
-    }
     synth = JZZ.synth.Fluid({ path: fluidpath, 
                     sf: soundfont,
                     args: fluidargs });
