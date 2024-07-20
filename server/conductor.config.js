@@ -12,6 +12,7 @@ var config = {
     "fluidpath" : '/usr/bin/fluidsynth', // OS-specific, overrider in [mac/rpi].conductor.config.js
     "fluidargs" : ["a", "pulseaudio","-R", 1, "-C", 1], // OS-specific, overrider in [mac/rpi].conductor.config.js
     "UDPSENDPORT" : 7004,
+    "UDPSENDIP" : "10.0.0.255",
     "UDPLISTENPORT" : 7005,
     "WEBSOCKET_PORT" : 8001,
     "WEBSERVER_PORT" : 8002
