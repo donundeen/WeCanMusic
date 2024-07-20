@@ -428,12 +428,15 @@ udpPort.on("message", function (oscMsg) {
         }
         let midi_voice = midi_bank+":"+midi_program;
         let instrument = orchestra.create_udp_instrument(name, value);
+        console.log(midi_voice, midi_bank, midi_program);
         orchestra.udp_instrument_set_value(name, "midi_voice", midi_voice);
         orchestra.udp_instrument_set_value(name, "midi_bank", midi_bank);
         orchestra.udp_instrument_set_value(name, "midi_program", midi_program);
         orchestra.udp_instrument_set_value(name, "midimin", midimin);
         orchestra.udp_instrument_set_value(name, "midimax", midimax);
         let props = instrument.get_config_props();
+        console.log("setting add instrument props");
+        console.log(midi_voice);
         console.log(props);
         socket.sendMessage("addinstrument", props);
         instrument.start();

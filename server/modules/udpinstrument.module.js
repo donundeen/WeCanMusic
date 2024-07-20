@@ -104,6 +104,7 @@ const UDPInstrument = class{
 
     populate_config_props(){
         for(let i =0; i< this.configProps.length; i++){
+            console.log("getting ", this.configProps[i]["value"], this[this.configProps[i]["name"]);
             this.configProps[i]["value"] = this[this.configProps[i]["name"]];
         }
     }
