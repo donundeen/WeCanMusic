@@ -24,7 +24,8 @@ void config_setup_multivalue(){
 
 
 void config_setup(int vindex){   //MULTIVALUE UPDATE REQUIRED
-  midi_voice[vindex] = getStoredConfigValInt(vindex, "midi_voice");  //MULTIVALUE UPDATE REQUIRED
+  // midi_voice just split out into bank/program when received.
+ // midi_voice[vindex] = getStoredConfigValInt(vindex, "midi_voice");  //MULTIVALUE UPDATE REQUIRED
   midi_bank[vindex] = getStoredConfigValInt(vindex, "midi_bank");  //MULTIVALUE UPDATE REQUIRED
   midi_program[vindex] = getStoredConfigValInt(vindex, "midi_program");  //MULTIVALUE UPDATE REQUIRED
   Serial.println("setting midi bank and program");
@@ -38,8 +39,14 @@ void config_setup(int vindex){   //MULTIVALUE UPDATE REQUIRED
 void routeDeviceMsg(OSCMessage &msg, int addrOffset ){  //MULTIVALUE UPDATE REQUIRED
   Serial.println("devicemsg");
   char devroute[100];
-  sprintf(devroute, "/%s/config", this_device_name);   //MULTIVALUE UPDATE REQUIRED
-  msg.route(devroute, routeConfigVal);
+  char address[32];
+  msg.getAddress(address);
+  Serial.println (address);
+  for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
+    sprintf(devroute, "/%s/config", DEVICE_NAME[vindex]);   //MULTIVALUE UPDATE REQUIRED
+    Serial.println(devroute);
+    msg.route(devroute, routeConfigVal);
+  }
 }
 
 
@@ -47,35 +54,38 @@ void routeConfigVal(OSCMessage &msg, int addrOffset ){
   Serial.println("configvar");
   char devroute[100];
 
-  // one of these for each variable
-  sprintf(devroute,"/%s/config/somevar",this_device_name);  //MULTIVALUE UPDATE REQUIRED
-  msg.route(devroute, routeConfig_somevar);  //MULTIVALUE UPDATE REQUIRED
 
-  // midi_vocie
-  sprintf(devroute,"/%s/config/midi_voice",this_device_name);  //MULTIVALUE UPDATE REQUIRED
-  msg.route(devroute, routeConfig_midi_voice);  //MULTIVALUE UPDATE REQUIRED
-  // also add bank and program (transition to bank and program from midi_voice)
-  sprintf(devroute,"/%s/config/midi_program",this_device_name);  //MULTIVALUE UPDATE REQUIRED
-  msg.route(devroute, routeConfig_midi_program);  //MULTIVALUE UPDATE REQUIRED
-  sprintf(devroute,"/%s/config/midi_bank",this_device_name);  //MULTIVALUE UPDATE REQUIRED
-  msg.route(devroute, routeConfig_midi_bank);  //MULTIVALUE UPDATE REQUIRED
+  for (int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
 
-  sprintf(devroute,"/%s/config/midimin",this_device_name);  //MULTIVALUE UPDATE REQUIRED
-  msg.route(devroute, routeConfig_midimin);  //MULTIVALUE UPDATE REQUIRED
+    // one of these for each variable
+    sprintf(devroute,"/%s/config/somevar",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    msg.route(devroute, routeConfig_somevar);  //MULTIVALUE UPDATE REQUIRED
 
+    // midi_vocie
+    sprintf(devroute,"/%s/config/midi_voice",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    msg.route(devroute, routeConfig_midi_voice);  //MULTIVALUE UPDATE REQUIRED
+    // also add bank and program (transition to bank and program from midi_voice)
+    sprintf(devroute,"/%s/config/midi_program",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    msg.route(devroute, routeConfig_midi_program);  //MULTIVALUE UPDATE REQUIRED
+    sprintf(devroute,"/%s/config/midi_bank",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    msg.route(devroute, routeConfig_midi_bank);  //MULTIVALUE UPDATE REQUIRED
 
-  sprintf(devroute,"/%s/config/midimax",this_device_name);   //MULTIVALUE UPDATE REQUIRED
-  msg.route(devroute, routeConfig_midimax);  //MULTIVALUE UPDATE REQUIRED
-
-
-  sprintf(devroute,"/%s/config/velocitycurve",this_device_name);  //MULTIVALUE UPDATE REQUIRED
-  msg.route(devroute, routeConfig_velocitycurve);  //MULTIVALUE UPDATE REQUIRED
+    sprintf(devroute,"/%s/config/midimin",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    msg.route(devroute, routeConfig_midimin);  //MULTIVALUE UPDATE REQUIRED
 
 
-  // reset system (max/mins, etc)
-  sprintf(devroute,"/%s/config/reset",this_device_name);  //MULTIVALUE UPDATE REQUIRED
-  msg.route(devroute, routeConfig_reset);  //MULTIVALUE UPDATE REQUIRED
+    sprintf(devroute,"/%s/config/midimax",DEVICE_NAME[vindex]);   //MULTIVALUE UPDATE REQUIRED
+    msg.route(devroute, routeConfig_midimax);  //MULTIVALUE UPDATE REQUIRED
 
+
+    sprintf(devroute,"/%s/config/velocitycurve",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    msg.route(devroute, routeConfig_velocitycurve);  //MULTIVALUE UPDATE REQUIRED
+
+
+    // reset system (max/mins, etc)
+    sprintf(devroute,"/%s/config/reset",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    msg.route(devroute, routeConfig_reset);  //MULTIVALUE UPDATE REQUIRED
+  }
 }
 
 
@@ -85,16 +95,22 @@ int extractVindexFromRoute(char* address){
   // regex "/[^/]+_(%d)/.*"
   MatchState ms;
   Serial.println(address);
+  char regexp[20]  = "/[^/]+_(%d)/.*";
+  Serial.println(regexp);
   ms.Target(address);
-  char result = ms.Match("/[^/]+_(%d)/.*");
+  char result = ms.Match(regexp);
   if(result == REGEXP_MATCHED){
       char buf[3];
       ms.GetCapture(buf, 0);
       int vindex = atoi(buf);
+      Serial.println("matched");
+      Serial.println(vindex);
       return vindex;
   }else if (result == REGEXP_NOMATCH){ // no match
+    Serial.println("NO MATCH");
     return -1;
   }else{ // some other error
+    Serial.println("other match error");
     return -1;
   }
   return -1;
@@ -113,13 +129,44 @@ void routeConfig_midi_voice(OSCMessage &msg, int addrOffset ){  //MULTIVALUE UPD
   char address[32];
   msg.getAddress(address);
   int vindex = extractVindexFromRoute(address);
-  midi_voice[vindex] = route_int(vindex, msg, addrOffset, "midi_voice");  //MULTIVALUE UPDATE REQUIRED
+  String midi_voice = route_string(vindex, msg, addrOffset, "midi_voice", false);  //MULTIVALUE UPDATE REQUIRED
   Serial.println("midi voice");
-  Serial.println(midi_voice[vindex]);
+  Serial.println(midi_voice);
+  int bank = -1;
+  int program = -1;
+  midi_voice_to_bank_program(midi_voice, bank, program);
+  midi_bank[vindex] = bank;
+  midi_program[vindex] = program;
+  Serial.println("stepa");
+  midiSetChannelBank(0, midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
+  midiSetChannelProgram(0, midi_program[vindex]);  //MULTIVALUE UPDATE REQUIRED
+
+  setStoredConfigVal(vindex, "midi_bank", bank);  //MULTIVALUE UPDATE REQUIRED
+  setStoredConfigVal(vindex, "midi_program", program);  //MULTIVALUE UPDATE REQUIRED
+
   // deprecating this for bank:program
 //  midiSetChannelProgram(0, midi_voice[vindex]);  //MULTIVALUE UPDATE REQUIRED
 }
 
+void midi_voice_to_bank_program(String midi_voice, int & bank, int & program){
+  int resultarrayp[] = {-1,-1};
+  char delimiters[] = ":";
+  char stringBuf[50];
+  midi_voice.toCharArray(stringBuf, 50);
+//  char delimbuf[3];
+  //delimiters.toCharArray(delimbuf, 3);
+
+  char *token = strtok(stringBuf, delimiters);
+  bank = atoi(token);
+
+  // Print each token
+  while (token != NULL) {
+    token = strtok(NULL, delimiters);
+    if(token != NULL){
+      program = atoi(token);
+    }
+  }
+}
 
 void routeConfig_midi_bank(OSCMessage &msg, int addrOffset ){  //MULTIVALUE UPDATE REQUIRED
   char address[32];
@@ -232,11 +279,11 @@ int route_int(int vindex, OSCMessage &msg, int addrOffset, String varname){  //M
 
 
 
-int route_string(int vindex, OSCMessage &msg, int addrOffset, String varname){ //MULTIVALUE UPDATE REQUIRED
+String route_string(int vindex, OSCMessage &msg, int addrOffset, String varname, boolean storeit){ //MULTIVALUE UPDATE REQUIRED
   int i = 0;
   //Serial.println(msg.getType(i));
   //Serial.println(msg.getFloat(i));
-  int theval= -1;
+  char theval[40] = "NONE";
   if(vindex > -1){
     varname = varname + "_"+String(vindex);
   }
@@ -244,13 +291,16 @@ int route_string(int vindex, OSCMessage &msg, int addrOffset, String varname){ /
   while (msg.getType(i) == 's'){
     //Serial.println(msg.getInt(i));
     //Serial.print(" ");
-    theval = msg.getInt(i);  //MULTIVALUE UPDATE REQUIRED
+
+    msg.getString(i, theval);  //MULTIVALUE UPDATE REQUIRED
     Serial.println("got val");
     Serial.println(theval);  
-    setStoredConfigVal(varname,theval);  //MULTIVALUE UPDATE REQUIRED
+    if(storeit){ // not storing strings yet...
+    //  setStoredConfigVal(varname, theval);  //MULTIVALUE UPDATE REQUIRED
+    }
     i++;
   }
-  return theval;
+  return String(theval);
 }
 
 

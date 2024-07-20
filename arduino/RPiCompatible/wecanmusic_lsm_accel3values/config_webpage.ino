@@ -209,6 +209,12 @@ void deleteAllCredentials(void) {
 
 
 
+void setStoredConfigVal(int vindex, String varname, int valuetostore){  //MULTIVALUE UPDATE REQUIRED
+  if(vindex > -1){
+    varname = varname + "_"+String(vindex);
+    setStoredConfigVal(varname, valuetostore);
+  }
+}
 ///////////////////////////////////
 // set and save an individual var, it might not be visible in the confg web page created by the arduino
 void setStoredConfigVal(String varname, int valuetostore){  //MULTIVALUE UPDATE REQUIRED
