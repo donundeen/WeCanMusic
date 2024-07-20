@@ -78,6 +78,7 @@ const UDPInstrument = class{
         {name:"notelist", type:"ia"},
         {name:"wecanmusic_server_ip", type:"s"},
         {name:"wecanmusic_port", type:"i"},
+        {name:"midi_voice", type:"s"},
         {name:"midi_bank", type:"i"},
         {name:"midi_program", type:"i"},
         {name:"midi_channel", type:"i"},
