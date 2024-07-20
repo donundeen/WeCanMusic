@@ -84,6 +84,7 @@ int extractVindexFromRoute(char* address){
   // and we want the number 2 (always one digit)
   // regex "/[^/]+_(%d)/.*"
   MatchState ms;
+  Serial.println(address);
   ms.Target(address);
   char result = ms.Match("/[^/]+_(%d)/.*");
   if(result == REGEXP_MATCHED){

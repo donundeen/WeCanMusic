@@ -369,7 +369,7 @@ socket.setMessageReceivedCallback(function(msg){
                     args: args
                 }]
             }
-            console.log("sending udp message " + address, args);
+            console.log("sending udp message " + address, args, UDPSENDIP, UDPSENDPORT);
             // send notelist to all UDP connected devices
             udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
         }

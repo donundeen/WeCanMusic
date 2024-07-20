@@ -628,10 +628,10 @@ void sensor_loop(int vindex){
       ADCRaw[vindex] = mag.magnetic.z;
       break;               
   }
-
-
+/* // this is useful to see, but creates a lot of output that makes it hard to see other messages.
   Serial.println("read value");
   Serial.println(ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
+*/
   firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED
 
 
@@ -789,6 +789,7 @@ void udp_loop(){
 void UDPListen(){
   OSCBundle bundleIN;
   int size;
+  Serial.println("UDPLISTEN");
  
   if( (size = udp.parsePacket())>0)
   {
@@ -804,8 +805,10 @@ void UDPListen(){
       Serial.println("routing?");
       bundleIN.route("/all/notelist", routeNotelist);
       char devroute[100];
-      sprintf(devroute,"/%s",this_device_name);  //MULTIVALUE UPDATE REQUIRED
-      bundleIN.route(devroute, routeDeviceMsg);
+      for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
+        sprintf(devroute,"/%s",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+        bundleIN.route(devroute, routeDeviceMsg);
+      }
     }else{
       Serial.println("some error");
       Serial.println(bundleIN.getError());

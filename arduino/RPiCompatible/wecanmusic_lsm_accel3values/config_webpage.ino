@@ -196,15 +196,15 @@ void config_webpage_setup() {
 }
 
 void deleteAllCredentials(void) {
-  
-  // uncomment this to actxually run the code
+  /*
+  // unco/*mment this to actxually run the code
   Serial.println("deleting all stored SSID credentials");
   if (!SPIFFS.begin(true)) {
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }  
   SPIFFS.remove("/config.json");
-  
+  */
 }
 
 
