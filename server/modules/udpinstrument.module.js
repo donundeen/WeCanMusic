@@ -161,7 +161,8 @@ const UDPInstrument = class{
     }
 
     get midi_voice(){
-        return this._midi_bank+":"+this._midi_voice;
+        console.log("getting midi_voice");
+        return this._midi_bank+":"+this._midi_program;
     }
 
     set midi_voice(voice){
