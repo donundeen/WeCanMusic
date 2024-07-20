@@ -166,9 +166,7 @@ const UDPInstrument = class{
     }
 
     set midi_voice(voice){
-        console.log("setting midi_voice " + voice);
         let split = voice.split(":");
-        console.log(split);
         let bank = 0;
         let program = 1;
         if(split.length == 1){
@@ -182,7 +180,6 @@ const UDPInstrument = class{
     }
 
     set midi_program(program){
-        console.log("setting midi program to :: " + program);
         this._midi_program = program;
         this.midiSetBankProgram();
     }
@@ -191,7 +188,6 @@ const UDPInstrument = class{
     }
 
     set midi_bank(bank){
-        console.log("setting bank to :: " + bank);
         this._midi_bank = bank;
         this.midiSetBankProgram(); // program and bank might come in reverse order, better to set it both times; at least the second time you set it the bank and program will be legit.
     }
@@ -202,10 +198,6 @@ const UDPInstrument = class{
 
     // what to do when a new sensor value is received. Need to trigger a note here
     set sensor_value(value){
-        console.log('sensor value is ' + value);
-        console.log("********************")
-        console.log(typeof(value));
-        console.log(value);
         // might be a number or an OSC-formatted value message
         if(typeof value == "number"){
             value = value;

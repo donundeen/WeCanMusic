@@ -510,10 +510,11 @@ function routeFromOSC(oscMsg, route, callback){
     // get teh OSC value. Need to figure out types here, 
     let value = oscMsg.args;
     let newvalue = false;
+/*
     console.log("got oscMsg " + value, value);
     console.log(oscMsg);
     console.log(typeof value);
-
+*/
     if(typeof value == "number"){
         newvalue = value;
     }else if(Array.isArray(value) && value.length == 1 && Object.hasOwn(value[0], "value")){
@@ -559,7 +560,7 @@ function routeFromOSC(oscMsg, route, callback){
 orchestra.makenote_callback = function(instr, pitch, velocity, duration){
     let device_name = instr.device_name;
 
-    console.log(global_notecount + synth.foothing +  "******************************** makenote_callback ", device_name, pitch, velocity, duration);
+//    console.log(global_notecount + synth.foothing +  "******************************** makenote_callback ", device_name, pitch, velocity, duration);
 
     global_notecount++;
     
@@ -582,7 +583,7 @@ orchestra.makenote_callback = function(instr, pitch, velocity, duration){
                     pitch: pitch, 
                     velocity: velocity,
                     duration: duration}
-    console.log("sending message")
+//    console.log("sending message")
     socket.sendMessage("makenote", dataObj );
 }
 
