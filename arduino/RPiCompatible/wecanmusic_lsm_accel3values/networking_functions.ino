@@ -116,6 +116,8 @@ void announceCreation(int vindex){
     Serial.println(UDPReceiverIP);
     Serial.println(UDPPort);
     Serial.println(DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    Serial.println(midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    Serial.println(midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
     //send hello world to server
     char ipbuffer[20];
     thisarduinoip.toCharArray(ipbuffer, 20);

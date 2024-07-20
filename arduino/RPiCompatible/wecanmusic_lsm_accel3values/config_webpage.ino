@@ -279,14 +279,18 @@ void setStoredConfigVal(String varname, int valuetostore){  //MULTIVALUE UPDATE 
 }
 
 int getStoredConfigValInt(int vindex, String varname){
-    char vindexchar[2];
+    Serial.println("getStoredConfigValInt");
+    Serial.println(varname);
+    Serial.println(vindex);
     String str = String(vindex);
-    varname = varname + "_"+vindexchar;
+    varname = varname + "_"+str;
+    Serial.println(varname);
     return getStoredConfigValInt(varname);
 }
 
 int getStoredConfigValInt(String varname){  //MULTIVALUE UPDATE REQUIRED
-   Serial.println("mounting FS...");
+   Serial.print("mounting FS... to get var name ");
+   Serial.println(varname);
   /////////////////////////////
   // load up existing config json file
   if (SPIFFS.begin()) {
