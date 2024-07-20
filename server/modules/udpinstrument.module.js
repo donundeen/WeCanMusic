@@ -28,8 +28,9 @@ const UDPInstrument = class{
     _wecanmusic_port = "7002";
 
     // midi vars
-    _midi_bank = 0; // bank and voice together select the tone.
-    _midi_voice = 1;
+    _midi_voice = "0:1"; // in format bank:program, when this is set, parse and set bank and program
+    _midi_bank = 0; // bank and program together select the tone.
+    _midi_program = 1;
     _midi_channel = 1;
     _rootMidi = 0;
     _midimin = 32;
@@ -77,7 +78,8 @@ const UDPInstrument = class{
         {name:"notelist", type:"ia"},
         {name:"wecanmusic_server_ip", type:"s"},
         {name:"wecanmusic_port", type:"i"},
-        {name:"midi_voice", type:"i"},
+        {name:"midi_bank", type:"i"},
+        {name:"midi_program", type:"i"},
         {name:"midi_channel", type:"i"},
         {name:"rootMidi", type:"i"},
         {name:"midimin", type:"i"},
@@ -156,19 +158,37 @@ const UDPInstrument = class{
         return this._bpm;
     }
 
+    get midi_voice(){
+        return this._midi_bank+":"+this._midi_voice;
+    }
+
     set midi_voice(voice){
-        console.log("setting voice to :: " + voice);
-        this._midi_voice = voice;
+        let split = voice.split(":");
+        let bank = 0;
+        let program = 1;
+        if(split.length == 1){
+            program = split[0];
+        }else{
+            bank = split[0];
+            program = split[1];
+        }
+        this.midi_bank = bank;
+        this.midi_program = program;
+    }
+
+    set midi_program(program){
+        console.log("setting midi program to :: " + program);
+        this._midi_program = program;
         this.midiSetBankProgram();
     }
-    get midi_voice(){
-        return this._midi_voice;
+    get midi_program(){
+        return this._midi_program;
     }
 
     set midi_bank(bank){
         console.log("setting bank to :: " + bank);
         this._midi_bank = bank;
-//        this.midiSetBankProgram(); // use the voice set to trigger the midi message to change voice.
+        this.midiSetBankProgram(); // program and bank might come in reverse order, better to set it both times; at least the second time you set it the bank and program will be legit.
     }
 
     get midi_bank(){
@@ -409,7 +429,7 @@ const UDPInstrument = class{
         if(this.synth){
             this.synth.allNotesOff(this._midi_channel);  
             if(this.synth.good_voices){
-                let realvoice = this.synth.good_voices[this._midi_voice % this.synth.good_voices.length]
+                let realvoice = this.synth.good_voices[this._midi_program % this.synth.good_voices.length]
                 this.synth
                 .program(this._midi_channel, realvoice)        
 
@@ -419,8 +439,13 @@ const UDPInstrument = class{
             }
         }
         if(this.midi_hardware_engine){
+            this.midi_hardware_engine.send('cc',{
+                controller: 0,
+                value: this._midi_bank, 
+                channel: this._midi_channel
+            });  
             this.midi_hardware_engine.send('program',{
-                number: this._midi_voice, 
+                number: this._midi_program, 
                 channel: this._midi_channel
             }); 
         }
@@ -435,7 +460,7 @@ const UDPInstrument = class{
                 channel: this._midi_channel
             }); 
             this.midi_hardware_engine.send('program',{
-                number: this._midi_voice, 
+                number: this._midi_program, 
                 channel: this._midi_channel
             }); 
         }    

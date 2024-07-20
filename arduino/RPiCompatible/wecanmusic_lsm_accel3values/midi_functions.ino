@@ -38,7 +38,7 @@ void midi_setup(int vindex){
   
   midiSetChannelBank(vindex, VS1053_BANK_MELODY);
   midiSetChannelVolume(vindex, 127);
-  midiSetInstrument(vindex, midi_voice[vindex]);
+  midiSetChannelProgram(vindex, midi_program[vindex]);
 }
 
 // Makenote: pith, velocity, duration
@@ -59,15 +59,24 @@ void midiMakeNote(int vindex, int pitch, int vel, int durationms){
   }, durationms);
 }
 
-
-void midiSetInstrument(uint8_t chan, uint8_t inst) {
+void midiSetChannelBank(uint8_t chan, uint8_t bank) {
   if (chan > 15) return;
-  inst --; // page 32 has instruments starting with 1 not 0 :(
-  if (inst > 127) return;
+  if (bank > 127) return;
+  
+  VS1053_MIDI.write(MIDI_CHAN_MSG | chan);
+  VS1053_MIDI.write((uint8_t)MIDI_CHAN_BANK);
+  VS1053_MIDI.write(bank);
+}
+
+// changed from midiSetInstrument
+void midiSetChannelProgram(uint8_t chan, uint8_t program) {
+  if (chan > 15) return;
+  program --; // page 32 has instruments starting with 1 not 0 :(
+  if (program > 127) return;
   
   VS1053_MIDI.write(MIDI_CHAN_PROGRAM | chan);  
   delay(10);
-  VS1053_MIDI.write(inst);
+  VS1053_MIDI.write(program);
   delay(10);
 }
 
@@ -80,14 +89,7 @@ void midiSetChannelVolume(uint8_t chan, uint8_t vol) {
   VS1053_MIDI.write(vol);
 }
 
-void midiSetChannelBank(uint8_t chan, uint8_t bank) {
-  if (chan > 15) return;
-  if (bank > 127) return;
-  
-  VS1053_MIDI.write(MIDI_CHAN_MSG | chan);
-  VS1053_MIDI.write((uint8_t)MIDI_CHAN_BANK);
-  VS1053_MIDI.write(bank);
-}
+
 
 void midiNoteOn(uint8_t chan, uint8_t n, uint8_t vel) {
   if (chan > 15) return;

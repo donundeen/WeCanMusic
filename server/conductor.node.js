@@ -92,17 +92,17 @@ curvecollection = {
 
 // we should get these values from the instruments themselves when we can
 synthDeviceVoices = {
-    "thread1" : 10,
-    "thread2" : 11,
-    "thread3" : 12,
-    "thread4" : 13,
-    "thread5" : 14,
-    "thread6" : 15,
-    "thread7" : 16,
-    "thread8" : 17,
-    "thread9" : 18,
-    "thread10" : 19,
-    "RENAME_ME" : 20
+    "thread1" : [0,10],
+    "thread2" : [0,11],
+    "thread3" : [0,12],
+    "thread4" : [0,13],
+    "thread5" : [0,14],
+    "thread6" : [0,15],
+    "thread7" : [0,16],
+    "thread8" : [0,17],
+    "thread9" : [0,18],
+    "thread10" : [0,19],
+    "RENAME_ME" : [0,20]
 }
 
 ////////////////// END CONFIG VARIABLES //////////////////////////
@@ -369,6 +369,7 @@ socket.setMessageReceivedCallback(function(msg){
                     args: args
                 }]
             }
+            console.log("sending udp message " + address, args);
             // send notelist to all UDP connected devices
             udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
         }
@@ -412,14 +413,22 @@ udpPort.on("message", function (oscMsg) {
         let value = oscMsg.simpleValue;
         console.log(value);
         let name = value[0];
-        let midi_voice = value[1];
+        let midi_bank = 0;
+        let midi_program = value[1];
         let midimin = value[2];
-        let midimax = value[3];
+        let midimax = value[3];        
+        if(value.length>4){
+            midi_bank = value[1];
+            midi_program = value[2];
+            midimin = value[3];
+            midimax = value[4];
+        }
         if(value.name){
             name = value.name;
         }
         let instrument = orchestra.create_udp_instrument(name, value);
-        orchestra.udp_instrument_set_value(name, "midi_voice", midi_voice);
+        orchestra.udp_instrument_set_value(name, "midi_bank", midi_bank);
+        orchestra.udp_instrument_set_value(name, "midi_program", midi_program);
         orchestra.udp_instrument_set_value(name, "midimin", midimin);
         orchestra.udp_instrument_set_value(name, "midimax", midimax);
         let props = instrument.get_config_props();

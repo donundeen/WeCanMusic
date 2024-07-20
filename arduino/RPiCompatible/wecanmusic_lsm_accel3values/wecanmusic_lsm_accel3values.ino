@@ -237,7 +237,7 @@ bool no_network = false;
 //#define VS1053_GM1_OCARINA 81
 #define VS1053_GM1_OCARINA 12 // change this for other sounds
 // See http://www.vlsi.fi/fileadmin/datasheets/vs1053.pdf Pg 32 for more!
-int midi_voice[6] = {12,12,12,12,12,12}; // see define_configs //MULTIVALUE UPDATE REQUIRED . Also update to bank/program for 
+int midi_voice[6] = {12,12,12,12,12,12}; // see define_configs //MULTIVALUE UPDATE REQUIRED . Also update to bank/program (midi_voice is bank:program)
 int midi_bank[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
 int midi_program[6] = {1,1,1,1,1,1}; //MULTIVALUE UPDATE REQUIRED
 

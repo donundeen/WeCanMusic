@@ -121,7 +121,7 @@ void announceCreation(int vindex){
     thisarduinoip.toCharArray(ipbuffer, 20);
     Serial.println(ipbuffer);
     OSCMessage oscmsg("/announceUDPInstrument");  
-    oscmsg.add(DEVICE_NAME[vindex]).add(midi_voice[vindex]).add(midimin[vindex]).add(midimax[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    oscmsg.add(DEVICE_NAME[vindex]).add(midi_bank[vindex]).add(midi_program[vindex]).add(midimin[vindex]).add(midimax[vindex]);  //MULTIVALUE UPDATE REQUIRED
  //   udp.beginPacket(UDPReceiverIP, UDPPort);
     udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...
  
