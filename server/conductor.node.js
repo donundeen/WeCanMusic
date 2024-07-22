@@ -648,7 +648,7 @@ socket.startWebServer();
 // and when it's open, run the score
 // or we're waiting for the web page to load up to start it?
 score.openscore(function(){    
-    if(config.player_state == "start"){
+    if(config.player_state == "play"){
         trans.start();
     }
 });//function(){trans.start();});
