@@ -110,7 +110,7 @@ If your system has no directory called /etc/security/limits.d then you will need
 
 restart after doing this stuff.
 
-try running `node synthplayer.node.js` - you should hear sounds
+try running `node tests/easymiditest.node.js` - you should hear sounds
 
 ### Make sure fluidsynth waits for pulseaudio
 
@@ -123,6 +123,19 @@ After=pulseaudio.service
 PartOf=pulseaudio.service
 ```
 
+
+## Install Soundfonts
+
+The server can handle whatever soundfont (sf2) files you want to load into it, here's what you need to do:
+
+- put the soundfont file in the soundfonts folder
+- from the server folder, run the python script: 
+` python parsesf.py `
+this will create the .json files that hold the bank, program, and name or each instrument. The web ui will load these files and use that to make dropdowns.
+- edit conductor.config.js and and change the values for soundfont and soundfont_instrument_list to match the full path to the files you uploaded. Better yet, put those vars in your unique, .gitignored env.config.js file.
+- edit /etc/default/fluidsynth, change the SOUND_FONT variable to match the filename of your soundfont file. If there are spaces in the filename, put it in single quotes AND escape the spaces with backslash 'like\ this\ here.sf2' 
+
+Sorry it's a lot, I'll try to make the code smarter so you only need to change the soundfont config and everything else will follow from there. But not there yet...
 
 
 ## Setup Webserver
