@@ -130,8 +130,7 @@ The server can handle whatever soundfont (sf2) files you want to load into it, h
 
 - put the soundfont file in the soundfonts folder
 - from the server folder, run the python script: 
-` python parsesf.py `
-this will create the .json files that hold the bank, program, and name or each instrument. The web ui will load these files and use that to make dropdowns.
+` python parsesf.py `.This will create the .json files that hold the bank, program, and name or each instrument. The web ui will load these files and use that to make dropdowns.
 - edit conductor.config.js and and change the values for soundfont and soundfont_instrument_list to match the full path to the files you uploaded. Better yet, put those vars in your unique, .gitignored env.config.js file.
 - edit /etc/default/fluidsynth, change the SOUND_FONT variable to match the filename of your soundfont file. If there are spaces in the filename, put it in single quotes AND escape the spaces with backslash 'like\ this\ here.sf2' 
 
