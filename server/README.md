@@ -112,6 +112,19 @@ restart after doing this stuff.
 
 try running `node synthplayer.node.js` - you should hear sounds
 
+### Make sure fluidsynth waits for pulseaudio
+
+This problem creeped up one day; if pulseaudio isn't started, fluidsynth won't connect to it, so you need to make fluidsynth wait until pulseaudio is started
+
+Add these lines to the [Unit] section of /usr/lib/systemd/user/fluidsynth.service:
+
+```
+After=pulseaudio.service
+PartOf=pulseaudio.service
+```
+
+
+
 ## Setup Webserver
 
 In server folder, run
