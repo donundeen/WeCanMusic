@@ -16,7 +16,7 @@ etc...]
 // int midimin
 // int midimax
 
-void config_setup_multivalue(){
+void config_setup(){
   for (int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
     config_setup(vindex);
   }

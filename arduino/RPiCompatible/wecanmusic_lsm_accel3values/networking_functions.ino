@@ -104,7 +104,7 @@ void configUdp(){
 ///////////////////////////////
 // functions to handle communication with the server/conductor
 
-void announceCreation_multivalue(){
+void announceCreation(){
   for(int i=0; i< NUM_MULTIVALUES; i++){
     announceCreation(i);
   }

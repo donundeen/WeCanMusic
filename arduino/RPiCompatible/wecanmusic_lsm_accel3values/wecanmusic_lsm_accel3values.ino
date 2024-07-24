@@ -26,7 +26,6 @@
 // REGEX LIBRARY FOR COMPLEX STRING PARSING
 #include <Regexp.h>
 
-
 // TIMING INCLUDES
 #include <AsyncTimer.h> //https://github.com/Aasim-A/AsyncTimer
 #include "uClock.h"
@@ -43,6 +42,8 @@
 // END CONFIG WEBPAGE INCLUDES
 ////////////////////////
 
+// MULTIVALUE SETUP
+const int NUM_MULTIVALUES = 3;
 
 ////////////////////////////////////
 // SENSOR INCLUDES
@@ -74,8 +75,6 @@ Adafruit_LIS3MDL lis3mdl;
 // END OBJECT CREATION
 ///////////////////////
 
-// MULTIVALUE SETUP
-const int NUM_MULTIVALUES = 3;
 
 ///////////////////////////
 // DEVICE CONFIGS
@@ -99,6 +98,7 @@ const int _ACCELZ = 6;
 const int _MAGX = 7;
 const int _MAGY = 8;
 const int _MAGZ = 9;
+//int AccelPitchVal[6] = {_GYROX, _GYROY, _GYROZ, _ACCELX, _ACCELY, _ACCELZ}; 
 int AccelPitchVal[6] = {_GYROX, _GYROY, _GYROZ, _ACCELX, _ACCELY, _ACCELZ}; 
 
 
@@ -110,8 +110,6 @@ int notelist[127];
 int notelistlength = 0;
 int workinglist[6][127]; //MULTIVALUE UPDATE REQUIRED
 int workinglistlength[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
-
-
 // END MUSIC PERFORMANCE VARIABLES
 ///////////////////////////
 
@@ -180,8 +178,6 @@ String thisarduinoip = "";
 WiFiUDP udp;
 OSCErrorCode error;
 
-
-
 // END NETWORK-SPECIFIC VARS
 //////////////////////////////////////////////////////////////////////////////
 
@@ -234,8 +230,6 @@ bool no_network = false;
 
 /////////// MIDI DEFINITIONS /////////////////////
 
-//#define VS1053_GM1_OCARINA 81
-#define VS1053_GM1_OCARINA 12 // change this for other sounds
 // See http://www.vlsi.fi/fileadmin/datasheets/vs1053.pdf Pg 32 for more!
 int midi_voice[6] = {12,12,12,12,12,12}; // see define_configs //MULTIVALUE UPDATE REQUIRED . Also update to bank/program (midi_voice is bank:program)
 int midi_bank[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
@@ -292,7 +286,6 @@ int bpm = 120;
 
 /////////////////////////////
 // Sensor scaling variables
-
 float minVal[6] = {100000.0, 100000.0, 100000.0, 100000.0, 100000.0, 100000.0}; //MULTIVALUE UPDATE REQUIRED
 float maxVal[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0};    //MULTIVALUE UPDATE REQUIRED
 float changeMin[6] = {10000.0, 10000.0, 10000.0, 10000.0, 10000.0, 10000.0};  //MULTIVALUE UPDATE REQUIRED
@@ -517,6 +510,15 @@ void sensor_setup(){
                           true, // polarity
                           false, // don't latch
                           true); // enabled!
+
+  // Start the loops here, not in the loop() function
+  t.setInterval(sensor_loop, 10);
+  sensor_loop();  //MULTIVALUE UPDATE REQUIRED
+//  t.setInterval(changerate_loop, 100);
+  changerate_loop();  //MULTIVALUE UPDATE REQUIRED
+  note_loop();  //MULTIVALUE UPDATE REQUIRED
+
+
 }
 
 void note_loop(){
@@ -551,7 +553,7 @@ void note_loop(int vindex){
   t.setTimeout(note_loop, mididuration); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
 }
 
-void sensor_loop_multivalue(){
+void sensor_loop(){
   for(int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
     sensor_loop(vindex);
   }
@@ -634,7 +636,6 @@ void sensor_loop(int vindex){
 */
   firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED
 
-
   /*
   if(!no_network){
     sendOSCUDP(ADCRaw);
@@ -645,7 +646,7 @@ void sensor_loop(int vindex){
 }
 
 
-void changerate_loop_multivalue(){
+void changerate_loop(){
   for(int i = 0; i<NUM_MULTIVALUES; i++){
     changerate_loop(i);
   }
@@ -747,13 +748,6 @@ int quantizeToNoteLength(unsigned long val){
 
 }
 
-
-
-
-
-
-
-
 // NETWORK+SENSOR CODE
 // sending data over OSC/UDP.
 void sendOSCUDP(int vindex, int sendVal){  //MULTIVALUE UPDATE REQUIRED
@@ -834,20 +828,10 @@ void setup() {
   }
 
   midi_setup();
-  clock_setup();
   test_setup();
   sensor_setup();  
-
-  // Start the loops here, not in the loop() function
-  t.setInterval(sensor_loop_multivalue, 10);
-  sensor_loop_multivalue();  //MULTIVALUE UPDATE REQUIRED
-//  t.setInterval(changerate_loop, 100);
-  changerate_loop_multivalue();  //MULTIVALUE UPDATE REQUIRED
-  note_loop();  //MULTIVALUE UPDATE REQUIRED
-
-  config_setup_multivalue();  //MULTIVALUE UPDATE REQUIRED
-
-  announceCreation_multivalue();  //MULTIVALUE UPDATE REQUIRED
+  config_setup();  //MULTIVALUE UPDATE REQUIRED
+  announceCreation();  //MULTIVALUE UPDATE REQUIRED
 
 }
 
