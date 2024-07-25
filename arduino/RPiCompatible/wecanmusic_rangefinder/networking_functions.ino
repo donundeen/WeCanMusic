@@ -10,10 +10,6 @@
 // NETWORKING FUNCTIONS
 void network_setup() {
 
-  strcat(DEVICE_ID, DEVICE_NAME);
-  strcat(DEVICE_ID, DEVICE_ID_SUFFIX);
-  Serial.print("DEVICE_ID ");
-  Serial.println(DEVICE_ID);
   delay(1000);
   Serial.println("setup");
 
@@ -108,19 +104,26 @@ void configUdp(){
 ///////////////////////////////
 // functions to handle communication with the server/conductor
 
-// send announce message over OSC when connected
 void announceCreation(){
+  for(int i=0; i< NUM_MULTIVALUES; i++){
+    announceCreation(i);
+  }
+}
+// send announce message over OSC when connected
+void announceCreation(int vindex){
   if(WiFi.status() == WL_CONNECTED){   
     Serial.println("ANNOUNCING udp:::");
     Serial.println(UDPReceiverIP);
     Serial.println(UDPPort);
-    Serial.println(DEVICE_NAME);
+    Serial.println(DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    Serial.println(midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    Serial.println(midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
     //send hello world to server
     char ipbuffer[20];
     thisarduinoip.toCharArray(ipbuffer, 20);
     Serial.println(ipbuffer);
     OSCMessage oscmsg("/announceUDPInstrument");  
-    oscmsg.add(DEVICE_NAME).add(midi_voice).add(midimin).add(midimax);
+    oscmsg.add(DEVICE_NAME[vindex]).add(midi_bank[vindex]).add(midi_program[vindex]).add(midimin[vindex]).add(midimax[vindex]);  //MULTIVALUE UPDATE REQUIRED
  //   udp.beginPacket(UDPReceiverIP, UDPPort);
     udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...
  
@@ -135,13 +138,13 @@ void announceCreation(){
 }
 
 // send a makenote to the server (use this when device doesn't have its own speakers or synth)
-void sendMakeNote(int pitch, int velocity, int duration){
+void sendMakeNote(int vindex, int pitch, int velocity, int duration){  //MULTIVALUE UPDATE REQUIRED
   if(velocity == 0){
     // don't send if value is 0
     return;
   }
   OSCMessage oscmsg("/makenote");  
-  oscmsg.add(DEVICE_NAME).add(pitch).add(velocity).add(duration);
+  oscmsg.add(DEVICE_NAME[vindex]).add(pitch).add(velocity).add(duration);  //MULTIVALUE UPDATE REQUIRED
   //   udp.beginPacket(UDPReceiverIP, UDPPort);
   udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...
 

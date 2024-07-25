@@ -124,8 +124,6 @@ OSCErrorCode error;
 // END NETWORK-SPECIFIC VARS
 //////////////////////////////////////////////////////////////////////////////
 
-
-
 ////////////////
 // Define the number of pulses per beat
 //umodular::clock::uClockClass::PPQNResolution PPQNr = uClock.PPQN_96;
@@ -161,7 +159,6 @@ int UDPINPort = 7004; // the UDP port that Max is listening on
 // END NETWORK CONFIGS
 ////////////////////////
 
-
 // NETWORK+SENSOR CONFIGS
 char DEVICE_NAME[][20] = {"RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx"};  //MULTIVALUE UPDATE REQUIRED: each value shows as DEVICE_NAME_[index]
 char *DEVICE_ID_SUFFIX = "/val";
@@ -169,7 +166,6 @@ char DEVICE_ID[][40] = {"/","/","/","/","/","/"};  //MULTIVALUE UPDATE REQUIRED:
 
 // NO NETWORK MODE? for testing sensor without network
 const bool no_network = false;
-
 
 /////////// MIDI DEFINITIONS /////////////////////
 
@@ -184,7 +180,6 @@ int midi_program[6] = {1,1,1,1,1,1}; //MULTIVALUE UPDATE REQUIRED
 
 ///////////////////////////////
 // MUSIC PERFORMANCE VARIABLES
-
 // These might get changed at start, or during play
 int rootMidi[6] = {0,0,0,0,0,0};  //MULTIVALUE UPDATE REQUIRED
 int midimin[6] = {32,32,32,32,32,32};  //MULTIVALUE UPDATE REQUIRED
@@ -194,7 +189,6 @@ int midimax[6] = {100,100,100,100,100,100}; //MULTIVALUE UPDATE REQUIRED
 
 //////////////////////////////
 // CURVE VARIABLES
-
 // initial velocity curve is a straight line, extra -1.0 variables are for when we want to make it longer
 //float velocitycurve[] = {0., 0.0, 0., 1.0, 1.0, 0.0, -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 };
 //MULTIVALUE UPDATE REQUIRED
@@ -220,7 +214,8 @@ float curve_str8upthresh[] = {0., 0., 0., 0.05, 0., 0., 1., 1., 0.};
 float curve_str8dnthresh[] = {0., 1., 0., 0.95, 0., 0., 1., 0., 0., 1., 0., 0.};
 float curve_logupthresh[]  = {0., 0., 0., 0.05, 0., 0., 1., 1., -0.65};
 float curve_logdnthresh[]  = {0., 1., 0., 0.95, 0., -0.65, 1., 0., -0.65};
-
+// END CURVE VARIABLES
+///////////////////////////////
 
 /////////////////////////////
 // TIMING VARIABLES 
@@ -236,6 +231,8 @@ float changeMax[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0}; //MULTIVALUE UPDATE R
 float elasticMinMaxScale = .005; // if true, then the min and max values used for dynamic scaling slowly come closer together, 
                                 // so that a rate large value over time will get smoothed out
                                 // set to 0 to disable
+// END SENSOR SCALING VARIABLES
+/////////////////////////////////
 
 ////////////////////////////////////
 // SENSOR PROCESSING GLOBALS
@@ -253,7 +250,6 @@ void reset_minmax(int vindex){  //MULTIVALUE UPDATE REQUIRED
   changeMin[vindex] = 10000.0;  //MULTIVALUE UPDATE REQUIRED
   changeMax[vindex] = -1.0;     //MULTIVALUE UPDATE REQUIRED
 }
-
 
 void sensor_setup(){
   t.setInterval(sensor_loop, 10);
@@ -311,12 +307,10 @@ void sensor_loop(int vindex){
   ADCRaw[vindex] = touchRead(inputPin[vindex]);
   //ADCRaw = analogRead(sensorPin);
 
-
   Serial.println("read value");
   Serial.println(ADCRaw[vindex]);
 
   firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED
-
   /*
   if(!no_network){
     sendOSCUDP(ADCRaw);
