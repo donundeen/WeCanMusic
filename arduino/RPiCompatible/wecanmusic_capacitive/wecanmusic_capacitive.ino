@@ -22,7 +22,6 @@
 // END NETWORK INCLUDES
 ////////////////////////
 
-
 // REGEX LIBRARY FOR COMPLEX STRING PARSING
 #include <Regexp.h>
 
@@ -51,7 +50,7 @@ const int NUM_MULTIVALUES = 1;
 // sensor config vars - pins
 // Just test touch pin - Touch0 is T0 which is on GPIO 4.
 // using 32 - This is GPIO #32 and also an analog input A7 on ADC #1
-int touchPin[] = {T9, T4, T5, T6, T7, T8}; //15;
+int inputPin[] = {T9, T4, T5, T6, T7, T8}; //15;
 // t9 is pin 32
 
 int SERIALBAUDRATE = 115200;
@@ -185,8 +184,6 @@ const bool no_network = false;
 int midi_voice[6] = {12,12,12,12,12,12}; // see define_configs //MULTIVALUE UPDATE REQUIRED . Also update to bank/program (midi_voice is bank:program)
 int midi_bank[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
 int midi_program[6] = {1,1,1,1,1,1}; //MULTIVALUE UPDATE REQUIRED
-
-
 ///  END MIDI DEFINITIONS
 /////////////////////////////////////////
 
@@ -314,8 +311,8 @@ void sensor_loop(){
 
 void sensor_loop(int vindex){
 
-  // use capacative touchPin
-  ADCRaw[vindex] = touchRead(touchPin[vindex]);
+  // use capacative inputPin
+  ADCRaw[vindex] = touchRead(inputPin[vindex]);
   //ADCRaw = analogRead(sensorPin);
 
 
@@ -533,8 +530,3 @@ void loop() {
 }
 // END SETUP AND LOOP FUNCTIONS
 /////////////////////////////////
-
-
-
-
-
