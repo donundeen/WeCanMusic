@@ -48,7 +48,6 @@ const int NUM_MULTIVALUES = 1;
 // DEVICE CONFIGS
 int inputPin[] = {A2, A0, A1, A3, A4, A5}; // Flex Sensor is connected to this pin
 
-
 int SERIALBAUDRATE = 115200;
 
 ///////////////////////////////
@@ -85,12 +84,9 @@ bool shouldSaveConfig = true;
 /// END SETTING UP CONFIG WEBPAGE VARS
 ///////////////////////////
 
-
 /////////////////////////////
 // TIMING VARIABLES 
 AsyncTimer t;
-
-
 
 ////////////////////////////////////////////
 // NETWORK SPECIFIC VARS - SHOULDN'T CHANGE
@@ -437,12 +433,6 @@ int quantizeToNoteLength(unsigned long val){
 // NETWORK+SENSOR CODE
 // sending data over OSC/UDP.
 void sendOSCUDP(int vindex, int sendVal){  //MULTIVALUE UPDATE REQUIRED
-  /* egs
-   *  '/perifit/1', valueInt1, valueInt2, device.name);
-   *  28:ec:9a:14:2b:b3 l 180
-      28:ec:9a:14:2b:b3 u 1391
-   *  
-   */
  if(WiFi.status() == WL_CONNECTED){   
   Serial.println("sending udp");
   Serial.println(UDPReceiverIP);
@@ -527,7 +517,6 @@ void loop() {
   }  
   udp_loop();
   t.handle();
-//  sensor_loop(); // moving this into sensor_setup, with a setTimeout function to make the looping happen
 }
 // END SETUP AND LOOP FUNCTIONS
 /////////////////////////////////

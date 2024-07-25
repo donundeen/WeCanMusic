@@ -1,4 +1,3 @@
-
 ////////////////////////
 // NETWORK INCLUDES
 /*
@@ -23,10 +22,12 @@
 // END NETWORK INCLUDES
 ////////////////////////
 
+// REGEX LIBRARY FOR COMPLEX STRING PARSING
+#include <Regexp.h>
 
 // TIMING INCLUDES
 #include <AsyncTimer.h> //https://github.com/Aasim-A/AsyncTimer
-#include "uClock.h"
+//#include "uClock.h"
 // END TIMING INCLUDES
 
 ////////////////////////
@@ -40,10 +41,14 @@
 // END CONFIG WEBPAGE INCLUDES
 ////////////////////////
 
+// MULTIVALUE SETUP
+const int NUM_MULTIVALUES = 1;
 
 ///////////////////////////
 // DEVICE CONFIGS
+int inputPin[] = {A2, A0, A1, A3, A4, A5}; // Flex Sensor is connected to this pin
 
+int SERIALBAUDRATE = 115200;
 
 // TCS230 or TCS3200 pins wiring to Arduino
 #define S0 27
@@ -52,15 +57,12 @@
 #define S3 32
 #define sensorOut A2
 
-
-int SERIALBAUDRATE = 115200;
-
 ///////////////////////////////
 // MUSIC PERFORMANCE VARIABLES
 int notelist[127];
 int notelistlength = 0;
-int workinglist[127];
-int workinglistlength = 0;
+int workinglist[6][127]; //MULTIVALUE UPDATE REQUIRED
+int workinglistlength[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
 // END MUSIC PERFORMANCE VARIABLES
 ///////////////////////////
 
@@ -89,12 +91,9 @@ bool shouldSaveConfig = true;
 /// END SETTING UP CONFIG WEBPAGE VARS
 ///////////////////////////
 
-
 /////////////////////////////
 // TIMING VARIABLES 
 AsyncTimer t;
-
-
 
 ////////////////////////////////////////////
 // NETWORK SPECIFIC VARS - SHOULDN'T CHANGE
@@ -129,16 +128,12 @@ String thisarduinoip = "";
 WiFiUDP udp;
 OSCErrorCode error;
 
-
-
 // END NETWORK-SPECIFIC VARS
 //////////////////////////////////////////////////////////////////////////////
 
-
-
 ////////////////
 // Define the number of pulses per beat
-umodular::clock::uClockClass::PPQNResolution PPQNr = uClock.PPQN_96;
+//umodular::clock::uClockClass::PPQNResolution PPQNr = uClock.PPQN_96;
 int PPQN = 96;
 
 // number of pulses for different common note values.
@@ -172,45 +167,49 @@ int UDPINPort = 7004; // the UDP port that Max is listening on
 ////////////////////////
 
 // NETWORK+SENSOR CONFIGS
-const char *DEVICE_NAME = "flex1";
-const char *DEVICE_ID_SUFFIX = "/val";
-char DEVICE_ID[40] = "/";
+char DEVICE_NAME[][20] = {"RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx"};  //MULTIVALUE UPDATE REQUIRED: each value shows as DEVICE_NAME_[index]
+char *DEVICE_ID_SUFFIX = "/val";
+char DEVICE_ID[][40] = {"/","/","/","/","/","/"};  //MULTIVALUE UPDATE REQUIRED: see above
 
 // NO NETWORK MODE? for testing sensor without network
 const bool no_network = false;
 
-
 /////////// MIDI DEFINITIONS /////////////////////
 
-//#define VS1053_GM1_OCARINA 81
-#define VS1053_GM1_OCARINA 12 // change this for other sounds
 // See http://www.vlsi.fi/fileadmin/datasheets/vs1053.pdf Pg 32 for more!
-int midi_voice = 12; // see define_configs
-
-
+int midi_voice[6] = {12,12,12,12,12,12}; // see define_configs //MULTIVALUE UPDATE REQUIRED . Also update to bank/program (midi_voice is bank:program)
+int midi_bank[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
+int midi_program[6] = {1,1,1,1,1,1}; //MULTIVALUE UPDATE REQUIRED
 ///  END MIDI DEFINITIONS
 /////////////////////////////////////////
 
 
 
+
 ///////////////////////////////
 // MUSIC PERFORMANCE VARIABLES
-
 // These might get changed at start, or during play
-int rootMidi = 0;
-int midimin = 32;  
-int midimax = 100;
+int rootMidi[6] = {0,0,0,0,0,0};  //MULTIVALUE UPDATE REQUIRED
+int midimin[6] = {32,32,32,32,32,32};  //MULTIVALUE UPDATE REQUIRED
+int midimax[6] = {100,100,100,100,100,100}; //MULTIVALUE UPDATE REQUIRED
 ////// END MUSIC PERFORMANCE VARIABLES  
 ///////////////////////////////////////
 
 //////////////////////////////
 // CURVE VARIABLES
-
 // initial velocity curve is a straight line, extra -1.0 variables are for when we want to make it longer
 //float velocitycurve[] = {0., 0.0, 0., 1.0, 1.0, 0.0, -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 };
-float velocitycurve[] = {0., 0., 0., 1., 1., -0.65, 1., 1., -0.65, -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 };
-float velocitycurvelength = 6; 
-String velocitycurvename = "curve_logup";
+//MULTIVALUE UPDATE REQUIRED
+float velocitycurve[][42] = {
+  {0., 0., 0., 1., 1., -0.65, 1., 1., -0.65, -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 },
+  {0., 0., 0., 1., 1., -0.65, 1., 1., -0.65, -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 },
+  {0., 0., 0., 1., 1., -0.65, 1., 1., -0.65, -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 },
+  {0., 0., 0., 1., 1., -0.65, 1., 1., -0.65, -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 },
+  {0., 0., 0., 1., 1., -0.65, 1., 1., -0.65, -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 },
+  {0., 0., 0., 1., 1., -0.65, 1., 1., -0.65, -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 }
+};
+float velocitycurvelength[] = {6,6,6,6,6,6}; 
+String velocitycurvename[6] = {"curve_logup","curve_logup","curve_logup","curve_logup","curve_logup","curve_logup"};
 
 // a collection of useful curves:
 float curve_str8up[]       = {0., 0., 0., 1., 1., 0.};
@@ -223,7 +222,8 @@ float curve_str8upthresh[] = {0., 0., 0., 0.05, 0., 0., 1., 1., 0.};
 float curve_str8dnthresh[] = {0., 1., 0., 0.95, 0., 0., 1., 0., 0., 1., 0., 0.};
 float curve_logupthresh[]  = {0., 0., 0., 0.05, 0., 0., 1., 1., -0.65};
 float curve_logdnthresh[]  = {0., 1., 0., 0.95, 0., -0.65, 1., 0., -0.65};
-
+// END CURVE VARIABLES
+///////////////////////////////
 
 /////////////////////////////
 // TIMING VARIABLES 
@@ -231,27 +231,29 @@ int bpm = 120;
 
 /////////////////////////////
 // Sensor scaling variables
-float minVal = 100000.0; 
-float maxVal = -1.0;
-float changeMin = 10000.0;
-float changeMax = -1.0;
+float minVal[6] = {100000.0, 100000.0, 100000.0, 100000.0, 100000.0, 100000.0}; //MULTIVALUE UPDATE REQUIRED
+float maxVal[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0};    //MULTIVALUE UPDATE REQUIRED
+float changeMin[6] = {10000.0, 10000.0, 10000.0, 10000.0, 10000.0, 10000.0};  //MULTIVALUE UPDATE REQUIRED
+float changeMax[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0}; //MULTIVALUE UPDATE REQUIRED
 
 float elasticMinMaxScale = .005; // if true, then the min and max values used for dynamic scaling slowly come closer together, 
                                 // so that a rate large value over time will get smoothed out
                                 // set to 0 to disable
+// END SENSOR SCALING VARIABLES
+/////////////////////////////////
 
 ////////////////////////////////////
 // SENSOR PROCESSING GLOBALS
-int ADCRaw = -1;
-float changerate = -1.0;
-float prevChangeVal = -1.0;
-int prevChangeTime = -1;
+bool firstSense[6] = {false, false, false, false, false, false}; //MULTIVALUE UPDATE REQUIRED
+int ADCRaw[6] = {-1, -1, -1, -1, -1, -1};          //MULTIVALUE UPDATE REQUIRED. ALSO rename to sensorInputVal or something
+float changerate[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0}; //MULTIVALUE UPDATE REQUIRED
+float prevChangeVal[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0};  //MULTIVALUE UPDATE REQUIRED
+int prevChangeTime[6] = {-1, -1, -1, -1, -1, -1} ;     //MULTIVALUE UPDATE REQUIRED
 
 // Stores frequency read by the photodiodes
 int redFrequency = 0;
 int greenFrequency = 0;
 int blueFrequency = 0;
-
 
 // calibration values 
 int redlow = 60;
@@ -266,11 +268,12 @@ int redColor = 0;
 int greenColor = 0;
 int blueColor = 0;
 
-void reset_minmax(){
-  minVal = 100000.0; 
-  maxVal = -1.0;
-  changeMin = 10000.0;
-  changeMax = -1.0;
+
+void reset_minmax(int vindex){  //MULTIVALUE UPDATE REQUIRED
+  minVal[vindex] = 100000.0; //MULTIVALUE UPDATE REQUIRED
+  maxVal[vindex] = -1.0;      //MULTIVALUE UPDATE REQUIRED
+  changeMin[vindex] = 10000.0;  //MULTIVALUE UPDATE REQUIRED
+  changeMax[vindex] = -1.0;     //MULTIVALUE UPDATE REQUIRED
 }
 
 
@@ -298,33 +301,47 @@ void sensor_setup(){
 
 
 void note_loop(){
-  if(ADCRaw == -1){
+  for (int i = 0 ; i < NUM_MULTIVALUES; i++){
+    note_loop(i);
+  }
+
+}
+
+void note_loop(int vindex){
+  if(!firstSense[vindex]){   //MULTIVALUE UPDATE REQUIRED
     // sensor hasn't sensed yet, skip this
     return;
   }
-  changerate_loop();
+  changerate_loop(vindex);  //MULTIVALUE UPDATE REQUIRED
   char pbuf[100];
-  sprintf(pbuf, "looppre: in:%d  min %f max %f", ADCRaw, minVal, maxVal);
+  sprintf(pbuf, "looppre: in:%d  min %f max %f", ADCRaw[vindex], minVal[vindex], maxVal[vindex]);
 //  Serial.println(pbuf);
-  float value = dyn_rescale(ADCRaw, &minVal, &maxVal, 0.0, 1.0);
+  float value = dyn_rescale(ADCRaw[vindex], &minVal[vindex], &maxVal[vindex], 0.0, 1.0);  //MULTIVALUE UPDATE REQUIRED
   sprintf(pbuf, "loop: in:%d scaled:%f min %f max %f", ADCRaw, value, minVal, maxVal);
 //  Serial.println(pbuf);
-  int midipitch    = derive_pitch(value);
-  int midivelocity = derive_velocity(ADCRaw);
-  int mididuration = derive_duration(value);
-  sprintf(pbuf, "      in:%d scaled:%f p:%d v:%d d:%d", ADCRaw, value, midipitch, midivelocity, mididuration);
+  int midipitch    = derive_pitch(vindex, value);  //MULTIVALUE UPDATE REQUIRED
+  int midivelocity = derive_velocity(vindex, ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
+  int mididuration = derive_duration(vindex, value);    //MULTIVALUE UPDATE REQUIRED
+  sprintf(pbuf, "      in:%d scaled:%f p:%d v:%d d:%d", ADCRaw[vindex], value, midipitch, midivelocity, mididuration);
 //  Serial.println(pbuf);
   // this will also make it monophonic:
   if(localSynth){
-    midiMakeNote(midipitch, midivelocity, mididuration);
+    midiMakeNote(vindex, midipitch, midivelocity, mididuration);  //MULTIVALUE UPDATE REQUIRED
   }else{
-    sendMakeNote(midipitch, midivelocity, mididuration);
+    sendMakeNote(vindex, midipitch, midivelocity, mididuration);  //MULTIVALUE UPDATE REQUIRED
   }
   t.setTimeout(note_loop, mididuration); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
 }
 
-void sensor_loop(){
 
+
+void sensor_loop(){
+  for(int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
+    sensor_loop(vindex);
+  }
+}
+
+void sensor_loop(int vindex){
 
  // Setting RED (R) filtered photodiodes to be read
   digitalWrite(S2,LOW);
@@ -338,13 +355,11 @@ void sensor_loop(){
   redColor = map(redFrequency, redlow, redhigh, 255,0);
 
   // Printing the RED (R) value
-  
   Serial.print("R = ");
   Serial.print(redFrequency);
   Serial.print("|");
   Serial.print(redColor);
   
-
   // Setting GREEN (G) filtered photodiodes to be read
   digitalWrite(S2,HIGH);
   digitalWrite(S3,HIGH);
@@ -354,7 +369,6 @@ void sensor_loop(){
   greenColor = map(greenFrequency, greenlow, greenhigh, 255, 0);
 
   // Printing the GREEN (G) value  
-  
   Serial.print(" G = ");
   Serial.print(greenFrequency);
   Serial.print("|");
@@ -368,9 +382,7 @@ void sensor_loop(){
   blueFrequency = pulseIn(sensorOut, LOW);
   blueColor = map(blueFrequency, bluelow, bluehigh, 255, 0);
 
-  
-  // Printing the BLUE (B) value 
-  
+  // Printing the BLUE (B) value   
   Serial.print(" B = ");
   Serial.print(blueFrequency);
   Serial.print("|");
@@ -391,15 +403,19 @@ void sensor_loop(){
   */
 
   // raw value is the Hue (not sure of the range, so let's multiply before casting to int)
-  ADCRaw = (int)(hsl[0] * 1000);
+  // this code supports multivalue, but here we only write to the first ADCRAw value
+  ADCRaw[0] = (int)(hsl[0] * 1000);
   //ADCRaw = analogRead(sensorPin);
 
   Serial.println("read value");
 
-  Serial.println(ADCRaw);
+  Serial.println(ADCRaw[0]);
   Serial.println(hsl[0]);
   Serial.println(hsl[1]);
   Serial.println(hsl[2]);
+
+  firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED
+
   /*
   if(!no_network){
     sendOSCUDP(ADCRaw);
@@ -456,79 +472,112 @@ double threeway_min(double a, double b, double c) {
 }
 
 
-
-
 void changerate_loop(){
-  changerate = get_changerate(ADCRaw);
+  for(int i = 0; i<NUM_MULTIVALUES; i++){
+    changerate_loop(i);
+  }
+}
+
+void changerate_loop(int vindex){   //MULTIVALUE UPDATE REQUIRED
+  changerate[vindex] = get_changerate(vindex, ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
 }
 
 
-float get_changerate(int ival){
-  float val = (float)ival;
+float get_changerate(int vindex, int ival){   //MULTIVALUE UPDATE REQUIRED
+  float val = (float)ival;  //MULTIVALUE UPDATE REQUIRED
   char pbuf[100];
   int millisr = millis();
 
-  if(prevChangeVal == -1){
-    prevChangeVal = val;
-    prevChangeTime = millisr;
+  if(prevChangeVal[vindex] == -1){ //MULTIVALUE UPDATE REQUIRED
+    prevChangeVal[vindex] = val;    //MULTIVALUE UPDATE REQUIRED
+    prevChangeTime[vindex] = millisr; //MULTIVALUE UPDATE REQUIRED
     return 0;
   }
 
-  float ochange = val - prevChangeVal;
+  float ochange = val - prevChangeVal[vindex]; //MULTIVALUE UPDATE REQUIRED
   if(ochange == 0){
     return 0;
   }
-  int millisd = millisr - prevChangeTime;
+  int millisd = millisr - prevChangeTime[vindex];   //MULTIVALUE UPDATE REQUIRED
   ochange = abs(ochange);
   // divide the change amoutn by the timeframe, so chnages in shorter timeframes count for me.
   ochange = ochange / (float)millisd; 
-  float change = dyn_rescale(ochange, &changeMin, &changeMax, 0, 1.0);
+  float change = dyn_rescale(ochange, &changeMin[vindex], &changeMax[vindex], 0, 1.0);
 
   // readjust changemin and max based on elasticMinMaxScale
-  changeMin = changeMin + (changeMin * elasticMinMaxScale);
-  changeMax = changeMax - (changeMax * elasticMinMaxScale);
+  changeMin[vindex] = changeMin[vindex] + (changeMin[vindex] * elasticMinMaxScale); //MULTIVALUE UPDATE REQUIRED
+  changeMax[vindex] = changeMax[vindex] - (changeMax[vindex] * elasticMinMaxScale); //MULTIVALUE UPDATE REQUIRED
 
  // Serial.println(pbuf);
-  prevChangeVal = val;
-  prevChangeTime = millisr;
-  sprintf(pbuf, "changerate v: %.4f pv: %.4f oc:%.4f c:%.4f minc:%.4f maxc:%.4f", val, prevChangeVal, ochange, change, changeMin, changeMax);
+  prevChangeVal[vindex] = val;          //MULTIVALUE UPDATE REQUIRED
+  prevChangeTime[vindex] = millisr;     //MULTIVALUE UPDATE REQUIRED
+  sprintf(pbuf, "changerate v: %.4f pv: %.4f oc:%.4f c:%.4f minc:%.4f maxc:%.4f", val, prevChangeVal[vindex], ochange, change, changeMin[vindex], changeMax[vindex]);
   Serial.println(pbuf);
   return change;
 
 }
 
-int derive_pitch(float val){
-  int pitch = noteFromFloat(val, midimin, midimax);
+int derive_pitch(int vindex, float val){   //MULTIVALUE UPDATE REQUIRED
+  int pitch = noteFromFloat(vindex, val, midimin[vindex], midimax[vindex]);  //MULTIVALUE UPDATE REQUIRED
   return pitch;
 }
 
-int derive_velocity(int val){
-  int velocity = floor(127.0 * functioncurve(changerate, velocitycurve, velocitycurvelength));
+int derive_velocity(int vindex, int val){   //MULTIVALUE UPDATE REQUIRED
+  int velocity = floor(127.0 * functioncurve(changerate[vindex], velocitycurve[vindex], velocitycurvelength[vindex]));  //MULTIVALUE UPDATE REQUIRED
   return velocity;
 }
 
-int derive_duration(float val){
+
+int derive_duration(int vindex, float val){  //MULTIVALUE UPDATE REQUIRED
+
   return pulseToMS(N16);
+/*
+  unsigned long raw_duration = updateLastNoteTime();
+  int duration = quantizeToNoteLength(raw_duration);
+  return duration;
+*/
 }
 
 
 
+unsigned long millisecs = millis();
+unsigned long lastNoteTime[6] = {millisecs,millisecs,millisecs,millisecs,millisecs,millisecs};  //MULTIVALUE UPDATE REQUIRED
+unsigned long updateLastNoteTime(int vindex){  //MULTIVALUE UPDATE REQUIRED
+  unsigned long now = millis();
+  unsigned long raw_duration = now - lastNoteTime[vindex];  //MULTIVALUE UPDATE REQUIRED
+  lastNoteTime[vindex] = now;   //MULTIVALUE UPDATE REQUIRED
+  return raw_duration;
+}
 
+int quantizeToNoteLength(unsigned long val){
+//  int notelengths[] = {WN, HN, HN3, QN, QN3, N8, N83, N16};
+  if(val < ((unsigned long)pulseToMS(N16) +(unsigned long)pulseToMS(N83) ) /  2.0 ){
+    return pulseToMS(N16);
+  }
+  if(val < ((unsigned long)pulseToMS(N83) +(unsigned long)pulseToMS(N8) ) /  2.0 ){
+    return pulseToMS(N83);
+  }
+  if(val < ((unsigned long)pulseToMS(N8) +(unsigned long)pulseToMS(QN3) ) /  2.0 ){
+    return pulseToMS(N8);
+  }
+  if(val < ((unsigned long)pulseToMS(QN3) +(unsigned long)pulseToMS(QN) ) /  2.0 ){
+    return pulseToMS(QN3);
+  }
+  if(val < ((unsigned long)pulseToMS(QN) +(unsigned long)pulseToMS(HN3) ) /  2.0 ){
+    return pulseToMS(QN);
+  }
+  if(val < ((unsigned long)pulseToMS(HN3) +(unsigned long)pulseToMS(HN) ) /  2.0 ){
+    return pulseToMS(HN3);
+  }
+  if(val < ((unsigned long)pulseToMS(HN) +(unsigned long)pulseToMS(WN) ) /  2.0 ){
+    return pulseToMS(HN);
+  }
+  return pulseToMS(WN);
 
-
-
-
-
-
-// NETWORK CODE
+}
+// NETWORK+SENSOR CODE
 // sending data over OSC/UDP.
-void sendOSCUDP(int flexVal){
-  /* egs
-   *  '/perifit/1', valueInt1, valueInt2, device.name);
-   *  28:ec:9a:14:2b:b3 l 180
-      28:ec:9a:14:2b:b3 u 1391
-   *  
-   */
+void sendOSCUDP(int vindex, int sendVal){  //MULTIVALUE UPDATE REQUIRED
  if(WiFi.status() == WL_CONNECTED){   
   Serial.println("sending udp");
   Serial.println(UDPReceiverIP);
@@ -536,8 +585,8 @@ void sendOSCUDP(int flexVal){
   //send hello world to server
   char ipbuffer[20];
   thisarduinoip.toCharArray(ipbuffer, 20);
-  OSCMessage oscmsg(DEVICE_ID);  
-  oscmsg.add(flexVal).add(ipbuffer);
+  OSCMessage oscmsg(DEVICE_ID[vindex]);  //MULTIVALUE UPDATE REQUIRED
+  oscmsg.add(sendVal).add(ipbuffer);
   udp.beginPacket(UDPReceiverIP, UDPPort);
 //  udp.write(buffer, msg.length()+1);
   oscmsg.send(udp);
@@ -570,8 +619,10 @@ void UDPListen(){
       Serial.println("routing?");
       bundleIN.route("/all/notelist", routeNotelist);
       char devroute[100];
-      sprintf(devroute,"/%s",this_device_name);
-      bundleIN.route(devroute, routeDeviceMsg);
+      for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
+        sprintf(devroute,"/%s",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+        bundleIN.route(devroute, routeDeviceMsg);
+      }
     }else{
       Serial.println("some error");
       Serial.println(bundleIN.getError());
@@ -597,11 +648,9 @@ void setup() {
   }
 
   midi_setup();
-  clock_setup();
   test_setup();
   sensor_setup();
   config_setup();
-
   announceCreation();
 
 }
@@ -613,12 +662,8 @@ void loop() {
   }  
   udp_loop();
   t.handle();
-//  sensor_loop(); // moving this into sensor_setup, with a setTimeout function to make the looping happen
 }
 // END SETUP AND LOOP FUNCTIONS
 /////////////////////////////////
-
-
-
 
 

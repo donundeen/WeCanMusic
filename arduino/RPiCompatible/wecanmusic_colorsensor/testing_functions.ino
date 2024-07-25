@@ -15,11 +15,11 @@ void test_setup(){
  // t.setInterval(sendRandVal, pulseToMS(QN));
 }
 
-void triggerRandNote(){
+void triggerRandNote(int vindex){
 //  Serial.println("triggerRandNote");
   //int note = random(32,120);
-  int note = noteFromFloat((double)random(1000) / (double)1000, midimin, midimax);
-  midiMakeNote(note, 127, pulseToMS(QN));
+  int note = noteFromFloat(vindex, (double)random(1000) / (double)1000, midimin[vindex], midimax[vindex]);
+  midiMakeNote(vindex, note, 127, pulseToMS(QN));
 }
 
 int notelisti = 0;
