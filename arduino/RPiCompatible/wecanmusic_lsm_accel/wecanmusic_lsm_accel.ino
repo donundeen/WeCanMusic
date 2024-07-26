@@ -1,3 +1,56 @@
+//////////////////////////////
+// CONFIG VARS
+
+// if the device has a synth/speakers attached, set this to true
+// if false, it will send a makenote message out over the netework,
+// for the server to play.
+boolean localSynth = false;
+
+// NO NETWORK MODE? for testing sensor without network
+const bool no_network = false;
+
+char wecanmusic_server_ip[40] = "10.0.0.255";
+char wecanmusic_port[6] = "7005";
+char this_device_name[34] = "RENAME_ME";
+//flag for saving data
+bool shouldSaveConfig = true;
+
+/* 
+ *  WIFI_MODE_ON set to true to send osc data over WIFI.
+ *  When this is true: 
+ *  -- if the arduino can't connect to wifi, it will create its own AP, named esp32_ap (pw 12345678)
+ *  -- you'll need to connect to that SSID via your phone, and use the interface that pops up on your phone 
+ *     to configure the SSID and PW of the router you want to connect to
+ *  When WIFI_MODE_ON = false, you need the arduino connected to the laptop, 
+ *  and it will send data over serial USB
+ */
+const boolean WIFI_MODE_ON = true;
+/* if we aren't using the auto-configuration process, 
+    and we want to hard-code the router's SSID and password here.
+    Also set HARDCODE_SSID = true
+*/
+
+//////////////////////////////
+/// NETWORK CONFIGS  
+const boolean HARDCODE_SSID = false; //true; //false;
+
+const char *WIFI_SSID = "wecanmusic";// "wecanmusic"; //"JJandJsKewlPad";
+const char *WIFI_PASSWORD = "";//"wecanmusic";//"wecanmusic"; //"WeL0veLettuce";
+char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
+char *presetip = "10.0.0.255"; // in case we just want to force it for testing
+int UDPPort = 7005; // the UDP port that Max is listening on
+int UDPINPort = 7004; // the UDP port that Max is listening on
+// END NETWORK CONFIGS
+////////////////////////
+
+// END CONFIG VARS
+//////////////////////////////
+
+////////////////////////////////////////////////////////
+//////////   EVERYTHING BELOW HERE SHOULD NOT CHANGE ///
+
+int NUM_MULTIVALUES = 1;
+
 ////////////////////////
 // NETWORK INCLUDES
 /*
@@ -22,13 +75,12 @@
 // END NETWORK INCLUDES
 ////////////////////////
 
-
 // REGEX LIBRARY FOR COMPLEX STRING PARSING
 #include <Regexp.h>
 
 // TIMING INCLUDES
 #include <AsyncTimer.h> //https://github.com/Aasim-A/AsyncTimer
-#include "uClock.h"
+//#include "uClock.h"
 // END TIMING INCLUDES
 
 ////////////////////////
@@ -42,66 +94,6 @@
 // END CONFIG WEBPAGE INCLUDES
 ////////////////////////
 
-// MULTIVALUE SETUP
-const int NUM_MULTIVALUES = 3;
-
-////////////////////////////////////
-// SENSOR INCLUDES
-//gyro code:
-// * LSM6DSOX + LIS3MDL FeatherWing : https://www.adafruit.com/product/4565
-// * ISM330DHCX + LIS3MDL FeatherWing https://www.adafruit.com/product/4569
-// * LSM6DSOX + LIS3MDL Breakout : https://www.adafruit.com/product/4517
-// * LSM6DS33 + LIS3MDL Breakout Lhttps://www.adafruit.com/product/4485
-// see here: https://learn.adafruit.com/st-9-dof-combo/ard/Users/donundeen/Downloads/TCS3200D/color/color.pdeuino 
-/*
- * Libraries to install (include dependencies)
- * OSC
- * Adafruit LSM6DS 
- * Adafruit LIS3MDL
- * AutoConnect (see https://hieromon.github.io/AutoConnect/#installation)
- * 
- */
-// SENSOR LIBS/Users/donundeen/Downloads/TCS3200D/TCS3200D/TCS3200D.pde
-#include <Adafruit_LSM6DSOX.h>
-#include <Adafruit_LIS3MDL.h>
-// END SENSOR INCLUDES  
-/////////////////////////////////////////
-
-////////////////////////////////
-// SENSOR OBJECT CREATION
-//Adafruit_LSM6DSOX lsm6ds;
-Adafruit_LSM6DSOX lsm6ds;
-Adafruit_LIS3MDL lis3mdl;
-// END OBJECT CREATION
-///////////////////////
-
-
-///////////////////////////
-// DEVICE CONFIGS
-// set the accelerometer value to use afor the pitch
-// one of:
-//    case "gyro.x":
-//    case "gyro.y":
-//    case "gyro.z":
-//    case "accel.x":
-//    case "accel.y":
-//    case "accel.z":
-//    case "mag.x":
-//    case "mag.y":
-//    case "mag.z":
-const int _GYROX = 1;
-const int _GYROY = 2;
-const int _GYROZ = 3;
-const int _ACCELX = 4;
-const int _ACCELY = 5;
-const int _ACCELZ = 6;
-const int _MAGX = 7;
-const int _MAGY = 8;
-const int _MAGZ = 9;
-//int AccelPitchVal[6] = {_GYROX, _GYROY, _GYROZ, _ACCELX, _ACCELY, _ACCELZ}; 
-int AccelPitchVal[6] = {_GYROX, _GYROY, _GYROZ, _ACCELX, _ACCELY, _ACCELZ}; 
-
-
 int SERIALBAUDRATE = 115200;
 
 ///////////////////////////////
@@ -113,54 +105,19 @@ int workinglistlength[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
 // END MUSIC PERFORMANCE VARIABLES
 ///////////////////////////
 
-
-// if the device has a synth/speakers attached, set this to true
-// if false, it will send a makenote message out over the netework,
-// for the server to play.
-boolean localSynth = false;
-
 ////////////////// SETING UP CONFIG WEBPAGE - FOR WIFI AND OTHER VALUES
 //define your default values here, if there are different values in config.json, they are overwritten.
-// My values: (in addition to WIFI data)
-// wecanmusic_server_ip
-// wecanmusic_port
-// this_device_name
-
-// wifi autoconnect code
 // CONFIG WEBPAGE PINS AND VARS
 int resetButtonPin = A0;
-
-char wecanmusic_server_ip[40] = "10.0.0.255";
-char wecanmusic_port[6] = "7005";
-char this_device_name[16] = "RENAME_ME";
-//flag for saving data
-bool shouldSaveConfig = true;
 /// END SETTING UP CONFIG WEBPAGE VARS
 ///////////////////////////
-
 
 /////////////////////////////
 // TIMING VARIABLES 
 AsyncTimer t;
 
-
-
 ////////////////////////////////////////////
 // NETWORK SPECIFIC VARS - SHOULDN'T CHANGE
-/* 
- *  WIFI_MODE_ON set to true to send osc data over WIFI.
- *  When this is true: 
- *  -- if the arduino can't connect to wifi, it will create its own AP, named esp32_ap (pw 12345678)
- *  -- you'll need to connect to that SSID via your phone, and use the interface that pops up on your phone 
- *     to configure the SSID and PW of the router you want to connect to
- *  When WIFI_MODE_ON = false, you need the arduino connected to the laptop, 
- *  and it will send data over serial USB
- */
-const boolean WIFI_MODE_ON = true;
-/* if we aren't using the auto-configuration process, 
-    and we want to hard-code the router's SSID and password here.
-    Also set HARDCODE_SSID = true
-*/
 // remember you can't connect to 5G networks with the arduino. 
 bool wifi_connected =false;
 /*
@@ -181,11 +138,9 @@ OSCErrorCode error;
 // END NETWORK-SPECIFIC VARS
 //////////////////////////////////////////////////////////////////////////////
 
-
-
 ////////////////
 // Define the number of pulses per beat
-umodular::clock::uClockClass::PPQNResolution PPQNr = uClock.PPQN_96;
+//umodular::clock::uClockClass::PPQNResolution PPQNr = uClock.PPQN_96;
 int PPQN = 96;
 
 // number of pulses for different common note values.
@@ -204,45 +159,24 @@ int notelengths[] = {WN, HN, HN3, QN, QN3, N8, N83, N16};
 // END TIMING VARIABLES
 ////////////////////////
 
-
-//////////////////////////////
-/// NETWORK CONFIGS  
-const boolean HARDCODE_SSID = false; //true; //false;
-
-char *WIFI_SSID = "wecanmusic";// "wecanmusic"; //"JJandJsKewlPad";
-char *WIFI_PASSWORD = "";//"wecanmusic";//"wecanmusic"; //"WeL0veLettuce";
-char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
-char *presetip = "10.0.0.255"; // in case we just want to force it for testing
-int UDPPort = 7005; // the UDP port that Max is listening on
-int UDPINPort = 7004; // the UDP port that Max is listening on
-// END NETWORK CONFIGS
 ////////////////////////
-
 // NETWORK+SENSOR CONFIGS
-// max size of device name is 19 characters, same as this_device_name, which is the ROOT of the name+ 3 for the number
 char DEVICE_NAME[][20] = {"RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx"};  //MULTIVALUE UPDATE REQUIRED: each value shows as DEVICE_NAME_[index]
 char *DEVICE_ID_SUFFIX = "/val";
 char DEVICE_ID[][40] = {"/","/","/","/","/","/"};  //MULTIVALUE UPDATE REQUIRED: see above
-
-// NO NETWORK MODE? for testing sensor without network
-bool no_network = false;
-
+// END NETWORK+SENSOR CONFIGS
+////////////////////////
 
 /////////// MIDI DEFINITIONS /////////////////////
-
 // See http://www.vlsi.fi/fileadmin/datasheets/vs1053.pdf Pg 32 for more!
 int midi_voice[6] = {12,12,12,12,12,12}; // see define_configs //MULTIVALUE UPDATE REQUIRED . Also update to bank/program (midi_voice is bank:program)
 int midi_bank[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
 int midi_program[6] = {1,1,1,1,1,1}; //MULTIVALUE UPDATE REQUIRED
-
 ///  END MIDI DEFINITIONS
 /////////////////////////////////////////
 
-
-
 ///////////////////////////////
 // MUSIC PERFORMANCE VARIABLES
-
 // These might get changed at start, or during play
 int rootMidi[6] = {0,0,0,0,0,0};  //MULTIVALUE UPDATE REQUIRED
 int midimin[6] = {32,32,32,32,32,32};  //MULTIVALUE UPDATE REQUIRED
@@ -252,7 +186,6 @@ int midimax[6] = {100,100,100,100,100,100}; //MULTIVALUE UPDATE REQUIRED
 
 //////////////////////////////
 // CURVE VARIABLES
-
 // initial velocity curve is a straight line, extra -1.0 variables are for when we want to make it longer
 //float velocitycurve[] = {0., 0.0, 0., 1.0, 1.0, 0.0, -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 , -1.0, -1.0 ,-1.0 };
 //MULTIVALUE UPDATE REQUIRED
@@ -278,7 +211,8 @@ float curve_str8upthresh[] = {0., 0., 0., 0.05, 0., 0., 1., 1., 0.};
 float curve_str8dnthresh[] = {0., 1., 0., 0.95, 0., 0., 1., 0., 0., 1., 0., 0.};
 float curve_logupthresh[]  = {0., 0., 0., 0.05, 0., 0., 1., 1., -0.65};
 float curve_logdnthresh[]  = {0., 1., 0., 0.95, 0., -0.65, 1., 0., -0.65};
-
+// END CURVE VARIABLES
+//////////////////////////////
 
 /////////////////////////////
 // TIMING VARIABLES 
@@ -293,7 +227,9 @@ float changeMax[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0}; //MULTIVALUE UPDATE R
 
 float elasticMinMaxScale = .005; // if true, then the min and max values used for dynamic scaling slowly come closer together, 
                                 // so that a rate large value over time will get smoothed out
-                                // set to 0 to disable //MULTIVALUE UPDATE REQUIRED
+                                // set to 0 to disable
+// END Sensor scaling variables
+/////////////////////////////
 
 ////////////////////////////////////
 // SENSOR PROCESSING GLOBALS
@@ -302,6 +238,20 @@ int ADCRaw[6] = {-1, -1, -1, -1, -1, -1};          //MULTIVALUE UPDATE REQUIRED.
 float changerate[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0}; //MULTIVALUE UPDATE REQUIRED
 float prevChangeVal[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0};  //MULTIVALUE UPDATE REQUIRED
 int prevChangeTime[6] = {-1, -1, -1, -1, -1, -1} ;     //MULTIVALUE UPDATE REQUIRED
+// END SENSOR PROCESSING GLOBALS
+////////////////////////////////////
+
+
+
+
+void sensor_setup(){
+  sensor_setup_device();
+  t.setInterval(sensor_loop, 10);
+  sensor_loop();
+//  t.setInterval(changerate_loop, 100);
+  changerate_loop();
+  note_loop();
+}
 
 
 void reset_minmax(int vindex){  //MULTIVALUE UPDATE REQUIRED
@@ -311,220 +261,11 @@ void reset_minmax(int vindex){  //MULTIVALUE UPDATE REQUIRED
   changeMax[vindex] = -1.0;     //MULTIVALUE UPDATE REQUIRED
 }
 
-
-
-
-void sensor_setup(){
-  delay(1000);
-  Serial.println("setup");
-
-  // for incoming UDP
-  //  SLIPSerial.begin(115200);
-
-  pinMode(BUILTIN_LED, OUTPUT);
-
-  // gyro/accel stuff
-  bool lsm6ds_success, lis3mdl_success;
-
-  // hardware I2C mode, can pass in address & alt Wire
-
-  lsm6ds_success = lsm6ds.begin_I2C();
-  lis3mdl_success = lis3mdl.begin_I2C();
-
-  if (!lsm6ds_success){
-    Serial.println("Failed to find LSM6DS chip");
-  }
-  if (!lis3mdl_success){
-    Serial.println("Failed to find LIS3MDL chip");
-  }
-  if (!(lsm6ds_success && lis3mdl_success)) {
-    while (1) {
-      delay(10);
-    }
-  }
-
-  Serial.println("LSM6DS and LIS3MDL Found!");
-
-  // lsm6ds.setAccelRange(LSM6DS_ACCEL_RANGE_2_G);
-  Serial.print("Accelerometer range set to: ");
-  switch (lsm6ds.getAccelRange()) {
-  case LSM6DS_ACCEL_RANGE_2_G:
-    Serial.println("+-2G");
-    break;
-  case LSM6DS_ACCEL_RANGE_4_G:
-    Serial.println("+-4G");
-    break;
-  case LSM6DS_ACCEL_RANGE_8_G:
-    Serial.println("+-8G");
-    break;
-  case LSM6DS_ACCEL_RANGE_16_G:
-    Serial.println("+-16G");
-    break;
-  }
-
-  // lsm6ds.setAccelDataRate(LSM6DS_RATE_12_5_HZ);
-  Serial.print("Accelerometer data rate set to: ");
-  switch (lsm6ds.getAccelDataRate()) {
-  case LSM6DS_RATE_SHUTDOWN:
-    Serial.println("0 Hz");
-    break;
-  case LSM6DS_RATE_12_5_HZ:
-    Serial.println("12.5 Hz");
-    break;
-  case LSM6DS_RATE_26_HZ:
-    Serial.println("26 Hz");
-    break;
-  case LSM6DS_RATE_52_HZ:
-    Serial.println("52 Hz");
-    break;
-  case LSM6DS_RATE_104_HZ:
-    Serial.println("104 Hz");
-    break;
-  case LSM6DS_RATE_208_HZ:
-    Serial.println("208 Hz");
-    break;
-  case LSM6DS_RATE_416_HZ:
-    Serial.println("416 Hz");
-    break;
-  case LSM6DS_RATE_833_HZ:
-    Serial.println("833 Hz");
-    break;
-  case LSM6DS_RATE_1_66K_HZ:
-    Serial.println("1.66 KHz");
-    break;
-  case LSM6DS_RATE_3_33K_HZ:
-    Serial.println("3.33 KHz");
-    break;
-  case LSM6DS_RATE_6_66K_HZ:
-    Serial.println("6.66 KHz");
-    break;
-  }
-
-  // lsm6ds.setGyroRange(LSM6DS_GYRO_RANGE_250_DPS );
-  Serial.print("Gyro range set to: ");
-  switch (lsm6ds.getGyroRange()) {
-  case LSM6DS_GYRO_RANGE_125_DPS:
-    Serial.println("125 degrees/s");
-    break;
-  case LSM6DS_GYRO_RANGE_250_DPS:
-    Serial.println("250 degrees/s");
-    break;
-  case LSM6DS_GYRO_RANGE_500_DPS:
-    Serial.println("500 degrees/s");
-    break;
-  case LSM6DS_GYRO_RANGE_1000_DPS:
-    Serial.println("1000 degrees/s");
-    break;
-  case LSM6DS_GYRO_RANGE_2000_DPS:
-    Serial.println("2000 degrees/s");
-    break;
-  case ISM330DHCX_GYRO_RANGE_4000_DPS:
-    Serial.println("4000 degrees/s");
-    break;
-  }
-  // lsm6ds.setGyroDataRate(LSM6DS_RATE_12_5_HZ);
-  Serial.print("Gyro data rate set to: ");
-  switch (lsm6ds.getGyroDataRate()) {
-  case LSM6DS_RATE_SHUTDOWN:
-    Serial.println("0 Hz");
-    break;
-  case LSM6DS_RATE_12_5_HZ:
-    Serial.println("12.5 Hz");
-    break;
-  case LSM6DS_RATE_26_HZ:
-    Serial.println("26 Hz");
-    break;
-  case LSM6DS_RATE_52_HZ:
-    Serial.println("52 Hz");
-    break;
-  case LSM6DS_RATE_104_HZ:
-    Serial.println("104 Hz");
-    break;
-  case LSM6DS_RATE_208_HZ:
-    Serial.println("208 Hz");
-    break;
-  case LSM6DS_RATE_416_HZ:
-    Serial.println("416 Hz");
-    break;
-  case LSM6DS_RATE_833_HZ:
-    Serial.println("833 Hz");
-    break;
-  case LSM6DS_RATE_1_66K_HZ:
-    Serial.println("1.66 KHz");
-    break;
-  case LSM6DS_RATE_3_33K_HZ:
-    Serial.println("3.33 KHz");
-    break;
-  case LSM6DS_RATE_6_66K_HZ:
-    Serial.println("6.66 KHz");
-    break;
-  }
-
-  lis3mdl.setDataRate(LIS3MDL_DATARATE_155_HZ);
-  // You can check the datarate by looking at the frequency of the DRDY pin
-  Serial.print("Magnetometer data rate set to: ");
-  switch (lis3mdl.getDataRate()) {
-    case LIS3MDL_DATARATE_0_625_HZ: Serial.println("0.625 Hz"); break;
-    case LIS3MDL_DATARATE_1_25_HZ: Serial.println("1.25 Hz"); break;
-    case LIS3MDL_DATARATE_2_5_HZ: Serial.println("2.5 Hz"); break;
-    case LIS3MDL_DATARATE_5_HZ: Serial.println("5 Hz"); break;
-    case LIS3MDL_DATARATE_10_HZ: Serial.println("10 Hz"); break;
-    case LIS3MDL_DATARATE_20_HZ: Serial.println("20 Hz"); break;
-    case LIS3MDL_DATARATE_40_HZ: Serial.println("40 Hz"); break;
-    case LIS3MDL_DATARATE_80_HZ: Serial.println("80 Hz"); break;
-    case LIS3MDL_DATARATE_155_HZ: Serial.println("155 Hz"); break;
-    case LIS3MDL_DATARATE_300_HZ: Serial.println("300 Hz"); break;
-    case LIS3MDL_DATARATE_560_HZ: Serial.println("560 Hz"); break;
-    case LIS3MDL_DATARATE_1000_HZ: Serial.println("1000 Hz"); break;
-  }
-
-  lis3mdl.setRange(LIS3MDL_RANGE_4_GAUSS);
-  Serial.print("Range set to: ");
-  switch (lis3mdl.getRange()) {
-    case LIS3MDL_RANGE_4_GAUSS: Serial.println("+-4 gauss"); break;
-    case LIS3MDL_RANGE_8_GAUSS: Serial.println("+-8 gauss"); break;
-    case LIS3MDL_RANGE_12_GAUSS: Serial.println("+-12 gauss"); break;
-    case LIS3MDL_RANGE_16_GAUSS: Serial.println("+-16 gauss"); break;
-  }
-
-  lis3mdl.setPerformanceMode(LIS3MDL_MEDIUMMODE);
-  Serial.print("Magnetometer performance mode set to: ");
-  switch (lis3mdl.getPerformanceMode()) {
-    case LIS3MDL_LOWPOWERMODE: Serial.println("Low"); break;
-    case LIS3MDL_MEDIUMMODE: Serial.println("Medium"); break;
-    case LIS3MDL_HIGHMODE: Serial.println("High"); break;
-    case LIS3MDL_ULTRAHIGHMODE: Serial.println("Ultra-High"); break;
-  }
-
-  lis3mdl.setOperationMode(LIS3MDL_CONTINUOUSMODE);
-  Serial.print("Magnetometer operation mode set to: ");
-  // Single shot mode will complete conversion and go into power down
-  switch (lis3mdl.getOperationMode()) {
-    case LIS3MDL_CONTINUOUSMODE: Serial.println("Continuous"); break;
-    case LIS3MDL_SINGLEMODE: Serial.println("Single mode"); break;
-    case LIS3MDL_POWERDOWNMODE: Serial.println("Power-down"); break;
-  }
-
-  lis3mdl.setIntThreshold(500);
-  lis3mdl.configInterrupt(false, false, true, // enable z axis
-                          true, // polarity
-                          false, // don't latch
-                          true); // enabled!
-
-  // Start the loops here, not in the loop() function
-  t.setInterval(sensor_loop, 10);
-  sensor_loop();  //MULTIVALUE UPDATE REQUIRED
-//  t.setInterval(changerate_loop, 100);
-  changerate_loop();  //MULTIVALUE UPDATE REQUIRED
-  note_loop();  //MULTIVALUE UPDATE REQUIRED
-
-
-}
-
 void note_loop(){
   for (int i = 0 ; i < NUM_MULTIVALUES; i++){
     note_loop(i);
   }
+
 }
 
 void note_loop(int vindex){
@@ -559,93 +300,6 @@ void sensor_loop(){
   }
 }
 
-void sensor_loop(int vindex){
-
-  sensors_event_t accel, gyro, mag, temp;
-
-  //  /* Get new normalized sensor events */
-  lsm6ds.getEvent(&accel, &gyro, &temp);
-  lis3mdl.getEvent(&mag);
-
-  /* Display the results (acceleration is measured in m/s^2) */
-  /*
-  Serial.print("\t\tAccel X: ");
-  Serial.print(accel.acceleration.x, 4);
-  Serial.print(" \tY: ");
-  Serial.print(accel.acceleration.y, 4);
-  Serial.print(" \tZ: ");
-  Serial.print(accel.acceleration.z, 4);
-  Serial.println(" \tm/s^2 ");
-  */
-
-  /* Display the results (rotation is measured in rad/s) */
-  /*
-  Serial.print("\t\tGyro  X: ");
-  Serial.print(gyro.gyro.x, 4);
-  Serial.print(" \tY: ");
-  Serial.print(gyro.gyro.y, 4);
-  Serial.print(" \tZ: ");
-  Serial.print(gyro.gyro.z, 4);
-  Serial.println(" \tradians/s ");
-  */
- /* Display the results (magnetic field is measured in uTesla) */
- /*
-  Serial.print(" \t\tMag   X: ");
-  Serial.print(mag.magnetic.x, 4);
-  Serial.print(" \tY: ");
-  Serial.print(mag.magnetic.y, 4);
-  Serial.print(" \tZ: ");
-  Serial.print(mag.magnetic.z, 4);
-  Serial.println(" \tuTesla ");
-  */
-
-//  sendOSCUDP(gyro.gyro.x, gyro.gyro.y, gyro.gyro.z, accel.acceleration.x, accel.acceleration.y, accel.acceleration.z, mag.magnetic.x,mag.magnetic.y,mag.magnetic.z, sensorVal);
-
-  switch(AccelPitchVal[vindex]){  //MULTIVALUE UPDATE REQUIRED
-    case _GYROX:
-      ADCRaw[vindex] = gyro.gyro.x;
-      break;
-    case _GYROY:
-      ADCRaw[vindex] = gyro.gyro.x;
-      break;
-    case _GYROZ:
-      ADCRaw[vindex] = gyro.gyro.z;
-      break;
-    case _ACCELX:
-      ADCRaw[vindex] = accel.acceleration.x;
-      break;
-    case _ACCELY:
-      ADCRaw[vindex] = accel.acceleration.y;
-      break;      
-    case _ACCELZ:
-      ADCRaw[vindex] = accel.acceleration.z;
-      break;
-    case _MAGX:
-      ADCRaw[vindex] = mag.magnetic.x;
-      break;
-    case _MAGY:
-      ADCRaw[vindex] = mag.magnetic.y;
-      break;            
-    case _MAGZ:
-      ADCRaw[vindex] = mag.magnetic.z;
-      break;               
-  }
-/* // this is useful to see, but creates a lot of output that makes it hard to see other messages.
-  Serial.println("read value");
-  Serial.println(ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
-*/
-  firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED
-
-  /*
-  if(!no_network){
-    sendOSCUDP(ADCRaw);
-  }
-  */
-  // should be 10
-  //delay(10); // removing when using timeouts
-}
-
-
 void changerate_loop(){
   for(int i = 0; i<NUM_MULTIVALUES; i++){
     changerate_loop(i);
@@ -655,7 +309,6 @@ void changerate_loop(){
 void changerate_loop(int vindex){   //MULTIVALUE UPDATE REQUIRED
   changerate[vindex] = get_changerate(vindex, ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
 }
-
 
 float get_changerate(int vindex, int ival){   //MULTIVALUE UPDATE REQUIRED
   float val = (float)ival;  //MULTIVALUE UPDATE REQUIRED
@@ -712,6 +365,8 @@ int derive_duration(int vindex, float val){  //MULTIVALUE UPDATE REQUIRED
 */
 }
 
+
+
 unsigned long millisecs = millis();
 unsigned long lastNoteTime[6] = {millisecs,millisecs,millisecs,millisecs,millisecs,millisecs};  //MULTIVALUE UPDATE REQUIRED
 unsigned long updateLastNoteTime(int vindex){  //MULTIVALUE UPDATE REQUIRED
@@ -747,16 +402,9 @@ int quantizeToNoteLength(unsigned long val){
   return pulseToMS(WN);
 
 }
-
 // NETWORK+SENSOR CODE
 // sending data over OSC/UDP.
 void sendOSCUDP(int vindex, int sendVal){  //MULTIVALUE UPDATE REQUIRED
-  /* egs
-   *  '/perifit/1', valueInt1, valueInt2, device.name);
-   *  28:ec:9a:14:2b:b3 l 180
-      28:ec:9a:14:2b:b3 u 1391
-   *  
-   */
  if(WiFi.status() == WL_CONNECTED){   
   Serial.println("sending udp");
   Serial.println(UDPReceiverIP);
@@ -783,7 +431,6 @@ void udp_loop(){
 void UDPListen(){
   OSCBundle bundleIN;
   int size;
-//  Serial.println("UDPLISTEN");
  
   if( (size = udp.parsePacket())>0)
   {
@@ -809,11 +456,8 @@ void UDPListen(){
     }
   }
 }
-
 // END UDP FUNCTIONS
 /////////////////////////
-
-
 
 /////////////////////////////
 // SETUP AND LOOP FUNCTIONS
@@ -823,15 +467,17 @@ void setup() {
   
   Serial.begin(115200);
 
+  NUM_MULTIVALUES = get_num_multivalues();
+
   if(!no_network){  
     network_setup();
   }
 
   midi_setup();
   test_setup();
-  sensor_setup();  
-  config_setup();  //MULTIVALUE UPDATE REQUIRED
-  announceCreation();  //MULTIVALUE UPDATE REQUIRED
+  sensor_setup();
+  config_setup();
+  announceCreation();
 
 }
 
@@ -842,12 +488,9 @@ void loop() {
   }  
   udp_loop();
   t.handle();
-//  sensor_loop(); // moving this into sensor_setup, with a setTimeout function to make the looping happen
 }
 // END SETUP AND LOOP FUNCTIONS
 /////////////////////////////////
-
-
-
-
+/////////////////////////////////////////////////////
+//// 
 

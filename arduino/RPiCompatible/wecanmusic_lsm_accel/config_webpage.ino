@@ -196,7 +196,7 @@ void config_webpage_setup() {
 }
 
 void deleteAllCredentials(void) {
-  /*
+  ///*
   // unco/*mment this to actxually run the code
   Serial.println("deleting all stored SSID credentials");
   if (!SPIFFS.begin(true)) {
@@ -204,7 +204,7 @@ void deleteAllCredentials(void) {
     return;
   }  
   SPIFFS.remove("/config.json");
-  */
+  //*/
 }
 
 

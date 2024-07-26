@@ -1,3 +1,56 @@
+//////////////////////////////
+// CONFIG VARS
+
+// if the device has a synth/speakers attached, set this to true
+// if false, it will send a makenote message out over the netework,
+// for the server to play.
+boolean localSynth = false;
+
+// NO NETWORK MODE? for testing sensor without network
+const bool no_network = false;
+
+char wecanmusic_server_ip[40] = "10.0.0.255";
+char wecanmusic_port[6] = "7005";
+char this_device_name[34] = "RENAME_ME";
+//flag for saving data
+bool shouldSaveConfig = true;
+
+/* 
+ *  WIFI_MODE_ON set to true to send osc data over WIFI.
+ *  When this is true: 
+ *  -- if the arduino can't connect to wifi, it will create its own AP, named esp32_ap (pw 12345678)
+ *  -- you'll need to connect to that SSID via your phone, and use the interface that pops up on your phone 
+ *     to configure the SSID and PW of the router you want to connect to
+ *  When WIFI_MODE_ON = false, you need the arduino connected to the laptop, 
+ *  and it will send data over serial USB
+ */
+const boolean WIFI_MODE_ON = true;
+/* if we aren't using the auto-configuration process, 
+    and we want to hard-code the router's SSID and password here.
+    Also set HARDCODE_SSID = true
+*/
+
+//////////////////////////////
+/// NETWORK CONFIGS  
+const boolean HARDCODE_SSID = false; //true; //false;
+
+const char *WIFI_SSID = "wecanmusic";// "wecanmusic"; //"JJandJsKewlPad";
+const char *WIFI_PASSWORD = "";//"wecanmusic";//"wecanmusic"; //"WeL0veLettuce";
+char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
+char *presetip = "10.0.0.255"; // in case we just want to force it for testing
+int UDPPort = 7005; // the UDP port that Max is listening on
+int UDPINPort = 7004; // the UDP port that Max is listening on
+// END NETWORK CONFIGS
+////////////////////////
+
+// END CONFIG VARS
+//////////////////////////////
+
+////////////////////////////////////////////////////////
+//////////   EVERYTHING BELOW HERE SHOULD NOT CHANGE ///
+
+int NUM_MULTIVALUES = 1;
+
 ////////////////////////
 // NETWORK INCLUDES
 /*
@@ -41,13 +94,6 @@
 // END CONFIG WEBPAGE INCLUDES
 ////////////////////////
 
-// MULTIVALUE SETUP
-const int NUM_MULTIVALUES = 1;
-
-///////////////////////////
-// DEVICE CONFIGS
-int inputPin[] = {A2, A0, A1, A3, A4, A5}; // Flex Sensor is connected to this pin
-
 int SERIALBAUDRATE = 115200;
 
 ///////////////////////////////
@@ -59,28 +105,10 @@ int workinglistlength[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
 // END MUSIC PERFORMANCE VARIABLES
 ///////////////////////////
 
-
-// if the device has a synth/speakers attached, set this to true
-// if false, it will send a makenote message out over the netework,
-// for the server to play.
-boolean localSynth = false;
-
 ////////////////// SETING UP CONFIG WEBPAGE - FOR WIFI AND OTHER VALUES
 //define your default values here, if there are different values in config.json, they are overwritten.
-// My values: (in addition to WIFI data)
-// wecanmusic_server_ip
-// wecanmusic_port
-// this_device_name
-
-// wifi autoconnect code
 // CONFIG WEBPAGE PINS AND VARS
 int resetButtonPin = A0;
-
-char wecanmusic_server_ip[40] = "10.0.0.255";
-char wecanmusic_port[6] = "7005";
-char this_device_name[34] = "RENAME_ME";
-//flag for saving data
-bool shouldSaveConfig = true;
 /// END SETTING UP CONFIG WEBPAGE VARS
 ///////////////////////////
 
@@ -90,20 +118,6 @@ AsyncTimer t;
 
 ////////////////////////////////////////////
 // NETWORK SPECIFIC VARS - SHOULDN'T CHANGE
-/* 
- *  WIFI_MODE_ON set to true to send osc data over WIFI.
- *  When this is true: 
- *  -- if the arduino can't connect to wifi, it will create its own AP, named esp32_ap (pw 12345678)
- *  -- you'll need to connect to that SSID via your phone, and use the interface that pops up on your phone 
- *     to configure the SSID and PW of the router you want to connect to
- *  When WIFI_MODE_ON = false, you need the arduino connected to the laptop, 
- *  and it will send data over serial USB
- */
-const boolean WIFI_MODE_ON = true;
-/* if we aren't using the auto-configuration process, 
-    and we want to hard-code the router's SSID and password here.
-    Also set HARDCODE_SSID = true
-*/
 // remember you can't connect to 5G networks with the arduino. 
 bool wifi_connected =false;
 /*
@@ -145,38 +159,21 @@ int notelengths[] = {WN, HN, HN3, QN, QN3, N8, N83, N16};
 // END TIMING VARIABLES
 ////////////////////////
 
-
-//////////////////////////////
-/// NETWORK CONFIGS  
-const boolean HARDCODE_SSID = false; //true; //false;
-
-const char *WIFI_SSID = "wecanmusic";// "wecanmusic"; //"JJandJsKewlPad";
-const char *WIFI_PASSWORD = "";//"wecanmusic";//"wecanmusic"; //"WeL0veLettuce";
-char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
-char *presetip = "10.0.0.255"; // in case we just want to force it for testing
-int UDPPort = 7005; // the UDP port that Max is listening on
-int UDPINPort = 7004; // the UDP port that Max is listening on
-// END NETWORK CONFIGS
 ////////////////////////
-
 // NETWORK+SENSOR CONFIGS
 char DEVICE_NAME[][20] = {"RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx", "RENAME_MExxxxxxx+xx"};  //MULTIVALUE UPDATE REQUIRED: each value shows as DEVICE_NAME_[index]
 char *DEVICE_ID_SUFFIX = "/val";
 char DEVICE_ID[][40] = {"/","/","/","/","/","/"};  //MULTIVALUE UPDATE REQUIRED: see above
-
-// NO NETWORK MODE? for testing sensor without network
-const bool no_network = false;
+// END NETWORK+SENSOR CONFIGS
+////////////////////////
 
 /////////// MIDI DEFINITIONS /////////////////////
-
 // See http://www.vlsi.fi/fileadmin/datasheets/vs1053.pdf Pg 32 for more!
 int midi_voice[6] = {12,12,12,12,12,12}; // see define_configs //MULTIVALUE UPDATE REQUIRED . Also update to bank/program (midi_voice is bank:program)
 int midi_bank[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
 int midi_program[6] = {1,1,1,1,1,1}; //MULTIVALUE UPDATE REQUIRED
 ///  END MIDI DEFINITIONS
 /////////////////////////////////////////
-
-
 
 ///////////////////////////////
 // MUSIC PERFORMANCE VARIABLES
@@ -215,7 +212,7 @@ float curve_str8dnthresh[] = {0., 1., 0., 0.95, 0., 0., 1., 0., 0., 1., 0., 0.};
 float curve_logupthresh[]  = {0., 0., 0., 0.05, 0., 0., 1., 1., -0.65};
 float curve_logdnthresh[]  = {0., 1., 0., 0.95, 0., -0.65, 1., 0., -0.65};
 // END CURVE VARIABLES
-///////////////////////////////
+//////////////////////////////
 
 /////////////////////////////
 // TIMING VARIABLES 
@@ -231,8 +228,8 @@ float changeMax[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0}; //MULTIVALUE UPDATE R
 float elasticMinMaxScale = .005; // if true, then the min and max values used for dynamic scaling slowly come closer together, 
                                 // so that a rate large value over time will get smoothed out
                                 // set to 0 to disable
-// END SENSOR SCALING VARIABLES
-/////////////////////////////////
+// END Sensor scaling variables
+/////////////////////////////
 
 ////////////////////////////////////
 // SENSOR PROCESSING GLOBALS
@@ -241,17 +238,14 @@ int ADCRaw[6] = {-1, -1, -1, -1, -1, -1};          //MULTIVALUE UPDATE REQUIRED.
 float changerate[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0}; //MULTIVALUE UPDATE REQUIRED
 float prevChangeVal[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0};  //MULTIVALUE UPDATE REQUIRED
 int prevChangeTime[6] = {-1, -1, -1, -1, -1, -1} ;     //MULTIVALUE UPDATE REQUIRED
+// END SENSOR PROCESSING GLOBALS
+////////////////////////////////////
 
 
 
-void reset_minmax(int vindex){  //MULTIVALUE UPDATE REQUIRED
-  minVal[vindex] = 100000.0; //MULTIVALUE UPDATE REQUIRED
-  maxVal[vindex] = -1.0;      //MULTIVALUE UPDATE REQUIRED
-  changeMin[vindex] = 10000.0;  //MULTIVALUE UPDATE REQUIRED
-  changeMax[vindex] = -1.0;     //MULTIVALUE UPDATE REQUIRED
-}
 
 void sensor_setup(){
+  sensor_setup_device();
   t.setInterval(sensor_loop, 10);
   sensor_loop();
 //  t.setInterval(changerate_loop, 100);
@@ -260,7 +254,12 @@ void sensor_setup(){
 }
 
 
-
+void reset_minmax(int vindex){  //MULTIVALUE UPDATE REQUIRED
+  minVal[vindex] = 100000.0; //MULTIVALUE UPDATE REQUIRED
+  maxVal[vindex] = -1.0;      //MULTIVALUE UPDATE REQUIRED
+  changeMin[vindex] = 10000.0;  //MULTIVALUE UPDATE REQUIRED
+  changeMax[vindex] = -1.0;     //MULTIVALUE UPDATE REQUIRED
+}
 
 void note_loop(){
   for (int i = 0 ; i < NUM_MULTIVALUES; i++){
@@ -301,26 +300,6 @@ void sensor_loop(){
   }
 }
 
-void sensor_loop(int vindex){
-
-  // use capacative inputPin
-  ADCRaw[vindex] = touchRead(inputPin[vindex]);
-  //ADCRaw = analogRead(sensorPin);
-
-  Serial.println("read value");
-  Serial.println(ADCRaw[vindex]);
-
-  firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED
-  /*
-  if(!no_network){
-    sendOSCUDP(ADCRaw);
-  }
-  */
-  // should be 10
-  //delay(10); // removing when using timeouts
-}
-
-
 void changerate_loop(){
   for(int i = 0; i<NUM_MULTIVALUES; i++){
     changerate_loop(i);
@@ -330,7 +309,6 @@ void changerate_loop(){
 void changerate_loop(int vindex){   //MULTIVALUE UPDATE REQUIRED
   changerate[vindex] = get_changerate(vindex, ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
 }
-
 
 float get_changerate(int vindex, int ival){   //MULTIVALUE UPDATE REQUIRED
   float val = (float)ival;  //MULTIVALUE UPDATE REQUIRED
@@ -478,11 +456,8 @@ void UDPListen(){
     }
   }
 }
-
 // END UDP FUNCTIONS
 /////////////////////////
-
-
 
 /////////////////////////////
 // SETUP AND LOOP FUNCTIONS
@@ -491,6 +466,8 @@ void setup() {
   delay(1000);
   
   Serial.begin(115200);
+
+  NUM_MULTIVALUES = get_num_multivalues();
 
   if(!no_network){  
     network_setup();
@@ -514,3 +491,6 @@ void loop() {
 }
 // END SETUP AND LOOP FUNCTIONS
 /////////////////////////////////
+/////////////////////////////////////////////////////
+//// 
+
