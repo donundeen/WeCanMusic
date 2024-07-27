@@ -371,8 +371,8 @@ $(function() {
             }
         });
         $( ".channel_display",instr ).blur(function(event){
-            let voiceval = parseInt($(event.target).val());
-            parseChannelVal(voiceval, instr);
+            let channelval = parseInt($(event.target).val());
+            parseChannelVal(channelval, instr);
         });
 
         function parseChannelVal(val, instr){
@@ -426,7 +426,7 @@ $(function() {
         $( ".voice_display",instr ).change(function(event){
             console.log($(event.target).val());
             let selectedIndex = $(event.target).prop('selectedIndex');
-            let voiceval = parseInt($(event.target).val());
+            let voiceval = $(event.target).val();
             parseVoiceVal(voiceval, instr, selectedIndex);
         });
         /*
@@ -436,7 +436,7 @@ $(function() {
         });
 */
         function parseVoiceVal(val, instr, selectedIndex){
-            console.log("voice value", val, selectedIndex);
+            console.log("voice value ", val, "selectedIndex ", selectedIndex);
             if(!isNaN(val)){
                 $( ".midi-voice",instr ).slider("value", selectedIndex);
                 $( ".voice_display",instr ).val(val);
