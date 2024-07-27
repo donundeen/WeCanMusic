@@ -452,9 +452,6 @@ const UDPInstrument = class{
 
     midiSetBankProgram(){
         console.log("midiSetBankProgram");
-        if(this._midi_bank > 127){
-            this._midi_bank = 127;
-        }
         if(this.midi_hardware_engine){
             console.log(this._midi_bank);
             this.midi_hardware_engine.send('cc',{
