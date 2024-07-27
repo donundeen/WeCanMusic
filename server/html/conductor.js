@@ -297,6 +297,7 @@ $(function() {
                 return (midi_bank == v[0] && midi_program == v[1]);
             });
         }catch(e){}
+        console.log("voice index is "+ midi_voice_index);
         midi_voice_index = (midi_voice_index >=0 ? midi_voice_index : 0);
         console.log(midi_voice, midi_bank, midi_voice_index);
         let midi_channel = options_object.midi_channel  ? options_object.midi_channel : 0;
@@ -394,7 +395,7 @@ $(function() {
             range: false,
             min: 0,
             max: 127,// (voicelist.length > 0 ? voicelist.length : 127),//voicelist.length - 1,
-            value: 0,//(midi_voice_index >=0 ? midi_voice_index : 0),// midi_voice,
+            value: midi_voice_index, //q0,//(midi_voice_index >=0 ? midi_voice_index : 0),// midi_voice,
             
             slide: function( event, ui ) {
                 
