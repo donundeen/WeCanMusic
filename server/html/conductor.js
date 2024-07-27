@@ -260,9 +260,16 @@ $(function() {
             let midi_voice = options.data.filter((item)=>item.name=="midi_voice")[0].value;
             let midimin = options.data.filter((item)=>item.name=="midimin")[0].value;
             let midimax = options.data.filter((item)=>item.name=="midimax")[0].value;
+            [midi_bank, midi_program] = midi_voice.split(":");
+            midi_bank = parseInt(midi_bank);
+            midi_program = parseInt(midi_program);            
+            let midi_voice_index = voicelist.findIndex((v)=>{
+                return (midi_bank == parseInt(v[0]) && midi_program == parseInt(v[1]));
+            });            
             $( ".midi-range",instr ).slider( "option", "values", [ midimin, midimax ] );
             $( ".range_display",instr ).val(  midimin + " - " + midimax );
-            $( ".midi-voice",instr ).slider( "option", "value", midi_voice );
+            // this isn't right' need to find selected_index
+            $( ".midi-voice",instr ).slider( "option", "value", midi_voice_index );
             $( ".voice_display",instr ).val(  midi_voice );
 
             return;
@@ -417,8 +424,7 @@ $(function() {
                 let data = {id:id, 
                             instrtype: instrtype,
                             var: "midi_voice",
-                            val: value,
-                            foo: "bar1" };
+                            val: value};
                 message(address, data);                
             }
         });
