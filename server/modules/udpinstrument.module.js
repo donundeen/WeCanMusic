@@ -451,12 +451,15 @@ const UDPInstrument = class{
 
 
     midiSetBankProgram(){
+        console.log("midiSetBankProgram");
         if(this.midi_hardware_engine){
+            console.log(this._midi_bank);
             this.midi_hardware_engine.send('cc',{
                 controller: 0,
                 value: this._midi_bank, 
                 channel: this._midi_channel
             }); 
+            console.log(this._midi_program);
             this.midi_hardware_engine.send('program',{
                 number: this._midi_program, 
                 channel: this._midi_channel
