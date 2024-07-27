@@ -6,6 +6,9 @@
 // for the server to play.
 boolean localSynth = false;
 
+// set to true if teh config file is corrupted.
+boolean resetConfigFile = false;
+
 // NO NETWORK MODE? for testing sensor without network
 const bool no_network = false;
 

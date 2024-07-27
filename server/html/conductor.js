@@ -291,6 +291,8 @@ $(function() {
         try{
             [midi_bank, midi_program] = midi_voice.split(":");
             // figure out midi_voice index in voicelist
+            console.log("finding voice index", midi_bank, midi_program);
+            console.log(voicelist);
             midi_voice_index = voicelist.findIndex((v)=>{
                 return (midi_bank == v[0] && midi_program == v[1]);
             });
@@ -431,7 +433,7 @@ $(function() {
         });
 */
         function parseVoiceVal(val, instr, selectedIndex){
-            console.log("voice value", val);
+            console.log("voice value", val, selectedIndex);
             if(!isNaN(val)){
                 $( ".midi-voice",instr ).slider("value", selectedIndex);
                 $( ".voice_display",instr ).val(val);
