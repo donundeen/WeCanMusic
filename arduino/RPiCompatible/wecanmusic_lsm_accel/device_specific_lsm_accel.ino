@@ -55,17 +55,9 @@ const int _MAGZ = 9;
 int AccelPitchVal[6] = {_GYROX, _GYROY, _GYROZ, _ACCELX, _ACCELY, _ACCELZ}; 
 
 //////////////////////////////
-// DEVICE-SPECIFIC CONFIG VARS
 // MULTIVALUE SETUP
 const int DEVICE_NUM_MULTIVALUES = 3;
-
-// sensor config vars - pins
-// Just test touch pin - Touch0 is T0 which is on GPIO 4.
-// using 32 - This is GPIO #32 and also an analog input A7 on ADC #1
-int inputPin[] = {T9, T4, T5, T6, T7, T8}; //15;
-// t9 is pin 32
-
-// END DEVICE-SPECIFIC CONFIG VARS
+// END MULTIVALUE SETUP
 //////////////////////////////
 
 
