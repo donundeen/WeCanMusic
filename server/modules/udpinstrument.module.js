@@ -181,7 +181,7 @@ const UDPInstrument = class{
     }
 
     set midi_program(program){
-        this._midi_program = program;
+        this._midi_program = parseInt(program);
         this.midiSetBankProgram();
     }
     get midi_program(){
@@ -189,7 +189,7 @@ const UDPInstrument = class{
     }
 
     set midi_bank(bank){
-        this._midi_bank = bank;
+        this._midi_bank = parseInt(bank);
         this.midiSetBankProgram(); // program and bank might come in reverse order, better to set it both times; at least the second time you set it the bank and program will be legit.
     }
 
@@ -452,6 +452,9 @@ const UDPInstrument = class{
 
     midiSetBankProgram(){
         console.log("midiSetBankProgram");
+        if(this._midi_bank > 127){
+            this._midi_bank = 127;
+        }
         if(this.midi_hardware_engine){
             console.log(this._midi_bank);
             this.midi_hardware_engine.send('cc',{
