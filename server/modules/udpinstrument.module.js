@@ -391,7 +391,7 @@ const UDPInstrument = class{
             console.log("no volume, no note");
             return;
         }
-        this.midiSetInstrument();
+//        this.midiSetInstrument(); // do we really need to set the bank an program for every note? seems like overkill...
         if(this.synth){
             this.synth
             .noteOn(this.midi_channel, note, velocity)
