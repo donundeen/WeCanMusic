@@ -443,13 +443,11 @@ $(function() {
 */
         function parseVoiceVal(val, instr, selectedIndex){
             console.log("voice value ", val, "selectedIndex ", selectedIndex);
-            if(!isNaN(val)){
-                $( ".midi-voice",instr ).slider("value", selectedIndex);
-                $( ".voice_display",instr ).val(val);
-                let instrtype = $(instr).data("instrtype");
-                let id = $(instr).attr("id");               
-                sendVoiceVal(val, id, instrtype);                
-            }
+            $( ".midi-voice",instr ).slider("option", "value", selectedIndex);
+            $( ".voice_display",instr ).val(val);
+            let instrtype = $(instr).data("instrtype");
+            let id = $(instr).attr("id");               
+            sendVoiceVal(val, id, instrtype);                
         }
         function sendVoiceVal(voiceval, id, instrtype){
             let address = "instrval";            
