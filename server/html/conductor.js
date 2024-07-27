@@ -290,11 +290,13 @@ $(function() {
         let midi_voice = options_object.midi_voice  ? options_object.midi_voice: "0:0";
         try{
             [midi_bank, midi_program] = midi_voice.split(":");
+            midi_bank = parseInt(midi_bank);
+            midi_program = parseInt(midi_program);
             // figure out midi_voice index in voicelist
             console.log("finding voice index", midi_bank, midi_program);
             console.log(voicelist);
             midi_voice_index = voicelist.findIndex((v)=>{
-                return (midi_bank == v[0] && midi_program == v[1]);
+                return (midi_bank == parseInt(v[0]) && midi_program == parseInt(v[1]));
             });
         }catch(e){}
         console.log("voice index is "+ midi_voice_index);
