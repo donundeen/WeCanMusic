@@ -166,6 +166,7 @@ const UDPInstrument = class{
     }
 
     set midi_voice(voice){
+        console.log("setting midi_voice ", voice);
         let split = voice.split(":");
         let bank = 0;
         let program = 1;
