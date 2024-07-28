@@ -24,46 +24,6 @@
                 "New Age Organ"
             ],
             [
-                128,
-                7,
-                "TR-808 Drumset 2"
-            ],
-            [
-                128,
-                6,
-                "Electronic Drumset"
-            ],
-            [
-                128,
-                5,
-                "Kraftwerk Drumset"
-            ],
-            [
-                128,
-                4,
-                "Analog Drumset"
-            ],
-            [
-                128,
-                3,
-                "TR-909 Drumset"
-            ],
-            [
-                128,
-                2,
-                "TR-808 Drumset"
-            ],
-            [
-                128,
-                1,
-                "CR-78 Drumset"
-            ],
-            [
-                128,
-                0,
-                "TR-101 Drumset"
-            ],
-            [
                 0,
                 123,
                 "TX81Z Sqncr Bass 2"
@@ -705,66 +665,6 @@
                 "Harpsichord"
             ],
             [
-                120,
-                56,
-                "SFX Kit"
-            ],
-            [
-                120,
-                48,
-                "Orchestral Perc."
-            ],
-            [
-                120,
-                40,
-                "Brush Drums"
-            ],
-            [
-                120,
-                32,
-                "Jazz Drums"
-            ],
-            [
-                120,
-                26,
-                "Dance Drums"
-            ],
-            [
-                120,
-                25,
-                "808/909 Drums"
-            ],
-            [
-                120,
-                24,
-                "Electronic Drums"
-            ],
-            [
-                120,
-                16,
-                "Power Drums"
-            ],
-            [
-                120,
-                8,
-                "Room Drums"
-            ],
-            [
-                120,
-                1,
-                "Standard 2 Drums"
-            ],
-            [
-                120,
-                0,
-                "Standard Drums"
-            ],
-            [
-                128,
-                0,
-                "Standard"
-            ],
-            [
                 0,
                 59,
                 "Muted Trumpet"
@@ -783,11 +683,6 @@
                 0,
                 109,
                 "Bagpipes"
-            ],
-            [
-                128,
-                25,
-                "808/909"
             ],
             [
                 0,
@@ -920,11 +815,6 @@
                 "Solo French Horn"
             ],
             [
-                128,
-                26,
-                "Dance"
-            ],
-            [
                 0,
                 65,
                 "Alto Sax"
@@ -1038,46 +928,6 @@
                 0,
                 48,
                 "Stereo Strings Fast"
-            ],
-            [
-                128,
-                56,
-                "SFX"
-            ],
-            [
-                128,
-                48,
-                "Orchestral"
-            ],
-            [
-                128,
-                40,
-                "Brush"
-            ],
-            [
-                128,
-                32,
-                "Jazz"
-            ],
-            [
-                128,
-                24,
-                "Electronic"
-            ],
-            [
-                128,
-                16,
-                "Power"
-            ],
-            [
-                128,
-                8,
-                "Room"
-            ],
-            [
-                128,
-                1,
-                "Standard 2"
             ],
             [
                 0,
