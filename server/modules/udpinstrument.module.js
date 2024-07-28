@@ -388,7 +388,7 @@ const UDPInstrument = class{
             return;
         }
         if(velocity == 0){
-            console.log("no volume, no note");
+//            console.log("no volume, no note");
             return;
         }
 //        this.midiSetInstrument(); // do we really need to set the bank an program for every note? seems like overkill...
@@ -400,7 +400,7 @@ const UDPInstrument = class{
         }
         // if there's a hardware midi device attached to this instrument
         if(this.midi_hardware_engine){
-            console.log("HARDWARE NOTE");
+//            console.log("HARDWARE NOTE");
             this.midi_hardware_engine.send('noteon', {
                 note: note,
                 velocity: velocity,
@@ -451,15 +451,14 @@ const UDPInstrument = class{
 
 
     midiSetBankProgram(){
-        console.log("midiSetBankProgram");
         if(this.midi_hardware_engine){
-            console.log(this._midi_bank);
+//            console.log(this._midi_bank);
             this.midi_hardware_engine.send('cc',{
                 controller: 0,
                 value: 127, //this._midi_bank, 
                 channel: this._midi_channel
             }); 
-            console.log(this._midi_program);
+  //          console.log(this._midi_program);
             this.midi_hardware_engine.send('program',{
                 number: this._midi_program, 
                 channel: this._midi_channel
