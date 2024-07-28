@@ -1,6 +1,8 @@
 const WEBSOCKET_PORT = 8001;
 const WEBSERVER_PORT = 8002;
 let voicelist = [[1,79,"nodata"],[0,78,"nodata"]];
+let scorelist = ["simplescore.txt"];
+let curscore = "simplescore.txt";
 
 $(function() {
 
@@ -67,6 +69,9 @@ $(function() {
         if(msg.address == "voicelist"){
             updateVoicelist(msg.data);
         }
+        if(msg.address == "scorelist"){
+            updateScoreList(msg.data);
+        }
 
         // add message about adding a new instrument here
     }
@@ -85,7 +90,10 @@ $(function() {
         }
     }
 
-    function updateScore(scoreText){
+    function updateScore(data){
+        scoreText = data.text;
+        curscore = data.scorename;
+        $(".scorenametext").val(curscore);
         let split = scoreText.split("\n");
         $(".score").empty();
 
@@ -103,6 +111,7 @@ $(function() {
                 $(elem).attr("data-position", curpos);
             }
         }
+        message("getscorelist",1);
     }
 
     function updateVoicelist(rvoicelist){
@@ -110,6 +119,12 @@ $(function() {
       //  console.log(rvoicelist);
         voicelist = rvoicelist;
         buildVoicelistOptions();
+    }
+
+    function updateScoreList(rscorelist){
+        console.log("got scorelist");
+        scorelist = rscorelist;
+        buildScoreListOptions();
     }
 
     function updateBeat(position, bar, beat){
@@ -129,7 +144,12 @@ $(function() {
                 return $(element).text()
             })
             .join("\n");
-        message("score", text);
+        curscore = $(".scorenametext").val();
+        console.log("sending score ", curscore, text);
+        let msg = {scorename: curscore, 
+                text: text
+        }
+        message("savescore", msg);
     }
 
 
@@ -164,7 +184,9 @@ $(function() {
     });
 
     $(".getscore").click(function(){
-        message("getscore",1);
+        let newscore = $(".scoreselect").val();
+        console.log("selecting   " + newscore);
+        message("loadscore", newscore);        
     });
 
     $(".score").on('keyup',function(e) {
@@ -530,6 +552,28 @@ $(function() {
         });
         
 
+    }
+
+    function buildScoreListOptions(){
+        $(".scoreselect").empty();
+        $(".scoreselect").append('<option value="">SELECT SCORE</option>');
+
+        for(let i = 0; i < scorelist.length; i++){
+            let selected = "";
+            if(scorelist[i] == curscore){
+                selected = "SELECTED"
+            }
+            let elem = $("<option value='"+scorelist[i]+"' "+selected+">"+scorelist[i]+"</option>");
+            $(".scoreselect").append(elem);
+        }
+
+        $(".scoreselect").change(function(event, ui){
+            let newscore = $(event.target).val();
+            curscore = newscore;
+            $(".scorenametext").val(curscore);
+            console.log("selecting   " + newscore);
+            message("loadscore", newscore);
+        });
     }
 
 

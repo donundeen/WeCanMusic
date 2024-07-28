@@ -7,8 +7,6 @@ let ScoreReader = {
     scoreText : false,
     messageCallback: false,
 
-    foo: "bar",
-
     setMessageCallback(callback){
         this.messageCallback = callback;
     },
@@ -26,7 +24,7 @@ let ScoreReader = {
 
     openscore(callback){
         let self = this;
-        fs.readFile(self.scoreFilename, 'utf8', (err, data) => {
+        fs.readFile(self.scoreDir + "/" + self.scoreFilename, 'utf8', (err, data) => {
             if (err) {
                 console.error(err);
                 return;
@@ -34,6 +32,19 @@ let ScoreReader = {
             self.scoreText = data;
             if(callback){
                 callback(self.scoreText);
+            }
+        });
+    },
+
+    writescore(callback){
+        let fullpath = this.scoreDir + "/" + this.scoreFilename;
+        console.log("writing score", this.scoreFilename, this.scoreText, this.scoreDir, fullpath);
+        fs.writeFile(fullpath, this.scoreText, err => {
+            if (err) {
+                console.error(err);
+            } else {
+                // file written successfully
+                callback(this);
             }
         });
     },

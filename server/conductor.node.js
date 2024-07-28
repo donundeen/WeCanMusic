@@ -4,6 +4,8 @@ It connects the various modules,
 holds the configuration variables
 and shows how messages are routed from one to the other.
 */
+const fs = require('node:fs');
+
 
 ////////////////////////
 // LOAD MAIN CONFIG FILE
@@ -64,7 +66,7 @@ if(use_midi_out){
 
 let bpm = 120;
 // defining some note lengths
-let scorename = config.scorename; //"./scores/simplescore.txt";
+let scorename = config.scorename; //"simplescore.txt";
 let UDPSENDIP = config.UDPSENDIP; //"10.0.0.255";
 //let UDPSENDIP = "10.0.0.131";
 let UDPSENDPORT = config.UDPSENDPORT;//7004;
@@ -156,6 +158,8 @@ score  = Object.create(ScoreReader);
 theory = Object.create(TheoryEngine);
 socket = Object.create(socketServer);
 
+// config score obect
+score.setScoreDir(config.scoreDir);
 
 
 // intialize the midi synth (fluid or tiny)
@@ -219,8 +223,9 @@ socket.setMessageReceivedCallback(function(msg){
     let result = routeFromWebsocket(msg, "chord", function(msg){
         theory.runSetter(msg, "fromsocket");
     });
-    routeFromWebsocket(msg, "getscore", function(msg){
-        data = score.scoreText;
+    routeFromWebsocket(msg, "getscore", function(msg){     
+        let data = {scorename : score.scoreFilename,
+                text: score.scoreText};
         socket.sendMessage("score", data);    
     });
     routeFromWebsocket(msg, "getscorelist", function(msg){
@@ -239,24 +244,36 @@ socket.setMessageReceivedCallback(function(msg){
 
     routeFromWebsocket(msg,"loadscore", function(msg){
         score.scoreFilename = msg;
-        score.openscore(function(scoreText){    
-            socket.sendMessage("score", scoreText);             //  trans.start();
+        score.openscore(function(scoreText){   
+            let data = {scorename : score.scoreFilename,
+                text: scoreText
+            };
+            console.log("sending score data", data);
+            socket.sendMessage("score", data);             //  trans.start();
         });        
     });
 
     routeFromWebsocket(msg,"savescore", function(msg){
-        let filename = msg.filename;
-        let scoreText = msg.scoreText;
+        console.log(msg);
+        let filename = msg.scorename;
+        let scoreText = msg.text;
         let dir = score.scoreDir;
         let fullpath = dir + "/"+filename;
 
-        fs.writeFile(fullpath, scoreText, err => {
-            if (err) {
-                console.error(err);
-            } else {
-                // file written successfully
-            }
-        });        
+        score.scoreFilename = filename;
+        score.scoreText = scoreText;
+
+        score.writescore(function(scoreobj){
+            console.log("score written");
+            score.openscore(function(scoreText){   
+                let data = {scorename : score.scoreFilename,
+                    text: scoreText
+                };
+                console.log("sending score data", data);
+                socket.sendMessage("score", data);             //  trans.start();
+            });              
+        });
+        
     });
 
     routeFromWebsocket(msg, "stop", function(msg){
@@ -278,13 +295,17 @@ socket.setMessageReceivedCallback(function(msg){
 
     // web page just loaded and is ready
     routeFromWebsocket(msg, "ready", function(msg){
-        data = score.scoreText;
+        let data = {scorename: score.scoreFilename, 
+                text: score.scoreText};
         socket.sendMessage("score", data);
         //send all the instruments if there are currently any running:
         orchestra.get_voicelist(function(voicelist){    
             socket.sendMessage("voicelist", voicelist);             //  trans.start();
         }); 
 
+        score.getScoreList(function(list){
+            socket.sendMessage("scorelist", list);
+        });
 
         orchestra.allLocalInstruments(function(instrument){
             let props = instrument.get_config_props();
