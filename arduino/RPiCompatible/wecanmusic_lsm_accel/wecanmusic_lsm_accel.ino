@@ -237,10 +237,13 @@ float elasticMinMaxScale = .005; // if true, then the min and max values used fo
 ////////////////////////////////////
 // SENSOR PROCESSING GLOBALS
 bool firstSense[6] = {false, false, false, false, false, false}; //MULTIVALUE UPDATE REQUIRED
-int ADCRaw[6] = {-1, -1, -1, -1, -1, -1};          //MULTIVALUE UPDATE REQUIRED. ALSO rename to sensorInputVal or something
+float ADCRaw[6] = {-1, -1, -1, -1, -1, -1};          //MULTIVALUE UPDATE REQUIRED. ALSO rename to sensorInputVal or something
 float changerate[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0}; //MULTIVALUE UPDATE REQUIRED
 float prevChangeVal[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0};  //MULTIVALUE UPDATE REQUIRED
 int prevChangeTime[6] = {-1, -1, -1, -1, -1, -1} ;     //MULTIVALUE UPDATE REQUIRED
+
+int peaks[6] = {0,0,0,0,0,0};
+int prevpeaks[6] = {0,0,0,0,0,0}; // track so we don't trigger a peak twice.
 // END SENSOR PROCESSING GLOBALS
 ////////////////////////////////////
 
@@ -354,7 +357,10 @@ int derive_pitch(int vindex, float val){   //MULTIVALUE UPDATE REQUIRED
 
 int derive_velocity(int vindex, int val){   //MULTIVALUE UPDATE REQUIRED
   int velocity = floor(127.0 * functioncurve(changerate[vindex], velocitycurve[vindex], velocitycurvelength[vindex]));  //MULTIVALUE UPDATE REQUIRED
+  // intergrate more clever ways of handling volume. peaks? bounce? etc? 
+//  velocity = velocity * abs(peaks[vindex]);
   return velocity;
+
 }
 
 

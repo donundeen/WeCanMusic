@@ -20,6 +20,10 @@
 #include <Adafruit_LIS3MDL.h>
 // END SENSOR INCLUDES  
 /////////////////////////////////////////
+#include <PeakDetection.h> // import peak/bounce detection lib
+
+PeakDetection peakDetections[6]; 
+
 
 ////////////////////////////////
 // SENSOR OBJECT CREATION
@@ -51,8 +55,8 @@ const int _ACCELZ = 6;
 const int _MAGX = 7;
 const int _MAGY = 8;
 const int _MAGZ = 9;
-//int AccelPitchVal[6] = {_GYROX, _GYROY, _GYROZ, _ACCELX, _ACCELY, _ACCELZ}; 
 int AccelPitchVal[6] = {_GYROX, _GYROY, _GYROZ, _ACCELX, _ACCELY, _ACCELZ}; 
+//int AccelPitchVal[6] = {_MAGX, _MAGY, _MAGZ, _ACCELX, _ACCELY, _ACCELZ}; 
 
 //////////////////////////////
 // MULTIVALUE SETUP
@@ -61,16 +65,24 @@ const int DEVICE_NUM_MULTIVALUES = 3;
 //////////////////////////////
 
 
+
 ////////////////////////////////////////////////////
 /////////////////////////////
 // DEVICE SPECIFIC FUNCTIONS
+void peak_setup(){
+  for(int vindex = 0; vindex < DEVICE_NUM_MULTIVALUES; vindex++){  
+//  peakDetections[vindex].begin(32, 4, 0.3);               // sets the lag, threshold and influence
+    peakDetections[vindex].begin(48, 3, 0.4);               // sets the lag, threshold and influence
+  }
+}
+
+
 void sensor_setup_device(){
 
   delay(1000);
   Serial.println("setup");
 
-  // for incoming UDP
-  //  SLIPSerial.begin(115200);
+ // peak_setup();
 
   pinMode(BUILTIN_LED, OUTPUT);
 
@@ -342,8 +354,11 @@ void sensor_loop(int vindex){
   Serial.println("read value");
   Serial.println(ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
 */
+
   firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED
 
+
+  //peak_loop(vindex);
   /*
   if(!no_network){
     sendOSCUDP(ADCRaw);
@@ -351,6 +366,31 @@ void sensor_loop(int vindex){
   */
   // should be 10
   //delay(10); // removing when using timeouts
+}
+
+void peak_loop(int vindex){
+  // peak detection
+  peakDetections[vindex].add(ADCRaw[vindex]);           // adds a new data point
+  peaks[vindex] = peakDetections[vindex].getPeak();  
+  /*        // 0, 1 or -1
+  if(peaks[vindex] == prevpeaks[vindex]){
+    prevpeaks[vindex] = peaks[vindex];
+    peaks[vindex] = 0;
+  }else{
+    prevpeaks[vindex] = peaks[vindex];
+  }
+  */
+  double filtered = peakDetections[vindex].getFilt();   // moving average
+//  if(peaks[vindex] != 0){
+    Serial.print(ADCRaw[vindex]);
+    Serial.print(",");
+    Serial.print(peaks[vindex]);                          // print peak status
+    Serial.print(",");
+    Serial.println(filtered);
+  //}
+//  ADCRaw[vindex] = ADCRaw[vindex] * (float)peak;
+//  Serial.println(ADCRaw[vindex]);
+
 }
 
 // END DEVICE SPECIFIC FUNCTIONS
