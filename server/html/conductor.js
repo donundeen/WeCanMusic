@@ -72,8 +72,11 @@ $(function() {
     }
 
     function message(address, data){
+
         let msg = {address : address,
             data: data};  
+
+        console.log("sending message ", msg);
         if(wsready){
         //    var buf = new Buffer.from(JSON.stringify(msg));
             ws.send(JSON.stringify(msg));
@@ -420,7 +423,6 @@ $(function() {
                 let address = "instrval";
                 let instrtype = $(instr).data("instrtype"); // local or udp
                 let value = $('.voice_display option:eq('+ui.value+')',instr).val();
-                console.log("sending " + value + instrtype);
                 let data = {id:id, 
                             instrtype: instrtype,
                             var: "midi_voice",
