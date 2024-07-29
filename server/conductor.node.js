@@ -39,7 +39,7 @@ let synthtype = config.synthtype; // tiny or fluidsynth or false
 let bad_tiny_voices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,65,66,67,68,69,71,72, 84, 90, 105,110,118,119,120,121,122,123,124,125,126,127];
 
 
-// midi hardward setup:
+// midi hardware setup:
 let use_midi_out = config.use_midi_out; // whether or not to send midi values through a hardware output, via easymidi
 let midi_hardware_engine = false;
 let midi_out_portname = config.midi_out_portname; // FLUID for on-baord synth, UM-ONE for the midi cable, or other things"; 
