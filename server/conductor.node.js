@@ -697,6 +697,8 @@ theory.setMidiListCallback(function(msg){
 });
 
 
+//////////////////////////////////////
+// setting things up and starting
 // set the bpm in the transport and the orchestra
 trans.updateBpm(bpm);
 orchestra.all_local_instrument_set_value("bpm", bpm);
@@ -704,16 +706,14 @@ orchestra.all_local_instrument_set_value("bpm", bpm);
 // set the name of the score
 score.scoreFilename = scorename;
 
-
 // start the socket server and the web server
 socket.startSocketServer();
 socket.startWebServer();
 
 // open the score file, 
-// and when it's open, run the score
-// or we're waiting for the web page to load up to start it?
+// and when it's open, run the score (if the config file says so)
 score.openscore(function(){    
     if(config.player_state == "play"){
         trans.start();
     }
-});//function(){trans.start();});
+});
