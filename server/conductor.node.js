@@ -47,6 +47,7 @@ if(use_midi_out){
     const midi = require('midi');
     const easymidi = require('easymidi');
     while(!midi_hardware_engine){
+        // if it can't find the named midi port, this part will just keep looping and hang the app
         let midi_outputs = easymidi.getOutputs();
         console.log(midi_outputs);
         let real_portname = false;
@@ -64,7 +65,8 @@ if(use_midi_out){
 }
 
 
-let bpm = 120;
+let bpm = 120; // this should eventually be configurable as a performance variable in the UI
+
 // defining some note lengths
 let scorename = config.scorename; //"simplescore.txt";
 let UDPSENDIP = config.UDPSENDIP; //"10.0.0.255";
@@ -110,7 +112,7 @@ synthDeviceVoices = {
 ////////////////// END CONFIG VARIABLES //////////////////////////
 
 
-
+/// SET UP OSC SERVER - SENDS AND RECIEVES MESSAGES FROM DEVICES
 var osc = require("osc");
 const { SocketServer } = require("./modules/socketserver.module.js");
 var udpPort = new osc.UDPPort({
@@ -123,6 +125,8 @@ var udpPort = new osc.UDPPort({
 udpPort.open();
 
 
+/////////////////////////////////////
+// SET UP THE MODULE OBJECTS
 // transport generates beat messges
 const Transport    = require("./modules/transport.module.js").Transport;
 // Score reader outputs messages at timed intervals
@@ -133,22 +137,13 @@ const TheoryEngine = require("./modules/theoryengine.module.js").TheoryEngine;
 const socketServer = require("./modules/socketserver.module.js").SocketServer;
 // orchestra controls local instruments that generate midi values, and /or actual tones
 const Orchestra    = require("./modules/orchestra.module.js");
-// jzz controls a local synthesizer and connected midi devices
-const JZZ = require('jzz');
 
 
 socketServer.WEBSOCKET_PORT  = WEBSOCKET_PORT;
 socketServer.WEBSERVER_PORT  = WEBSERVER_PORT;
 socketServer.default_webpage = default_webpage;
 
-if(synthtype == "fluidsynth"){
-    require('jzz-synth-fluid')(JZZ);
-}
-if(synthtype == "tiny"){
-    const WAAPI = require('node-web-audio-api');
-    require('jzz-synth-tiny')(JZZ);
-    global.window = { AudioContext: WAAPI.AudioContext };    
-}
+
 console.log("starting");
 
 // initialize the modules
@@ -164,47 +159,59 @@ score.setScoreDir(config.scoreDir);
 
 // intialize the midi synth (fluid or tiny)
 let synth = false;
-//let soundfont = './soundfonts/GeneralUserGS/GeneralUserGS.sf2'
-//let soundfont_instrument_list = './soundfonts/GeneralUserGS/GeneralUserGS.sf2'
+
+// soundfont file setup - needs to match what's in the fluidsynth startup script config
 let soundfont = config.soundfont;//'./soundfonts/141-Compleet bank synth.sf2'
 let soundfont_instrument_list = config.soundfont_instrument_list; //'./soundfonts/141-Compleet bank synth.sf2.voicelist.json'
-let fluidpath = config.fluidpath; //'/usr/bin/fluidsynth';
-let fluidargs = config.fluidargs; // ["a", "pulseaudio","-R", 1, "-C", 1];
-if(synthtype == "fluidsynth"){
-    synth = JZZ.synth.Fluid({ path: fluidpath, 
-                    sf: soundfont,
-                    args: fluidargs });
+
+////////////////////////////////////////////
+// SET UP SOFTWARE SYNTH 
+// (as opposed to sending midi to an external or internal synth)
+// - we've found that this approach exposes bugs in these software synths
+// so we don't use this. Intead we use easymidi to send MIDI data to
+// either external MIDI outs, or internal midi outs to the Fluidsynth
+if(synthtype){
+    // jzz controls a local synthesizer and connected midi devices
+    const JZZ = require('jzz');
+    if(synthtype == "fluidsynth"){
+        let fluidpath = config.fluidpath; //'/usr/bin/fluidsynth';
+        let fluidargs = config.fluidargs; // ["a", "pulseaudio","-R", 1, "-C", 1];
+        
+        require('jzz-synth-fluid')(JZZ);
+        synth = JZZ.synth.Fluid({ path: fluidpath, 
+            sf: soundfont,
+            args: fluidargs });            
+    }
+    if(synthtype == "tiny"){
+        const WAAPI = require('node-web-audio-api');
+        require('jzz-synth-tiny')(JZZ);
+        global.window = { AudioContext: WAAPI.AudioContext };   
+        synth = JZZ.synth.Tiny({quality:0, useReverb:0, voices:32});
+        let tiny_voices = [];
+        for(let i = 0; i<=127;i++){
+            if(!bad_tiny_voices.includes(i)){
+                tiny_voices.push(i);
+            }
+        }
+        synth.good_voices = tiny_voices;         
+    }
 }
+let global_notecount = 0; // used as a hack for the fluidsynth software synth
+
+
+//db.testSynth(synth, bluetooth);
+//////////////////////////////////////
+// SET UP ORCHESTRA
+orchestra.synth = synth;
+orchestra.synthDeviceVoices = synthDeviceVoices;
+orchestra.midi_hardware_engine = midi_hardware_engine;
+
 orchestra.soundfont_file = soundfont;
 orchestra.soundfont_voicelist_file = soundfont_instrument_list;
 
 
-
-if(synthtype == "tiny"){
-    synth = JZZ.synth.Tiny({quality:0, useReverb:0, voices:32});
-    let tiny_voices = [];
-    for(let i = 0; i<=127;i++){
-        if(!bad_tiny_voices.includes(i)){
-            tiny_voices.push(i);
-        }
-    }
-    synth.good_voices = tiny_voices;
-}                
-
-//db.testSynth(synth, bluetooth);
-
-orchestra.synth = synth;
-orchestra.synthDeviceVoices = synthDeviceVoices;
-
-orchestra.midi_hardware_engine = midi_hardware_engine;
-
-
-// just a var for testing.
-synth.foothing = "first";
-
-let global_notecount = 0;
-
-
+///////////////////////////////
+// SETUP TRANSPORT/SCORE CONNECTION
 // tell the score to do smomething when a beat happens
 // send a data over websockets with the transport info
 trans.setBeatCallback(function(beatcount, bar, beat, transport){
@@ -213,27 +220,42 @@ trans.setBeatCallback(function(beatcount, bar, beat, transport){
     socket.sendMessage("curbeat", data);    
 });
 
+
+////////////////////////////////////////
+// SCORE/THEORY CONNECTION
 // when score produces a messages, send it to the theory engine
 score.setMessageCallback(function(msg){
     theory.runSetter(msg, "fromscore");
 });
 
+
+
+////////////////////////////////////////
+// HANDLING MESSAGES FROM THE WEBPAGE
 // when the websocket gets a message, send it where it needs to go
 socket.setMessageReceivedCallback(function(msg){
+
+    // /chord message sets the chord for the theory engine to make a notelist
     let result = routeFromWebsocket(msg, "chord", function(msg){
         theory.runSetter(msg, "fromsocket");
     });
+
+    // getscore ask for the contents and name of the current score
     routeFromWebsocket(msg, "getscore", function(msg){     
         let data = {scorename : score.scoreFilename,
                 text: score.scoreText};
         socket.sendMessage("score", data);    
     });
+
+    // getscorelist asks for a list of all scores
     routeFromWebsocket(msg, "getscorelist", function(msg){
         score.getScoreList(function(list){
             socket.sendMessage("scorelist", list);    
         });
     });
 
+    // getvoicelist ask for a list of the
+    // bank:program and name of every instrument in the soundfont
     routeFromWebsocket(msg, "getvoicelist", function(msg){
         // get voicelist and send as socket.sendMessage("voicelist", voicelist);
         orchestra.soundfont_file = soundfont;
@@ -242,6 +264,8 @@ socket.setMessageReceivedCallback(function(msg){
         });        
     });
 
+    // loadscore updates the name and contents of the score objects current score,
+    // and sends the name and content back to the web page
     routeFromWebsocket(msg,"loadscore", function(msg){
         score.scoreFilename = msg;
         score.openscore(function(scoreText){   
@@ -253,6 +277,8 @@ socket.setMessageReceivedCallback(function(msg){
         });        
     });
 
+    // savescore sends a name and content to be saved on the server,
+    // and also sends that content back to the webpage
     routeFromWebsocket(msg,"savescore", function(msg){
         console.log(msg);
         let filename = msg.scorename;
@@ -276,37 +302,45 @@ socket.setMessageReceivedCallback(function(msg){
         
     });
 
+    // stop tells the transport to stop (stop and go to beginning)
     routeFromWebsocket(msg, "stop", function(msg){
         trans.stop();
     });
+
+    // play tells the transport to play from current point
     routeFromWebsocket(msg, "play", function(msg){
         trans.start();
     });
+
+    // pause tells the transport to stop playing but don't change position
     routeFromWebsocket(msg, "pause", function(msg){
         trans.pause();
     });
 
+    // set bpm changes the bpm. might not be fully implemented
     routeFromWebsocket(msg, "setbpm", function(msg){
-        let bpm = msg.bpm;
+        bpm = msg.bpm;
         trans.updateBpm(bpm);
         orchestra.all_instrument_set_value("bpm", bpm);
     });
-
 
     // web page just loaded and is ready
     routeFromWebsocket(msg, "ready", function(msg){
         let data = {scorename: score.scoreFilename, 
                 text: score.scoreText};
         socket.sendMessage("score", data);
-        //send all the instruments if there are currently any running:
+
+        // send the voicelist
         orchestra.get_voicelist(function(voicelist){    
             socket.sendMessage("voicelist", voicelist);             //  trans.start();
         }); 
 
+        // send the scorelist
         score.getScoreList(function(list){
             socket.sendMessage("scorelist", list);
         });
 
+        //send all the instruments if there are currently any running:
         orchestra.allLocalInstruments(function(instrument){
             let props = instrument.get_config_props();
             props.push({name: "instrtype", value: "local"});
@@ -321,7 +355,7 @@ socket.setMessageReceivedCallback(function(msg){
 
         if(db.active){
             // TESTING THINGS HERE
-            
+            // create some dummy instruments for UI testing. they won't play
             let instrument = orchestra.create_udp_instrument("thread1", "TEST");
             let props = instrument.get_config_props();
             props.push({name: "instrtype", value: "udp"});
@@ -337,30 +371,32 @@ socket.setMessageReceivedCallback(function(msg){
         }
 
     });
-    routeFromWebsocket(msg, "score", function(text){
-        score.scoreText = text;
-    });
 
+    // reset resets the synth and midi engine (not sure this has been tested)
     routeFromWebsocket(msg, "reset", function(text){
         console.log("~~~~~~~~~~~~~~~~`RESETTING EVERYTHING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~`");
         // reset a bunch of stuff.
         // the synth:
 //        synth.stop();
-        synth.close();
-        synth = false;
-        synth = JZZ.synth.Fluid({ path: fluidpath, 
-            sf: soundfont,
-            args: fluidargs });
-        orchestra.synth = synth;  
-        orchestra.all_udp_instrument_set_value("synth", synth);      
-        orchestra.all_local_instrument_set_value("synth", synth);      
+        if(synthtype == "FLUID"){
+            synth.close();
+            synth = false;
+            synth = JZZ.synth.Fluid({ path: fluidpath, 
+                sf: soundfont,
+                args: fluidargs });
+            orchestra.synth = synth;  
+            orchestra.all_udp_instrument_set_value("synth", synth);      
+            orchestra.all_local_instrument_set_value("synth", synth);      
+        }
         // midi_hardware_engine
-        orchestra.midi_hardware_engine = midi_hardware_engine;  
-        orchestra.all_udp_instrument_set_value("midi_hardware_engine", midi_hardware_engine);      
-        orchestra.all_local_instrument_set_value("midi_hardware_engine", midi_hardware_engine);             
-       // synth.start();
+        orchestra.midi_hardware_engine.send('reset'); 
     });
 
+
+    ////////////////////////////
+    // instrval gets a varname and a value, and updates the instrument's variables accordingly
+    // midimin, midimax, channel, voice (bank:program), etc
+    // one var can be "reset" which here resets the instruments calibration
     routeFromWebsocket(msg, "instrval", function(data){
         // send config messages to instruments
         // remind myself how the instruments like to get messages...
@@ -376,6 +412,7 @@ socket.setMessageReceivedCallback(function(msg){
             orchestra.udp_instrument_set_value(device_name, prop, value);
             console.log("set udp instr value");
             console.log(msg);
+            // sending UDP message to remote instruments
             let type = "s";
             if(typeof value == "number" ){
                 value = parseInt(value);
@@ -397,14 +434,15 @@ socket.setMessageReceivedCallback(function(msg){
     });
 });
 
-// handling message over OSC/UDP
+// handling messages over OSC/UDP
 udpPort.on("message", function (oscMsg) {
     // when an OSC messages comes in
     console.log("An OSC message just arrived!", oscMsg);
     // pass the message to the orchestra, which controls all the instruments
 //    orchestra.parseOSC(oscMsg.address, oscMsg.args);
 
-    // announcind instruments to create them in the orchestra
+    // announcing local instruments to create them in the orchestra
+    // NOTE: all localInstrument stuff is broken, needs updating
     routeFromOSC(oscMsg, "/announceLocalInstrument", function(oscMsg, address){
         let value = oscMsg.simpleValue;
         console.log(value);
@@ -418,6 +456,7 @@ udpPort.on("message", function (oscMsg) {
         socket.sendMessage("addinstrument", props);
         instrument.start();
     });
+
     // processing request to destroy and instruments
     routeFromOSC(oscMsg, "/removeLocalInstrument", function(oscMsg, address){
         let value = oscMsg.simpleValue;
@@ -428,7 +467,7 @@ udpPort.on("message", function (oscMsg) {
         orchestra.destroy_local_instrument(name);
     });
 
-    // announcind instruments to create them in the orchestra
+    // announcind UDP (arduino esp32 mostly) instruments to create them in the orchestra
     routeFromOSC(oscMsg, "/announceUDPInstrument", function(oscMsg, address){
         console.log("!!!!!!!!!!!!!!!!!!!! UDP INSTRUMENT !!!!!!!!!!!!!!!!!!!!!!");
         let value = oscMsg.simpleValue;
@@ -484,7 +523,7 @@ udpPort.on("message", function (oscMsg) {
         }        
     });
 
-    // processing request to destroy and instruments
+    // processing request to destroy UDP instruments
     routeFromOSC(oscMsg, "/removeUDPInstrument", function(oscMsg, address){
         let value = oscMsg.simpleValue;
         let name = value;
@@ -496,6 +535,8 @@ udpPort.on("message", function (oscMsg) {
 
 
     // setting config values for instruments
+    // for if a UDP message is sent to change settings on a localInstrument
+    // THIS NEEDS REVIEW
     let instrnames = orchestra.get_local_instrument_names()
     let localInstrMatch = "("+ instrnames.join("|")+")";
     if(localInstrMatch != "()"){
@@ -518,7 +559,8 @@ udpPort.on("message", function (oscMsg) {
 
 
 
-
+/////////////////////////////////////////
+// routing function for handling all OSC messages
 // oasMsg : osc message, with .address and .args address provided
 // route : string or regex to match the address
 // args: the message content
@@ -599,7 +641,9 @@ orchestra.makenote_callback = function(instr, pitch, velocity, duration){
         }
     }
     
-
+    // tell the webpage what devices played what note, so it can update the UI
+    // NOTE: this might eat up a lot of network, so we could take it out.
+    // it's just useful to show that an instrument is still active
     let dataObj = {device_name: device_name, 
                     pitch: pitch, 
                     velocity: velocity,
