@@ -12,6 +12,10 @@ let Transport = {
     N8: false,
     beatcallback: false,
 
+    configProps : [
+        {name:"bpm", type:"i"}
+    ],
+
     bpmToMS(bpm){
         return 60000 / bpm;
     },

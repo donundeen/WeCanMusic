@@ -7,6 +7,10 @@ let ScoreReader = {
     scoreText : false,
     messageCallback: false,
 
+    configProps : [
+        {name:"scoreFilename", type:"s"}
+    ],
+
     setMessageCallback(callback){
         this.messageCallback = callback;
     },
