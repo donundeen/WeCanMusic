@@ -12,9 +12,21 @@ let Transport = {
     N8: false,
     beatcallback: false,
 
-    configProps : [
+    performanceProps : [
         {name:"bpm", type:"i"}
     ],
+
+    performanceUpdateCallback: false, // callback that gets called when a performance data is updated
+
+    gatherPerformanceData(){
+        // load performanceProps values into a JSON
+    },
+
+    loadPerformanceData(perfData){
+        // extract performanceProps data, 
+        // set internally, 
+        // and do any announcing you need to do
+    }
 
     bpmToMS(bpm){
         return 60000 / bpm;

@@ -246,6 +246,21 @@ class Orchestra{
         this.all_udp_instrument_set_value("notelist", notelist);
 
     }
+
+
+    performanceUpdateCallback=  false; // callback that gets called when a performance data is updated
+
+    gatherPerformanceData(){
+        // load instruments' configProps values into a JSON
+    }
+
+    loadPerformanceData(perfData){
+        // extract instrument configProps data, 
+        // set instruments values internally, 
+        // and do any announcing you need to do
+    }
+
+
 }
 
 module.exports = Orchestra

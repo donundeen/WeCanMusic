@@ -7,9 +7,21 @@ let ScoreReader = {
     scoreText : false,
     messageCallback: false,
 
-    configProps : [
+    performanceProps : [
         {name:"scoreFilename", type:"s"}
     ],
+
+    performanceUpdateCallback: false, // callback that gets called when a performance data is updated
+
+    gatherPerformanceData(){
+        // load performanceProps values into a JSON
+    },
+
+    loadPerformanceData(perfData){
+        // extract performanceProps data, 
+        // set internally, 
+        // and do any announcing you need to do
+    },
 
     setMessageCallback(callback){
         this.messageCallback = callback;

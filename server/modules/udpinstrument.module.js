@@ -16,8 +16,6 @@ const UDPInstrument = class{
     changerate = false;
     prevChangeVal = false;
 
-
-
     // note lists
     _notelist = [];
     workinglist = [];
