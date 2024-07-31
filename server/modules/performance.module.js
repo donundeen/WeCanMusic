@@ -36,13 +36,13 @@ and handle loading thier config JSON
 
 */
 
-class Performance {
-    orchestra = false; // the orchestra object
-    score = false; // the score object
-    transport = false; // the transport object
+let Performance = {
+    orchestra : false, // the orchestra object
+    score : false, // the score object
+    transport : false, // the transport object
 
-    performanceDir = false;
-    performanceFile = false;
+    performanceDir : false,
+    performanceFile : false,
 
 
 
@@ -76,7 +76,7 @@ class Performance {
         });
 
         // save the JSON
-    }
+    },
 
     loadPerformance(name){
         // load the performance file and extract the data
@@ -103,8 +103,9 @@ class Performance {
                 callback(self.scoreText);
             }
         });
-    }
+    },
 
 }
 
-module.exports = Performance
+
+exports.Performance = Performance

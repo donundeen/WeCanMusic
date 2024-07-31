@@ -114,7 +114,6 @@ synthDeviceVoices = {
 
 /// SET UP OSC SERVER - SENDS AND RECIEVES MESSAGES FROM DEVICES
 var osc = require("osc");
-const { SocketServer } = require("./modules/socketserver.module.js");
 var udpPort = new osc.UDPPort({
     localAddress: "0.0.0.0",
     localPort: UDPLISTENPORT, // this port for listening
@@ -134,14 +133,16 @@ const ScoreReader  = require("./modules/scorereader.module.js").ScoreReader;
 // thoeryEngine generates lists of notes from theory terms (eg A MINORPENTATONIC)
 const TheoryEngine = require("./modules/theoryengine.module.js").TheoryEngine;
 // socketServer is the web page that gets control messages
-const socketServer = require("./modules/socketserver.module.js").SocketServer;
+const SocketServer = require("./modules/socketserver.module.js").SocketServer;
+// performance saves and restores settings that might change per performance, song, etc
+const Performance = require("./modules/performance.module.js").Performance;
 // orchestra controls local instruments that generate midi values, and /or actual tones
 const Orchestra    = require("./modules/orchestra.module.js");
 
 
-socketServer.WEBSOCKET_PORT  = WEBSOCKET_PORT;
-socketServer.WEBSERVER_PORT  = WEBSERVER_PORT;
-socketServer.default_webpage = default_webpage;
+SocketServer.WEBSOCKET_PORT  = WEBSOCKET_PORT;
+SocketServer.WEBSERVER_PORT  = WEBSERVER_PORT;
+SocketServer.default_webpage = default_webpage;
 
 
 console.log("starting");
@@ -151,7 +152,8 @@ orchestra = new Orchestra();
 trans  = Object.create(Transport);
 score  = Object.create(ScoreReader);
 theory = Object.create(TheoryEngine);
-socket = Object.create(socketServer);
+socket = Object.create(SocketServer);
+performance = Object.create(Performance);
 
 // config score obect
 score.setScoreDir(config.scoreDir);
