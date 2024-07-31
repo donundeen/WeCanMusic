@@ -159,6 +159,35 @@ performance = Object.create(Performance);
 score.setScoreDir(config.scoreDir);
 
 
+// set up performance object with links to other objeccts
+performance.score = score;
+performance.transport = trans;
+performance.orchestra = orchestra;
+// set up listeners/callbacks for score, transport, and orchestra
+score.performanceUpdateCallback(function(scoreobj){
+    // send messages to webpage
+
+});
+score.performancePropUpdateCallback(function(scoreobj, propname, proptype, propvalue ){
+
+});
+transport.performanceUpdateCallback(function(transportobj){
+    //send message to webpage?
+    //restart transport? not sure....
+});
+transport.performancePropUpdateCallback(function(transportobj, propname, proptype, propvalue ){
+    
+});
+orchestra.performanceUpdateCallback(function(instrument){
+
+});
+orchestra.performancePropUpdateCallback(function(instrument, propname, proptype, propvalue ){
+    // send deivce name and prop and value to web page
+    // send prop and value over OSC to the device
+});
+
+
+
 // intialize the midi synth (fluid or tiny)
 let synth = false;
 

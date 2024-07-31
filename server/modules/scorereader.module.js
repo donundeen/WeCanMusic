@@ -36,7 +36,7 @@ let ScoreReader = {
         // opent the score 
         this.openscore();
         if(this.performanceUpdateCallback){
-            this.performanceUpdateCallback();
+            this.performanceUpdateCallback(this);
         }
     },
 
