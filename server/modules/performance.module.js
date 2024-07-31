@@ -40,18 +40,40 @@ class Performance {
     orchestra = false; // the orchestra object
     score = false; // the score object
     transport = false; // the transport object
-    savePerformance(name){
+
+    performanceDir = false;
+    performanceFile = false;
+
+
+
+    savePerformance(name, callback){
         //  use performanceProps in score and transport,
         // and configProps in the orchestra's udp instruments,
         // to get all the savable values
-        let scoreData = false;
-        let transportData = false;
-        let orchestraData = false;
+        // each of these objects has functions getPerformanceData and setPerformanceData
+        this.performanceFile = name;
+        
+        let scoreData = score.getPerformanceData();
+        let transportData = transport.getPerformanceData();
+        let orchestraData = orchestrea.getPerformanceData();
         let perfData = {
             score: scoreData,
             transport: transportData,
             orchestra: orchestraData
         }
+
+        let fullpath = this.performanceDir + "/" + this.performanceFile;
+        console.log("writing perf file", this.performanceDir, this.performanceFile, perfData, fullpath);
+        fs.writeFile(fullpath, JSON.stringify(perfData, null, "  "), err => {
+            if (err) {
+                console.error(err);
+            } else {
+                // file written successfully
+                if(callback){
+                    callback(this);
+                }
+            }
+        });
 
         // save the JSON
     }
@@ -60,15 +82,29 @@ class Performance {
         // load the performance file and extract the data
         // load the json
         perfData = false; // load it here
-        scoreData = perfData.score;
-        transportData = perfData.transport;
-        orchestraData = perfData.orchestra;
-        
-        // send the data to the respective objects, 
-        // they should know what to do with it.
+        let self = this;
+        fs.readFile(self.performanceDir + "/" + self.performanceFile, 'utf8', (err, perfData) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+
+            scoreData     = perfData.score;
+            transportData = perfData.transport;
+            orchestraData = perfData.orchestra;
+            // send the data to the respective objects, 
+            // they should know what to do with it.
+
+            this.score.loadPerformanceData(scoreData);
+            this.transport.loadPerformanceData(transportData);
+            this.orchestra.loadPerformanceData(orchestraData);
+
+            if(callback){
+                callback(self.scoreText);
+            }
+        });
     }
 
 }
-
 
 module.exports = Performance

@@ -76,6 +76,41 @@ class Orchestra{
         this.all_udp_instrument_set_value("midi_hardware_engine", this._midi_hardware_engine);
     }
 
+
+    // performance data is for the instruments, but managed through the orchestra
+    _performanceUpdateCallback = false; // these callbacks cshould be passed to the instruments
+    set performanceUpdateCallback(callback){
+        all_udp_instrument_set_value("performanceUpdateCallback", callback);
+    }
+    _performancePropUpdateCallback =  false;
+    set performancePropUpdateCallback(callback){
+        all_udp_instrument_set_value("performancePropUpdateCallback", callback);
+    }
+
+    getPerformanceData(){
+        // gather the data in performanceProps and return it
+        let perfData = {};
+        for (let key in this.udpInstruments) {
+            let instrData = this.udpInstruments[key].getPerformanceData();
+            perfData[this.udpInstruments[key]] = instrData;
+        }         
+
+        return perfData;
+    }
+
+    loadPerformanceData(perfData){
+        // extract performanceProps data, 
+        // set internally, 
+        // and do any announcing you need to do
+        for (let key in this.perfData) {
+            let instrData = this.perfData[key];
+            if(this.udpInstruments[key]){
+                this.udpInstruments[key].loadPerformanceData(instrData);
+            }
+        }
+    } 
+
+
     getChannel(){
         if(this.channelPool.length == 0){
             this.channelPool = this.allChannels;

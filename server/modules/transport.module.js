@@ -15,18 +15,33 @@ let Transport = {
     performanceProps : [
         {name:"bpm", type:"i"}
     ],
-
     performanceUpdateCallback: false, // callback that gets called when a performance data is updated
+    performancePropUpdateCallback: false,
 
-    gatherPerformanceData(){
-        // load performanceProps values into a JSON
+    getPerformanceData(){
+        // gather the data in performanceProps and return it
+        let perfData = {};
+        for(let i = 0; i < this.performanceProps.length; i++){
+            perfData[this.performanceProps[i].name] = this[this.performanceProps[i].name];
+        }
+        return perfData;
     },
 
     loadPerformanceData(perfData){
         // extract performanceProps data, 
         // set internally, 
         // and do any announcing you need to do
-    }
+        for(let i = 0; i < this.performanceProps.length; i++){
+            this[this.performanceProps[i].name] = perfData[this.performanceProps[i].name];
+            if(this.performancePropUpdateCallback){
+                this.performancePropUpdateCallback(this, this.performanceProps[i].name, this.performanceProps[i].type, this[this.performanceProps[i].name] )
+            }             
+        }
+        this.updateBpm(this.bpm);
+        if(this.performanceUpdateCallback){
+            this.performanceUpdateCallback();
+        }
+    },
 
     bpmToMS(bpm){
         return 60000 / bpm;

@@ -107,6 +107,33 @@ const UDPInstrument = class{
         }
     }
 
+
+    performanceUpdateCallback = false; // callback that gets called when a performance data is updated
+    performancePropUpdateCallback = false;
+    getPerformanceData(){
+        // gather the data in performanceProps and return it
+        let perfData = {};
+        for(let i = 0; i < this.configProps.length; i++){
+            perfData[this.configProps[i].name] = this[this.configProps[i].name];
+        }
+        return perfData;
+    }
+
+    loadPerformanceData(perfData){
+        // extract performanceProps data, 
+        // set internally, 
+        // and do any announcing you need to do
+        for(let i = 0; i < this.performanceProps.length; i++){
+            this[this.configProps[i].name] = perfData[this.configProps[i].name];
+            if(this.performancePropUpdateCallback){
+                this.performancePropUpdateCallback(this, this.performanceProps[i].name, this.performanceProps[i].type, this[this.performanceProps[i].name] )
+            }            
+        }
+        if(this.performanceUpdateCallback){
+            this.performanceUpdateCallback();
+        }
+    } 
+
     start(){
         // start the instrument running
         this.running = true;
