@@ -158,8 +158,8 @@ performance = Object.create(Performance);
 // config score obect
 score.setScoreDir(config.scoreDir);
 
-
 // set up performance object with links to other objeccts
+performance.performanceDir = config.performanceDir;
 performance.score = score;
 performance.transport = trans;
 performance.orchestra = orchestra;
