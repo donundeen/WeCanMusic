@@ -164,27 +164,36 @@ performance.score = score;
 performance.transport = trans;
 performance.orchestra = orchestra;
 // set up listeners/callbacks for score, transport, and orchestra
-score.performanceUpdateCallback(function(scoreobj){
+score.performanceUpdateCallbackm = function(scoreobj){
     // send messages to webpage
+    let data = {scorename : scoreobj.scoreFilename,
+        text: scoreobj.scoreText
+    };
+    console.log("sending score data for new performance", data);
+    socket.sendMessage("score", data);     
 
-});
-score.performancePropUpdateCallback(function(scoreobj, propname, proptype, propvalue ){
+};
+score.performancePropUpdateCallback = function(scoreobj, propname, proptype, propvalue ){
 
-});
-transport.performanceUpdateCallback(function(transportobj){
+};
+transport.performanceUpdateCallback = function(transportobj){
     //send message to webpage?
     //restart transport? not sure....
-});
-transport.performancePropUpdateCallback(function(transportobj, propname, proptype, propvalue ){
+};
+transport.performancePropUpdateCallback =function(transportobj, propname, proptype, propvalue ){
     
-});
-orchestra.performanceUpdateCallback(function(instrument){
+};
+orchestra.performanceUpdateCallback = function(instrument, perfData){
+    // send deivce name and newData to web page (all instrument data at once)
+    console.log("sending perfData");
+    console.log(perfData);
+    socket.sendMessage("updateInstrument", perfData);
 
-});
-orchestra.performancePropUpdateCallback(function(instrument, propname, proptype, propvalue ){
-    // send deivce name and prop and value to web page
-    // send prop and value over OSC to the device
-});
+
+};
+orchestra.performancePropUpdateCallback = function(instrument, propname, proptype, propvalue ){
+    // send prop and value over OSC to the device, one value at a times
+};
 
 
 
@@ -583,7 +592,7 @@ udpPort.on("message", function (oscMsg) {
             }
             updateobj= {"device_name": instrname};
             updateobj[propname] = value;
-            socket.sendMessage("updateinstrument",updateobj);
+            socket.sendMessage("updateLocalInstrument",updateobj);
         });
     }
 });

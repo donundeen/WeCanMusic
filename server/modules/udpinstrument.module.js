@@ -130,7 +130,7 @@ const UDPInstrument = class{
             }            
         }
         if(this.performanceUpdateCallback){
-            this.performanceUpdateCallback();
+            this.performanceUpdateCallback(this, perfData);
         }
     } 
 

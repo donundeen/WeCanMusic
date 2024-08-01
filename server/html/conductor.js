@@ -60,6 +60,8 @@ $(function() {
             console.log("adding instrument");
             instrumentAnnounced(msg);
         }
+
+        //     // I don't think this is used. It doesn't make any sense..
         if(msg.address =="updateinstrument"){
             updateInstrumentData(msg.data.device_name, msg.data);
         }
@@ -497,14 +499,12 @@ $(function() {
     }
 
 
+
     function updateInstrumentData(id, data_obj){
         console.log("updateInstrument");
         console.log(data_obj);
         let instr = $("#"+id);
-        console.log(data_obj.sensor_value);
-        if(data_obj.sensor_value){
-            $( ".sensor_val span",instr ).text(data_obj.sensor_value);
-        }
+        
     }
     function updateInstrumentMakenote(id, data_obj){
         console.log("updateMakenote");
