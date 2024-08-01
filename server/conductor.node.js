@@ -176,11 +176,11 @@ score.performanceUpdateCallbackm = function(scoreobj){
 score.performancePropUpdateCallback = function(scoreobj, propname, proptype, propvalue ){
 
 };
-transport.performanceUpdateCallback = function(transportobj){
+trans.performanceUpdateCallback = function(transportobj){
     //send message to webpage?
     //restart transport? not sure....
 };
-transport.performancePropUpdateCallback =function(transportobj, propname, proptype, propvalue ){
+trans.performancePropUpdateCallback =function(transportobj, propname, proptype, propvalue ){
     
 };
 orchestra.performanceUpdateCallback = function(instrument, perfData){
@@ -294,6 +294,13 @@ socket.setMessageReceivedCallback(function(msg){
         });
     });
 
+    // getscorelist asks for a list of all scores
+    routeFromWebsocket(msg, "getperformancelist", function(msg){
+        performance.getPerformanceList(function(list){
+            socket.sendMessage("performancelist", list);    
+        });
+    });    
+
     // getvoicelist ask for a list of the
     // bank:program and name of every instrument in the soundfont
     routeFromWebsocket(msg, "getvoicelist", function(msg){
@@ -303,6 +310,29 @@ socket.setMessageReceivedCallback(function(msg){
             socket.sendMessage("voicelist", voicelist);             //  trans.start();
         });        
     });
+
+
+    // loadscore updates the name and contents of the score objects current score,
+    // and sends the name and content back to the web page
+    routeFromWebsocket(msg,"loadperformance", function(msg){
+        performance.performanceFile = msg;
+        performance.loadPerformance(msg);
+    });
+
+    // savescore sends a name and content to be saved on the server,
+    // and also sends that content back to the webpage
+    routeFromWebsocket(msg,"saveperformance", function(msg){
+        console.log(msg);
+        let filename = msg.performancename;
+
+        performance.performanceFile = filename;
+
+        performance.savePerformance(filename, function(performance ){
+            console.log("performance written");
+        });
+        
+    });
+
 
     // loadscore updates the name and contents of the score objects current score,
     // and sends the name and content back to the web page

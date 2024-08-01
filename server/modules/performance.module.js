@@ -36,6 +36,9 @@ and handle loading thier config JSON
 
 */
 
+const fs = require('node:fs');
+
+
 let Performance = {
     orchestra : false, // the orchestra object
     score : false, // the score object
@@ -53,9 +56,9 @@ let Performance = {
         // each of these objects has functions getPerformanceData and setPerformanceData
         this.performanceFile = name;
         
-        let scoreData = score.getPerformanceData();
-        let transportData = transport.getPerformanceData();
-        let orchestraData = orchestrea.getPerformanceData();
+        let scoreData = this.score.getPerformanceData();
+        let transportData = this.transport.getPerformanceData();
+        let orchestraData = this.orchestra.getPerformanceData();
         let perfData = {
             score: scoreData,
             transport: transportData,
@@ -81,6 +84,7 @@ let Performance = {
     loadPerformance(name){
         // load the performance file and extract the data
         // load the json
+        this.performanceFile = name;
         perfData = false; // load it here
         let self = this;
         fs.readFile(self.performanceDir + "/" + self.performanceFile, 'utf8', (err, perfData) => {
@@ -104,6 +108,14 @@ let Performance = {
             }
         });
     },
+
+    getPerformanceList(callback){
+        // get list of all files in dir
+        fs.readdir(this.performanceDir, (err, files) => {
+            callback(files);
+        });        
+    }
+
 
 }
 

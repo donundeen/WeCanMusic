@@ -3,6 +3,8 @@ const WEBSERVER_PORT = 8002;
 let voicelist = [[1,79,"nodata"],[0,78,"nodata"]];
 let scorelist = ["simplescore.txt"];
 let curscore = "simplescore.txt";
+let performancelist = [];
+let curperformance = "";
 
 $(function() {
 
@@ -53,6 +55,7 @@ $(function() {
         if(msg.address == "score"){
             updateScore(msg.data);
         }
+
         if(msg.address == "curbeat"){
             updateBeat(msg.data[0],msg.data[1],msg.data[2]);
         }
@@ -73,6 +76,10 @@ $(function() {
         }
         if(msg.address == "scorelist"){
             updateScoreList(msg.data);
+        }
+
+        if(msg.address == "performancelist"){
+            updatePerformanceList(msg.data);
         }
 
         // add message about adding a new instrument here
@@ -129,6 +136,12 @@ $(function() {
         buildScoreListOptions();
     }
 
+    function updatePerformanceList(rperformancelist){
+        console.log("got performancelist");
+        performancelist = rperformancelist;
+        buildPerformanceListOptions();
+    }    
+
     function updateBeat(position, bar, beat){
         $(".position").text(bar+":"+beat);
         let selector = ".line[data-position='"+position+"']";
@@ -154,9 +167,20 @@ $(function() {
         message("savescore", msg);
     }
 
-
     $(".sendscore").click(function(){
         sendScore();
+    });
+
+    function sendPerformance(){
+        curperformance = $(".performancenametext").val();
+        console.log("sending curperformance ", curperformance);
+        let msg = {performancename: curperformance
+        }
+        message("saveperformance", msg);
+    }
+
+    $(".sendperformance").click(function(){
+        sendPerformance();
     });
 
 
@@ -185,11 +209,21 @@ $(function() {
         message("pause",1);
     });
 
+
+    $(".getperformance").click(function(){
+        let newperformance = $(".performanceselect").val();
+        console.log("selecting   " + newperformance);
+        message("loadperformance", newperformance);        
+    });
+
+
     $(".getscore").click(function(){
         let newscore = $(".scoreselect").val();
         console.log("selecting   " + newscore);
         message("loadscore", newscore);        
     });
+
+
 
     $(".score").on('keyup',function(e) {
         if(e.which == 13) {
@@ -504,7 +538,7 @@ $(function() {
         console.log("updateInstrument");
         console.log(data_obj);
         let instr = $("#"+id);
-        
+
     }
     function updateInstrumentMakenote(id, data_obj){
         console.log("updateMakenote");
@@ -573,6 +607,29 @@ $(function() {
             $(".scorenametext").val(curscore);
             console.log("selecting   " + newscore);
             message("loadscore", newscore);
+        });
+    }
+
+
+    function buildPerformanceListOptions(){
+        $(".performanceselect").empty();
+        $(".performanceselect").append('<option value="">SELECT PERFORMANCE</option>');
+
+        for(let i = 0; i < performancelist.length; i++){
+            let selected = "";
+            if(performancelist[i] == curperformance){
+                selected = "SELECTED"
+            }
+            let elem = $("<option value='"+performancelist[i]+"' "+selected+">"+performancelist[i]+"</option>");
+            $(".performanceselect").append(elem);
+        }
+
+        $(".performanceselect").change(function(event, ui){
+            let newperformance = $(event.target).val();
+            curperformance = newperformance;
+            $(".performancenametext").val(curperformance);
+            console.log("selecting   " + newperformance);
+            message("loadperformance", newperformance);
         });
     }
 

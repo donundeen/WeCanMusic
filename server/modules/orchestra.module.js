@@ -80,11 +80,11 @@ class Orchestra{
     // performance data is for the instruments, but managed through the orchestra
     _performanceUpdateCallback = false; // these callbacks cshould be passed to the instruments
     set performanceUpdateCallback(callback){
-        all_udp_instrument_set_value("performanceUpdateCallback", callback);
+        this.all_udp_instrument_set_value("performanceUpdateCallback", callback);
     }
     _performancePropUpdateCallback =  false;
     set performancePropUpdateCallback(callback){
-        all_udp_instrument_set_value("performancePropUpdateCallback", callback);
+        this.all_udp_instrument_set_value("performancePropUpdateCallback", callback);
     }
 
     getPerformanceData(){
