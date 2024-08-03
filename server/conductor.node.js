@@ -164,7 +164,7 @@ performance.score = score;
 performance.transport = trans;
 performance.orchestra = orchestra;
 // set up listeners/callbacks for score, transport, and orchestra
-score.performanceUpdateCallbackm = function(scoreobj){
+score.performanceUpdateCallback = function(scoreobj){
     // send messages to webpage
     let data = {scorename : scoreobj.scoreFilename,
         text: scoreobj.scoreText
@@ -174,24 +174,31 @@ score.performanceUpdateCallbackm = function(scoreobj){
 
 };
 score.performancePropUpdateCallback = function(scoreobj, propname, proptype, propvalue ){
+    console.log("score performancePropUpdateCallback")
 
 };
 trans.performanceUpdateCallback = function(transportobj){
+    console.log("trans.performanceUpdateCallback")
+
     //send message to webpage?
     //restart transport? not sure....
 };
 trans.performancePropUpdateCallback =function(transportobj, propname, proptype, propvalue ){
-    
+    console.log("trans.performancePropUpdateCallback") 
 };
 orchestra.performanceUpdateCallback = function(instrument, perfData){
+    console.log("instrument.performanceUpdateCallback")
+
     // send deivce name and newData to web page (all instrument data at once)
     console.log("sending perfData");
     console.log(perfData);
-    socket.sendMessage("updateInstrument", perfData);
+    socket.sendMessage("updateinstrument", perfData);
 
 
 };
 orchestra.performancePropUpdateCallback = function(instrument, propname, proptype, propvalue ){
+    console.log("instrument.performancePropUpdateCallback")
+
     // send prop and value over OSC to the device, one value at a times
 };
 
@@ -319,8 +326,6 @@ socket.setMessageReceivedCallback(function(msg){
         performance.loadPerformance(msg);
     });
 
-    // savescore sends a name and content to be saved on the server,
-    // and also sends that content back to the webpage
     routeFromWebsocket(msg,"saveperformance", function(msg){
         console.log(msg);
         let filename = msg.performancename;
@@ -329,6 +334,9 @@ socket.setMessageReceivedCallback(function(msg){
 
         performance.savePerformance(filename, function(performance ){
             console.log("performance written");
+            performance.getPerformanceList(function(list){
+                socket.sendMessage("performancelist", list);    
+            });            
         });
         
     });
@@ -367,7 +375,11 @@ socket.setMessageReceivedCallback(function(msg){
                 };
                 console.log("sending score data", data);
                 socket.sendMessage("score", data);             //  trans.start();
-            });              
+            });
+            // send the scorelist
+            score.getScoreList(function(list){
+                socket.sendMessage("scorelist", list);
+            });            
         });
         
     });
@@ -400,6 +412,7 @@ socket.setMessageReceivedCallback(function(msg){
                 text: score.scoreText};
         socket.sendMessage("score", data);
 
+        /* I think the web page should request this data instead of sending it unbidden
         // send the voicelist
         orchestra.get_voicelist(function(voicelist){    
             socket.sendMessage("voicelist", voicelist);             //  trans.start();
@@ -409,6 +422,7 @@ socket.setMessageReceivedCallback(function(msg){
         score.getScoreList(function(list){
             socket.sendMessage("scorelist", list);
         });
+        */
 
         //send all the instruments if there are currently any running:
         orchestra.allLocalInstruments(function(instrument){

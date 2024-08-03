@@ -81,7 +81,7 @@ let Performance = {
         // save the JSON
     },
 
-    loadPerformance(name){
+    loadPerformance(name, callback){
         // load the performance file and extract the data
         // load the json
         this.performanceFile = name;
@@ -92,19 +92,20 @@ let Performance = {
                 console.error(err);
                 return;
             }
-
-            scoreData     = perfData.score;
+            perfData = JSON.parse(perfData);
+            scoreData     = perfData["score"];
             transportData = perfData.transport;
             orchestraData = perfData.orchestra;
             // send the data to the respective objects, 
             // they should know what to do with it.
-
+            console.log("perfomance loadPerformanceDAta");
             this.score.loadPerformanceData(scoreData);
             this.transport.loadPerformanceData(transportData);
+
             this.orchestra.loadPerformanceData(orchestraData);
 
             if(callback){
-                callback(self.scoreText);
+                callback(perfData);
             }
         });
     },

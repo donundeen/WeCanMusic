@@ -111,7 +111,7 @@ const UDPInstrument = class{
     performanceUpdateCallback = false; // callback that gets called when a performance data is updated
     performancePropUpdateCallback = false;
     getPerformanceData(){
-        // gather the data in performanceProps and return it
+        // gather the data in configProps and return it
         let perfData = {};
         for(let i = 0; i < this.configProps.length; i++){
             perfData[this.configProps[i].name] = this[this.configProps[i].name];
@@ -120,16 +120,21 @@ const UDPInstrument = class{
     }
 
     loadPerformanceData(perfData){
-        // extract performanceProps data, 
+        console.log("instrument loadPerformanceData");
+        // extract configProps data, 
         // set internally, 
         // and do any announcing you need to do
-        for(let i = 0; i < this.performanceProps.length; i++){
+        for(let i = 0; i < this.configProps.length; i++){
+//            console.log("Setting " , this.configProps[i].name,  perfData[this.configProps[i].name]);
             this[this.configProps[i].name] = perfData[this.configProps[i].name];
             if(this.performancePropUpdateCallback){
-                this.performancePropUpdateCallback(this, this.performanceProps[i].name, this.performanceProps[i].type, this[this.performanceProps[i].name] )
+                this.performancePropUpdateCallback(this, this.configProps[i].name, this.configProps[i].type, this[this.configProps[i].name] )
             }            
         }
+        console.log("calling insrt performanceUpdateCallback?", this.performanceUpdateCallback);
+
         if(this.performanceUpdateCallback){
+            console.log("calling insrt performanceUpdateCallback!")
             this.performanceUpdateCallback(this, perfData);
         }
     } 
@@ -231,7 +236,7 @@ const UDPInstrument = class{
             value = value[0].value;
         }else{
             console.log("!!!!!!!!!!!!!! ");
-            console.log("don't know what value is " + Array.isArray(value) + " : " + value.length);
+            console.log("don't know what value is " , value,  Array.isArray(value) + " : " + value.length);
         }
         console.log(value);
         console.log("********************");

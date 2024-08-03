@@ -34,6 +34,8 @@ $(function() {
         wsready = true;
         console.log("opened " + ws.readyState);
         message("getvoicelist",1);        
+        message("getperformancelist",1);
+        message("getscorelist",1);
         message("ready", "READY NOW")
     };
 
@@ -100,6 +102,7 @@ $(function() {
     }
 
     function updateScore(data){
+        console.log("updating score");
         scoreText = data.text;
         curscore = data.scorename;
         $(".scorenametext").val(curscore);
@@ -120,7 +123,6 @@ $(function() {
                 $(elem).attr("data-position", curpos);
             }
         }
-        message("getscorelist",1);
     }
 
     function updateVoicelist(rvoicelist){
@@ -535,11 +537,29 @@ $(function() {
 
 
     function updateInstrumentData(id, data_obj){
-        console.log("updateInstrument");
+        console.log("updateInstrumentData");
         console.log(data_obj);
         let instr = $("#"+id);
-
+        if($(instr).length){
+            if (data_obj.midi_channel) {    
+                $( ".midi-channel",instr ).slider("value", data_obj.midi_channel);
+                $( ".channel_display",instr ).val(data_obj.midi_channel);
+            }
+            if (data_obj.midi_voice) {    
+                console.log(data_obj.midi_voice);
+                $('.voice_display option[value="'+data_obj.midi_voice+'"]', instr).prop('selected', true);
+                let selectedIndex = $('.voice_display', instr ).prop('selectedIndex');
+                console.log(selectedIndex);
+                $( ".midi-voice",instr ).slider("option", "value", selectedIndex);
+            }
+            if (data_obj.midimin && data_obj.midimax) {    
+                $( ".range_display",instr ).val(  data_obj.midimin + " - " + data_obj.midimax );
+                $( ".midi-range",instr ).slider({values:[data_obj.midimin , data_obj.midimax]});
+            }
+        }
     }
+
+
     function updateInstrumentMakenote(id, data_obj){
         console.log("updateMakenote");
         console.log(data_obj);

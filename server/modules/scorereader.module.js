@@ -27,6 +27,8 @@ let ScoreReader = {
         // extract performanceProps data, 
         // set internally, 
         // and do any announcing you need to do
+        console.log("scorereader loadPErformanceDAta");
+        console.log(perfData);
         for(let i = 0; i < this.performanceProps.length; i++){
             this[this.performanceProps[i].name] = perfData[this.performanceProps[i].name];
             if(this.performancePropUpdateCallback){

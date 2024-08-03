@@ -80,10 +80,15 @@ class Orchestra{
     // performance data is for the instruments, but managed through the orchestra
     _performanceUpdateCallback = false; // these callbacks cshould be passed to the instruments
     set performanceUpdateCallback(callback){
+        console.log("orhestra set performanceUpdateCallback");
+        this._performanceUpdateCallback = callback;
         this.all_udp_instrument_set_value("performanceUpdateCallback", callback);
     }
     _performancePropUpdateCallback =  false;
     set performancePropUpdateCallback(callback){
+        console.log("orhestra set performancePropUpdateCallback")
+        this._performancePropUpdateCallback = callback;
+
         this.all_udp_instrument_set_value("performancePropUpdateCallback", callback);
     }
 
@@ -92,7 +97,7 @@ class Orchestra{
         let perfData = {};
         for (let key in this.udpInstruments) {
             let instrData = this.udpInstruments[key].getPerformanceData();
-            perfData[this.udpInstruments[key]] = instrData;
+            perfData[key] = instrData;
         }         
 
         return perfData;
@@ -102,8 +107,12 @@ class Orchestra{
         // extract performanceProps data, 
         // set internally, 
         // and do any announcing you need to do
-        for (let key in this.perfData) {
-            let instrData = this.perfData[key];
+        console.log("orchestra loading perfData")
+        console.log(perfData);
+        for (let key in perfData) {
+            console.log(key);
+            let instrData = perfData[key];
+            console.log("instr loading perfData")
             if(this.udpInstruments[key]){
                 this.udpInstruments[key].loadPerformanceData(instrData);
             }
@@ -176,6 +185,9 @@ class Orchestra{
         this.udpInstruments[name].bpm = this.bpm;
         this.udpInstruments[name].notelist = this.notelist;
         this.udpInstruments[name].makenote_callback = this._makenote_callback;
+        this.udpInstruments[name].performanceUpdateCallback = this._performanceUpdateCallback;
+        this.udpInstruments[name].performancePropUpdateCallback = this._performancePropUpdateCallback;
+        
         // set the device voice number from a list of name=>voice mappings (sort of a hack here)
         if(this.synthDeviceVoices[name]){
             this.udpInstruments[name].midi_bank = this.synthDeviceVoices[name][0];
@@ -242,7 +254,9 @@ class Orchestra{
             console.log("setting notelist");
             this.notelist = value;
         }
+        console.log("this.udpInstruments");
         for (let key in this.udpInstruments) {
+            console.log("setting instr value for ", key);
             this.udp_instrument_set_value(key, prop, value);
         }
     }    
@@ -283,17 +297,6 @@ class Orchestra{
     }
 
 
-    performanceUpdateCallback=  false; // callback that gets called when a performance data is updated
-
-    gatherPerformanceData(){
-        // load instruments' configProps values into a JSON
-    }
-
-    loadPerformanceData(perfData){
-        // extract instrument configProps data, 
-        // set instruments values internally, 
-        // and do any announcing you need to do
-    }
 
 
 }
