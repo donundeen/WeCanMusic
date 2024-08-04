@@ -28,6 +28,8 @@ void config_setup(int vindex){   //MULTIVALUE UPDATE REQUIRED
  // midi_voice[vindex] = getStoredConfigValInt(vindex, "midi_voice");  //MULTIVALUE UPDATE REQUIRED
   midi_bank[vindex] = getStoredConfigValInt(vindex, "midi_bank");  //MULTIVALUE UPDATE REQUIRED
   midi_program[vindex] = getStoredConfigValInt(vindex, "midi_program");  //MULTIVALUE UPDATE REQUIRED
+  midimin[vindex] = getStoredConfigValInt(vindex, "midimin");  //MULTIVALUE UPDATE REQUIRED
+  midimax[vindex] = getStoredConfigValInt(vindex, "midimax");  //MULTIVALUE UPDATE REQUIRED
   Serial.println("setting midi bank and program");
   Serial.println(midi_bank[vindex]);
   Serial.println(midi_program[vindex]);
