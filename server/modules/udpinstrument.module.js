@@ -125,6 +125,7 @@ const UDPInstrument = class{
         // set internally, 
         // and do any announcing you need to do
         for(let i = 0; i < this.configProps.length; i++){
+            // maybe we don't want ALL of these fields sent over udp as updates.
 //            console.log("Setting " , this.configProps[i].name,  perfData[this.configProps[i].name]);
             this[this.configProps[i].name] = perfData[this.configProps[i].name];
             if(this.performancePropUpdateCallback){
