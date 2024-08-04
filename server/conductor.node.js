@@ -174,8 +174,8 @@ score.performanceUpdateCallback = function(scoreobj){
 
 };
 score.performancePropUpdateCallback = function(scoreobj, propname, proptype, propvalue ){
-    console.log("score performancePropUpdateCallback")
-
+    console.log("score performancePropUpdateCallback");
+    
 };
 trans.performanceUpdateCallback = function(transportobj){
     console.log("trans.performanceUpdateCallback")
@@ -197,7 +197,38 @@ orchestra.performanceUpdateCallback = function(instrument, perfData){
 
 };
 orchestra.performancePropUpdateCallback = function(instrument, propname, proptype, propvalue ){
-    console.log("instrument.performancePropUpdateCallback")
+    console.log("instrument.performancePropUpdateCallback");
+
+    let device_name = instrument.device_name;
+    let prop = propname;
+    let value = propvalue;
+    let instrtype = instrument.type;
+    if(instrtype == "local"){
+//        orchestra.local_instrument_set_value(device_name, prop, value);
+    }else if(instrtype == "udp"){
+        // set locally in orchestra AND remotely on device.
+        orchestra.udp_instrument_set_value(device_name, prop, value);
+        console.log("set udp instr value");
+        console.log(msg);
+        // sending UDP message to remote instruments
+        let type = "s";
+        if(typeof value == "number" ){
+            value = parseInt(value);
+            type = "i";
+        };
+        let address = "/"+device_name+"/config/"+prop;
+        let args = [{type: type, value: value}];
+        let bundle = {
+            timeTag: osc.timeTag(1),
+            packets :[{
+                address: address,
+                args: args
+            }]
+        }
+        console.log("sending udp message " + address, args, UDPSENDIP, UDPSENDPORT);
+        // send notelist to all UDP connected devices
+        udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
+    }    
 
     // send prop and value over OSC to the device, one value at a times
 };
