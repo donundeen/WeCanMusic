@@ -83,8 +83,10 @@ const UDPInstrument = class{
         {name:"rootMidi", type:"i"},
         {name:"midimin", type:"i"},
         {name:"midimax", type:"i"},
+        /* // TBD: saving of the data in these curve objects.
         {name:"velocitycurve", type:"fa"},
         {name:"changeratecurve", type:"fa"},
+        */
         {name:"bpm", type:"i"},        
     ];
 
