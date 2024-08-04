@@ -208,8 +208,7 @@ orchestra.performancePropUpdateCallback = function(instrument, propname, proptyp
     }else if(instrtype == "udp"){
         // set locally in orchestra AND remotely on device.
         orchestra.udp_instrument_set_value(device_name, prop, value);
-        console.log("set udp instr value");
-        console.log(msg);
+        console.log("set udp instr value", device_name, prop, value);
         // sending UDP message to remote instruments
         let type = "s";
         if(typeof value == "number" ){

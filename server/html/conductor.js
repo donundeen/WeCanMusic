@@ -492,6 +492,7 @@ $(function() {
         });
         $( ".voice_display",instr ).val( midi_voice );
         $( ".voice_display",instr ).change(function(event){
+            console.log("voice_display. change");
             console.log($(event.target).val());
             let selectedIndex = $(event.target).prop('selectedIndex');
             let voiceval = $(event.target).val();
