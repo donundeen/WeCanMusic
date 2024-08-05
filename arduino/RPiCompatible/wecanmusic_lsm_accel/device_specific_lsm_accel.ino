@@ -326,7 +326,7 @@ void sensor_loop(int vindex){
       ADCRaw[vindex] = gyro.gyro.x;
       break;
     case _GYROY:
-      ADCRaw[vindex] = gyro.gyro.x;
+      ADCRaw[vindex] = gyro.gyro.y;
       break;
     case _GYROZ:
       ADCRaw[vindex] = gyro.gyro.z;
