@@ -83,7 +83,7 @@ let default_webpage = "conductor.html";
 
 // defining some useful curves for tweaking instrument values. used by both the localinstrument and arduino instruments
 // they are numbered for easier communication with the arduino devices over osc
-curvecollection = {
+let curvecollection = {
     str8up : [0., 0., 0., 1., 1., 0.], // 1
     str8dn : [0., 1., 0., 1., 0., 0.], // 2
     logup : [0., 0., 0., 1., 1., -0.65], // 3
@@ -95,7 +95,7 @@ curvecollection = {
 }
 
 // we should get these values from the instruments themselves when we can
-synthDeviceVoices = {
+let synthDeviceVoices = {
     "thread1" : [0,10],
     "thread2" : [0,11],
     "thread3" : [0,12],
@@ -108,6 +108,14 @@ synthDeviceVoices = {
     "thread10" : [0,19],
     "RENAME_ME" : [0,20]
 }
+
+
+//////////////////////////////////////////////////////////////////
+///// Defining Note Length Names /////////////////////////////////
+///// the order needs to match the order in the arduino code 
+///// int notelengths[] = {WN, HN, HN3, QN, QN3, N8, N83, N16};
+
+let notelengthNames = ["Whole", "Half","Half Triplet","Quarter","Quarter Triplet","Eighth","Eighth Triplet","Sixteenth"];
 
 ////////////////// END CONFIG VARIABLES //////////////////////////
 
@@ -349,8 +357,8 @@ socket.setMessageReceivedCallback(function(msg){
     });
 
 
-    // loadscore updates the name and contents of the score objects current score,
-    // and sends the name and content back to the web page
+    // loadperformance sends a performance name, 
+    // and triggers the loading of all those configurations where they are needed
     routeFromWebsocket(msg,"loadperformance", function(msg){
         performance.performanceFile = msg;
         performance.loadPerformance(msg);
@@ -509,7 +517,7 @@ socket.setMessageReceivedCallback(function(msg){
 
     ////////////////////////////
     // instrval gets a varname and a value, and updates the instrument's variables accordingly
-    // midimin, midimax, channel, voice (bank:program), etc
+    // midimin, midimax, channel, voice (bank:program), midi_notelength, etc
     // one var can be "reset" which here resets the instruments calibration
     routeFromWebsocket(msg, "instrval", function(data){
         // send config messages to instruments
@@ -591,11 +599,13 @@ udpPort.on("message", function (oscMsg) {
         let midi_program = value[1];
         let midimin = value[2];
         let midimax = value[3];        
-        if(value.length>4){
+        let midi_notelength = value[4];
+        if(value.length>5){
             midi_bank = value[1];
             midi_program = value[2];
             midimin = value[3];
             midimax = value[4];
+            midi_notelength = value[5];
         }
         if(value.name){
             name = value.name;
@@ -608,6 +618,7 @@ udpPort.on("message", function (oscMsg) {
         orchestra.udp_instrument_set_value(name, "midi_program", midi_program);
         orchestra.udp_instrument_set_value(name, "midimin", midimin);
         orchestra.udp_instrument_set_value(name, "midimax", midimax);
+        orchestra.udp_instrument_set_value(name, "midi_notelength", midi_notelength);
         let props = instrument.get_config_props();
         console.log("setting add instrument props");
         console.log(midi_voice);

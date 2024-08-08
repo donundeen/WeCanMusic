@@ -80,6 +80,7 @@ const UDPInstrument = class{
         {name:"midi_bank", type:"i"},
         {name:"midi_program", type:"i"},
         {name:"midi_channel", type:"i"},
+        {name:"midi_notelength", type:"i"},
         {name:"rootMidi", type:"i"},
         {name:"midimin", type:"i"},
         {name:"midimax", type:"i"},
@@ -271,9 +272,9 @@ const UDPInstrument = class{
         this.notelengths.QN3 = this.notelengths.HN / 3;
         this.notelengths.HN3 = this.notelengths.WN / 3;
         this.notelengths.N83 = this.notelengths.QN / 3;
-        this.notelength_values.push(this.notelengths.QN);
         this.notelength_values.push(this.notelengths.WN);
         this.notelength_values.push(this.notelengths.HN);
+        this.notelength_values.push(this.notelengths.QN);
         this.notelength_values.push(this.notelengths.N8);
         this.notelength_values.push(this.notelengths.N16);
         this.notelength_values.push(this.notelengths.QN3);

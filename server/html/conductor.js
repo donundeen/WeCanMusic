@@ -6,6 +6,9 @@ let curscore = "simplescore.txt";
 let performancelist = [];
 let curperformance = "";
 
+let notelength_names = ["Whole", "Half","Half Triplet","Quarter","Quarter Triplet","Eighth","Eighth Triplet","Sixteenth"];
+
+
 $(function() {
 
     console.log("starting");
@@ -371,8 +374,8 @@ $(function() {
         }catch(e){}
         console.log("voice index is "+ midi_voice_index);
         midi_voice_index = (midi_voice_index >=0 ? midi_voice_index : 0);
-        console.log(midi_voice, midi_bank, midi_voice_index);
         let midi_channel = options_object.midi_channel  ? options_object.midi_channel : 0;
+        let midi_notelength = options_object.midi_notelength  ? options_object.midi_notelength : 7;
         let device_name = options_object.device_name  ? options_object.device_name : "BAD_NAME";
         let instrtype = options_object.type ? options_object.type : "UNKNOWNTYPE";
         $(instr).data("device_name", device_name);
@@ -407,8 +410,33 @@ $(function() {
 
             }
         });
+        
         $( ".range_display" ,instr).val( midimin +
             " - " + midimax );
+
+        $( ".midi-notelength",instr ).slider({
+            range: false,
+            min: 0,
+            max: 7,
+            value: midi_notelength,
+            slide: function( event, ui ) {
+                console.log("slide", ui.value);
+                $(event.target).closest(".instrument").attr("id")                
+                $( ".notelength_display",instr ).val(  notelength_names[ui.value] );
+            },            
+            stop: function( event, ui ) {
+                $(event.target).closest(".instrument").attr("id")                
+                $( ".notelength_display",instr ).val(  notelength_names[ui.value] );
+                let address = "instrval";
+                let instrtype = $(instr).data("instrtype"); // local or udp
+                let data = {id:id, 
+                            instrtype: instrtype,
+                            var: "midi_notelength",
+                            val: ui.value };
+                message(address, data);
+            }
+        });
+
 
         $( ".midi-channel",instr ).slider({
             range: false,
@@ -432,6 +460,7 @@ $(function() {
                 message(address, data);
             }
         });
+
         $( ".channel_display",instr ).val(midi_channel );
         $( ".channel_display",instr ).keyup(function(event){
             console.log(event.which);
@@ -546,6 +575,11 @@ $(function() {
                 $( ".midi-channel",instr ).slider("value", data_obj.midi_channel);
                 $( ".channel_display",instr ).val(data_obj.midi_channel);
             }
+            if (data_obj.midi_notelength) {    
+                $( ".midi-notelength",instr ).slider("value", data_obj.midi_notelength);
+                $( ".notelength_display",instr ).val(notelength_names[data_obj.midi_notelength]);
+            }
+
             if (data_obj.midi_voice) {    
                 console.log(data_obj.midi_voice);
                 $('.voice_display option[value="'+data_obj.midi_voice+'"]', instr).prop('selected', true);

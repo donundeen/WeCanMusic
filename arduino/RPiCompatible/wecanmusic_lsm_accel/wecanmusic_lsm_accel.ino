@@ -184,6 +184,7 @@ int midi_program[6] = {1,1,1,1,1,1}; //MULTIVALUE UPDATE REQUIRED
 int rootMidi[6] = {0,0,0,0,0,0};  //MULTIVALUE UPDATE REQUIRED
 int midimin[6] = {32,32,32,32,32,32};  //MULTIVALUE UPDATE REQUIRED
 int midimax[6] = {100,100,100,100,100,100}; //MULTIVALUE UPDATE REQUIRED
+int midi_notelength[6] = {7,7,7,7,7,7}; // these ints poin tot positions in the notelengths array
 ////// END MUSIC PERFORMANCE VARIABLES  
 ///////////////////////////////////////
 
@@ -366,7 +367,11 @@ int derive_velocity(int vindex, int val){   //MULTIVALUE UPDATE REQUIRED
 
 int derive_duration(int vindex, float val){  //MULTIVALUE UPDATE REQUIRED
 
-  return pulseToMS(N16);
+  // midi_notelength is an index to a notelength in the array notelengths. 
+  // this way if the bpm changes, the notelength changes too 
+  // (though we don't actually have code to change bpm on the device )
+  return pulseToMS(notelengths[midi_notelength[vindex]]);
+//  return pulseToMS(N16);
 /*
   unsigned long raw_duration = updateLastNoteTime();
   int duration = quantizeToNoteLength(raw_duration);

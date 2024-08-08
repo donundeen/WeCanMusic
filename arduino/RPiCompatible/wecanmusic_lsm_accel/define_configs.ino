@@ -12,9 +12,10 @@ etc...]
 */
 
 //Variable List
-//int midi_voice = 12;
+// int midi_voice = 12;
 // int midimin
 // int midimax
+// int midi_notelength
 
 void config_setup(){
   for (int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
@@ -30,9 +31,8 @@ void config_setup(int vindex){   //MULTIVALUE UPDATE REQUIRED
   midi_program[vindex] = getStoredConfigValInt(vindex, "midi_program");  //MULTIVALUE UPDATE REQUIRED
   midimin[vindex] = getStoredConfigValInt(vindex, "midimin");  //MULTIVALUE UPDATE REQUIRED
   midimax[vindex] = getStoredConfigValInt(vindex, "midimax");  //MULTIVALUE UPDATE REQUIRED
-  Serial.println("setting midi bank and program");
-  Serial.println(midi_bank[vindex]);
-  Serial.println(midi_program[vindex]);
+  midi_notelength[vindex] = getStoredConfigValInt(vindex, "midi_notelength");  //MULTIVALUE UPDATE REQUIRED
+  Serial.println("setting midi bank and program and note length");
   midiSetChannelBank(0, midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
   midiSetChannelProgram(0, midi_program[vindex]);  //MULTIVALUE UPDATE REQUIRED
 }
@@ -66,6 +66,7 @@ void routeConfigVal(OSCMessage &msg, int addrOffset ){
     // midi_vocie
     sprintf(devroute,"/%s/config/midi_voice",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
     msg.route(devroute, routeConfig_midi_voice);  //MULTIVALUE UPDATE REQUIRED
+
     // also add bank and program (transition to bank and program from midi_voice)
     sprintf(devroute,"/%s/config/midi_program",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
     msg.route(devroute, routeConfig_midi_program);  //MULTIVALUE UPDATE REQUIRED
@@ -75,10 +76,11 @@ void routeConfigVal(OSCMessage &msg, int addrOffset ){
     sprintf(devroute,"/%s/config/midimin",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
     msg.route(devroute, routeConfig_midimin);  //MULTIVALUE UPDATE REQUIRED
 
-
     sprintf(devroute,"/%s/config/midimax",DEVICE_NAME[vindex]);   //MULTIVALUE UPDATE REQUIRED
     msg.route(devroute, routeConfig_midimax);  //MULTIVALUE UPDATE REQUIRED
 
+    sprintf(devroute,"/%s/config/midi_notelength",DEVICE_NAME[vindex]);   //MULTIVALUE UPDATE REQUIRED
+    msg.route(devroute, routeConfig_midi_notelength);  //MULTIVALUE UPDATE REQUIRED
 
     sprintf(devroute,"/%s/config/velocitycurve",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
     msg.route(devroute, routeConfig_velocitycurve);  //MULTIVALUE UPDATE REQUIRED
@@ -209,6 +211,16 @@ void routeConfig_midimax(OSCMessage &msg, int addrOffset ){ //MULTIVALUE UPDATE 
   midimax[vindex] = route_int(vindex, msg, addrOffset, "midimax");    //MULTIVALUE UPDATE REQUIRED
   Serial.println("midimax");
   Serial.println(midimax[vindex]);    //MULTIVALUE UPDATE REQUIRED
+}
+
+
+void routeConfig_midi_notelength(OSCMessage &msg, int addrOffset ){ //MULTIVALUE UPDATE REQUIRED
+  char address[32];
+  msg.getAddress(address);
+  int vindex = extractVindexFromRoute(address);
+  midi_notelength[vindex] = route_int(vindex, msg, addrOffset, "midi_notelength");    //MULTIVALUE UPDATE REQUIRED
+  Serial.println("midi_notelength");
+  Serial.println(midi_notelength[vindex]);    //MULTIVALUE UPDATE REQUIRED
 }
 
 void routeConfig_velocitycurve(OSCMessage &msg, int addrOffset ){     //MULTIVALUE UPDATE REQUIRED
