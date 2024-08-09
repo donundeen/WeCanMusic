@@ -3,6 +3,8 @@ const functionCurve = class{
     curvelist = [0., 0.0, 0., 1.0, 1.0, 0.0];
     e = 2.71828; 
 
+    db = false;
+
     constructor(curve){
         this.curvelist = curve;
     }

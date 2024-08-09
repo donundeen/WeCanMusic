@@ -7,6 +7,8 @@ let ScoreReader = {
     scoreText : false,
     messageCallback: false,
 
+    db: false,
+
     performanceProps : [
         {name:"scoreFilename", type:"s"}
     ],
@@ -27,8 +29,8 @@ let ScoreReader = {
         // extract performanceProps data, 
         // set internally, 
         // and do any announcing you need to do
-        console.log("scorereader loadPErformanceDAta");
-        console.log(perfData);
+        db.log("scorereader loadPErformanceDAta");
+        db.log(perfData);
         for(let i = 0; i < this.performanceProps.length; i++){
             this[this.performanceProps[i].name] = perfData[this.performanceProps[i].name];
             if(this.performancePropUpdateCallback){
@@ -73,7 +75,7 @@ let ScoreReader = {
 
     writescore(callback){
         let fullpath = this.scoreDir + "/" + this.scoreFilename;
-        console.log("writing score", this.scoreFilename, this.scoreText, this.scoreDir, fullpath);
+        db.log("writing score", this.scoreFilename, this.scoreText, this.scoreDir, fullpath);
         fs.writeFile(fullpath, this.scoreText, err => {
             if (err) {
                 console.error(err);
@@ -85,17 +87,17 @@ let ScoreReader = {
     },
 
     onbeat(beatcount, bar, beat, transport){
-//        console.log("score beat");
-        console.log(beatcount + ": " + bar + ":" + beat);
-//        console.log(this.scoreText);
+//        db.log("score beat");
+        db.log(beatcount + ": " + bar + ":" + beat);
+//        db.log(this.scoreText);
         let rstring = "(^|\r|\n|\r\n)"+bar+":"+beat+" (.*)($|\r|\n|\r\n)";
-//        console.log(rstring);
+//        db.log(rstring);
         let regex = new RegExp(rstring, "g");
         let matches =  [...this.scoreText.matchAll(regex)];
-//        console.log(matches);
+//        db.log(matches);
         for(match of matches){
             let msg = match[2];
-            console.log(match[2]);
+            db.log(match[2]);
             let splits = msg.split(" ");
             for (split of splits){
                 this.processMessage(split, transport);

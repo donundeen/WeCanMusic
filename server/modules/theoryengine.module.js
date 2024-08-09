@@ -64,6 +64,7 @@ const teoriaChordProgression = require('teoria-chord-progression');
 
 let TheoryEngine = {
 
+    db: false,
 
     notes : [
     "C",	//0  
@@ -143,7 +144,7 @@ let TheoryEngine = {
 
     debugmsg(msg){
         if(this.debugmode){
-            console.log(msg);
+            db.log(msg);
         }
     },
 
@@ -181,7 +182,7 @@ let TheoryEngine = {
         }else{
             let result = this.tryChord(command);
             if(!result){
-                console.log("no command match for "+command);
+                db.log("no command match for "+command);
             }
         }
     }, 

@@ -6,7 +6,6 @@ and shows how messages are routed from one to the other.
 */
 const fs = require('node:fs');
 
-
 ////////////////////////
 // LOAD MAIN CONFIG FILE
 const merge = require('deepmerge')
@@ -16,15 +15,17 @@ let config = require("./conductor.config.js");
 let machine_config = require("./"+env+".conductor.config.js");
 config.env = env;
 config = {...config, ...machine_config, ...env_config};
-console.log(config);
-
 
 ////////////////////////////////
 // LOAD DEBUGGING FRAMEWORK
 const db = require('./modules/debugging.module.js').Debugging;
 // TURN DEBUGGING ON/OFF HERE
 db.active = config["db.active"];
-db.log("starting");
+db.trace = false;
+db.log("starting","now",[1,2,3]);
+db.log(config);
+
+
 
 let bluetooth = false;
 if(config["bluetooth.active"]){
@@ -49,7 +50,7 @@ if(use_midi_out){
     while(!midi_hardware_engine){
         // if it can't find the named midi port, this part will just keep looping and hang the app
         let midi_outputs = easymidi.getOutputs();
-        console.log(midi_outputs);
+        db.log(midi_outputs);
         let real_portname = false;
         for(let i = 0; i<midi_outputs.length; i++){
             if(midi_outputs[i].includes(midi_out_portname)){
@@ -153,15 +154,21 @@ SocketServer.WEBSERVER_PORT  = WEBSERVER_PORT;
 SocketServer.default_webpage = default_webpage;
 
 
-console.log("starting");
+db.log("starting");
 
 // initialize the modules
 orchestra = new Orchestra();
+orchestra.db = db
 trans  = Object.create(Transport);
+trans.db = db
 score  = Object.create(ScoreReader);
+score.db = db
 theory = Object.create(TheoryEngine);
+theory.db = db
 socket = Object.create(SocketServer);
+socket.db = db
 performance = Object.create(Performance);
+performance.db = db
 
 // config score obect
 score.setScoreDir(config.scoreDir);
@@ -177,35 +184,35 @@ score.performanceUpdateCallback = function(scoreobj){
     let data = {scorename : scoreobj.scoreFilename,
         text: scoreobj.scoreText
     };
-    console.log("sending score data for new performance", data);
+    db.log("sending score data for new performance", data);
     socket.sendMessage("score", data);     
 
 };
 score.performancePropUpdateCallback = function(scoreobj, propname, proptype, propvalue ){
-    console.log("score performancePropUpdateCallback");
+    db.log("score performancePropUpdateCallback");
     
 };
 trans.performanceUpdateCallback = function(transportobj){
-    console.log("trans.performanceUpdateCallback")
+    db.log("trans.performanceUpdateCallback")
 
     //send message to webpage?
     //restart transport? not sure....
 };
 trans.performancePropUpdateCallback =function(transportobj, propname, proptype, propvalue ){
-    console.log("trans.performancePropUpdateCallback") 
+    db.log("trans.performancePropUpdateCallback") 
 };
 orchestra.performanceUpdateCallback = function(instrument, perfData){
-    console.log("instrument.performanceUpdateCallback")
+    db.log("instrument.performanceUpdateCallback")
 
     // send deivce name and newData to web page (all instrument data at once)
-    console.log("sending perfData");
-    console.log(perfData);
+    db.log("sending perfData");
+    db.log(perfData);
     socket.sendMessage("updateinstrument", perfData);
 
 
 };
 orchestra.performancePropUpdateCallback = function(instrument, propname, proptype, propvalue ){
-    console.log("instrument.performancePropUpdateCallback");
+    db.log("instrument.performancePropUpdateCallback");
 
     let device_name = instrument.device_name;
     let prop = propname;
@@ -216,7 +223,7 @@ orchestra.performancePropUpdateCallback = function(instrument, propname, proptyp
     }else if(instrtype == "udp"){
         // set locally in orchestra AND remotely on device.
         orchestra.udp_instrument_set_value(device_name, prop, value);
-        console.log("set udp instr value", device_name, prop, value);
+        db.log("set udp instr value", device_name, prop, value);
         // sending UDP message to remote instruments
         let type = "s";
         if(typeof value == "number" ){
@@ -232,7 +239,7 @@ orchestra.performancePropUpdateCallback = function(instrument, propname, proptyp
                 args: args
             }]
         }
-        console.log("sending udp message " + address, args, UDPSENDIP, UDPSENDPORT);
+        db.log("sending udp message " + address, args, UDPSENDIP, UDPSENDPORT);
         // send notelist to all UDP connected devices
         udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
     }    
@@ -365,13 +372,13 @@ socket.setMessageReceivedCallback(function(msg){
     });
 
     routeFromWebsocket(msg,"saveperformance", function(msg){
-        console.log(msg);
+        db.log(msg);
         let filename = msg.performancename;
 
         performance.performanceFile = filename;
 
         performance.savePerformance(filename, function(performance ){
-            console.log("performance written");
+            db.log("performance written");
             performance.getPerformanceList(function(list){
                 socket.sendMessage("performancelist", list);    
             });            
@@ -388,7 +395,7 @@ socket.setMessageReceivedCallback(function(msg){
             let data = {scorename : score.scoreFilename,
                 text: scoreText
             };
-            console.log("sending score data", data);
+            db.log("sending score data", data);
             socket.sendMessage("score", data);             //  trans.start();
         });        
     });
@@ -396,7 +403,7 @@ socket.setMessageReceivedCallback(function(msg){
     // savescore sends a name and content to be saved on the server,
     // and also sends that content back to the webpage
     routeFromWebsocket(msg,"savescore", function(msg){
-        console.log(msg);
+        db.log(msg);
         let filename = msg.scorename;
         let scoreText = msg.text;
         let dir = score.scoreDir;
@@ -406,12 +413,12 @@ socket.setMessageReceivedCallback(function(msg){
         score.scoreText = scoreText;
 
         score.writescore(function(scoreobj){
-            console.log("score written");
+            db.log("score written");
             score.openscore(function(scoreText){   
                 let data = {scorename : score.scoreFilename,
                     text: scoreText
                 };
-                console.log("sending score data", data);
+                db.log("sending score data", data);
                 socket.sendMessage("score", data);             //  trans.start();
             });
             // send the scorelist
@@ -496,7 +503,7 @@ socket.setMessageReceivedCallback(function(msg){
 
     // reset resets the synth and midi engine (not sure this has been tested)
     routeFromWebsocket(msg, "reset", function(text){
-        console.log("~~~~~~~~~~~~~~~~`RESETTING EVERYTHING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~`");
+        db.log("~~~~~~~~~~~~~~~~`RESETTING EVERYTHING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~`");
         // reset a bunch of stuff.
         // the synth:
 //        synth.stop();
@@ -522,7 +529,7 @@ socket.setMessageReceivedCallback(function(msg){
     routeFromWebsocket(msg, "instrval", function(data){
         // send config messages to instruments
         // remind myself how the instruments like to get messages...
-        console.log("instrval update");
+        db.log("instrval update");
         let device_name = data.id;
         let prop = data.var;
         let value = data.val;
@@ -532,8 +539,8 @@ socket.setMessageReceivedCallback(function(msg){
         }else if(instrtype == "udp"){
             // set locally in orchestra AND remotely on device.
             orchestra.udp_instrument_set_value(device_name, prop, value);
-            console.log("set udp instr value");
-            console.log(msg);
+            db.log("set udp instr value");
+            db.log(msg);
             // sending UDP message to remote instruments
             let type = "s";
             if(typeof value == "number" ){
@@ -549,7 +556,7 @@ socket.setMessageReceivedCallback(function(msg){
                     args: args
                 }]
             }
-            console.log("sending udp message " + address, args, UDPSENDIP, UDPSENDPORT);
+            db.log("sending udp message " + address, args, UDPSENDIP, UDPSENDPORT);
             // send notelist to all UDP connected devices
             udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
         }
@@ -559,7 +566,7 @@ socket.setMessageReceivedCallback(function(msg){
 // handling messages over OSC/UDP
 udpPort.on("message", function (oscMsg) {
     // when an OSC messages comes in
-    console.log("An OSC message just arrived!", oscMsg);
+    db.log("An OSC message just arrived!", oscMsg);
     // pass the message to the orchestra, which controls all the instruments
 //    orchestra.parseOSC(oscMsg.address, oscMsg.args);
 
@@ -567,7 +574,7 @@ udpPort.on("message", function (oscMsg) {
     // NOTE: all localInstrument stuff is broken, needs updating
     routeFromOSC(oscMsg, "/announceLocalInstrument", function(oscMsg, address){
         let value = oscMsg.simpleValue;
-        console.log(value);
+        db.log(value);
         let name = value;
         if(value.name){
             name = value.name;
@@ -591,9 +598,9 @@ udpPort.on("message", function (oscMsg) {
 
     // announcind UDP (arduino esp32 mostly) instruments to create them in the orchestra
     routeFromOSC(oscMsg, "/announceUDPInstrument", function(oscMsg, address){
-        console.log("!!!!!!!!!!!!!!!!!!!! UDP INSTRUMENT !!!!!!!!!!!!!!!!!!!!!!");
+        db.log("!!!!!!!!!!!!!!!!!!!! UDP INSTRUMENT !!!!!!!!!!!!!!!!!!!!!!");
         let value = oscMsg.simpleValue;
-        console.log(value);
+        db.log(value);
         let name = value[0];
         let midi_bank = 0;
         let midi_program = value[1];
@@ -612,7 +619,7 @@ udpPort.on("message", function (oscMsg) {
         }
         let midi_voice = midi_bank+":"+midi_program;
         let instrument = orchestra.create_udp_instrument(name, value);
-        console.log(midi_voice, midi_bank, midi_program);
+        db.log(midi_voice, midi_bank, midi_program);
         orchestra.udp_instrument_set_value(name, "midi_voice", midi_voice);
         orchestra.udp_instrument_set_value(name, "midi_bank", midi_bank);
         orchestra.udp_instrument_set_value(name, "midi_program", midi_program);
@@ -620,9 +627,9 @@ udpPort.on("message", function (oscMsg) {
         orchestra.udp_instrument_set_value(name, "midimax", midimax);
         orchestra.udp_instrument_set_value(name, "midi_notelength", midi_notelength);
         let props = instrument.get_config_props();
-        console.log("setting add instrument props");
-        console.log(midi_voice);
-        console.log(props);
+        db.log("setting add instrument props");
+        db.log(midi_voice);
+        db.log(props);
         socket.sendMessage("addinstrument", props);
         instrument.start();
     });
@@ -630,7 +637,7 @@ udpPort.on("message", function (oscMsg) {
 
     // processign makenote messages from UDP connected devices (eg, if they aren't using their own speakers)
     routeFromOSC(oscMsg, "/makenote", function(oscMsg, address){
-        console.log("MAKING NOTE in routeFromOSC");
+        db.log("MAKING NOTE in routeFromOSC");
         let value = oscMsg.simpleValue;
         let name = value[0];
         let pitch = value[1];
@@ -699,9 +706,9 @@ function routeFromOSC(oscMsg, route, callback){
     let value = oscMsg.args;
     let newvalue = false;
 /*
-    console.log("got oscMsg " + value, value);
-    console.log(oscMsg);
-    console.log(typeof value);
+    db.log("got oscMsg " + value, value);
+    db.log(oscMsg);
+    db.log(typeof value);
 */
     if(typeof value == "number"){
         newvalue = value;
@@ -729,8 +736,8 @@ function routeFromOSC(oscMsg, route, callback){
             }
         }
     }else{
-        console.log("!!!!!!!!!!!!!! ");
-        console.log("don't know what value is " + Array.isArray(value) + " : " + value.length + " type :" + typeof value);
+        db.log("!!!!!!!!!!!!!! ");
+        db.log("don't know what value is " + Array.isArray(value) + " : " + value.length + " type :" + typeof value);
     }
 
     oscMsg.simpleValue = newvalue;
@@ -748,13 +755,13 @@ function routeFromOSC(oscMsg, route, callback){
 orchestra.makenote_callback = function(instr, pitch, velocity, duration){
     let device_name = instr.device_name;
 
-//    console.log(global_notecount + synth.foothing +  "******************************** makenote_callback ", device_name, pitch, velocity, duration);
+//    db.log(global_notecount + synth.foothing +  "******************************** makenote_callback ", device_name, pitch, velocity, duration);
 
     global_notecount++;
     
     if(synthtype == "fluidsynth"){
         if(global_notecount >= 300){
-            console.log("RRRrrrrrrrrrr Reseting Synth +++++++++++++++++++++++++++++++++++++++");
+            db.log("RRRrrrrrrrrrr Reseting Synth +++++++++++++++++++++++++++++++++++++++");
             synth.close();
             synth = JZZ.synth.Fluid({ path: fluidpath, 
                 sf: soundfont,
@@ -773,7 +780,7 @@ orchestra.makenote_callback = function(instr, pitch, velocity, duration){
                     pitch: pitch, 
                     velocity: velocity,
                     duration: duration}
-//    console.log("sending message")
+//    db.log("sending message")
     socket.sendMessage("makenote", dataObj );
 }
 
@@ -805,8 +812,8 @@ function routeFromWebsocket(msg, route, callback){
 // send it out over udp (to networked devices)
 // also send it to local instruments in the orchestra
 theory.setMidiListCallback(function(msg){
-    //console.log("theory output ");
-    //console.log(msg);
+    //db.log("theory output ");
+    //db.log(msg);
     let args = msg.map(function(x) {return {type: "i", value: parseInt(x)};});
     let bundle = {
         timeTag: osc.timeTag(1),

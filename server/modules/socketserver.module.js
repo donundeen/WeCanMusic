@@ -23,7 +23,7 @@ let SocketServer = {
 
   startSocketServer(){
 
-    console.log("trying to start websockets...");
+    this.db.log("trying to start websockets...");
 
     this.socketserver = new WebSocket.Server({
 
@@ -34,20 +34,20 @@ let SocketServer = {
 
     this.socketserver.on('connection', (function(socket) {
       this.sockets.push(socket);
-      console.log("STARTD websockets " +globalvar);
-//      console.log(this.socketserver);
+      this.db.log("STARTD websockets " +globalvar);
+//      this.db.log(this.socketserver);
 
       // When you receive a message, send that message to every socket.
       socket.on('message', (function(msg) {
         //this.socketserver.onmessage = function(msg) {
-            console.log("got message");
+            this.db.log("got message");
           //this.sockets.forEach(s => s.send(msg)); // send back out - we don't need to do this
-      //  	console.log(msg);
-      //	  console.log("Got message " + msg.toString());
+      //  	this.db.log(msg);
+      //	  this.db.log("Got message " + msg.toString());
           //this is messages FROM the web page
-          console.log(msg.toString());
+          this.db.log(msg.toString());
           let newmsg = JSON.parse(msg.toString());          
-          console.log(newmsg);
+          this.db.log(newmsg);
         this.messageReceived(newmsg);
       }).bind(this));
 
@@ -81,11 +81,11 @@ let SocketServer = {
 
   startWebServer(){
     // this is serving the web page
-    console.log("startWebServer");
-    console.log(__dirname);    
+    this.db.log("startWebServer");
+    this.db.log(__dirname);    
     self= this;
     let options = {index: this.default_webpage};
-    console.log(options);
+    this.db.log(options);
     connect()
       .use(serveStatic(__dirname+"/../html",options))
       .listen(this.WEBSERVER_PORT, () => 	{
@@ -101,22 +101,22 @@ let SocketServer = {
                 if (!results[name]) {
                     results[name] = [];
                 }
-                console.log(name);
+                this.db.log(name);
                 results[name].push(net.address);
             }
         }
       }
-      console.log(results);
+      this.db.log(results);
       if(results["en0"]){
         my_ip_address = results["en0"]; 
       }else if(results["Ethernet"]){
         my_ip_address = results["Ethernet 2"]; 
       }
 
-      console.log('Server running on '+self.WEBSERVER_PORT+'... http://'+my_ip_address+':'+self.WEBSERVER_PORT+'/aiselector.html '+__dirname);
-      console.log('http://'+my_ip_address+':'+self.WEBSERVER_PORT+'/aiselector.html');
-      console.log('UIInterface http://'+my_ip_address+':'+self.WEBSERVER_PORT+'/aiselector.html');
-      console.log('ipaddress '+my_ip_address);
+      this.db.log('Server running on '+self.WEBSERVER_PORT+'... http://'+my_ip_address+':'+self.WEBSERVER_PORT+'/aiselector.html '+__dirname);
+      this.db.log('http://'+my_ip_address+':'+self.WEBSERVER_PORT+'/aiselector.html');
+      this.db.log('UIInterface http://'+my_ip_address+':'+self.WEBSERVER_PORT+'/aiselector.html');
+      this.db.log('ipaddress '+my_ip_address);
      });
     }
   }

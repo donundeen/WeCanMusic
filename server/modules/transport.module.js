@@ -1,5 +1,8 @@
 
 let Transport = {
+
+    db: false,
+
     play: false,
     bpm: false,
     beatcount: 0,
@@ -48,7 +51,7 @@ let Transport = {
     },
 
     updateBpm(bpm){
-        console.log("set bpm " + bpm);
+        this.db.log("set bpm " + bpm);
         this.bpm = bpm;
         this.QN = this.bpmToMS(bpm);
         this.HN = this.QN * 2;
@@ -63,18 +66,18 @@ let Transport = {
         if(this.beatcallback){
             this.beatcallback(this.beatcount, this.bar, this.beat, this);
         }else{
-            console.log("no callback");
+            this.db.log("no callback");
         }
     },
 
     start(){
         if(!this.interval){
             if(this.QN){
-                console.log("Starting " + this.QN);
+                this.db.log("Starting " + this.QN);
                 this.interval = setInterval((function(){this.onbeat();}).bind(this), this.QN);
             }else{
-                console.log("no BPM set");
-                console.log(this);
+                this.db.log("no BPM set");
+                this.db.log(this);
             }
         }
     },

@@ -23,6 +23,8 @@ class Orchestra{
     // instr, pitch, velocity, duration
     _makenote_callback = false;
 
+    db = false;
+
     set soundfont_voicelist_file(filename){
         this._soundfont_voicelist_file = filename;
     }
@@ -48,7 +50,7 @@ class Orchestra{
     }
 
     set makenote_callback(callback){
-        console.log("set makenote callback")
+        this.db.log("set makenote callback")
         this._makenote_callback = callback;
         for (let key in this.localInstruments) {
             this.localInstruments[key].makenote_callback = this._makenote_callback;
@@ -80,13 +82,13 @@ class Orchestra{
     // performance data is for the instruments, but managed through the orchestra
     _performanceUpdateCallback = false; // these callbacks cshould be passed to the instruments
     set performanceUpdateCallback(callback){
-        console.log("orhestra set performanceUpdateCallback");
+        this.db.log("orhestra set performanceUpdateCallback");
         this._performanceUpdateCallback = callback;
         this.all_udp_instrument_set_value("performanceUpdateCallback", callback);
     }
     _performancePropUpdateCallback =  false;
     set performancePropUpdateCallback(callback){
-        console.log("orhestra set performancePropUpdateCallback")
+        this.db.log("orhestra set performancePropUpdateCallback")
         this._performancePropUpdateCallback = callback;
 
         this.all_udp_instrument_set_value("performancePropUpdateCallback", callback);
@@ -107,12 +109,12 @@ class Orchestra{
         // extract performanceProps data, 
         // set internally, 
         // and do any announcing you need to do
-        console.log("orchestra loading perfData")
-        console.log(perfData);
+        this.db.log("orchestra loading perfData")
+        this.db.log(perfData);
         for (let key in perfData) {
-            console.log(key);
+            this.db.log(key);
             let instrData = perfData[key];
-            console.log("instr loading perfData")
+            this.db.log("instr loading perfData")
             if(this.udpInstruments[key]){
                 this.udpInstruments[key].loadPerformanceData(instrData);
             }
@@ -159,8 +161,9 @@ class Orchestra{
         if(this.localInstruments[name]){
             return this.localInstruments[name];
         }
-        console.log("CREATING INSTRUMENT " + name);
+        this.db.log("CREATING INSTRUMENT " + name);
         this.localInstruments[name] = new LocalInstrument();
+        this.localInstruments[name].db = this.db;
         this.localInstruments[name].device_name = name;
         this.localInstruments[name].midi_channel = this.getChannel();
         this.localInstruments[name].synth = this._synth;
@@ -176,8 +179,9 @@ class Orchestra{
         if(this.udpInstruments[name]){
             return this.udpInstruments[name];
         }
-        console.log("CREATING INSTRUMENT " + name);
+        this.db.log("CREATING INSTRUMENT " + name);
         this.udpInstruments[name] = new UDPInstrument();
+        this.udpInstruments[name].db = this.db;
         this.udpInstruments[name].device_name = name;
         this.udpInstruments[name].midi_channel = this.getChannel();
         this.udpInstruments[name].synth = this._synth;
@@ -230,15 +234,15 @@ class Orchestra{
         if(this.udpInstruments[name]){
             this.udpInstruments[name].midiMakeNote(pitch, velocity, duration);
         }else{
-            console.log("no instrument " + name);
+            this.db.log("no instrument " + name);
         }
     }
     all_local_instrument_set_value(prop, value){
-        console.log("setting value for " +prop);
-        console.log(value);
+        this.db.log("setting value for " +prop);
+        this.db.log(value);
         if(prop == "notelist"){
             // store it locally for future instruments
-            console.log("setting notelist");
+            this.db.log("setting notelist");
             this.notelist = value;
         }
         for (let key in this.localInstruments) {
@@ -247,30 +251,30 @@ class Orchestra{
     }
 
     all_udp_instrument_set_value(prop, value){
-        console.log("setting value for " +prop);
-        console.log(value);
+        this.db.log("setting value for " +prop);
+        this.db.log(value);
         if(prop == "notelist"){
             // store it locally for future instruments
-            console.log("setting notelist");
+            this.db.log("setting notelist");
             this.notelist = value;
         }
-        console.log("this.udpInstruments");
+        this.db.log("this.udpInstruments");
         for (let key in this.udpInstruments) {
-            console.log("setting instr value for ", key);
+            this.db.log("setting instr value for ", key);
             this.udp_instrument_set_value(key, prop, value);
         }
     }    
 
     local_instrument_set_value(name, prop, value){
-        console.log("setting instr value" , name, prop, value);
+        this.db.log("setting instr value" , name, prop, value);
         if(this.localInstruments[name]){
             this.localInstruments[name][prop] = value;
         }
     }
 
     udp_instrument_set_value(name, prop, value){
-        console.log("setting udp instr value" , name, prop, value);
-        console.log("value is " + value);
+        this.db.log("setting udp instr value" , name, prop, value);
+        this.db.log("value is " + value);
         if(this.udpInstruments[name]){
             this.udpInstruments[name][prop] = value;
         }

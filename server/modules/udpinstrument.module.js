@@ -3,6 +3,8 @@ functionCurve = require("./functionCurve.module");
 
 const UDPInstrument = class{
 
+    db = false;
+
     _type = "udp";
     type = "udp";
     /*
@@ -92,7 +94,7 @@ const UDPInstrument = class{
     ];
 
     constructor(){
-        console.log("CONSTRUCTING");
+        this.db.log("CONSTRUCTING");
         this.last_note_time = Date.now();
         this.setNoteLengths();
         this.get_config_props();
@@ -105,7 +107,7 @@ const UDPInstrument = class{
 
     populate_config_props(){
         for(let i =0; i< this.configProps.length; i++){
-            console.log("getting ", this.configProps[i]["name"], this.configProps[i]["value"], this[this.configProps[i]["name"]], );
+            this.db.log("getting ", this.configProps[i]["name"], this.configProps[i]["value"], this[this.configProps[i]["name"]], );
             this.configProps[i]["value"] = this[this.configProps[i]["name"]];
         }
     }
@@ -123,22 +125,22 @@ const UDPInstrument = class{
     }
 
     loadPerformanceData(perfData){
-        console.log("instrument loadPerformanceData");
+        this.db.log("instrument loadPerformanceData");
         // extract configProps data, 
         // set internally, 
         // and do any announcing you need to do
         for(let i = 0; i < this.configProps.length; i++){
             // maybe we don't want ALL of these fields sent over udp as updates.
-//            console.log("Setting " , this.configProps[i].name,  perfData[this.configProps[i].name]);
+//            this.db.log("Setting " , this.configProps[i].name,  perfData[this.configProps[i].name]);
             this[this.configProps[i].name] = perfData[this.configProps[i].name];
             if(this.performancePropUpdateCallback){
                 this.performancePropUpdateCallback(this, this.configProps[i].name, this.configProps[i].type, this[this.configProps[i].name] )
             }            
         }
-        console.log("calling insrt performanceUpdateCallback?", this.performanceUpdateCallback);
+        this.db.log("calling insrt performanceUpdateCallback?", this.performanceUpdateCallback);
 
         if(this.performanceUpdateCallback){
-            console.log("calling insrt performanceUpdateCallback!")
+            this.db.log("calling insrt performanceUpdateCallback!")
             this.performanceUpdateCallback(this, perfData);
         }
     } 
@@ -155,7 +157,7 @@ const UDPInstrument = class{
     }
 
     reset_instrument(){
-        console.log("RESETTING LOCAL---------------------------------------");
+        this.db.log("RESETTING LOCAL---------------------------------------");
         this.input_scale.reset();
         this.velocity_scale.reset();
         this.changerate_scale.reset();
@@ -195,12 +197,12 @@ const UDPInstrument = class{
     }
 
     get midi_voice(){
-        console.log("getting midi_voice");
+        this.db.log("getting midi_voice");
         return this._midi_bank+":"+this._midi_program;
     }
 
     set midi_voice(voice){
-        console.log("setting midi_voice ", voice);
+        this.db.log("setting midi_voice ", voice);
         let split = voice.split(":");
         let bank = 0;
         let program = 1;
@@ -239,11 +241,11 @@ const UDPInstrument = class{
         }else if(Array.isArray(value) && value.length > 0 && Object.hasOwn(value[0], "value")){
             value = value[0].value;
         }else{
-            console.log("!!!!!!!!!!!!!! ");
-            console.log("don't know what value is " , value,  Array.isArray(value) + " : " + value.length);
+            this.db.log("!!!!!!!!!!!!!! ");
+            this.db.log("don't know what value is " , value,  Array.isArray(value) + " : " + value.length);
         }
-        console.log(value);
-        console.log("********************");
+        this.db.log(value);
+        this.db.log("********************");
 
         this.derive_changerate(this._sensor_value);
         this._sensor_value = value;
@@ -254,7 +256,7 @@ const UDPInstrument = class{
     }
 
     set midi_channel(channel){
-        console.log("changing midi channel to " + channel);
+        this.db.log("changing midi channel to " + channel);
         this._midi_channel = channel;
     }
     get midi_channel(){
@@ -320,9 +322,9 @@ const UDPInstrument = class{
         if(this.running === false){            
             return false;
         }
-        console.log("sensor value " + this.sensor_value);
+        this.db.log("sensor value " + this.sensor_value);
         let value        = this.input_scale.scale(this.sensor_value,0,1);
-        console.log("scaled value is " + value);
+        this.db.log("scaled value is " + value);
         let midipitch    = this.derive_pitch(value);
         let midivelocity = this.derive_velocity();
         let mididuration = this.derive_duration();
@@ -339,7 +341,7 @@ const UDPInstrument = class{
 
     derive_changerate(val){
         // derive the changerate
-        console.log("getting changerate");
+        this.db.log("getting changerate");
         if(this.prevChangeVal === false){
             this.prevChangeVal = val;
             return 0;
@@ -348,7 +350,7 @@ const UDPInstrument = class{
         ochange = Math.abs(ochange);
         this.changerate = this.changerate_scale.scale(ochange, 0, 1.0);
         this.prevChangeVal = val;
-        console.log("changerate " + this.changerate);
+        this.db.log("changerate " + this.changerate);
         return this.changerate;        
     }
 
@@ -414,15 +416,15 @@ const UDPInstrument = class{
     // this happens when the udp device is calculating the note data itself, 
     // but doesn't have a synth or speakers attached to it
     midiMakeNote(note, velocity, duration){
-       // console.log(this.synth.foothing + " MAKING NOTE UDP " + this._midi_channel + " : " + note + " : " + velocity + " : " + duration);
+       // this.db.log(this.synth.foothing + " MAKING NOTE UDP " + this._midi_channel + " : " + note + " : " + velocity + " : " + duration);
         // note: each instrument needs its own channel, or the instrument will be the same tone.
-        console.log("mideMakeNote : "+ this.midi_channel + ":" + note + " : " + velocity + " : " + duration);
+        this.db.log("mideMakeNote : "+ this.midi_channel + ":" + note + " : " + velocity + " : " + duration);
         if(!Number.isFinite(note) || !Number.isFinite(velocity) || !Number.isFinite(duration)){
-            console.log("bad midi values, returning");
+            this.db.log("bad midi values, returning");
             return;
         }
         if(velocity == 0){
-//            console.log("no volume, no note");
+//            this.db.log("no volume, no note");
             return;
         }
 //        this.midiSetInstrument(); // do we really need to set the bank an program for every note? seems like overkill...
@@ -434,7 +436,7 @@ const UDPInstrument = class{
         }
         // if there's a hardware midi device attached to this instrument
         if(this.midi_hardware_engine){
-//            console.log("HARDWARE NOTE");
+//            this.db.log("HARDWARE NOTE");
             this.midi_hardware_engine.send('noteon', {
                 note: note,
                 velocity: velocity,
@@ -448,7 +450,7 @@ const UDPInstrument = class{
                 });
             }, duration);
         }else{
-            console.log("NNNNNNNNNNNNNNNo hardware engine");
+            this.db.log("NNNNNNNNNNNNNNNo hardware engine");
         }
 
 
@@ -486,13 +488,13 @@ const UDPInstrument = class{
 
     midiSetBankProgram(){
         if(this.midi_hardware_engine){
-//            console.log(this._midi_bank);
+//            this.db.log(this._midi_bank);
             this.midi_hardware_engine.send('cc',{
                 controller: 0,
                 value: 127, //this._midi_bank, 
                 channel: this._midi_channel
             }); 
-  //          console.log(this._midi_program);
+  //          this.db.log(this._midi_program);
             this.midi_hardware_engine.send('program',{
                 number: this._midi_program, 
                 channel: this._midi_channel
@@ -549,7 +551,7 @@ const UDPInstrument = class{
     }
 
     noteFromFloat(value, min, max){
-        console.log("note from float " + value);
+        this.db.log("note from float " + value);
         this.makeWorkingList(min, max);
         //Serial.print("note from value ");
         //Serial.println(value);
@@ -558,10 +560,10 @@ const UDPInstrument = class{
         if(index == this.workinglist.length){
             index = this.workinglist.length -1;
         }
-        console.log(index);
+        this.db.log(index);
         //Serial.println(index);
         let note  = this.workinglist[index];// % workingList.length]
-        console.log("returning note " + note);
+        this.db.log("returning note " + note);
         //Serial.println(note);
         return note;
     }
