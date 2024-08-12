@@ -180,7 +180,7 @@ class Orchestra{
             return this.udpInstruments[name];
         }
         this.db.log("CREATING INSTRUMENT " + name);
-        this.udpInstruments[name] = new UDPInstrument();
+        this.udpInstruments[name] = new UDPInstrument(this.db);
         this.udpInstruments[name].db = this.db;
         this.udpInstruments[name].device_name = name;
         this.udpInstruments[name].midi_channel = this.getChannel();

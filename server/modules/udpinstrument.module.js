@@ -93,7 +93,8 @@ const UDPInstrument = class{
         {name:"bpm", type:"i"},        
     ];
 
-    constructor(){
+    constructor(db){
+        this.db = db;
         this.last_note_time = Date.now();
         this.setNoteLengths();
         this.get_config_props();
