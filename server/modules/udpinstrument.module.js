@@ -94,7 +94,6 @@ const UDPInstrument = class{
     ];
 
     constructor(){
-        this.db.log("CONSTRUCTING");
         this.last_note_time = Date.now();
         this.setNoteLengths();
         this.get_config_props();
