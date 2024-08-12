@@ -29,8 +29,8 @@ let ScoreReader = {
         // extract performanceProps data, 
         // set internally, 
         // and do any announcing you need to do
-        db.log("scorereader loadPErformanceDAta");
-        db.log(perfData);
+        this.db.log("scorereader loadPErformanceDAta");
+        this.db.log(perfData);
         for(let i = 0; i < this.performanceProps.length; i++){
             this[this.performanceProps[i].name] = perfData[this.performanceProps[i].name];
             if(this.performancePropUpdateCallback){
@@ -75,7 +75,7 @@ let ScoreReader = {
 
     writescore(callback){
         let fullpath = this.scoreDir + "/" + this.scoreFilename;
-        db.log("writing score", this.scoreFilename, this.scoreText, this.scoreDir, fullpath);
+        this.db.log("writing score", this.scoreFilename, this.scoreText, this.scoreDir, fullpath);
         fs.writeFile(fullpath, this.scoreText, err => {
             if (err) {
                 console.error(err);
@@ -88,7 +88,7 @@ let ScoreReader = {
 
     onbeat(beatcount, bar, beat, transport){
 //        db.log("score beat");
-        db.log(beatcount + ": " + bar + ":" + beat);
+        this.db.log(beatcount + ": " + bar + ":" + beat);
 //        db.log(this.scoreText);
         let rstring = "(^|\r|\n|\r\n)"+bar+":"+beat+" (.*)($|\r|\n|\r\n)";
 //        db.log(rstring);
@@ -97,7 +97,7 @@ let ScoreReader = {
 //        db.log(matches);
         for(match of matches){
             let msg = match[2];
-            db.log(match[2]);
+            this.db.log(match[2]);
             let splits = msg.split(" ");
             for (split of splits){
                 this.processMessage(split, transport);
