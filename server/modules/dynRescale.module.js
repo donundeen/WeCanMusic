@@ -5,8 +5,8 @@ const dynRescale = class{
     db = false;
     
     scale(inval, outmin, outmax){
-        db.log("scaling " + inval);
-        db.log(this.min +" , "+this.max);
+        this.db.log("scaling " + inval);
+        this.db.log(this.min +" , "+this.max);
         // do thje math
         if(this.min === false || inval < this.min){
             this.min = inval;
@@ -14,7 +14,7 @@ const dynRescale = class{
         if(this.max === false || inval > this.max){
             this.max = inval;
         }
-        db.log(this.min +" , "+this.max);
+        this.db.log(this.min +" , "+this.max);
         let mapped = this.floatmap(inval, this.min, this.max, outmin, outmax);
         return mapped;
     }
@@ -36,12 +36,12 @@ const dynRescale = class{
     }
 
     floatmap(inval, inmin, inmax, outmin, outmax){
-        db.log("floatmap : " + inval + " : " + inmin + " : " + inmax);
+        this.db.log("floatmap : " + inval + " : " + inmin + " : " + inmax);
         // assume all values are 0-1
         let inrange = inmax - inmin;
-        db.log(inrange);
+        this.db.log(inrange);
         if(inrange == 0){
-            db.log("0 range, returning outmin " +outmin);
+            this.db.log("0 range, returning outmin " +outmin);
             //bad division, just return the outmin
             return outmin;
         }

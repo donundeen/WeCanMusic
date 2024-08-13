@@ -144,7 +144,7 @@ let TheoryEngine = {
 
     debugmsg(msg){
         if(this.debugmode){
-            db.log(msg);
+            this.db.log(msg);
         }
     },
 
@@ -182,7 +182,7 @@ let TheoryEngine = {
         }else{
             let result = this.tryChord(command);
             if(!result){
-                db.log("no command match for "+command);
+                this.db.log("no command match for "+command);
             }
         }
     }, 

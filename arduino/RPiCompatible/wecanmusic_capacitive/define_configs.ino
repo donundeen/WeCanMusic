@@ -81,8 +81,7 @@ void routeConfigVal(OSCMessage &msg, int addrOffset ){
     msg.route(devroute, routeConfig_midimax);  //MULTIVALUE UPDATE REQUIRED
 
     sprintf(devroute,"/%s/config/midi_nlen",DEVICE_NAME[vindex]);   //MULTIVALUE UPDATE REQUIRED
-    console.log("routing midi_nlen");
-    console.log(devroute);
+
     msg.route(devroute, routeConfig_midi_notelength);  //MULTIVALUE UPDATE REQUIRED
 
     sprintf(devroute,"/%s/config/velocitycurve",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
@@ -224,7 +223,7 @@ void routeConfig_midi_notelength(OSCMessage &msg, int addrOffset ){ //MULTIVALUE
   int vindex = extractVindexFromRoute(address);
   midi_notelength[vindex] = route_int(vindex, msg, addrOffset, "midi_nlen");    //MULTIVALUE UPDATE REQUIRED
   Serial.println("midi_nlen");
-  Serial.println( [vindex]);    //MULTIVALUE UPDATE REQUIRED
+  Serial.println( midi_notelength[vindex]);    //MULTIVALUE UPDATE REQUIRED
 }
 
 void routeConfig_velocitycurve(OSCMessage &msg, int addrOffset ){     //MULTIVALUE UPDATE REQUIRED

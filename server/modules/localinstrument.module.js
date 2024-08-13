@@ -86,7 +86,7 @@ const LocalInstrument = class{
     ];
 
     constructor(){
-        db.log("CONSTRUCTING");
+        this.db.log("CONSTRUCTING");
         this.last_note_time = Date.now();
         this.setNoteLengths();
         this.get_config_props();
@@ -146,7 +146,7 @@ const LocalInstrument = class{
     }
 
     set midi_voice(voice){
-        db.log("setting voice to ") + voice;
+        this.db.log("setting voice to ") + voice;
         this._midi_voice = voice;
         this.midiSetInstrument();
     }
@@ -156,21 +156,21 @@ const LocalInstrument = class{
 
     // what to do when a new sensor value is received. Need to trigger a note here
     set sensor_value(value){
-        db.log('sensor value is ' + value);
-        db.log("********************")
-        db.log(typeof(value));
-        db.log(value);
+        this.db.log('sensor value is ' + value);
+        this.db.log("********************")
+        this.db.log(typeof(value));
+        this.db.log(value);
         // might be a number or an OSC-formatted value message
         if(typeof value == "number"){
             value = value;
         }else if(Array.isArray(value) && value.length > 0 && Object.hasOwn(value[0], "value")){
             value = value[0].value;
         }else{
-            db.log("!!!!!!!!!!!!!! ");
-            db.log("don't know what value is " + Array.isArray(value) + " : " + value.length);
+            this.db.log("!!!!!!!!!!!!!! ");
+            this.db.log("don't know what value is " + Array.isArray(value) + " : " + value.length);
         }
-        db.log(value);
-        db.log("********************");
+        this.db.log(value);
+        this.db.log("********************");
 
         this.derive_changerate(this._sensor_value);
         this._sensor_value = value;
@@ -181,7 +181,7 @@ const LocalInstrument = class{
     }
 
     set midi_channel(channel){
-        db.log("changing midi channel to " + channel);
+        this.db.log("changing midi channel to " + channel);
         this._midi_channel = channel;
     }
     get midi_channel(){
@@ -247,9 +247,9 @@ const LocalInstrument = class{
         if(this.running === false){            
             return false;
         }
-        db.log("sensor value " + this.sensor_value);
+        this.db.log("sensor value " + this.sensor_value);
         let value        = this.input_scale.scale(this.sensor_value,0,1);
-        db.log("scaled value is " + value);
+        this.db.log("scaled value is " + value);
         let midipitch    = this.derive_pitch(value);
         let midivelocity = this.derive_velocity();
         let mididuration = this.derive_duration();
@@ -266,7 +266,7 @@ const LocalInstrument = class{
 
     derive_changerate(val){
         // derive the changerate
-        db.log("getting changerate");
+        this.db.log("getting changerate");
         if(this.prevChangeVal === false){
             this.prevChangeVal = val;
             return 0;
@@ -275,7 +275,7 @@ const LocalInstrument = class{
         ochange = Math.abs(ochange);
         this.changerate = this.changerate_scale.scale(ochange, 0, 1.0);
         this.prevChangeVal = val;
-        db.log("changerate " + this.changerate);
+        this.db.log("changerate " + this.changerate);
         return this.changerate;        
     }
 
@@ -339,11 +339,11 @@ const LocalInstrument = class{
     midiMakeNote(note, velocity, duration){
         // note: each instrument needs its own channel, or the instrument will be the same tone.
         if(!Number.isFinite(note) || !Number.isFinite(velocity) || !Number.isFinite(duration)){
-            db.log("bad midi values, returning");
+            this.db.log("bad midi values, returning");
             return;
         }
         if(velocity == 0){
-            db.log("no volume, no note");
+            this.db.log("no volume, no note");
             return;
         }
         this.synth
@@ -425,7 +425,7 @@ const LocalInstrument = class{
     }
 
     noteFromFloat(value, min, max){
-        db.log("note from float " + value);
+        this.db.log("note from float " + value);
         this.makeWorkingList(min, max);
         //Serial.print("note from value ");
         //Serial.println(value);
@@ -434,10 +434,10 @@ const LocalInstrument = class{
         if(index == this.workinglist.length){
             index = this.workinglist.length -1;
         }
-        db.log(index);
+        this.db.log(index);
         //Serial.println(index);
         let note  = this.workinglist[index];// % workingList.length]
-        db.log("returning note " + note);
+        this.db.log("returning note " + note);
         //Serial.println(note);
         return note;
     }
