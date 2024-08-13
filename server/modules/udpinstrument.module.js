@@ -82,7 +82,7 @@ const UDPInstrument = class{
         {name:"midi_bank", type:"i"},
         {name:"midi_program", type:"i"},
         {name:"midi_channel", type:"i"},
-        {name:"midi_notelength", type:"i"},
+        {name:"midi_nlen", type:"i"},
         {name:"rootMidi", type:"i"},
         {name:"midimin", type:"i"},
         {name:"midimax", type:"i"},

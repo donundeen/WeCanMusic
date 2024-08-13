@@ -375,7 +375,7 @@ $(function() {
         console.log("voice index is "+ midi_voice_index);
         midi_voice_index = (midi_voice_index >=0 ? midi_voice_index : 0);
         let midi_channel = options_object.midi_channel  ? options_object.midi_channel : 0;
-        let midi_notelength = options_object.midi_notelength  ? options_object.midi_notelength : 7;
+        let midi_nlen = options_object.midi_nlen  ? options_object.midi_nlen : 7;
         let device_name = options_object.device_name  ? options_object.device_name : "BAD_NAME";
         let instrtype = options_object.type ? options_object.type : "UNKNOWNTYPE";
         $(instr).data("device_name", device_name);
@@ -418,7 +418,7 @@ $(function() {
             range: false,
             min: 0,
             max: 7,
-            value: midi_notelength,
+            value: midi_nlen,
             slide: function( event, ui ) {
                 console.log("slide", ui.value);
                 $(event.target).closest(".instrument").attr("id")                
@@ -431,7 +431,7 @@ $(function() {
                 let instrtype = $(instr).data("instrtype"); // local or udp
                 let data = {id:id, 
                             instrtype: instrtype,
-                            var: "midi_notelength",
+                            var: "midi_nlen",
                             val: ui.value };
                 message(address, data);
             }
@@ -575,9 +575,9 @@ $(function() {
                 $( ".midi-channel",instr ).slider("value", data_obj.midi_channel);
                 $( ".channel_display",instr ).val(data_obj.midi_channel);
             }
-            if (data_obj.midi_notelength) {    
-                $( ".midi-notelength",instr ).slider("value", data_obj.midi_notelength);
-                $( ".notelength_display",instr ).val(notelength_names[data_obj.midi_notelength]);
+            if (data_obj.midi_nlen) {    
+                $( ".midi-notelength",instr ).slider("value", data_obj.midi_nlen);
+                $( ".notelength_display",instr ).val(notelength_names[data_obj.midi_nlen]);
             }
 
             if (data_obj.midi_voice) {    

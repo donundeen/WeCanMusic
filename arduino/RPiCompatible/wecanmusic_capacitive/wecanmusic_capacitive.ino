@@ -184,6 +184,9 @@ int midi_program[6] = {1,1,1,1,1,1}; //MULTIVALUE UPDATE REQUIRED
 int rootMidi[6] = {0,0,0,0,0,0};  //MULTIVALUE UPDATE REQUIRED
 int midimin[6] = {32,32,32,32,32,32};  //MULTIVALUE UPDATE REQUIRED
 int midimax[6] = {100,100,100,100,100,100}; //MULTIVALUE UPDATE REQUIRED
+int midi_notelength[6] = {7,7,7,7,7,7}; // these ints poin tot positions in the notelengths array
+
+int noteloop_rate[6] = {7,7,7,7,7,7};
 ////// END MUSIC PERFORMANCE VARIABLES  
 ///////////////////////////////////////
 
@@ -237,10 +240,13 @@ float elasticMinMaxScale = .005; // if true, then the min and max values used fo
 ////////////////////////////////////
 // SENSOR PROCESSING GLOBALS
 bool firstSense[6] = {false, false, false, false, false, false}; //MULTIVALUE UPDATE REQUIRED
-int ADCRaw[6] = {-1, -1, -1, -1, -1, -1};          //MULTIVALUE UPDATE REQUIRED. ALSO rename to sensorInputVal or something
+float ADCRaw[6] = {-1, -1, -1, -1, -1, -1};          //MULTIVALUE UPDATE REQUIRED. ALSO rename to sensorInputVal or something
 float changerate[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0}; //MULTIVALUE UPDATE REQUIRED
 float prevChangeVal[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0};  //MULTIVALUE UPDATE REQUIRED
 int prevChangeTime[6] = {-1, -1, -1, -1, -1, -1} ;     //MULTIVALUE UPDATE REQUIRED
+
+int peaks[6] = {0,0,0,0,0,0};
+int prevpeaks[6] = {0,0,0,0,0,0}; // track so we don't trigger a peak twice.
 // END SENSOR PROCESSING GLOBALS
 ////////////////////////////////////
 
@@ -294,7 +300,7 @@ void note_loop(int vindex){
   }else{
     sendMakeNote(vindex, midipitch, midivelocity, mididuration);  //MULTIVALUE UPDATE REQUIRED
   }
-  t.setTimeout(note_loop, mididuration); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
+  t.setTimeout(note_loop, noteloop_rate[vindex]); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
 }
 
 void sensor_loop(){
@@ -342,7 +348,7 @@ float get_changerate(int vindex, int ival){   //MULTIVALUE UPDATE REQUIRED
   prevChangeVal[vindex] = val;          //MULTIVALUE UPDATE REQUIRED
   prevChangeTime[vindex] = millisr;     //MULTIVALUE UPDATE REQUIRED
   sprintf(pbuf, "changerate v: %.4f pv: %.4f oc:%.4f c:%.4f minc:%.4f maxc:%.4f", val, prevChangeVal[vindex], ochange, change, changeMin[vindex], changeMax[vindex]);
-  Serial.println(pbuf);
+  //Serial.println(pbuf);
   return change;
 
 }
@@ -354,13 +360,20 @@ int derive_pitch(int vindex, float val){   //MULTIVALUE UPDATE REQUIRED
 
 int derive_velocity(int vindex, int val){   //MULTIVALUE UPDATE REQUIRED
   int velocity = floor(127.0 * functioncurve(changerate[vindex], velocitycurve[vindex], velocitycurvelength[vindex]));  //MULTIVALUE UPDATE REQUIRED
+  // intergrate more clever ways of handling volume. peaks? bounce? etc? 
+//  velocity = velocity * abs(peaks[vindex]);
   return velocity;
+
 }
 
 
 int derive_duration(int vindex, float val){  //MULTIVALUE UPDATE REQUIRED
 
-  return pulseToMS(N16);
+  // midi_notelength is an index to a notelength in the array notelengths. 
+  // this way if the bpm changes, the notelength changes too 
+  // (though we don't actually have code to change bpm on the device )
+  return pulseToMS(notelengths[midi_notelength[vindex]]);
+//  return pulseToMS(N16);
 /*
   unsigned long raw_duration = updateLastNoteTime();
   int duration = quantizeToNoteLength(raw_duration);
@@ -452,6 +465,7 @@ void UDPListen(){
       for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
         sprintf(devroute,"/%s",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
         bundleIN.route(devroute, routeDeviceMsg);
+        Serial.println("done BundleIn");
       }
     }else{
       Serial.println("some error");

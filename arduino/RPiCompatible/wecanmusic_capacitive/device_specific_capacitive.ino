@@ -29,8 +29,8 @@ void sensor_loop(int vindex){
   ADCRaw[vindex] = touchRead(inputPin[vindex]);
   //ADCRaw = analogRead(sensorPin);
 
-  Serial.println("read value");
-  Serial.println(ADCRaw[vindex]);
+//  Serial.println("read value");
+//  Serial.println(ADCRaw[vindex]);
 
   firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED
   /*

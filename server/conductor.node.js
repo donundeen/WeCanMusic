@@ -524,7 +524,7 @@ socket.setMessageReceivedCallback(function(msg){
 
     ////////////////////////////
     // instrval gets a varname and a value, and updates the instrument's variables accordingly
-    // midimin, midimax, channel, voice (bank:program), midi_notelength, etc
+    // midimin, midimax, channel, voice (bank:program), midi_nlen, etc
     // one var can be "reset" which here resets the instruments calibration
     routeFromWebsocket(msg, "instrval", function(data){
         // send config messages to instruments
@@ -606,13 +606,13 @@ udpPort.on("message", function (oscMsg) {
         let midi_program = value[1];
         let midimin = value[2];
         let midimax = value[3];        
-        let midi_notelength = value[4];
+        let midi_nlen = value[4];
         if(value.length>5){
             midi_bank = value[1];
             midi_program = value[2];
             midimin = value[3];
             midimax = value[4];
-            midi_notelength = value[5];
+            midi_nlen = value[5];
         }
         if(value.name){
             name = value.name;
@@ -625,7 +625,7 @@ udpPort.on("message", function (oscMsg) {
         orchestra.udp_instrument_set_value(name, "midi_program", midi_program);
         orchestra.udp_instrument_set_value(name, "midimin", midimin);
         orchestra.udp_instrument_set_value(name, "midimax", midimax);
-        orchestra.udp_instrument_set_value(name, "midi_notelength", midi_notelength);
+        orchestra.udp_instrument_set_value(name, "midi_nlen", midi_nlen);
         let props = instrument.get_config_props();
         db.log("setting add instrument props");
         db.log(midi_voice);
