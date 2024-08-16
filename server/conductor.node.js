@@ -78,7 +78,7 @@ let UDPLISTENPORT = config.UDPLISTENPORT;//7005;
 let WEBSOCKET_PORT = config.WEBSOCKET_PORT //8001;
 let WEBSERVER_PORT = config.WEBSERVER_PORT //8002;
 
-let default_webpage = "conductor.html";
+let default_webpage = config.defaultWebpage; //"conductor.html";
 
 
 

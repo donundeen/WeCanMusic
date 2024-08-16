@@ -8,6 +8,7 @@ var config = {
     "scoreDir" : "./scores",
     "scorename" : "simplescore.txt",
     "performanceDir" : "./performances",
+    "defaultWebpage" : "jamalong.html",
     "soundfont_instrument_list" : "./soundfonts/141-Compleet bank synth.sf2.voicelist.json",
     "use_midi_out" : true,
     "midi_out_portname" : "FLUID",
