@@ -1,5 +1,6 @@
 1:1 C M
 3:1 G M
 5:1 B M
+5:2 C m
 7:1 F m
 8:4 tostart
