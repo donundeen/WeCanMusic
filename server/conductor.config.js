@@ -6,7 +6,7 @@ var config = {
     "player_state" : "play", // stop or play
     "soundfont" : "./soundfonts/141-Compleet bank synth.sf2",
     "scoreDir" : "./scores",
-    "scorename" : "simplescore.txt",
+    "scorename" : "cheeseBlues.txt",
     "performanceDir" : "./performances",
     "defaultWebpage" : "jamalong.html",
     "soundfont_instrument_list" : "./soundfonts/141-Compleet bank synth.sf2.voicelist.json",
