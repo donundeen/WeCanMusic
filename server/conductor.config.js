@@ -18,7 +18,8 @@ var config = {
     "UDPSENDIP" : "10.0.0.255",
     "UDPLISTENPORT" : 7005,
     "WEBSOCKET_PORT" : 8001,
-    "WEBSERVER_PORT" : 8002
+//    "WEBSERVER_PORT" : 8002
+    "WEBSERVER_PORT" : 80
 }
 
 module.exports = config;
