@@ -491,7 +491,8 @@ $(function() {
             message(address, data);             
         }
 
-   
+
+        
         $( ".midi-voice",instr ).slider({
             range: false,
             min: 0,
@@ -499,19 +500,23 @@ $(function() {
             value: midi_voice_index, //q0,//(midi_voice_index >=0 ? midi_voice_index : 0),// midi_voice,
             
             slide: function( event, ui ) {
+                console.log("sliding");
                 
-                $(event.target).closest(".instrument").attr("id");     
-                $('.voice_display option:eq('+ui.value+')',instr).attr('selected', 'selected');          
+                let instrid = $(event.target).closest(".instrument").attr("id");     
+                console.log(ui.value);
+                $('.voice_display option',instr).prop("selected", false);
+                $('.voice_display option',instr).eq(ui.value).prop('selected', 'selected');          
              //   $( ".voice_display",instr ).val(  ui.value );
             },
             
             stop: function( event, ui ) {
                 
                 $(event.target).closest(".instrument").attr("id");         
-                $('.voice_display option:eq('+ui.value+')',instr).attr('selected', 'selected');
-                let address = "instrval";
+                $('.voice_display option',instr).prop("selected", false);
+                $('.voice_display option',instr).eq(ui.value).prop('selected', 'selected');          
                 let instrtype = $(instr).data("instrtype"); // local or udp
                 let value = $('.voice_display option:eq('+ui.value+')',instr).val();
+                let address = "instrval"
                 let data = {id:id, 
                             instrtype: instrtype,
                             var: "midi_voice",
@@ -519,37 +524,13 @@ $(function() {
                 message(address, data);                
             }
         });
-        $( ".voice_display",instr ).val( midi_voice );
-        $( ".voice_display",instr ).change(function(event){
-            console.log("voice_display. change");
-            console.log($(event.target).val());
-            let selectedIndex = $(event.target).prop('selectedIndex');
-            let voiceval = $(event.target).val();
-            parseVoiceVal(voiceval, instr, selectedIndex);
-        });
+
         /*
         $( ".voice_display",instr ).blur(function(event){
             let voiceval = parseInt($(event.target).val());
             parseVoiceVal(voiceval, instr);
         });
 */
-        function parseVoiceVal(val, instr, selectedIndex){
-            console.log("voice value ", val, "selectedIndex ", selectedIndex);
-            $( ".midi-voice",instr ).slider("option", "value", selectedIndex);
-            $( ".voice_display",instr ).val(val);
-            let instrtype = $(instr).data("instrtype");
-            let id = $(instr).attr("id");               
-            sendVoiceVal(val, id, instrtype);                
-        }
-        function sendVoiceVal(voiceval, id, instrtype){
-            let address = "instrval";            
-            let data = {id:id, 
-                instrtype: instrtype,
-                var: "midi_voice",
-                val: voiceval,
-                foo: "bar2" };
-            message(address, data);             
-        }
 
         $(".resetbutton button", instr).click(function(event,ui){
             console.log("reset clicked");
@@ -562,8 +543,39 @@ $(function() {
                         val: 1 };
             message(address, data);               
         });
+
+        console.log("setting select to " + midi_voice);
+        $( ".voice_display",instr ).val( midi_voice );
+
+        $( ".voice_display",instr ).on("change",function(event){
+            console.log("voice_display. change");
+            console.log($(event.target).val());
+            let selectedIndex = $(event.target).prop('selectedIndex');
+            let voiceval = $(event.target).val();
+            parseVoiceVal(voiceval, instr, selectedIndex);
+        });
+
     }
 
+
+
+    function parseVoiceVal(val, instr, selectedIndex){
+        console.log("voice value ", val, "selectedIndex ", selectedIndex);
+        $( ".midi-voice",instr ).slider("option", "value", selectedIndex);
+        $( ".voice_display",instr ).val(val);
+        let instrtype = $(instr).data("instrtype");
+        let id = $(instr).attr("id");               
+        sendVoiceVal(val, id, instrtype);                
+    }
+    function sendVoiceVal(voiceval, id, instrtype){
+        let address = "instrval";            
+        let data = {id:id, 
+            instrtype: instrtype,
+            var: "midi_voice",
+            val: voiceval,
+            foo: "bar2" };
+        message(address, data);             
+    }
 
 
     function updateInstrumentData(id, data_obj){
@@ -606,7 +618,7 @@ $(function() {
 
 
     function buildVoicelistOptions(){
-        
+        console.log("building voie list options");
         let voptions = $("<select class='voice_display' name='midi_voice'>");
         console.log(voicelist);
         for (var i = 0; i< voicelist.length; i++){
@@ -618,7 +630,7 @@ $(function() {
         }
         $(".voice_display").replaceWith(voptions);    
         // also need to update the voice slider to link with the new select options...
-        $(".instrument").not(".copyme").each(function(index){
+        $(".instrument").not(".copyme").each(function(index,instr){
             let midi_voice = $(this).data("midi_voice");
             console.log("voice", midi_voice);
             let midi_voice_index = 0;
@@ -637,6 +649,13 @@ $(function() {
                 value: midi_voice_index,//(midi_voice_index >=0 ? midi_voice_index : 0),// midi_voice,
             });
             $('.voice_display',this).val(midi_voice);
+            $( ".voice_display",this ).on("change",function(event){
+                console.log("voice_display. change");
+                console.log($(event.target).val());
+                let selectedIndex = $(event.target).prop('selectedIndex');
+                let voiceval = $(event.target).val();
+                parseVoiceVal(voiceval, instr, selectedIndex);
+            });            
 
         });
         
