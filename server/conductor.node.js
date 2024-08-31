@@ -147,7 +147,8 @@ const SocketServer = require("./modules/socketserver.module.js").SocketServer;
 const Performance = require("./modules/performance.module.js").Performance;
 // orchestra controls local instruments that generate midi values, and /or actual tones
 const Orchestra    = require("./modules/orchestra.module.js");
-
+// Status Melodies = plays specific note series to announce things like startup, crashes, etc.
+const StatusMelodies = require('./modules/statusmelodies.module.js').StatusMelodies;
 
 SocketServer.WEBSOCKET_PORT  = WEBSOCKET_PORT;
 SocketServer.WEBSERVER_PORT  = WEBSERVER_PORT;
@@ -169,6 +170,10 @@ socket = Object.create(SocketServer);
 socket.db = db
 performance = Object.create(Performance);
 performance.db = db
+statusmelodies = Object.create(StatusMelodies);
+statusmelodies.db = db;
+statusmelodies.midi_hardware_engine = midi_hardware_engine;
+
 
 // config score obect
 score.setScoreDir(config.scoreDir);

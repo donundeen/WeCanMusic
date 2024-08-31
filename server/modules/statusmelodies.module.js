@@ -37,19 +37,23 @@ let StatusMelodies = {
     },
 
     playnote(pitch, volume){
-        this.midi_hardware_engine.send('noteon', {
-            note: pitch,
-            velocity: volume,
-            channel: this.midi_channel
-        });
+        if(this.midi_hardware_engine){
+            this.midi_hardware_engine.send('noteon', {
+                note: pitch,
+                velocity: volume,
+                channel: this.midi_channel
+            });
+        }
     },
 
     endnote(pitch){
-        this.midi_hardware_engine.send('noteoff', {
-            note: pitch,
-            velocity: 0,
-            channel: this.midi_channel
-        });
+        if(this.midi_hardware_engine){
+            this.midi_hardware_engine.send('noteoff', {
+                note: pitch,
+                velocity: 0,
+                channel: this.midi_channel
+            });
+        }
     }
 }
 
