@@ -1,0 +1,56 @@
+let StatusMelodies = {
+
+    midi_hardware_engine : false,
+    active: false,
+
+    midi_channel : 0,
+
+    readyNotes : [65, 69, 72, 65, 69, 72],
+    errorNotes : [72, 68, 65, 72, 68, 65],
+
+    playready(){
+        // play a series of notes that mean "ready";
+        this.playnotes(this.readyNotes, 127, 500, 250);
+    },
+
+    playerror(){
+        this.playnotes(this.errorNotes, 127, 500, 250);
+    },
+
+    playnotes(series, volume, duration, spacing){
+        this.playnoteInSeries(series, 0, volume, duration, spacing );
+    },
+
+    playnoteInSeries(series, index, volume, duration, spacing){
+        if(index < series.length){
+
+            this.playnote(series[index], volume);
+            let self= this;
+            setTimeout(function(){
+                self.endnote(series[index])
+            }, duration);
+            index++;
+            setTimeout(function(){
+                self.playnoteInSeries(series, index, volume, duration, spacing);
+            }, spacing);
+        }
+    },
+
+    playnote(pitch, volume){
+        this.midi_hardware_engine.send('noteon', {
+            note: pitch,
+            velocity: volume,
+            channel: this.midi_channel
+        });
+    },
+
+    endnote(pitch){
+        this.midi_hardware_engine.send('noteoff', {
+            note: pitch,
+            velocity: 0,
+            channel: this.midi_channel
+        });
+    }
+}
+
+exports.StatusMelodies = StatusMelodies;
