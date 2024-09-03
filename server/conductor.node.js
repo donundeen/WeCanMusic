@@ -100,6 +100,8 @@ setTimeout(function(){
                 midifound = true;
                 midi_hardware_engine = new easymidi.Output(real_portname);   
                 midi_hardware_engine.send('reset'); 
+                statusmelodies.midi_hardware_engine = midi_hardware_engine;
+                statusmelodies.playready();
             }
         }
     },5000);
