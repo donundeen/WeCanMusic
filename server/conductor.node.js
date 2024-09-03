@@ -101,6 +101,7 @@ setTimeout(function(){
                 midi_hardware_engine = new easymidi.Output(real_portname);   
                 midi_hardware_engine.send('reset'); 
                 statusmelodies.midi_hardware_engine = midi_hardware_engine;
+                orchestra.midi_hardware_engine = midi_hardware_engine;
                 statusmelodies.playready();
             }
         }
