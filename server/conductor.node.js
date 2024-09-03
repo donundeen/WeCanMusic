@@ -850,6 +850,7 @@ socket.startWebServer();
 // open the score file, 
 // and when it's open, run the score (if the config file says so)
 score.openscore(function(){    
+    statusmelodies.playready();
     if(config.player_state == "play"){
         trans.start();
     }
