@@ -25,8 +25,8 @@ db.trace = false;
 db.log("starting","now",[1,2,3]);
 db.log(config);
 
-
-
+/*
+setTimeout(function(){
 // testing restarting fluidsynth
 const { exec } = require("child_process");
 
@@ -41,7 +41,8 @@ exec("systemctl --user restart fluidsynth.service", (error, stdout, stderr) => {
     }
     console.log(`stdout: ${stdout}`);
 });
-
+},20000);
+*/
 
 let bluetooth = false;
 if(config["bluetooth.active"]){
