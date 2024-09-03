@@ -84,8 +84,8 @@ setTimeout(function(){
         console.log(`stdout: ${stdout}`);
     });
     setTimeout(function(){
-        midi_hardware_engine = false;
-        while(!midi_hardware_engine){
+        let midifound = false;
+        while(!midifound){
             // if it can't find the named midi port, this part will just keep looping and hang the app
             easymidi = require('easymidi');
             let midi_outputs = easymidi.getOutputs();
@@ -97,6 +97,7 @@ setTimeout(function(){
                 }
             }
             if(real_portname){
+                midifound = true;
                 midi_hardware_engine = new easymidi.Output(real_portname);   
                 midi_hardware_engine.send('reset'); 
             }
