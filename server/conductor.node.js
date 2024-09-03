@@ -46,9 +46,9 @@ let bad_tiny_voices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,
 let use_midi_out = config.use_midi_out; // whether or not to send midi values through a hardware output, via easymidi
 let midi_hardware_engine = false;
 let midi_out_portname = config.midi_out_portname; // FLUID for on-baord synth, UM-ONE for the midi cable, or other things"; 
+let midi = require('midi');
+let easymidi = require('easymidi');
 if(use_midi_out){
-    let midi = require('midi');
-    let easymidi = require('easymidi');
     while(!midi_hardware_engine){
         // if it can't find the named midi port, this part will just keep looping and hang the app
         let midi_outputs = easymidi.getOutputs();
