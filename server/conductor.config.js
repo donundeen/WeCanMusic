@@ -5,6 +5,7 @@ var config = {
     "bluetooth.deviceID" :  "40:EF:4C:6F:C8:45", //relay: 40:EF:4C:6F:C8:45, oontz 74:F0:F0:AB:D5:21
     "player_state" : "play", // stop or play
     "soundfont" : "./soundfonts/141-Compleet bank synth.sf2",
+    "common_soundfont" : "./soundfonts/FluidSynthDefaultSoundfont.sf2", // the file that the soundfont file in use gets copied to. 
     "scoreDir" : "./scores",
     "scorename" : "cheeseBlues.txt",
     "performanceDir" : "./performances",
