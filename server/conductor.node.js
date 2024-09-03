@@ -68,47 +68,6 @@ if(use_midi_out){
 }
 
 
-setTimeout(function(){
-    // testing restarting fluidsynth
-    const { exec } = require("child_process");
-    
-    exec("systemctl --user restart fluidsynth.service", (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            return;
-        }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        console.log(`stdout: ${stdout}`);
-    });
-    setTimeout(function(){
-        let midifound = false;
-        while(!midifound){
-            // if it can't find the named midi port, this part will just keep looping and hang the app
-            easymidi = require('easymidi');
-            let midi_outputs = easymidi.getOutputs();
-            console.log(midi_outputs);
-            let real_portname = false;
-            for(let i = 0; i<midi_outputs.length; i++){
-                if(midi_outputs[i].includes(midi_out_portname)){
-                    real_portname = midi_outputs[i];
-                }
-            }
-            if(real_portname){
-                midifound = true;
-                midi_hardware_engine = new easymidi.Output(real_portname);   
-                midi_hardware_engine.send('reset'); 
-                statusmelodies.midi_hardware_engine = midi_hardware_engine;
-                orchestra.midi_hardware_engine = midi_hardware_engine;
-                statusmelodies.playready();
-            }
-        }
-    },5000);
-},20000);
-
-
 let bpm = 120; // this should eventually be configurable as a performance variable in the UI
 
 // defining some note lengths
