@@ -27,6 +27,22 @@ db.log(config);
 
 
 
+// testing restarting fluidsynth
+const { exec } = require("child_process");
+
+exec("systemctl --user restart fluidsynth.service", (error, stdout, stderr) => {
+    if (error) {
+        console.log(`error: ${error.message}`);
+        return;
+    }
+    if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return;
+    }
+    console.log(`stdout: ${stdout}`);
+});
+
+
 let bluetooth = false;
 if(config["bluetooth.active"]){
     bluetooth = require('./modules/bluetooth.module.js').Bluetooth;
