@@ -300,6 +300,12 @@ class Orchestra{
 
     }
 
+    resendInstrumentsBankProgramChannel(){
+        this.allUDPInstruments(function(instrument){
+            instrument.midiSetBankProgram();
+        });
+    }
+
 
 
 
