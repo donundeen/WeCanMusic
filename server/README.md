@@ -50,7 +50,7 @@ with whatever mthod you use to clone repos, eg
 
 ` mv WeCanMusic wecanmusic`
 
-` cd wecanmusicprojects/server`
+` cd wecanmusic/server`
 
 `npm install`
 
