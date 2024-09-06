@@ -46,7 +46,7 @@ https://www.pishop.ca/product/pijuice-hat-a-portable-power-platform-for-every-ra
 
 with whatever mthod you use to clone repos, eg
 
-` git clone https://github.com/donundeen/wecanmusicprojects.git`
+` git clone https://github.com/donundeen/WeCanMusic.git`
 
 ` cd wecanmusicprojects/server`
 
