@@ -48,6 +48,8 @@ with whatever mthod you use to clone repos, eg
 
 ` git clone https://github.com/donundeen/WeCanMusic.git`
 
+` mv WeCanMusic wecanmusic`
+
 ` cd wecanmusicprojects/server`
 
 `npm install`
