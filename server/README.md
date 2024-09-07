@@ -27,7 +27,6 @@ sudo apt upgrade
 
 ```
 sudo apt install git
-
 ```
 
 # PiJuice Setup
@@ -43,7 +42,6 @@ https://www.pishop.ca/product/pijuice-hat-a-portable-power-platform-for-every-ra
 # Install Node & npm
 
 [https://pimylifeup.com/raspberry-pi-nodejs/](https://pimylifeup.com/raspberry-pi-nodejs/)
-
 ```
 
 sudo apt install -y ca-certificates curl gnupg
@@ -59,7 +57,6 @@ sudo apt update
 sudo apt install nodejs
 
 sudo apt install build-essential
-
 ```
 
 # Install FluidSynth
