@@ -22,7 +22,7 @@ Complete installation instructions coming shortly.
   
   - **MaxCompatible**: arduino code for devices that just send thier raw values over UDP to a Max installation (in **PositionalJamAlphaBlast**). I've moved away from this approach to using the more open-source, RPi-based setup in **RPiCompatible**.
   
-  - **RPiCompatible**: Arduino code for devices that take their sensor value, turn it into MIDI notes based on the supplied chord changes, and plays the notes using the attached MusicMaker featherwing. It ALSO can send the MIDI note as a makenote message over OSC/UDP, so that another computer could play it via an attached synth. This is useful if you don't have enough MusicMakers, or want to use fancier synths. There will be a sub-folder for each type of device
+  - **RPiCompatible**: Arduino code for devices that take their sensor value, turn it into MIDI notes based on the supplied chord changes, and plays the notes using the attached MusicMaker featherwing. It ALSO can send the MIDI note as a makenote message over OSC/UDP, so that another computer could play it via an attached synth. This is useful if you don't have enough MusicMakers, or want to use fancier synths. There will be a sub-folder for each type of device, such as
     
     - **wecanmusic_capacitive**: The version of the device code for handling simple capacitive sensing, on pin 32.
       
@@ -38,9 +38,9 @@ Complete installation instructions coming shortly.
   
   - **Tests**: Files I made to test things, and may want to refer to later.
 
-- **server**: Files for running the Raspberry Pi server. If you don't need the Local WAP system, then you can run this server code on a Mac, but this setup isn't documented as well. See the README.md file in the **server** folder
+- **server**: Files for running the Raspberry Pi server. If you don't need the Local WAP system, then you can run this server code on a Mac, but this setup isn't documented as well. See the README.md file in the **server** folder for installation and usage instructions.
 
-- **PositionalJamAlphaBlast**: An implementation of this project that uses Max/MSP for most of the processing. In this setup, the devices simply send their raw values, and Max handles during those values into midi notes according to the chord changes, and sends MIDI values out. In this implmentation, the MIDI values are captured and played by Ableton; the ableton files are also in this folder. I've put aside this version in favor of the more open-source, wireless and headless version using the files in server and arduino folders instead. But there's lots of good stuff in here if you like working with Max.
+- **VizStudioImplementation**: An implementation of this project that uses Max/MSP for most of the processing. In this setup, the devices simply send their raw values, and Max handles during those values into midi notes according to the chord changes, and sends MIDI values out. In this implmentation, the MIDI values are captured and played by Ableton; the ableton files are also in this folder. I've put aside this version in favor of the more open-source, wireless and headless version using the files in server and arduino folders instead. But there's lots of good stuff in here if you like working with Max.
 
 ## Hardware Used:
 
@@ -51,5 +51,7 @@ Complete installation instructions coming shortly.
 - Adafruit Music Maker MP3 player and MIDI Synth: [Adafruit Music Maker](https://www.adafruit.com/product/3357) 
 
 - Raspberry Pi 4 (but you can probably use other Pis)
+
+- IQAudio DAC+: Provides much better audio quality than the built-in rpi audio outputs: https://www.pishop.ca/product/iqaudio-dac/ 
 
 # 
