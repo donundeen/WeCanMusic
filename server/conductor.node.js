@@ -834,6 +834,12 @@ theory.setMidiListCallback(function(msg){
 });
 
 
+function setSoundfontFile(filename){
+    // copy this file to common_soundfont file
+
+    // restart FluidSynth
+    resetFluidSynth();
+}
 
 function resetFluidSynth(){
     const { exec } = require("child_process");
