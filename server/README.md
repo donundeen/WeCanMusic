@@ -3,38 +3,34 @@
 The Raspberry Pi Server does these things:
 
 - Runs a WiFI access point which all devices can connect to, so an internet connection isn't needed
-
 - Sends out Note List information to all the devices, so they play from the same selection of notes. This note list can come from a score that plays on its own, or from a web app where the use can trigger chord changes in real time
-
 - Run a Web Server, which provides
-  
+
   - score editing and playing interface
-  
   - live chord change selection
-  
   - control configuration of individual devices.
-
-- Runs a local MIDI synth, which can play notes sent from networked devices, or can process raw sensor values from devices that can't create their own MIDI notes. These notes can be played from the Rpi's audio out, or through a bluetooth speaker
-
+- Runs a local MIDI synth, which can play notes sent from networked devices, or can process raw sensor values from devices that can't create their own MIDI notes. These notes can be played from the Rpi's audio out, a USB Midi Cable, or through a bluetooth speaker
 - Can send raw MIDI notes to hardware synths connected via USB->MIDI interfaces.
 
 ## RPI Setup
 
 - Get a Pi. I use a Pi4, but you can probably use a pi 3
 
-## install some basics
+# Update and upgrade
 
 ```
 sudo apt update
 sudo apt upgrade
-sudo curl -fsSL https://deb.nodesource.com/setup_21.x  > nodeget.sh
-chmod a+x nodeget.sh
-sudo ./nodeget.sh
-sudo apt-get install -y nodejs
-sudo apt install git 
 ```
 
-## PiJuice Setup
+# Install Git
+
+```
+sudo apt install git
+
+```
+
+# PiJuice Setup
 
 Do this only if you're using a PiJuice:
 
@@ -42,156 +38,163 @@ https://www.pishop.ca/product/pijuice-hat-a-portable-power-platform-for-every-ra
 
 `sudo apt-get install pijuice-base`
 
-## Install this Repo
 
-with whatever mthod you use to clone repos, eg
 
-` git clone https://github.com/donundeen/WeCanMusic.git`
+# Install Node & npm
 
-` mv WeCanMusic wecanmusic`
-
-` cd wecanmusic/server`
-
-`npm install`
-
-`cp env.config.js.template env.config.js `
-
-Then edit env.config.js to set your environment to 'rpi' or 'mac', and any other config settings you want to NOT be changed when the repo changes (more on config values later as they develop)
-
-### Setup up WIFI AP / Regular WIFI connect modes
-
-following these instructions: **Following this: [Turn Your Raspberry Pi into an Access Point ](https://raspberrytips.com/access-point-setup-raspberry-pi/)**
+[https://pimylifeup.com/raspberry-pi-nodejs/](https://pimylifeup.com/raspberry-pi-nodejs/)
 
 ```
-sudo nmcli con add con-name hotspot ifname wlan0 type wifi ssid "wecanmusic"
+
+sudo apt install -y ca-certificates curl gnupg
+
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg
+
+NODE_MAJOR=20
+
+echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+
+sudo apt update
+
+sudo apt install nodejs
+
+sudo apt install build-essential
+
+```
+
+# Install FluidSynth
+
+```
+sudo apt install fluidsynth
+```
+
+## Set priority level for fluidsynth
+
+
+``` sudo nano /etc/security/limits.d/audio.conf```
+add lines:
+``` 
+@audio   -  rtprio     95
+@audio   -  memlock    unlimited
+```
+
+# Setup dependencies
+
+```
+sudo apt install alsa-utils libasound2-plugins
+sudo apt install libasound2-dev
+```
+
+# Clone Repo
+
+pull only, no need to create ssh key
+```
+git clone https://github.com/donundeen/WeCanMusic.git
+```
+
+## Lowercase the name (until I fix a few bugs)
+
+```
+mv WeCanMusic wecanmusic
+```
+
+# Setup App
+
+```
+cd ~/wecanmusic/server
+npm install
+```
+
+## Create machine-specific config file
+
+```
+cd ~/wecanmusic/server
+cp env.config.js.template env.config.js
+```
+
+## edit env.config.js as appropriate
+
+change env value from “mac” to “rpi”
+
+add line
+```
+    "scorename" : "simplescore.txt" // default score to start with since this score already exists in the repo
+```
+
+# Get Soundfonts
+[TBD]
+
+Soundfont files are too large to put in the Repo, so you need to find them and install them separately.
+
+scp the soundfont file from another machine, into the folder `soundfonts`
+
+Whatever soundfont file you want as your operating soundfont file, 
+copy it to the filename `FluidSynthDefaultSoundfont.sf2` 
+
+Whenever you change this, you'll need to restart the server (really just Fluidsynth.service then wecanmusic.service, but it's easier to just reboot the machine))
+
+create a “workingsoundfont.sf2” file, and we copy whatever sf2 file we want to use to this name.
+
+# Fix some permissions
+
+```
+sudo apt-get install libcap2-bin
+sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
+```
+
+# Try Running It
+
+```
+cd ~/wecanmusic/server
+node conductor.node.js
+```
+
+should see no errors or anything else.
+
+# Setup networking: hotspot and internet access
+
+The Hotspot mode runs a local wifi access point that all your instruments, and any control interfaces, ipads, etc can connect to. You need it running to run wecanmusic and have it do stuff.
+
+The internet access mode is for getting code updates.
+
+```
+sudo nmcli con add con-name hotspot ifname wlan0 type wifi ssid "icanmusic"
 sudo nmcli con modify hotspot wifi-sec.key-mgmt wpa-psk
-sudo nmcli con modify hotspot wifi-sec.psk "wecanmusic"
+sudo nmcli con modify hotspot 802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared
+sudo nmtui
 ```
+change the icanmusic security to “None” - no password
 
-Then I ran `nmtui` , which brings up an interface that lets me create a named connection to my local wifi.
+change IPv4 Configuration:
 
-**I ALSO changed the wecanmusic AP to NOT use a password, since I couldn't get the arduinos to negotiate authentication. **
+Shared
 
-Then I ran
+addresses: 10.0.0.1/24
 
-`nmcli con modify [YOUR LOCAL WIFI NAME] connection.interface-name wlan0`
+change the preconfigured connection name to mediawifi (or whatever you want)
 
-To bring up the local wifi (access the internet):
-
+switch back and forth between hotspot and internet access with
 ```
+# get internet access
 nmcli con down hotspot
-nmcli con up [YOUR LOCAL WIFI NAME]
-```
+nmcli con up mediawifi
 
-To run as access point (no access to internet)
-
-```
-nmcli con down [YOUR LOCAL WIFI NAME]
+# run hotspot for wecanmusic
+nmcli con down mediawifi
 nmcli con up hotspot
-```
-
-## Setup Fluidsynth
-
-fluidsynth is the local midi synth, for playing midi notes through an audio out, or for piping midi to a connected hardware synth
-
-`sudo apt install fluidsynth`
-
-or on mac: `brew install fluidsynth`
-
-### get fluidsynth running with high priority:
-
-I followed the instructions here: **[How do I configure my linux system to allow JACK to use realtime scheduling? | JACK Audio Connection Kit](https://jackaudio.org/faq/linux_rt_config.html)**  - even though I'm not using JACK
-
-If your system has no directory called /etc/security/limits.d then you will need to edit /etc/security/limits.conf. If /etc/security/limits.d does exist on your machine, then you will need to create and edit a file called /etc/security/limits.d/audio.conf. The file must contain (at least) the following two lines:
 
 ```
-@audio   -  rtprio     95
 
-@audio   -  memlock    unlimited
+# Setup Systemd
+
+So wecanmusic runs at startup
+```
+sudo cp ~/wecanmusic/server/units/wecanmusic.service /lib/systemd/user/
+sudo systemctl daemon-reload
+systemctl --user enable wecanmusic.service 
 ```
 
-restart after doing this stuff.
-
-try running `node tests/easymiditest.node.js` - you should hear sounds
-
-### Make sure fluidsynth waits for pulseaudio
-
-This problem creeped up one day; if pulseaudio isn't started, fluidsynth won't connect to it, so you need to make fluidsynth wait until pulseaudio is started
-
-Add these lines to the [Unit] section of /usr/lib/systemd/user/fluidsynth.service:
-
+check if it works:
 ```
-After=pulseaudio.service
-PartOf=pulseaudio.service
+systemctl --user status wecanmusic.service
 ```
-
-
-## Install Soundfonts
-
-The server can handle whatever soundfont (sf2) files you want to load into it, here's what you need to do:
-
-- put the soundfont file in the soundfonts folder
-- from the server folder, run the python script: 
-` python parsesf.py `.This will create the .json files that hold the bank, program, and name or each instrument. The web ui will load these files and use that to make dropdowns.
-- edit conductor.config.js and and change the values for soundfont and soundfont_instrument_list to match the full path to the files you uploaded. Better yet, put those vars in your unique, .gitignored env.config.js file.
-- edit /etc/default/fluidsynth, change the SOUND_FONT variable to match the filename of your soundfont file. If there are spaces in the filename, put it in single quotes AND escape the spaces with backslash 'like\ this\ here.sf2' 
-
-Sorry it's a lot, I'll try to make the code smarter so you only need to change the soundfont config and everything else will follow from there. But not there yet...
-
-
-## Setup Webserver
-
-In server folder, run
-
-`npm install`
-
-## Run conductor.node.js
-
-conductor.node.js is the main program that runs all the cool stuff. The file itself mostly glues together a bunch of modules, provides message routing between them and the networked devices and webpage, and gets things going. There's a lot of config values to check out, which you might need to edito foryour particular setup, in particular if you want to run it on different test environments, a mac laptop, etc.
-
-`node conductor.node.js`
-
-you might get errors about missing npm modules the first time you run in, wich cna probably be fixed by npm installing those modules.
-
-## Access Web Interface
-
-Connect your screen devices (laptop, tablet, etc) to the wecanmusic wifi.
-
-The web interface for controlling the score and the devices is at
-
-`http://localhost:8002`
-
-## Connect to Bluetooth Speakers
-
-The rpi audio out is pretty crap, you'll get much better performance from bluetooth audio. Here's how to get it working.
-
-(Alternatively, get a hardware DAC fro RPI)
-
-**
-
-`sudo apt-get install pulseaudio pulseaudio-module-bluetooth`
-
-`sudo usermod -G bluetooth -a pi`
-
-`sudo apt install mpg123`
-
-**
-
-run ```bluetoothctl```
-
-in bluetoothctl, run:
-
-`power on`
-`agent on`
-`default-agent`
-`scan on`
-Watch for the devices it finds. Take note of the bluetooth speaker you’re looking for
-Might need to turn the headphones on and off again, to figure out which one it is
-(you can use tab for auto-completion)
-Below <dev> is the name of the device (usually a bunch of HEX characters like 20:45:CF:... etc
-`pair <dev>`
-`trust <dev>`
-`connect <dev> `
-`quit`
-
-Then run `node synthplayer.node.js`  - you should hear some notes.
