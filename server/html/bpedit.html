@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curve Editor</title>
+    <style>
+        canvas { border: 1px solid black; }
+        .control { margin: 10px; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <div class="control">
+        <label for="inputSlider">Input: <span id="inputValue">0.0</span></label>
+        <input type="range" id="inputSlider" min="0" max="100" step="1" value="0">
+        <br>
+        <label for="outputSlider">Output: <span id="outputValue">0.0</span></label>
+        <input type="range" id="outputSlider" min="0" max="100" step="1" value="0" disabled>
+        <br>
+        <button id="convertToArray">Convert Curve to Array</button>
+        <br>
+        <label for="arrayInput">Load Array:</label>
+        <input type="text" id="arrayInput">
+        <button id="loadArray">Load</button>
+        <pre id="arrayOutput"></pre>
+    </div>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const inputSlider = document.getElementById('inputSlider');
+        const inputValue = document.getElementById('inputValue');
+        const outputSlider = document.getElementById('outputSlider');
+        const outputValue = document.getElementById('outputValue');
+        const convertToArrayButton = document.getElementById('convertToArray');
+        const arrayOutput = document.getElementById('arrayOutput');
+        const arrayInput = document.getElementById('arrayInput');
+        const loadArrayButton = document.getElementById('loadArray');
+
+        let breakpoints = [];
+        let selectedPoint = null;
+        let isShiftKeyPressed = false;
+        let isCKeyPressed = false;
+        let draggingPoint = null;
+        let controlPoint = null;
+        let controlPointIndex = -1;
+
+        function drawFunction() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (breakpoints.length < 2) return;
+
+            ctx.beginPath();
+            ctx.moveTo(breakpoints[0].x, canvas.height - breakpoints[0].y);
+
+            for (let i = 0; i < breakpoints.length - 1; i++) {
+                const p1 = breakpoints[i];
+                const p2 = breakpoints[i + 1];
+                const cp = controlPoint && controlPoint.start === p1 && controlPoint.end === p2 ? controlPoint.cp : null;
+
+                if (cp) {
+                    ctx.quadraticCurveTo(cp.x, canvas.height - cp.y, p2.x, canvas.height - p2.y);
+                } else {
+                    ctx.lineTo(p2.x, canvas.height - p2.y);
+                }
+            }
+
+            ctx.stroke();
+            drawBreakpoints();
+        }
+
+        function drawBreakpoints() {
+            breakpoints.forEach(point => {
+                ctx.beginPath();
+                ctx.arc(point.x, canvas.height - point.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = 'red';
+                ctx.fill();
+                ctx.stroke();
+            });
+        }
+
+        function handleMouseClick(x, y) {
+            if (isShiftKeyPressed) {
+                const indexToRemove = breakpoints.findIndex(point => Math.abs(point.x - x) < 10 && Math.abs(point.y - y) < 10);
+                if (indexToRemove !== -1) {
+                    breakpoints.splice(indexToRemove, 1);
+                    drawFunction();
+                }
+            } else {
+                if (breakpoints.every(p => Math.hypot(p.x - x, p.y - y) > 10)) {
+                    breakpoints.push({ x, y });
+                    breakpoints.sort((a, b) => a.x - b.x);
+                    drawFunction();
+                }
+            }
+        }
+
+        canvas.addEventListener('click', (event) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = canvas.height - (event.clientY - rect.top);
+            handleMouseClick(x, y);
+        });
+
+        canvas.addEventListener('mousedown', (event) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = canvas.height - (event.clientY - rect.top);
+
+            selectedPoint = breakpoints.find(point => Math.abs(point.x - x) < 10 && Math.abs(point.y - y) < 10);
+            if (selectedPoint) {
+                draggingPoint = selectedPoint;
+                return;
+            }
+
+            controlPoint = breakpoints.reduce((closest, p1, i) => {
+                if (i < breakpoints.length - 1) {
+                    const p2 = breakpoints[i + 1];
+                    if (Math.abs(x - (p1.x + p2.x) / 2) < 20 && Math.abs(y - (p1.y + p2.y) / 2) < 20) {
+                        return { start: p1, end: p2, cp: { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 } };
+                    }
+                }
+                return closest;
+            }, null);
+
+            if (controlPoint) {
+                controlPointIndex = breakpoints.indexOf(controlPoint.start);
+                return;
+            }
+
+            handleMouseClick(x, y);
+        });
+
+        canvas.addEventListener('mousemove', (event) => {
+            if (draggingPoint !== null) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = canvas.height - (event.clientY - rect.top);
+                draggingPoint.x = x;
+                draggingPoint.y = y;
+                drawFunction();
+            } else if (controlPoint && isCKeyPressed) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = canvas.height - (event.clientY - rect.top);
+
+                controlPoint.cp.x = x;
+                controlPoint.cp.y = y;
+                drawFunction();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            draggingPoint = null;
+            controlPoint = null;
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Shift') {
+                isShiftKeyPressed = true;
+            }
+            if (event.key === 'c') {
+                isCKeyPressed = true;
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            if (event.key === 'Shift') {
+                isShiftKeyPressed = false;
+            }
+            if (event.key === 'c') {
+                isCKeyPressed = false;
+            }
+        });
+
+        function mapToCurve(xInput) {
+            if (breakpoints.length < 2) return false;
+
+            if (xInput < 0.0 || xInput > 1.0) return false;
+
+            const x = xInput * canvas.width;
+
+            for (let i = 0; i < breakpoints.length - 1; i++) {
+                const p1 = breakpoints[i];
+                const p2 = breakpoints[i + 1];
+
+                if (x >= p1.x && x <= p2.x) {
+                    const t = (x - p1.x) / (p2.x - p1.x);
+                    let y;
+
+                    if (controlPoint && controlPoint.start === p1 && controlPoint.end === p2) {
+                        y = Math.pow(1 - t, 2) * p1.y +
+                            2 * (1 - t) * t * controlPoint.cp.y +
+                            Math.pow(t, 2) * p2.y;
+                    } else {
+                        y = p1.y * (1 - t) + p2.y * t;
+                    }
+
+                    return 1 - (y / canvas.height);
+                }
+            }
+
+            return false;
+        }
+
+        function curveToArray() {
+            const breakpointsArray = breakpoints.map(point => [
+                (point.x / canvas.width).toFixed(2),
+                (1 - point.y / canvas.height).toFixed(2)
+            ]);
+            const segmentsArray = breakpoints.reduce((arr, point, index) => {
+                if (index < breakpoints.length - 1) {
+                    arr.push({
+                        start: [(point.x / canvas.width).toFixed(2), (1 - point.y / canvas.height).toFixed(2)],
+                        end: [(breakpoints[index + 1].x / canvas.width).toFixed(2), (1 - breakpoints[index + 1].y / canvas.height).toFixed(2)],
+                        cp: [
+                            ((breakpoints[index].x + breakpoints[index + 1].x) / 2 / canvas.width).toFixed(2),
+                            (1 - ((breakpoints[index].y + breakpoints[index + 1].y) / 2 / canvas.height)).toFixed(2)
+                        ]
+                    });
+                }
+                return arr;
+            }, []);
+            return { breakpoints: breakpointsArray, segments: segmentsArray };
+        }
+
+        function arrayToCurve(array) {
+            breakpoints = array.breakpoints.map(([x, y]) => ({
+                x: parseFloat(x) * canvas.width,
+                y: (1 - parseFloat(y)) * canvas.height
+            }));
+
+            array.segments.forEach((segment, index) => {
+                if (index < breakpoints.length - 1) {
+                    const start = breakpoints[index];
+                    const end = breakpoints[index + 1];
+                    const cp = {
+                        x: parseFloat(segment.cp[0]) * canvas.width,
+                        y: (1 - parseFloat(segment.cp[1])) * canvas.height
+                    };
+                    controlPoint = { start, end, cp };
+                    drawFunction();
+                }
+            });
+        }
+
+        convertToArrayButton.addEventListener('click', () => {
+            const array = curveToArray();
+            arrayOutput.textContent = JSON.stringify(array);
+        });
+
+        loadArrayButton.addEventListener('click', () => {
+            try {
+                const arrayStr = arrayInput.value.trim();
+                const array = JSON.parse(arrayStr);
+                if (array.breakpoints) {
+                    arrayToCurve(array);
+                } else {
+                    alert('Invalid array format');
+                }
+            } catch (e) {
+                alert('Invalid JSON format');
+            }
+        });
+
+        drawFunction();
+    </script>
+</body>
+</html>
+    
