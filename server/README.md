@@ -93,6 +93,21 @@ After=pulseaudio.service
 PartOf=pulseaudio.service
 ```
 
+## edit fluidsynth startup settings:
+```
+sudo nano /etc/defaults/fluidsynth
+```
+```
+# Mandatory parameters (uncomment and edit)
+#SOUND_FONT=/usr/share/sounds/sf3/default-GM.sf3
+SOUND_FONT='/home/pi/wecanmusic/server/soundfonts/FluidSynthDefaultSoundfont.sf2'
+
+# Additional optional parameters (may be useful, see 'man fluidsynth' for further info)
+#OTHER_OPTS='-a alsa -m alsa_seq -p FluidSynth\ GM -r 48000'
+OTHER_OPTS='-a pulseaudio'
+```
+
+
 # Setup dependencies
 
 ```
