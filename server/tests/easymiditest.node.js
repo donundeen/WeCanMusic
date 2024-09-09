@@ -24,14 +24,14 @@ midiSetBankProgram(1, 0, 88);
 
 
 setTimeout(function(){
-    midiSetBankProgram(0, 120, 32);
+    midiSetBankProgram(1, 0, 32);
     midiMakeNote(1, 65, 120, 500);
     midiMakeNote(1, 69, 120, 500);
     midiMakeNote(1, 73, 120, 500);
 }, 100);
 
 setTimeout(function(){
-    midiSetBankProgram(0, 11, 96);
+    midiSetBankProgram(0, 0, 96);
     midiMakeNote(1, 65, 120, 500);
     midiMakeNote(1, 69, 120, 500);
     midiMakeNote(1, 73, 120, 500);
