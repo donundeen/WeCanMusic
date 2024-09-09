@@ -78,6 +78,12 @@ add lines:
 @audio   -  memlock    unlimited
 ```
 
+## Make sure the right audio device is selected
+```
+sudo raspi-config
+```
+system->audio->select the audio interface
+
 # Setup dependencies
 
 ```
