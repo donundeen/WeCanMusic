@@ -15,6 +15,7 @@ if(use_midi_out){
             }
         }
         if(real_portname){
+            console.log("using port " + real_portname);
             midi_hardware_engine = new easymidi.Output(real_portname);   
             midi_hardware_engine.send('reset'); 
         }
