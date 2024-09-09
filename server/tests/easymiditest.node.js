@@ -41,6 +41,7 @@ setTimeout(function(){
 
 
 function midiSetBankProgram(midi_channel, bank, midi_voice){
+    console.log("set channel bank progam", midi_channel, bank, midi_voice);
     if(midi_hardware_engine){
         midi_hardware_engine.send('cc',{
             controller: 0,
@@ -81,6 +82,7 @@ function midiSetInstrument(midi_channel, midi_voice){
 
 function midiMakeNote(midi_channel, note, velocity, duration){
     // if there's a hardware midi device attached to this instrument
+    console.log("midiMakeNote " , midi_channel, note, velocity);
     if(midi_hardware_engine){
         console.log("HARDWARE NOTE");
         midi_hardware_engine.send('noteon', {
