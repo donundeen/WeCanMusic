@@ -84,6 +84,15 @@ sudo raspi-config
 ```
 system->audio->select the audio interface
 
+## edit service to tie to pulseaudio:
+```
+sudo nano /usr/lib/systemd/user/fluidsynth.service
+
+[Unit]
+After=pulseaudio.service
+PartOf=pulseaudio.service
+```
+
 # Setup dependencies
 
 ```
