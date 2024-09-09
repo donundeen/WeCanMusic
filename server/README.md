@@ -67,7 +67,10 @@ sudo apt install fluidsynth
 
 ## Set priority level for fluidsynth
 
-
+```
+sudo groupadd audio
+sudo usermod -a -G audio pi
+```
 ``` sudo nano /etc/security/limits.d/audio.conf```
 add lines:
 ``` 
@@ -140,6 +143,9 @@ sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\``
 ```
 
 # Try Running It
+```
+sudo reboot
+```
 
 ```
 cd ~/wecanmusic/server
