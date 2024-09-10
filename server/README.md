@@ -30,7 +30,7 @@ sudo apt install -y git ca-certificates curl gnupg pulseaudio pulseaudio-module-
 
 # Install Git
 ```
-sudo apt install git
+sudo apt install -y git
 ```
 
 # PiJuice Setup
@@ -39,7 +39,7 @@ Do this only if you're using a PiJuice:
 
 https://www.pishop.ca/product/pijuice-hat-a-portable-power-platform-for-every-raspberry-pi/
 
-`sudo apt-get install pijuice-base`
+`sudo apt-get install -y pijuice-base`
 
 
 
@@ -58,16 +58,16 @@ echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.
 
 sudo apt update
 
-sudo apt install nodejs
+sudo apt install -y nodejs
 
-sudo apt install build-essential
+sudo apt install -y build-essential
 ```
 # Setup dependencies
 
 ```
 sudo apt install -y pulseaudio pulseaudio-module-bluetooth`
-sudo apt install alsa-utils libasound2-plugins
-sudo apt install libasound2-dev
+sudo apt install -y alsa-utils libasound2-plugins
+sudo apt install -y libasound2-dev
 ```
 # Set priority level for audio
 ```
@@ -86,7 +86,7 @@ add lines:
 # Install FluidSynth
 
 ```
-sudo apt install fluidsynth
+sudo apt install -y fluidsynth
 ```
 
 ## Make sure the right audio device is selected
@@ -172,7 +172,7 @@ create a “workingsoundfont.sf2” file, and we copy whatever sf2 file we want 
 # Fix some permissions
 
 ```
-sudo apt-get install libcap2-bin
+sudo apt-get install -y libcap2-bin
 sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
 ```
 
