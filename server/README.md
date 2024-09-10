@@ -141,6 +141,11 @@ sudo apt-get install -y libcap2-bin
 sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
 ```
 
+# now install alsa
+```
+sudo apt install -y alsa-utils libasound2-plugins libasound2-dev
+```
+
 # Clone Repo
 
 pull only, no need to create ssh key
