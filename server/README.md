@@ -42,7 +42,6 @@ https://www.pishop.ca/product/pijuice-hat-a-portable-power-platform-for-every-ra
 `sudo apt-get install -y pijuice-base`
 
 
-
 # Install Node & npm
 
 [https://pimylifeup.com/raspberry-pi-nodejs/](https://pimylifeup.com/raspberry-pi-nodejs/)
