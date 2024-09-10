@@ -23,8 +23,12 @@ sudo apt update
 sudo apt upgrade
 ```
 
-# Install Git
+# All the apt installs together (except node):
+```
+sudo apt install -y git ca-certificates curl gnupg pulseaudio pulseaudio-module-bluetooth alsa-utils libasound2-plugins libasound2-dev fluidsynth libcap2-bin
+```
 
+# Install Git
 ```
 sudo apt install git
 ```
