@@ -116,6 +116,13 @@ OTHER_OPTS='-a pulseaudio'
 ```
 
 
+# Fix some permissions
+
+```
+sudo apt-get install -y libcap2-bin
+sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
+```
+
 # Clone Repo
 
 pull only, no need to create ssh key
@@ -166,12 +173,6 @@ Whenever you change this, you'll need to restart the server (really just Fluidsy
 
 create a “workingsoundfont.sf2” file, and we copy whatever sf2 file we want to use to this name.
 
-# Fix some permissions
-
-```
-sudo apt-get install -y libcap2-bin
-sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
-```
 
 # Try Running It
 ```
