@@ -57,9 +57,7 @@ echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.
 
 sudo apt update
 
-sudo apt install -y nodejs
-
-sudo apt install -y build-essential
+sudo apt install -y nodejs build-essential
 ```
 # Setup dependencies
 
@@ -105,7 +103,7 @@ PartOf=pulseaudio.service
 
 ## edit fluidsynth startup settings:
 ```
-sudo nano /etc/defaults/fluidsynth
+sudo nano /etc/default/fluidsynth
 ```
 ```
 # Mandatory parameters (uncomment and edit)
