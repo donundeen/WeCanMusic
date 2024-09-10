@@ -100,6 +100,9 @@ dtoverlay=rpi-dacplus
 dtoverlay=rpi-dacpro
 dtoverlay=rpi-digiampplus
 ```
+```
+sudo reboot -H now
+```
 then
 ```
 sudo raspi-config
