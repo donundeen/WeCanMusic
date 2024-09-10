@@ -58,15 +58,14 @@ sudo apt install nodejs
 
 sudo apt install build-essential
 ```
-
-# Install FluidSynth
+# Setup dependencies
 
 ```
-sudo apt install fluidsynth
+sudo apt install -y pulseaudio pulseaudio-module-bluetooth`
+sudo apt install alsa-utils libasound2-plugins
+sudo apt install libasound2-dev
 ```
-
-## Set priority level for fluidsynth
-
+# Set priority level for audio
 ```
 sudo groupadd audio
 sudo usermod -a -G audio pi
@@ -76,6 +75,14 @@ add lines:
 ``` 
 @audio   -  rtprio     95
 @audio   -  memlock    unlimited
+```
+
+
+
+# Install FluidSynth
+
+```
+sudo apt install fluidsynth
 ```
 
 ## Make sure the right audio device is selected
@@ -107,13 +114,6 @@ SOUND_FONT='/home/pi/wecanmusic/server/soundfonts/FluidSynthDefaultSoundfont.sf2
 OTHER_OPTS='-a pulseaudio'
 ```
 
-
-# Setup dependencies
-
-```
-sudo apt install alsa-utils libasound2-plugins
-sudo apt install libasound2-dev
-```
 
 # Clone Repo
 
