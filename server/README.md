@@ -25,7 +25,7 @@ sudo apt upgrade
 
 # All the apt installs together (except node):
 ```
-sudo apt install -y git ca-certificates curl gnupg pulseaudio pulseaudio-module-bluetooth alsa-utils libasound2-plugins libasound2-dev fluidsynth libcap2-bin
+sudo apt install -y git ca-certificates curl gnupg pulseaudio pulseaudio-module-bluetooth  fluidsynth libcap2-bin
 ```
 
 # Install Git
@@ -88,9 +88,24 @@ sudo apt install -y fluidsynth
 
 ## Make sure the right audio device is selected
 ```
+sudo nano /boot/firmware/config.txt
+```
+```
+[all]
+# Some magic to prevent the normal HAT overlay from being loaded
+dtoverlay=
+# And then choose one of the following, according to the model:
+dtoverlay=rpi-codeczero
+dtoverlay=rpi-dacplus
+dtoverlay=rpi-dacpro
+dtoverlay=rpi-digiampplus
+```
+then
+```
 sudo raspi-config
 ```
-system->audio->select the audio interface
+System->Audio -> 2 RPi DigiAMP+
+
 
 ## edit service to tie to pulseaudio:
 ```
