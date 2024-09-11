@@ -170,6 +170,7 @@ mv WeCanMusic wecanmusic
 ```
 cd ~/wecanmusic/server
 npm install
+chmod a+x hotspotup.sh
 ```
 
 ## Create machine-specific config file
