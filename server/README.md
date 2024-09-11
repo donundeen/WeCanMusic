@@ -133,15 +133,21 @@ SOUND_FONT='/home/pi/wecanmusic/server/soundfonts/FluidSynthDefaultSoundfont.sf2
 OTHER_OPTS='-a pulseaudio'
 ```
 
-
-# Fix some permissions
+# reboot and confirm
 
 ```
-sudo apt-get install -y libcap2-bin
-sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
+sudo reboot
 ```
+
+```
+systemctl --user status fluidsynth
+```
+
+There shouldn't be any error messages.
+
 
 # now install alsa
+
 ```
 sudo apt install -y alsa-utils libasound2-plugins libasound2-dev
 ```
@@ -195,6 +201,15 @@ copy it to the filename `FluidSynthDefaultSoundfont.sf2`
 Whenever you change this, you'll need to restart the server (really just Fluidsynth.service then wecanmusic.service, but it's easier to just reboot the machine))
 
 create a “workingsoundfont.sf2” file, and we copy whatever sf2 file we want to use to this name.
+
+
+
+# Fix some permissions
+
+```
+sudo apt-get install -y libcap2-bin
+sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
+```
 
 
 # Try Running It
