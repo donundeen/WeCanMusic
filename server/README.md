@@ -25,7 +25,7 @@ sudo apt upgrade
 
 # All the apt installs together (except node):
 ```
-sudo apt install -y git ca-certificates curl gnupg pulseaudio pulseaudio-module-bluetooth alsa-utils libasound2-plugins libasound2-dev fluidsynth libcap2-bin
+sudo apt install -y git ca-certificates curl gnupg pulseaudio pulseaudio-module-bluetooth  fluidsynth libcap2-bin
 ```
 
 # Install Git
@@ -88,9 +88,27 @@ sudo apt install -y fluidsynth
 
 ## Make sure the right audio device is selected
 ```
+sudo nano /boot/firmware/config.txt
+```
+```
+[all]
+# Some magic to prevent the normal HAT overlay from being loaded
+dtoverlay=
+# And then choose one of the following, according to the model:
+dtoverlay=rpi-codeczero
+dtoverlay=rpi-dacplus
+dtoverlay=rpi-dacpro
+dtoverlay=rpi-digiampplus
+```
+```
+sudo reboot -H now
+```
+then
+```
 sudo raspi-config
 ```
-system->audio->select the audio interface
+System->Audio -> 2 RPi DigiAMP+
+
 
 ## edit service to tie to pulseaudio:
 ```
@@ -115,12 +133,23 @@ SOUND_FONT='/home/pi/wecanmusic/server/soundfonts/FluidSynthDefaultSoundfont.sf2
 OTHER_OPTS='-a pulseaudio'
 ```
 
-
-# Fix some permissions
+# reboot and confirm
 
 ```
-sudo apt-get install -y libcap2-bin
-sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
+sudo reboot
+```
+
+```
+systemctl --user status fluidsynth
+```
+
+There shouldn't be any error messages.
+
+
+# now install alsa
+
+```
+sudo apt install -y alsa-utils libasound2-plugins libasound2-dev
 ```
 
 # Clone Repo
@@ -141,6 +170,7 @@ mv WeCanMusic wecanmusic
 ```
 cd ~/wecanmusic/server
 npm install
+chmod a+x hotspotup.sh
 ```
 
 ## Create machine-specific config file
@@ -172,6 +202,15 @@ copy it to the filename `FluidSynthDefaultSoundfont.sf2`
 Whenever you change this, you'll need to restart the server (really just Fluidsynth.service then wecanmusic.service, but it's easier to just reboot the machine))
 
 create a “workingsoundfont.sf2” file, and we copy whatever sf2 file we want to use to this name.
+
+
+
+# Fix some permissions
+
+```
+sudo apt-get install -y libcap2-bin
+sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
+```
 
 
 # Try Running It
