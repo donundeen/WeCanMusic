@@ -7,6 +7,7 @@ let StatusMelodies = {
 
     readyNotes : [65, 69, 72, 65, 69, 72],
     errorNotes : [72, 68, 65, 72, 68, 65],
+    performanceChange : [72, 65, 68, 72, 65, 68],
 
     playready(){
         // play a series of notes that mean "ready";
@@ -16,6 +17,11 @@ let StatusMelodies = {
     playerror(){
         this.playnotes(this.errorNotes, 127, 500, 250);
     },
+
+    playperformancechange(){
+        this.playnotes(this.performanceChange, 127, 500, 250);
+    },
+
 
     playnotes(series, volume, duration, spacing){
         this.playnoteInSeries(series, 0, volume, duration, spacing );

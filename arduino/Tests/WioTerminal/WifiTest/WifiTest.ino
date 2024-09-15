@@ -22,8 +22,8 @@ bool WIFI_MODE_ON = true;
 
 
 #define ARRAYSIZE 10
-String commands[ARRAYSIZE] = { "/xyz", "/performance", "/performance" };
-String arguments[ARRAYSIZE] = {"1","2","3"};
+String commands[ARRAYSIZE] = { "/performance", "/performance", "/performance" };
+String arguments[ARRAYSIZE] = {"cheeseblues","veryspooky","perf1"};
 int commandsLen = 3;
 int commandIndex = 0;
 

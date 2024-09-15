@@ -687,7 +687,9 @@ udpPort.on("message", function (oscMsg) {
             name = value.name;
         }
         performance.performanceFile = name;
-        performance.loadPerformance(name);
+        performance.loadPerformance(name, function(){
+            statusmelodies.playperformancechange();
+        });
     }); 
 
 

@@ -105,7 +105,7 @@ $(function() {
     }
 
     function updateScore(data){
-        console.log("updating score");
+        console.log("updating score", data);
         scoreText = data.text;
         curscore = data.scorename;
         $(".scorenametext").val(curscore);
