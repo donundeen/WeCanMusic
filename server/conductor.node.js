@@ -671,6 +671,26 @@ udpPort.on("message", function (oscMsg) {
     });    
 
 
+/*
+    // loadperformance sends a performance name, 
+    // and triggers the loading of all those configurations where they are needed
+    routeFromWebsocket(msg,"loadperformance", function(msg){
+        performance.performanceFile = msg;
+        performance.loadPerformance(msg);
+    });
+*/
+    // processing request to destroy UDP instruments
+    routeFromOSC(oscMsg, "/performance", function(oscMsg, address){
+        let value = oscMsg.simpleValue;
+        let name = value;
+        if(value.name){
+            name = value.name;
+        }
+        performance.performanceFile = name;
+        performance.loadPerformance(name);
+    }); 
+
+
     // setting config values for instruments
     // for if a UDP message is sent to change settings on a localInstrument
     // THIS NEEDS REVIEW

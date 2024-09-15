@@ -4,13 +4,13 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 5,
-			"revision" : 0,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 40.0, 1033.0, 1358.0, 331.0 ],
+		"rect" : [ 48.0, 271.0, 1358.0, 331.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -179,9 +179,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 4563.866782248020172, 40.933322250843048, 306.0, 34.0 ],
+					"patching_rect" : [ 4563.866782248020172, 40.933322250843048, 306.0, 33.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 358.766552448272705, 23.93333637714386, 189.588236570358276, 34.0 ],
+					"presentation_rect" : [ 358.766552448272705, 23.93333637714386, 189.588236570358276, 33.0 ],
 					"text" : "2 TouchWire"
 				}
 
@@ -206,7 +206,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 4715.266781210899353, 388.681812880039161, 132.400001227855682, 36.0 ],
+					"patching_rect" : [ 4715.266781210899353, 388.681812880039161, 132.400001227855682, 35.0 ],
 					"text" : "impr121theory1 b0.73(20-100)"
 				}
 
@@ -438,9 +438,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 4018.866782248020172, 40.933322250843048, 306.0, 34.0 ],
+					"patching_rect" : [ 4018.866782248020172, 40.933322250843048, 306.0, 33.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 17.200008153915405, 166.515183863639777, 282.0, 34.0 ],
+					"presentation_rect" : [ 17.200008153915405, 166.515183863639777, 282.0, 33.0 ],
 					"text" : "5 Conductive Thread"
 				}
 
@@ -465,7 +465,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 4170.266781210899353, 388.681812880039161, 132.400001227855682, 36.0 ],
+					"patching_rect" : [ 4170.266781210899353, 388.681812880039161, 132.400001227855682, 35.0 ],
 					"text" : "ithreadtheory f0.00(20-100)"
 				}
 
@@ -527,7 +527,7 @@
 					"patching_rect" : [ 4041.61678159236908, 345.281811115741675, 371.0, 22.0 ],
 					"presentation" : 1,
 					"presentation_linecount" : 2,
-					"presentation_rect" : [ 17.200008153915405, 205.61519306659693, 295.083432734012604, 36.0 ],
+					"presentation_rect" : [ 17.200008153915405, 205.61519306659693, 295.083432734012604, 35.0 ],
 					"text" : "udpInstrument1Input \"conductive thread\" ithread /thread1/val 7005 1",
 					"varname" : "FractalInstrumentScoreFollower[2]"
 				}
@@ -698,9 +698,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 3474.866782248020172, 32.933322250843048, 306.0, 34.0 ],
+					"patching_rect" : [ 3474.866782248020172, 32.933322250843048, 306.0, 33.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 358.766552448272705, 166.515183863639777, 282.0, 34.0 ],
+					"presentation_rect" : [ 358.766552448272705, 166.515183863639777, 282.0, 33.0 ],
 					"text" : "6 Hug Sensor"
 				}
 
@@ -725,7 +725,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 3626.266781210899353, 380.681812880039161, 132.400001227855682, 36.0 ],
+					"patching_rect" : [ 3626.266781210899353, 380.681812880039161, 132.400001227855682, 35.0 ],
 					"text" : "ihugtheory f1.00(20-100)"
 				}
 
@@ -1105,9 +1105,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 2369.866782248020172, 29.0, 306.0, 34.0 ],
+					"patching_rect" : [ 2369.866782248020172, 29.0, 306.0, 33.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 1042.200008153915405, 33.866677939891815, 196.0, 34.0 ],
+					"presentation_rect" : [ 1042.200008153915405, 33.866677939891815, 196.0, 33.0 ],
 					"text" : "4 Color Sensor"
 				}
 
@@ -1132,7 +1132,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 2521.266781210899353, 376.748490629196112, 132.400001227855682, 36.0 ],
+					"patching_rect" : [ 2521.266781210899353, 376.748490629196112, 132.400001227855682, 35.0 ],
 					"text" : "icolortheory b0.820(20-100)"
 				}
 
@@ -1326,9 +1326,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 3009.5, 26.633349180221558, 306.0, 34.0 ],
+					"patching_rect" : [ 3009.5, 26.633349180221558, 306.0, 33.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 725.200008153915405, 23.833327174186707, 299.0, 34.0 ],
+					"presentation_rect" : [ 725.200008153915405, 23.833327174186707, 299.0, 33.0 ],
 					"text" : "3 Accelerometer 2 - Wiry"
 				}
 
@@ -1353,7 +1353,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 3168.266663372516632, 382.748490629196112, 132.400001227855682, 36.0 ],
+					"patching_rect" : [ 3168.266663372516632, 382.748490629196112, 132.400001227855682, 35.0 ],
 					"text" : "l3g4200theory b0.581(20-100)"
 				}
 
@@ -1689,7 +1689,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 1819.983357667922974, 29.0, 306.0, 34.0 ],
+					"patching_rect" : [ 1819.983357667922974, 29.0, 306.0, 33.0 ],
 					"text" : "4 Rangefinder"
 				}
 
@@ -1714,7 +1714,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 1971.383356630802155, 376.748490629196112, 132.400001227855682, 36.0 ],
+					"patching_rect" : [ 1971.383356630802155, 376.748490629196112, 132.400001227855682, 35.0 ],
 					"text" : "irangetheory b0.95(20-100)"
 				}
 
@@ -1875,9 +1875,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 1270.983357667922974, 29.0, 306.0, 34.0 ],
+					"patching_rect" : [ 1270.983357667922974, 29.0, 306.0, 33.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 723.583432734012604, 166.000009775161743, 306.0, 34.0 ],
+					"presentation_rect" : [ 723.583432734012604, 166.000009775161743, 306.0, 33.0 ],
 					"text" : "7 Flex"
 				}
 
@@ -1902,7 +1902,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 1422.383356630802155, 376.748490629196112, 132.400001227855682, 36.0 ],
+					"patching_rect" : [ 1422.383356630802155, 376.748490629196112, 132.400001227855682, 35.0 ],
 					"text" : "iflextheory f1.00(20-100)"
 				}
 
@@ -2294,9 +2294,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 122.983357667922974, 36.0, 306.0, 34.0 ],
+					"patching_rect" : [ 122.983357667922974, 36.0, 306.0, 33.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 17.200008153915405, 20.866677939891815, 280.916567265987396, 34.0 ],
+					"presentation_rect" : [ 17.200008153915405, 20.866677939891815, 280.916567265987396, 33.0 ],
 					"text" : "1 Accelerometer 1 - Boxy"
 				}
 
@@ -2321,8 +2321,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 339.783357858657837, 383.748490629196112, 132.400001227855682, 36.0 ],
-					"text" : "iacceltheory b0.19(20-100)"
+					"patching_rect" : [ 339.783357858657837, 383.748490629196112, 132.400001227855682, 35.0 ],
+					"text" : "iacceltheory f0.22(20-49)"
 				}
 
 			}
@@ -2381,10 +2381,10 @@
 					"numinlets" : 9,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 145.733357012271881, 340.348488864898627, 212.0, 36.0 ],
+					"patching_rect" : [ 145.733357012271881, 340.348488864898627, 212.0, 35.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 17.200008153915405, 56.866677939891815, 239.0, 22.0 ],
-					"text" : "udpInstrumentAccel iaccel /accel1/val 7001",
+					"presentation_rect" : [ 17.200008153915405, 56.866677939891815, 280.0, 22.0 ],
+					"text" : "udpInstrumentAccel iaccel /acceleromter1/val 7005",
 					"varname" : "FractalInstrumentScoreFollower[7]"
 				}
 

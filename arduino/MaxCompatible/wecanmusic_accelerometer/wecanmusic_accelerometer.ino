@@ -49,10 +49,10 @@ Adafruit_LIS3MDL lis3mdl;
 #include <ArduinoJson.h>          //https://github.com/bblanchon/ArduinoJson
 
 
-const char *WIFI_SSID = "wecanmusic";
-const char *WIFI_PASSWORD = "wecanmusic";
-const char *UDPReceiverIP = "192.168.0.200"; // ip where UDP messages are going
-int UDPPort = 7002; // the UDP port that Max is listening on
+const char *WIFI_SSID = "JJandJsKewlPad";
+const char *WIFI_PASSWORD = "WeL0veLettuce";
+const char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
+int UDPPort = 7005; // the UDP port that Max is listening on
 
 
 /*
@@ -101,7 +101,7 @@ const boolean WIFI_MODE_ON = true;
     and we want to hard-code the router's SSID and password here.
     Also set HARDCODE_SSID = true
 */
-const boolean HARDCODE_SSID = false;
+const boolean HARDCODE_SSID = true;
 // remember you can't connect to 5G networks with the arduino. 
 bool wifi_connected =false;
 /*
@@ -340,7 +340,7 @@ void device_loop() {
   // get button value:
     int sensorVal = digitalRead(21);
   //print out the value of the pushbutton
-  Serial.println(sensorVal);
+//  Serial.println(sensorVal);
 
   // Keep in mind the pull-up  means the pushbutton's logic is inverted. It goes
   // HIGH when it's open, and LOW when it's pressed. Turn on pin 13 when the

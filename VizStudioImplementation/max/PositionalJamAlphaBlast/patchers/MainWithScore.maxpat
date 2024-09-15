@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 116.0, 1919.0, 614.0 ],
+		"rect" : [ 60.0, 120.0, 764.0, 602.0 ],
 		"bglocked" : 1,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -1428,7 +1428,7 @@
 					"presentation" : 1,
 					"presentation_linecount" : 2,
 					"presentation_rect" : [ 434.29999965429306, 122.143217404117649, 167.766715347766876, 40.399999856948853 ],
-					"text" : "http://172.30.59.245:8000/other/aiselector.html"
+					"text" : "http://10.0.0.174:8002/other/aiselector.html"
 				}
 
 			}
@@ -2378,7 +2378,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 3033.137516915798187, 1.294884264469147, 37.0, 22.0 ],
-					"text" : "C m"
+					"text" : "A# m"
 				}
 
 			}
@@ -3431,7 +3431,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 2858.866681933403015, 91.265263378620148, 50.0, 35.0 ],
-					"text" : "theory C m"
+					"text" : "theory A# m"
 				}
 
 			}
@@ -5732,14 +5732,14 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "BPM2ms.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "addNoteToScore.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
@@ -5762,7 +5762,7 @@
 			}
 , 			{
 				"name" : "bach.filternull.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
@@ -5837,7 +5837,7 @@
 			}
 , 			{
 				"name" : "bach.slot2line.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
@@ -5848,7 +5848,7 @@
 			}
 , 			{
 				"name" : "bach.times.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
@@ -5859,161 +5859,161 @@
 			}
 , 			{
 				"name" : "bach.x2dx.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "basic.json",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/data",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/data",
 				"patcherrelativepath" : "../data",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "buildchordovertype.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "chordGen.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dot.extrema.local.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dot.extrema.sliding.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dot.float.inf.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dot.float.sanitize.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dot.gesture.jab.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dot.median.sliding.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dot.route.type.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dot.sign.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dot.split.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dot.window.sliding.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "dynamic_rescale.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "fit_jweb_to_bounds.js",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/code",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/code",
 				"patcherrelativepath" : "../code",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "iaccelaccel.json",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/data",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/data",
 				"patcherrelativepath" : "../data",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "iflexpattrname.json",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/data",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/data",
 				"patcherrelativepath" : "../data",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "impr121cap12.json",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/data",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/data",
 				"patcherrelativepath" : "../data",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "instruments.json",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/data",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/data",
 				"patcherrelativepath" : "../data",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "instruments.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "irangerange.json",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/data",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/data",
 				"patcherrelativepath" : "../data",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "iropeaccel1ropeaccel.json",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/data",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/data",
 				"patcherrelativepath" : "../data",
 				"type" : "JSON",
 				"implicit" : 1
@@ -6024,98 +6024,98 @@
 			}
 , 			{
 				"name" : "miditonotename.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "n4m.monitor.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "quantizer.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "resize_n4m_monitor_patcher.js",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/code",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/code",
 				"patcherrelativepath" : "../code",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "scoreprocessor.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "socketserver.js",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/code",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/code",
 				"patcherrelativepath" : "../code",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "testSocketServer.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "theoryEngine.js",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/code",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/code",
 				"patcherrelativepath" : "../code",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "udpInstrument1Input.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "udpInstrumentAccel.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "udpInstrumentColorSensor.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "udpInstrumentRopeAccel.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "udpinstrumentMPR121_cap12.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "udpinstrumentRangefinder.maxpat",
-				"bootpath" : "~/Documents/htdocs/wecanmusicprojects/PositionalJamAlphaBlast/max/PositionalJamAlphaBlast/patchers",
+				"bootpath" : "~/Documents/htdocs/WeCanMusic/VizStudioImplementation/max/PositionalJamAlphaBlast/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1

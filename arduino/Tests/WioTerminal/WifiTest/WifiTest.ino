@@ -3,6 +3,23 @@
 #include"Free_Fonts.h" //include the header file
 TFT_eSPI tft;
 
+#include <OSCData.h>
+#include <OSCBundle.h>
+#include <OSCBoards.h>
+#include <OSCTiming.h>
+#include <OSCMessage.h>
+#include <OSCMatch.h>
+
+WiFiUDP udp;
+
+bool wifi_connected =false;
+char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
+char *presetip = "10.0.0.255"; // in case we just want to force it for testing
+int UDPOutPort = 7005; // the UDP port that Max is listening on
+int UDPINPort = 7004; // the UDP port that Max is listening on
+bool WIFI_MODE_ON = true;
+// END NETWORK CONFIGS
+
 
 #define ARRAYSIZE 10
 String commands[ARRAYSIZE] = { "/xyz", "/performance", "/performance" };
@@ -33,24 +50,30 @@ void setup() {
     tft.begin();
     tft.setRotation(3);
     tft.fillScreen(TFT_RED); // fills entire the screen with colour red
-    tft.setFreeFont(&FreeSansBoldOblique12pt7b); //select Free, Sans, Bold, Oblique, 12pt.
+//    tft.setFreeFont(&FreeSansBoldOblique12pt7b); //select Free, Sans, Bold, Oblique, 12pt.
+    tft.setFreeFont(&FreeMonoBold12pt7b); //select Free, Sans, Bold, Oblique, 12pt.
     tft.drawString("Connecting to WiFi...",10,10);//prints string at (70,80)
 
 
     // Set WiFi to station mode and disconnect from an AP if it was previously connected
     WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
+    tft.drawString("Connected to WiFi, disconnecting..",10,10);//prints string at (70,80)
 
-    Serial.println("Connecting to WiFi..");
+    WiFi.disconnect();
+    tft.drawString("Disconnected, beginning Wifi...",10,10);//prints string at (70,80)
     WiFi.begin(ssid, password);
 
     while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
+        delay(100);
         Serial.println("Connecting to WiFi..");
         tft.drawString("still waiting for wifi",10,10);//prints string at (70,80)
 //        WiFi.begin(ssid, password);
         WiFi.begin(ssid);
     }
+    Serial.println("Connected to WiFi, configUdp ...");
+
+    configUdp();
+
     tft.fillScreen(TFT_BLACK); // fills entire the screen with colour red
 
     tft.drawString("Connected to the WiFi!",10,10);//prints string at (70,80)
@@ -109,14 +132,43 @@ void loop() {
 
 
 void displayCommand(){
-    tft.drawString("                        ",10,110);//prints string at (70,110)
+    tft.drawString("|                       |",10,110);//prints string at (70,110)
     tft.drawString(commands[commandIndex] + " " + arguments[commandIndex],10,110);//prints string at (70,110)
 }
 
 void displaySent(){
-      tft.drawString("sent", 10, 140);
-      tft.drawString("                        ",60,170);//prints string at (70,110)
-      tft.drawString(commands[commandIndex] + " " + arguments[commandIndex],60,170);//prints string at (70,110)
+  sendMessage(commands[commandIndex], arguments[commandIndex]);
+  tft.drawString("|                    |", 10, 140);
+  tft.drawString("sending", 10, 140);
+  tft.drawString("|                               |",60,170);//prints string at (70,110)
+  tft.drawString(commands[commandIndex] + " " + arguments[commandIndex],60,170);//prints string at (70,110)
+  tft.drawString("|                    |", 10, 140);
+  tft.drawString("sent", 10, 140);
 }
 
 
+/*
+ * connecting to UDP port on laptop runnin Max (or otherwise sending/recieving UDP data)
+ */
+void configUdp(){
+  udp.begin(UDPINPort);
+}
+
+void sendMessage(String command, String argument){
+  char command_buffer[command.length() + 1];
+  command.toCharArray(command_buffer, command.length() + 1);
+  char argument_buffer[argument.length() + 1];
+  argument.toCharArray(argument_buffer, argument.length() + 1);
+
+  OSCMessage oscmsg(command_buffer);  
+  oscmsg.add(argument_buffer);  //MULTIVALUE UPDATE REQUIRED
+  //   udp.beginPacket(UDPReceiverIP, UDPPort);
+  udp.beginPacket(UDPReceiverIP, UDPOutPort); // this needs to get set in a config somehwere...
+
+  // udp.beginMulticastPacket(UDPReceiverIP, UDPPort, WiFi.localIP());
+  //  udp.write(buffer, msg.length()+1);
+  oscmsg.send(udp);
+  udp.endPacket();
+  oscmsg.empty();  
+
+}
