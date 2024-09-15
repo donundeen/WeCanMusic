@@ -86,6 +86,9 @@ $(function() {
         if(msg.address == "performancelist"){
             updatePerformanceList(msg.data);
         }
+        if(msg.address == "performancename"){
+            updatePerformanceName(msg.data);
+        }
 
         // add message about adding a new instrument here
     }
@@ -147,6 +150,12 @@ $(function() {
         buildPerformanceListOptions();
     }    
 
+    function updatePerformanceName(rperformancename){
+        curperformance = rperformancename;
+        buildPerformanceListOptions();
+
+    }
+
     function updateBeat(position, bar, beat){
         $(".position").text(bar+":"+beat);
         let selector = ".line[data-position='"+position+"']";
@@ -179,8 +188,7 @@ $(function() {
     function sendPerformance(){
         curperformance = $(".performancenametext").val();
         console.log("sending curperformance ", curperformance);
-        let msg = {performancename: curperformance
-        }
+        let msg = {performancename: curperformance}
         message("saveperformance", msg);
     }
 
