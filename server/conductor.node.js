@@ -693,8 +693,7 @@ udpPort.on("message", function (oscMsg) {
         performance.loadPerformance(name, function(){
             statusmelodies.playperformancechange();
         });
-        let command = "flite -t \""+name+"\"";
-        exec(command);
+
         socket.sendMessage("performancename", name);     
 
     });
