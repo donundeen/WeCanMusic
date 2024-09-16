@@ -697,7 +697,17 @@ udpPort.on("message", function (oscMsg) {
         exec(command);
         socket.sendMessage("performancename", name);     
 
-    }); 
+    });
+    
+    routeFromOSC(oscMsg, "/sayperformance", function(oscMsg, address){
+        let value = oscMsg.simpleValue;
+        let name = value;
+        if(value.name){
+            name = value.name;
+        }
+        let command = "flite -t \""+name+"\"";
+        exec(command);
+    });
 
 
     // setting config values for instruments

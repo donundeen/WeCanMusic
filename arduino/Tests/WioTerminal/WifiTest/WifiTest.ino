@@ -134,6 +134,8 @@ void loop() {
 void displayCommand(){
     tft.drawString("|                       |",10,110);//prints string at (70,110)
     tft.drawString(commands[commandIndex] + " " + arguments[commandIndex],10,110);//prints string at (70,110)
+    sendMessage(commands[commandIndex], arguments[commandIndex]);
+
 }
 
 void displaySent(){
