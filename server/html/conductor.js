@@ -129,6 +129,7 @@ $(function() {
                 $(elem).attr("data-position", curpos);
             }
         }
+        buildScoreListOptions();
     }
 
     function updateVoicelist(rvoicelist){
