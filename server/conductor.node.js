@@ -6,6 +6,9 @@ and shows how messages are routed from one to the other.
 */
 const fs = require('node:fs');
 
+var exec = require('child_process').exec;
+  
+
 ////////////////////////
 // LOAD MAIN CONFIG FILE
 const merge = require('deepmerge')
@@ -690,6 +693,8 @@ udpPort.on("message", function (oscMsg) {
         performance.loadPerformance(name, function(){
             statusmelodies.playperformancechange();
         });
+        let command = "flite -t \""+name+"\"";
+        exec(command, function(error, stdout, stderr){ callback(stdout); });
         socket.sendMessage("performancename", name);     
 
     }); 

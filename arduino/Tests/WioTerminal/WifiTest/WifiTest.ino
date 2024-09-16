@@ -39,7 +39,7 @@ int prevBUTTON = HIGH;
 
 void setup() {
     Serial.begin(115200);
-    while(!Serial); // Wait for Serial to be ready
+   // while(!Serial); // Wait for Serial to be ready
 
     pinMode(WIO_5S_UP, INPUT_PULLUP);
     pinMode(WIO_5S_DOWN, INPUT_PULLUP);
