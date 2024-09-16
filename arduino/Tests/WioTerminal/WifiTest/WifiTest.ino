@@ -68,7 +68,7 @@ void setup() {
         Serial.println("Connecting to WiFi..");
         tft.drawString("still waiting for wifi",10,10);//prints string at (70,80)
 //        WiFi.begin(ssid, password);
-        WiFi.begin(ssid);
+//        WiFi.begin(ssid, password);
     }
     Serial.println("Connected to WiFi, configUdp ...");
 
@@ -134,7 +134,7 @@ void loop() {
 void displayCommand(){
     tft.drawString("|                       |",10,110);//prints string at (70,110)
     tft.drawString(commands[commandIndex] + " " + arguments[commandIndex],10,110);//prints string at (70,110)
-    sendMessage(commands[commandIndex], arguments[commandIndex]);
+    sendMessage("/sayperformance", arguments[commandIndex]);
 
 }
 
