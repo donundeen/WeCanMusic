@@ -48,10 +48,15 @@ Adafruit_LIS3MDL lis3mdl;
 #endif
 #include <ArduinoJson.h>          //https://github.com/bblanchon/ArduinoJson
 
-
+/*
 const char *WIFI_SSID = "JJandJsKewlPad";
 const char *WIFI_PASSWORD = "WeL0veLettuce";
 const char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
+*/
+const char *WIFI_SSID = "Media";
+const char *WIFI_PASSWORD = "%2Kd9Fc5RYM4ek2Tj!";
+const char *UDPReceiverIP = "192.168.73.76"; // ip where UDP messages are going
+
 int UDPPort = 7005; // the UDP port that Max is listening on
 
 

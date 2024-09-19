@@ -37,7 +37,7 @@ const boolean WIFI_MODE_ON = true;
 /// NETWORK CONFIGS  
 const boolean HARDCODE_SSID = false; //true; //false;
 
-const char *WIFI_SSID = "wecanmusic";// "wecanmusic"; //"JJandJsKewlPad";
+const char *WIFI_SSID = "icanmusic";// "wecanmusic"; //"JJandJsKewlPad";
 const char *WIFI_PASSWORD = "";//"wecanmusic";//"wecanmusic"; //"WeL0veLettuce";
 char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
 char *presetip = "10.0.0.255"; // in case we just want to force it for testing
@@ -291,7 +291,7 @@ void note_loop(int vindex){
   int midivelocity = derive_velocity(vindex, ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
   int mididuration = derive_duration(vindex, value);    //MULTIVALUE UPDATE REQUIRED
   sprintf(pbuf, "      in:%d scaled:%f p:%d v:%d d:%d", ADCRaw[vindex], value, midipitch, midivelocity, mididuration);
-//  Serial.println(pbuf);
+  Serial.println(pbuf);
   // this will also make it monophonic:
   if(localSynth){
     midiMakeNote(vindex, midipitch, midivelocity, mididuration);  //MULTIVALUE UPDATE REQUIRED

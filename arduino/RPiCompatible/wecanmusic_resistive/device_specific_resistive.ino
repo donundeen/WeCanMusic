@@ -5,7 +5,7 @@
 const int DEVICE_NUM_MULTIVALUES = 1;
 
 // sensor config vars - pins
-int inputPin[] = {A2, A0, A1, A3, A4, A5}; // Flex Sensor is connected to this pin
+int inputPin[] = {A2, A3, A4, A4, A5, A6}; // Flex Sensor is connected to this pin
 
 // END DEVICE-SPECIFIC CONFIG VARS
 //////////////////////////////
@@ -27,10 +27,11 @@ void sensor_setup_device(){
 void sensor_loop(int vindex){
 
   // use capacative inputPin
-  ADCRaw[vindex] = touchRead(inputPin[vindex]);
+  ADCRaw[vindex] = analogRead(inputPin[vindex]);
   //ADCRaw = analogRead(sensorPin);
 
-  Serial.println("read value");
+  Serial.print("read value from");
+  Serial.println(inputPin[vindex]);
   Serial.println(ADCRaw[vindex]);
 
   firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED

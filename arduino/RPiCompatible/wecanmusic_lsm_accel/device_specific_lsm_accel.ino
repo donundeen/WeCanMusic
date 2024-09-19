@@ -350,10 +350,10 @@ void sensor_loop(int vindex){
       ADCRaw[vindex] = mag.magnetic.z;
       break;               
   }
-/* // this is useful to see, but creates a lot of output that makes it hard to see other messages.
-  Serial.println("read value");
-  Serial.println(ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
-*/
+ // this is useful to see, but creates a lot of output that makes it hard to see other messages.
+//  Serial.println("read value");
+//  Serial.println(ADCRaw[vindex]);  //MULTIVALUE UPDATE REQUIRED
+
 
   firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED
 
