@@ -14,7 +14,7 @@ const bool no_network = false;
 
 char wecanmusic_server_ip[40] = "10.0.0.255";
 char wecanmusic_port[6] = "7005";
-char this_device_name[34] = "RENAME_ME";
+char this_device_name[34] = "thread7";
 //flag for saving data
 bool shouldSaveConfig = true;
 
@@ -37,7 +37,7 @@ const boolean WIFI_MODE_ON = true;
 /// NETWORK CONFIGS  
 const boolean HARDCODE_SSID = false; //true; //false;
 
-const char *WIFI_SSID = "wecanmusic";// "wecanmusic"; //"JJandJsKewlPad";
+const char *WIFI_SSID = "icanmusic";// "icanmusic"; //"JJandJsKewlPad";
 const char *WIFI_PASSWORD = "";//"wecanmusic";//"wecanmusic"; //"WeL0veLettuce";
 char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
 char *presetip = "10.0.0.255"; // in case we just want to force it for testing
