@@ -304,12 +304,21 @@ let TheoryEngine = {
     setNote(note){
         this.curNote = teoria.note(note);
         if(this.curScale){
-            this.curScale = this.curNote.scale(this.curScaleName);
-            this.createScaleSet();
+            try{
+                this.curScale = this.curNote.scale(this.curScaleName);
+                this.createScaleSet();
+            }catch(e){
+                // maybe the curScaleName was bad, in which case just skip and move on
+
+            }
         }
         if(this.curChord){
-            this.curChord = this.curNote.chord(this.curChordName);
-            this.createChordSet();
+            try{
+                this.curChord = this.curNote.chord(this.curChordName);
+                this.createChordSet();
+            }catch(e){
+                // maybe the curChordName was bad, in which case just skip and move on
+            }
         }
     },
 
