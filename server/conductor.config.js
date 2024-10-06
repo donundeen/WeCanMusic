@@ -4,13 +4,13 @@ var config = {
     "bluetooth.active" : false,
     "bluetooth.deviceID" :  "40:EF:4C:6F:C8:45", //relay: 40:EF:4C:6F:C8:45, oontz 74:F0:F0:AB:D5:21
     "player_state" : "play", // stop or play
-    "soundfont" : "./soundfonts/141-Compleet bank synth.sf2",
+    "soundfont" : "./soundfonts/DayOfTheDeadSF.sf2",
     "common_soundfont" : "./soundfonts/FluidSynthDefaultSoundfont.sf2", // the file that the soundfont file in use gets copied to. 
     "scoreDir" : "./scores",
     "scorename" : "cheeseBlues.txt",
     "performanceDir" : "./performances",
     "defaultWebpage" : "jamalong.html",
-    "soundfont_instrument_list" : "./soundfonts/141-Compleet bank synth.sf2.voicelist.json",
+    "soundfont_instrument_list" : "./soundfonts/DayOfTheDeadSF.sf2.voicelist.json",
     "use_midi_out" : true,
     "midi_out_portname" : "FLUID",
     "fluidpath" : '/usr/bin/fluidsynth', // OS-specific, overrider in [mac/rpi].conductor.config.js
