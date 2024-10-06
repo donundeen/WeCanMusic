@@ -3,7 +3,7 @@ import json
 
 
 #sf2dir = "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/"
-sf2dir = "~/wecanmusic/server/soundfonts/"
+sf2dir = "/home/pi/wecanmusic/server/soundfonts/"
 
 filename1 = "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/Collections part 2/bloodwar.sf2"
 filename2 = "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/804 SoundFonts/141-Compleet bank  synth.sf2"
