@@ -490,9 +490,10 @@ socket.setMessageReceivedCallback(function(msg){
         });
 
 
-        if(db.active){
+        if(db.create_fake_instruments){
             // TESTING THINGS HERE
             // create some dummy instruments for UI testing. they won't play
+            
             let instrument = orchestra.create_udp_instrument("thread1", "TEST");
             let props = instrument.get_config_props();
             props.push({name: "instrtype", value: "udp"});
@@ -503,8 +504,7 @@ socket.setMessageReceivedCallback(function(msg){
             let props2 = instrument2.get_config_props();
             props2.push({name: "instrtype", value: "udp"});
             socket.sendMessage("addinstrument", props2);
-            instrument2.start();  
-            
+            instrument2.start();      
         }
 
     });
