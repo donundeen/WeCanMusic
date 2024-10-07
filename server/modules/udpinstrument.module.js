@@ -513,6 +513,10 @@ const UDPInstrument = class{
     }
 
     midiSetVolume(volume){
+        // don't allow volumes over 254
+        if(volume > 254){
+            return; 
+        }
         // control change value to set volume.
         this.midi_hardware_engine.send('cc',{
             controller: 7,
