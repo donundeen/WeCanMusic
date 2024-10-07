@@ -89,6 +89,7 @@ function midiSetInstrument(midi_channel, midi_voice){
 
 function midiSetVolume(midi_channel,volume){
     // control change value to set volume.
+    console.log("set volume ", midi_channel, volume);
     midi_hardware_engine.send('cc',{
         controller: 7,
         value: volume, // the volume, 
