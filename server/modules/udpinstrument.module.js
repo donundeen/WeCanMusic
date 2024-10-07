@@ -332,10 +332,7 @@ const UDPInstrument = class{
         let midipitch    = this.derive_pitch(value);
         let midivelocity = this.derive_velocity();
         let mididuration = this.derive_duration();
-        if(!this.skip_duplicate_notes || midipitch != this.previous_pitch ){
-            this.midiMakeNote(midipitch, midivelocity, mididuration);
-        }
-        this.previous_pitch = midipitch;
+        this.midiMakeNote(midipitch, midivelocity, mididuration);
     }
 
 
@@ -429,6 +426,13 @@ const UDPInstrument = class{
             this.db.log("bad midi values, returning");
             return;
         }
+        if(!this.skip_duplicate_notes || note != this.previous_pitch ){
+        }else{
+            return;
+        }
+        this.previous_pitch = note;
+
+
         if(velocity == 0){
 //            this.db.log("no volume, no note");
             return;
