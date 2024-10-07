@@ -2,6 +2,7 @@
 let use_midi_out = true; // whether or not to send midi values through a hardware output, via easymidi
 let midi_hardware_engine = false;
 let midi_out_portname = "FLUID"; // FLUID for on-baord synth, UM-ONE for the midi cable, or other things"; 
+let midi_channel = 1;
 if(use_midi_out){
     const midi = require('midi');
     const easymidi = require('easymidi');
@@ -21,32 +22,32 @@ if(use_midi_out){
         }
     }
 }
-midiSetBankProgram(1, 0, 3);
+midiSetBankProgram(midi_channel, 0, 4);
 
 
 setTimeout(function(){
   //  midiSetBankProgram(1, 0, 32);
-    midiSetVolume(1, 255);
-    midiMakeNote(1, 65, 120, 500);
-    midiMakeNote(1, 69, 120, 500);
-    midiMakeNote(1, 73, 120, 500);
+    midiSetVolume(midi_channel, 255);
+    midiMakeNote(midi_channel, 65, 120, 500);
+    midiMakeNote(midi_channel, 69, 120, 500);
+    midiMakeNote(midi_channel, 73, 120, 500);
 }, 100);
 
 
 setTimeout(function(){
     //midiSetBankProgram(0, 0, 96);
-    midiSetVolume(1, 100);
-    midiMakeNote(1, 65, 120, 500);
-    midiMakeNote(1, 69, 120, 500);
-    midiMakeNote(1, 73, 120, 500);
+    midiSetVolume(midi_channel, 100);
+    midiMakeNote(midi_channel, 65, 120, 500);
+    midiMakeNote(midi_channel, 69, 120, 500);
+    midiMakeNote(midi_channel, 73, 120, 500);
 }, 600);
 
 setTimeout(function(){
     //midiSetBankProgram(0, 0, 96);
-    midiSetVolume(1, 50);
-    midiMakeNote(1, 65, 120, 500);
-    midiMakeNote(1, 69, 120, 500);
-    midiMakeNote(1, 73, 120, 500);
+    midiSetVolume(midi_channel, 50);
+    midiMakeNote(midi_channel, 65, 120, 500);
+    midiMakeNote(midi_channel, 69, 120, 500);
+    midiMakeNote(midi_channel, 73, 120, 500);
 }, 1000);
 
 
