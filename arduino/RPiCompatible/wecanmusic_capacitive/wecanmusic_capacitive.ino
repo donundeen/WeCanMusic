@@ -147,6 +147,7 @@ OSCErrorCode error;
 int PPQN = 96;
 
 // number of pulses for different common note values.
+int DWN = PPQN * 8;
 int WN = PPQN * 4;
 int HN = PPQN * 2;
 int QN = PPQN;
@@ -157,7 +158,7 @@ int HN3 = WN / 3;
 int N83 = QN / 3;
 
 // array of all notelengths, for picking
-int notelengths[] = {WN, HN, HN3, QN, QN3, N8, N83, N16};
+int notelengths[] = {DWN, WN, HN, HN3, QN, QN3, N8, N83, N16};
 
 // END TIMING VARIABLES
 ////////////////////////
@@ -393,7 +394,7 @@ unsigned long updateLastNoteTime(int vindex){  //MULTIVALUE UPDATE REQUIRED
 }
 
 int quantizeToNoteLength(unsigned long val){
-//  int notelengths[] = {WN, HN, HN3, QN, QN3, N8, N83, N16};
+//  int notelengths[] = {DWN, WN, HN, HN3, QN, QN3, N8, N83, N16};
   if(val < ((unsigned long)pulseToMS(N16) +(unsigned long)pulseToMS(N83) ) /  2.0 ){
     return pulseToMS(N16);
   }
@@ -415,7 +416,10 @@ int quantizeToNoteLength(unsigned long val){
   if(val < ((unsigned long)pulseToMS(HN) +(unsigned long)pulseToMS(WN) ) /  2.0 ){
     return pulseToMS(HN);
   }
-  return pulseToMS(WN);
+  if(val < ((unsigned long)pulseToMS(WN) +(unsigned long)pulseToMS(DWN) ) /  2.0 ){
+    return pulseToMS(WN);
+  }
+  return pulseToMS(DWN);
 
 }
 // NETWORK+SENSOR CODE
