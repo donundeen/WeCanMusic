@@ -6,7 +6,7 @@ let curscore = "simplescore.txt";
 let performancelist = [];
 let curperformance = "";
 
-let notelength_names = ["Whole", "Half","Half Triplet","Quarter","Quarter Triplet","Eighth","Eighth Triplet","Sixteenth"];
+let notelength_names = ["Double Whole", "Whole", "Half","Half Triplet","Quarter","Quarter Triplet","Eighth","Eighth Triplet","Sixteenth"];
 
 
 $(function() {
@@ -426,7 +426,7 @@ $(function() {
         $( ".midi-notelength",instr ).slider({
             range: false,
             min: 0,
-            max: 7,
+            max: 8,
             value: midi_nlen,
             slide: function( event, ui ) {
                 console.log("slide", ui.value);
