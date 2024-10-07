@@ -501,7 +501,7 @@ const UDPInstrument = class{
 //            this.db.log(this._midi_bank);
             this.midi_hardware_engine.send('cc',{
                 controller: 0,
-                value: 127, //this._midi_bank, 
+                value: 0, //this._midi_bank, 
                 channel: this._midi_channel
             }); 
   //          this.db.log(this._midi_program);
