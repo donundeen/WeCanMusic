@@ -26,18 +26,28 @@ if(use_midi_out){
 
 setTimeout(function(){
   //  midiSetBankProgram(1, 0, 32);
+    midiSetVolume(1, 200);
     midiMakeNote(1, 65, 120, 500);
     midiMakeNote(1, 69, 120, 500);
     midiMakeNote(1, 73, 120, 500);
 }, 100);
 
+
 setTimeout(function(){
     //midiSetBankProgram(0, 0, 96);
+    midiSetVolume(1, 100);
     midiMakeNote(1, 65, 120, 500);
     midiMakeNote(1, 69, 120, 500);
     midiMakeNote(1, 73, 120, 500);
 }, 600);
 
+setTimeout(function(){
+    //midiSetBankProgram(0, 0, 96);
+    midiSetVolume(1, 50);
+    midiMakeNote(1, 65, 120, 500);
+    midiMakeNote(1, 69, 120, 500);
+    midiMakeNote(1, 73, 120, 500);
+}, 1000);
 
 
 function midiSetBankProgram(midi_channel, bank, midi_voice){
@@ -77,7 +87,14 @@ function midiSetInstrument(midi_channel, midi_voice){
     }
 }
 
-
+function midiSetVolume(midi_channel,volume){
+    // control change value to set volume.
+    this.midi_hardware_engine.send('cc',{
+        controller: 7,
+        value: volume, // the volume, 
+        channel: midi_channel
+    });         
+}
 
 
 function midiMakeNote(midi_channel, note, velocity, duration){

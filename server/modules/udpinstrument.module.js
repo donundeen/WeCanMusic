@@ -511,6 +511,15 @@ const UDPInstrument = class{
             }); 
         }    
     }
+
+    midiSetVolume(volume){
+        // control change value to set volume.
+        this.midi_hardware_engine.send('cc',{
+            controller: 7,
+            value: volume, // the volume, 
+            channel: this._midi_channel
+        });         
+    }
     
 
 
