@@ -27,7 +27,7 @@ midiSetBankProgram(midi_channel, 0, 4);
 
 setTimeout(function(){
   //  midiSetBankProgram(1, 0, 32);
-    midiSetVolume(midi_channel, 255);
+    midiSetVolume(midi_channel, 200);
     midiMakeNote(midi_channel, 65, 120, 500);
     midiMakeNote(midi_channel, 69, 120, 500);
     midiMakeNote(midi_channel, 73, 120, 500);
@@ -36,7 +36,7 @@ setTimeout(function(){
 
 setTimeout(function(){
     //midiSetBankProgram(0, 0, 96);
-    midiSetVolume(midi_channel, 100);
+    midiSetVolume(midi_channel, 50);
     midiMakeNote(midi_channel, 65, 120, 500);
     midiMakeNote(midi_channel, 69, 120, 500);
     midiMakeNote(midi_channel, 73, 120, 500);
