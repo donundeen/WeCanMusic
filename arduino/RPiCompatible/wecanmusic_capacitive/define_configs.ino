@@ -16,6 +16,7 @@ etc...]
 // int midimin
 // int midimax
 // int midi_nlen
+// int midi_vol
 
 void config_setup(){
   for (int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
@@ -32,6 +33,7 @@ void config_setup(int vindex){   //MULTIVALUE UPDATE REQUIRED
   midimin[vindex] = getStoredConfigValInt(vindex, "midimin");  //MULTIVALUE UPDATE REQUIRED
   midimax[vindex] = getStoredConfigValInt(vindex, "midimax");  //MULTIVALUE UPDATE REQUIRED
   midi_notelength[vindex] = getStoredConfigValInt(vindex, "midi_nlen");  //MULTIVALUE UPDATE REQUIRED
+  midi_volume[vindex] = getStoredConfigValInt(vindex, "midi_vol");  //MULTIVALUE UPDATE REQUIRED
   Serial.println("setting midi bank and program and note length");
   midiSetChannelBank(0, midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
   midiSetChannelProgram(0, midi_program[vindex]);  //MULTIVALUE UPDATE REQUIRED
@@ -81,8 +83,10 @@ void routeConfigVal(OSCMessage &msg, int addrOffset ){
     msg.route(devroute, routeConfig_midimax);  //MULTIVALUE UPDATE REQUIRED
 
     sprintf(devroute,"/%s/config/midi_nlen",DEVICE_NAME[vindex]);   //MULTIVALUE UPDATE REQUIRED
-
     msg.route(devroute, routeConfig_midi_notelength);  //MULTIVALUE UPDATE REQUIRED
+
+    sprintf(devroute,"/%s/config/midi_vol",DEVICE_NAME[vindex]);   //MULTIVALUE UPDATE REQUIRED
+    msg.route(devroute, routeConfig_midi_volume);  //MULTIVALUE UPDATE REQUIRED
 
     sprintf(devroute,"/%s/config/velocitycurve",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
     msg.route(devroute, routeConfig_velocitycurve);  //MULTIVALUE UPDATE REQUIRED
@@ -224,6 +228,15 @@ void routeConfig_midi_notelength(OSCMessage &msg, int addrOffset ){ //MULTIVALUE
   midi_notelength[vindex] = route_int(vindex, msg, addrOffset, "midi_nlen");    //MULTIVALUE UPDATE REQUIRED
   Serial.println("midi_nlen");
   Serial.println( midi_notelength[vindex]);    //MULTIVALUE UPDATE REQUIRED
+}
+
+void routeConfig_midi_volume(OSCMessage &msg, int addrOffset ){ //MULTIVALUE UPDATE REQUIRED
+  char address[32];
+  msg.getAddress(address);
+  int vindex = extractVindexFromRoute(address);
+  midi_volume[vindex] = route_int(vindex, msg, addrOffset, "midi_vol");    //MULTIVALUE UPDATE REQUIRED
+  Serial.println("midi_vol");
+  Serial.println( midi_volume[vindex]);    //MULTIVALUE UPDATE REQUIRED
 }
 
 void routeConfig_velocitycurve(OSCMessage &msg, int addrOffset ){     //MULTIVALUE UPDATE REQUIRED

@@ -35,6 +35,7 @@ const UDPInstrument = class{
     _rootMidi = 0;
     _midimin = 32;
     _midimax = 100;
+    _midi_volume = 200; (0-254)
 
     _reset = false; // if the "reset" value is set, call the reset function 
 
@@ -87,6 +88,7 @@ const UDPInstrument = class{
         {name:"midi_program", type:"i"},
         {name:"midi_channel", type:"i"},
         {name:"midi_nlen", type:"i"},
+        {name:"midi_volume", type:"i"},
         {name:"rootMidi", type:"i"},
         {name:"midimin", type:"i"},
         {name:"midimax", type:"i"},
@@ -257,6 +259,11 @@ const UDPInstrument = class{
     }
     get sensor_value(){
         return this._sensor_value;
+    }
+
+    set midi_volume(volume){
+        this._midi_volume = volume;
+        this.midiSetVolume();
     }
 
     set midi_channel(channel){
@@ -512,15 +519,15 @@ const UDPInstrument = class{
         }    
     }
 
-    midiSetVolume(volume){
+    midiSetVolume(){
         // don't allow volumes over 254
-        if(volume > 254){
-            return; 
+        if(this._midi_volume > 254){
+            this._midi_volume = 254;
         }
         // control change value to set volume.
         this.midi_hardware_engine.send('cc',{
             controller: 7,
-            value: volume, // the volume, 
+            value: this._midi_volume, // the volume, 
             channel: this._midi_channel
         });         
     }

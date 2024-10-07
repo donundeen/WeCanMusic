@@ -335,6 +335,7 @@ $(function() {
             let midi_voice = options.data.filter((item)=>item.name=="midi_voice")[0].value;
             let midimin = options.data.filter((item)=>item.name=="midimin")[0].value;
             let midimax = options.data.filter((item)=>item.name=="midimax")[0].value;
+            let midi_volume = options.data.filter((item)=>item.name=="midi_volume")[0].value;
             [midi_bank, midi_program] = midi_voice.split(":");
             midi_bank = parseInt(midi_bank);
             midi_program = parseInt(midi_program);            
@@ -346,6 +347,8 @@ $(function() {
             // this isn't right' need to find selected_index
             $( ".midi-voice",instr ).slider( "option", "value", midi_voice_index );
             $( ".voice_display",instr ).val(  midi_voice );
+            $( ".midi-volume",instr ).slider( "option", "value", midi_volume );
+            $( ".volume_display",instr ).val(  midi_volume );
 
             return;
         }
@@ -370,6 +373,7 @@ $(function() {
         let midi_voice_index = 0;
         let [midi_bank, midi_program] = [0,0];
         let midi_voice = options_object.midi_voice  ? options_object.midi_voice: "0:0";
+        let midi_volume = options_object.midi_volume  ? options_object.midi_volume: 200;
         try{
             [midi_bank, midi_program] = midi_voice.split(":");
             midi_bank = parseInt(midi_bank);
@@ -441,6 +445,29 @@ $(function() {
                 let data = {id:id, 
                             instrtype: instrtype,
                             var: "midi_nlen",
+                            val: ui.value };
+                message(address, data);
+            }
+        });
+
+        $( ".midi-volume",instr ).slider({
+            range: false,
+            min: 0,
+            max: 254,
+            value: midi_nlen,
+            slide: function( event, ui ) {
+                console.log("slide", ui.value);
+                $(event.target).closest(".instrument").attr("id")                
+                $( ".volume_display",instr ).val(  notelength_names[ui.value] );
+            },            
+            stop: function( event, ui ) {
+                $(event.target).closest(".instrument").attr("id")                
+                $( ".volume_display",instr ).val(  notelength_names[ui.value] );
+                let address = "instrval";
+                let instrtype = $(instr).data("instrtype"); // local or udp
+                let data = {id:id, 
+                            instrtype: instrtype,
+                            var: "midi_vol",
                             val: ui.value };
                 message(address, data);
             }
