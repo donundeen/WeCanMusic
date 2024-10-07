@@ -68,6 +68,10 @@ const UDPInstrument = class{
     // instr, pitch, velocity, duration
     makenote_callback = false;
 
+    // track the previous note, so we don't play the same note twice in a row
+    previous_pitch = 0;
+    skip_duplicate_notes = true;
+
     // vars that might be externally set.
     // we can send this info to a server so it can set up a UI to collect those values
     // maybe array of objects?
@@ -328,8 +332,10 @@ const UDPInstrument = class{
         let midipitch    = this.derive_pitch(value);
         let midivelocity = this.derive_velocity();
         let mididuration = this.derive_duration();
-        this.midiMakeNote(midipitch, midivelocity, mididuration);
-       
+        if(!this.skip_duplicate_notes || midipitch != this.previous_pitch ){
+            this.midiMakeNote(midipitch, midivelocity, mididuration);
+        }
+        this.previous_pitch = midipitch;
     }
 
 
