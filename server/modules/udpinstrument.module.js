@@ -35,7 +35,7 @@ const UDPInstrument = class{
     _rootMidi = 0;
     _midimin = 32;
     _midimax = 100;
-    _midi_volume = 200; //(0-254)
+    _midi_vol = 200; //(0-254) // sometimes we use shorter names because of arduino restrictions in OSC routes
 
     _reset = false; // if the "reset" value is set, call the reset function 
 
@@ -88,7 +88,7 @@ const UDPInstrument = class{
         {name:"midi_program", type:"i"},
         {name:"midi_channel", type:"i"},
         {name:"midi_nlen", type:"i"},
-        {name:"midi_volume", type:"i"},
+        {name:"midi_vol", type:"i"},
         {name:"rootMidi", type:"i"},
         {name:"midimin", type:"i"},
         {name:"midimax", type:"i"},
@@ -261,8 +261,8 @@ const UDPInstrument = class{
         return this._sensor_value;
     }
 
-    set midi_volume(volume){
-        this._midi_volume = volume;
+    set midi_vol(volume){
+        this._midi_vol = volume;
         this.midiSetVolume();
     }
 
@@ -521,13 +521,13 @@ const UDPInstrument = class{
 
     midiSetVolume(){
         // don't allow volumes over 254
-        if(this._midi_volume > 254){
-            this._midi_volume = 254;
+        if(this._midi_vol > 254){
+            this._midi_vol = 254;
         }
         // control change value to set volume.
         this.midi_hardware_engine.send('cc',{
             controller: 7,
-            value: this._midi_volume, // the volume, 
+            value: this._midi_vol, // the volume, 
             channel: this._midi_channel
         });         
     }
