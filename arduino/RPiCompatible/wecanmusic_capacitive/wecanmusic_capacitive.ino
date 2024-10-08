@@ -275,7 +275,6 @@ void note_loop(){
   for (int i = 0 ; i < NUM_MULTIVALUES; i++){
     note_loop(i);
   }
-
 }
 
 void note_loop(int vindex){
