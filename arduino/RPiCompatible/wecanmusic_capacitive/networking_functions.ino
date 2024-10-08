@@ -117,7 +117,7 @@ void announceCreation(int vindex){
     Serial.println(UDPPort);
     Serial.println(DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
     Serial.println(midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
-    Serial.println(midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    Serial.println(midi_program[vindex]);  //MULTIVALUE UPDATE REQUIRED
     Serial.println(midi_notelength[vindex]);  //MULTIVALUE UPDATE REQUIRED
     Serial.println(midi_vol[vindex]);  //MULTIVALUE UPDATE REQUIRED
     //send hello world to server
