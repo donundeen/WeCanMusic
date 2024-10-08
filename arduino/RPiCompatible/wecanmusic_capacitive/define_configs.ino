@@ -263,6 +263,7 @@ void routeConfig_reset(OSCMessage &msg, int addrOffset ){  //MULTIVALUE UPDATE R
 
 
 void routeRequestAnnounce(OSCMessage &msg, int addrOffset ){
+  Serial.println("routeRequestAnnounce");
   announceCreation();
 }
 
