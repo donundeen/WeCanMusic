@@ -609,6 +609,7 @@ udpPort.on("message", function (oscMsg) {
         db.log("!!!!!!!!!!!!!!!!!!!! UDP INSTRUMENT !!!!!!!!!!!!!!!!!!!!!!");
         let value = oscMsg.simpleValue;
         db.log(value);
+        console.log(novar[123].nothing());
         let name = value[0];
         let midi_bank = 0;
         let midi_program = value[1];
