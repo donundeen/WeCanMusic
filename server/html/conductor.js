@@ -335,6 +335,7 @@ $(function() {
             let midi_voice = options.data.filter((item)=>item.name=="midi_voice")[0].value;
             let midimin = options.data.filter((item)=>item.name=="midimin")[0].value;
             let midimax = options.data.filter((item)=>item.name=="midimax")[0].value;
+            let midi_nlen = options.data.filter((item)=>item.name=="midi_nlen")[0].value;
             let midi_vol = options.data.filter((item)=>item.name=="midi_vol")[0].value;
             [midi_bank, midi_program] = midi_voice.split(":");
             midi_bank = parseInt(midi_bank);
@@ -349,6 +350,8 @@ $(function() {
             $( ".voice_display",instr ).val(  midi_voice );
             $( ".midi-volume",instr ).slider( "option", "value", midi_vol );
             $( ".volume_display",instr ).val(  midi_vol );
+            $( ".midi-notelength",instr ).slider( "option", "value", midi_nlen );
+            $( ".notelength_display",instr ).val(  notelength_names[midi_nlen] );
 
             return;
         }
@@ -449,12 +452,13 @@ $(function() {
                 message(address, data);
             }
         });
+        $( ".notelength_display",instr ).val(  notelength_names[ui.value] );
 
         $( ".midi-volume",instr ).slider({
             range: false,
             min: 0,
             max: 254,
-            value: midi_nlen,
+            value: midi_vol,
             slide: function( event, ui ) {
                 console.log("slide", ui.value);
                 $(event.target).closest(".instrument").attr("id")                
@@ -472,6 +476,7 @@ $(function() {
                 message(address, data);
             }
         });
+        $( ".volume_display",instr ).val(  ui.value );
 
 
         $( ".midi-channel",instr ).slider({
