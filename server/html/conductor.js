@@ -458,11 +458,11 @@ $(function() {
             slide: function( event, ui ) {
                 console.log("slide", ui.value);
                 $(event.target).closest(".instrument").attr("id")                
-                $( ".volume_display",instr ).val(  notelength_names[ui.value] );
+                $( ".volume_display",instr ).val( ui.value );
             },            
             stop: function( event, ui ) {
                 $(event.target).closest(".instrument").attr("id")                
-                $( ".volume_display",instr ).val(  notelength_names[ui.value] );
+                $( ".volume_display",instr ).val(  ui.value );
                 let address = "instrval";
                 let instrtype = $(instr).data("instrtype"); // local or udp
                 let data = {id:id, 
