@@ -35,7 +35,7 @@ const UDPInstrument = class{
     _rootMidi = 0;
     _midimin = 32;
     _midimax = 100;
-    _midi_volume = 200; (0-254)
+    _midi_volume = 200; //(0-254)
 
     _reset = false; // if the "reset" value is set, call the reset function 
 
