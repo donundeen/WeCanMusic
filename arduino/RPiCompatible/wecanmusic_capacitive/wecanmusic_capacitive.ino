@@ -464,6 +464,7 @@ void UDPListen(){
     if(!bundleIN.hasError()){
       Serial.println("routing?");
       bundleIN.route("/all/notelist", routeNotelist);
+      bundleIN.route("/all/requestannounce", routeRequestAnnounce);
       char devroute[100];
       for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
         sprintf(devroute,"/%s",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED

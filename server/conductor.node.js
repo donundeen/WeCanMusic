@@ -248,7 +248,7 @@ orchestra.performancePropUpdateCallback = function(instrument, propname, proptyp
             }]
         }
         db.log("sending udp message " + address, args, UDPSENDIP, UDPSENDPORT);
-        // send notelist to all UDP connected devices
+        // send prop to all devices, but route will only be accepted by the one with the same name 
         udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
     }    
 
@@ -565,7 +565,7 @@ socket.setMessageReceivedCallback(function(msg){
                 }]
             }
             db.log("sending udp message " + address, args, UDPSENDIP, UDPSENDPORT);
-            // send notelist to all UDP connected devices
+            // send device prop to all UDP connected devices
             udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
         }
     });
@@ -935,6 +935,22 @@ score.scoreFilename = scorename;
 // start the socket server and the web server
 socket.startSocketServer();
 socket.startWebServer();
+
+
+// request that all listening instruments announce themselves:
+let args = [{type: "i", value: 1}];
+let bundle = {
+    timeTag: osc.timeTag(1),
+    packets :[{
+        address: "/all/requestannounce",
+        args: args
+    }]
+}
+
+db.log("sending udp message /all/requestannounce", args, UDPSENDIP, UDPSENDPORT);
+// send "requestannounce" to all active devices, so they'll re-send their announce message
+udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
+
 
 // open the score file, 
 // and when it's open, run the score (if the config file says so)
