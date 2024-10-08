@@ -119,12 +119,13 @@ void announceCreation(int vindex){
     Serial.println(midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
     Serial.println(midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
     Serial.println(midi_notelength[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    Serial.println(midi_vol[vindex]);  //MULTIVALUE UPDATE REQUIRED
     //send hello world to server
     char ipbuffer[20];
     thisarduinoip.toCharArray(ipbuffer, 20);
     Serial.println(ipbuffer);
     OSCMessage oscmsg("/announceUDPInstrument");  
-    oscmsg.add(DEVICE_NAME[vindex]).add(midi_bank[vindex]).add(midi_program[vindex]).add(midimin[vindex]).add(midimax[vindex]).add(midi_notelength[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    oscmsg.add(DEVICE_NAME[vindex]).add(midi_bank[vindex]).add(midi_program[vindex]).add(midimin[vindex]).add(midimax[vindex]).add(midi_notelength[vindex]).add(midi_vol[vindex]);  //MULTIVALUE UPDATE REQUIRED
  //   udp.beginPacket(UDPReceiverIP, UDPPort);
     udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...
  

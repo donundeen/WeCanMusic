@@ -186,7 +186,7 @@ int rootMidi[6] = {0,0,0,0,0,0};  //MULTIVALUE UPDATE REQUIRED
 int midimin[6] = {32,32,32,32,32,32};  //MULTIVALUE UPDATE REQUIRED
 int midimax[6] = {100,100,100,100,100,100}; //MULTIVALUE UPDATE REQUIRED
 int midi_notelength[6] = {7,7,7,7,7,7}; // these ints poin tot positions in the notelengths array
-int midi_volume[6] = {200,200,200,200,200,200};
+int midi_vol[6] = {200,200,200,200,200,200};
 int noteloop_rate[6] = {7,7,7,7,7,7};
 ////// END MUSIC PERFORMANCE VARIABLES  
 ///////////////////////////////////////
