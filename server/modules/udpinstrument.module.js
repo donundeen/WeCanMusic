@@ -266,6 +266,10 @@ const UDPInstrument = class{
         this.midiSetVolume();
     }
 
+    get midi_vol(){
+        return this._midi_vol;
+    }
+
     set midi_channel(channel){
         this.db.log("changing midi channel to " + channel);
         this._midi_channel = channel;
