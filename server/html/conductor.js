@@ -335,7 +335,7 @@ $(function() {
             let midi_voice = options.data.filter((item)=>item.name=="midi_voice")[0].value;
             let midimin = options.data.filter((item)=>item.name=="midimin")[0].value;
             let midimax = options.data.filter((item)=>item.name=="midimax")[0].value;
-            let midi_volume = options.data.filter((item)=>item.name=="midi_volume")[0].value;
+            let midi_vol = options.data.filter((item)=>item.name=="midi_vol")[0].value;
             [midi_bank, midi_program] = midi_voice.split(":");
             midi_bank = parseInt(midi_bank);
             midi_program = parseInt(midi_program);            
@@ -347,8 +347,8 @@ $(function() {
             // this isn't right' need to find selected_index
             $( ".midi-voice",instr ).slider( "option", "value", midi_voice_index );
             $( ".voice_display",instr ).val(  midi_voice );
-            $( ".midi-volume",instr ).slider( "option", "value", midi_volume );
-            $( ".volume_display",instr ).val(  midi_volume );
+            $( ".midi-volume",instr ).slider( "option", "value", midi_vol );
+            $( ".volume_display",instr ).val(  midi_vol );
 
             return;
         }
@@ -373,7 +373,7 @@ $(function() {
         let midi_voice_index = 0;
         let [midi_bank, midi_program] = [0,0];
         let midi_voice = options_object.midi_voice  ? options_object.midi_voice: "0:0";
-        let midi_volume = options_object.midi_volume  ? options_object.midi_volume: 200;
+        let midi_vol = options_object.midi_vol  ? options_object.midi_vol: 200;
         try{
             [midi_bank, midi_program] = midi_voice.split(":");
             midi_bank = parseInt(midi_bank);
