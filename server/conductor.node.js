@@ -615,12 +615,14 @@ udpPort.on("message", function (oscMsg) {
         let midimin = value[2];
         let midimax = value[3];        
         let midi_nlen = value[4];
-        if(value.length>5){
+        let midi_vol = value[5];
+        if(value.length>6){
             midi_bank = value[1];
             midi_program = value[2];
             midimin = value[3];
             midimax = value[4];
             midi_nlen = value[5];
+            midi_vol = value[6];
         }
         if(value.name){
             name = value.name;
@@ -634,6 +636,7 @@ udpPort.on("message", function (oscMsg) {
         orchestra.udp_instrument_set_value(name, "midimin", midimin);
         orchestra.udp_instrument_set_value(name, "midimax", midimax);
         orchestra.udp_instrument_set_value(name, "midi_nlen", midi_nlen);
+        orchestra.udp_instrument_set_value(name, "midi_vol", midi_vol);
         let props = instrument.get_config_props();
         db.log("setting add instrument props");
         db.log(midi_voice);
