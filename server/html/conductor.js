@@ -452,7 +452,7 @@ $(function() {
                 message(address, data);
             }
         });
-        $( ".notelength_display",instr ).val(  notelength_names[ui.value] );
+        $( ".notelength_display",instr ).val(  notelength_names[midi_nlen] );
 
         $( ".midi-volume",instr ).slider({
             range: false,
@@ -476,7 +476,7 @@ $(function() {
                 message(address, data);
             }
         });
-        $( ".volume_display",instr ).val(  ui.value );
+        $( ".volume_display",instr ).val( midi_vol );
 
 
         $( ".midi-channel",instr ).slider({
