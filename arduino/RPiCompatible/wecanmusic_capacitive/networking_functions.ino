@@ -143,8 +143,10 @@ void announceCreation(int vindex){
 void sendMakeNote(int vindex, int pitch, int velocity, int duration){  //MULTIVALUE UPDATE REQUIRED
   if(velocity == 0){
     // don't send if value is 0
+//    Serial.println("no velocity, not sending");
     return;
   }
+  Serial.println("sending makenote");
   OSCMessage oscmsg("/makenote");  
   oscmsg.add(DEVICE_NAME[vindex]).add(pitch).add(velocity).add(duration);  //MULTIVALUE UPDATE REQUIRED
   //   udp.beginPacket(UDPReceiverIP, UDPPort);
