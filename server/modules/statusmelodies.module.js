@@ -3,7 +3,9 @@ let StatusMelodies = {
     midi_hardware_engine : false,
     active: false,
 
-    midi_channel : 0,
+    midi_channel : 9,
+    midi_bank : 0,
+    midi_program : 2, 
 
     readyNotes : [65, 69, 72, 65, 69, 72],
     errorNotes : [72, 68, 65, 72, 68, 65],
@@ -24,7 +26,19 @@ let StatusMelodies = {
 
 
     playnotes(series, volume, duration, spacing){
-        this.playnoteInSeries(series, 0, volume, duration, spacing );
+        if(this.midi_hardware_engine){
+            this.midi_hardware_engine.send('cc',{
+                controller: 0,
+                value: this.midi_bank, 
+                channel: this.midi_channel
+            }); 
+  //          this.db.log(this._midi_program);
+            this.midi_hardware_engine.send('program',{
+                number: this.midi_program, 
+                channel: this.midi_channel
+            }); 
+            this.playnoteInSeries(series, 0, volume, duration, spacing );
+        }
     },
 
     playnoteInSeries(series, index, volume, duration, spacing){
