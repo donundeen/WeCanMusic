@@ -92,6 +92,8 @@ void configUdp(){
       Serial.println("SSID:" + WiFi.SSID());
       wifi_connected = true;
       udp.begin(UDPINPort);
+      // re-announce device
+      announceCreation();
     }
     if(WiFi.status() != WL_CONNECTED){
       Serial.println("wifi not connected");
