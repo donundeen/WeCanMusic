@@ -3,7 +3,7 @@ let StatusMelodies = {
     midi_hardware_engine : false,
     active: false,
 
-    midi_channel : 9,
+    midi_channel : 8,
     midi_bank : 0,
     midi_program : 2, 
 
