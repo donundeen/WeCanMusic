@@ -937,20 +937,22 @@ socket.startSocketServer();
 socket.startWebServer();
 
 
-// request that all listening instruments announce themselves:
-let args = [{type: "i", value: 1}];
-let bundle = {
-    timeTag: osc.timeTag(1),
-    packets :[{
-        address: "/all/requestannounce",
-        args: args
-    }]
-}
+setTimeout(function(){
+    // request that all listening instruments announce themselves:
+    let args = [{type: "i", value: 1}];
+    let bundle = {
+        timeTag: osc.timeTag(1),
+        packets :[{
+            address: "/all/requestannounce",
+            args: args
+        }]
+    }
 
-db.log("sending udp message /all/requestannounce", args, UDPSENDIP, UDPSENDPORT);
-// send "requestannounce" to all active devices, so they'll re-send their announce message
-udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
-
+    db.log("+++++++++++++++++++++++++++++++++++++++");
+    db.log("+++++++++++sending udp message /all/requestannounce", args, UDPSENDIP, UDPSENDPORT);
+    // send "requestannounce" to all active devices, so they'll re-send their announce message
+    udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
+},2000);
 
 // open the score file, 
 // and when it's open, run the score (if the config file says so)
