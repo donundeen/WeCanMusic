@@ -432,7 +432,7 @@ const UDPInstrument = class{
     midiMakeNote(note, velocity, duration){
        // this.db.log(this.synth.foothing + " MAKING NOTE UDP " + this._midi_channel + " : " + note + " : " + velocity + " : " + duration);
         // note: each instrument needs its own channel, or the instrument will be the same tone.
-        this.db.log("mideMakeNote : ", this.midi_channel, this._midi_bank, this._midi_program,  note, velocity, duration);
+        this.db.log("mideMakeNote : ", this._midi_vol, this.midi_channel, this._midi_bank, this._midi_program,  note, velocity, duration);
         if(!Number.isFinite(note) || !Number.isFinite(velocity) || !Number.isFinite(duration)){
             this.db.log("bad midi values, returning");
             return;
