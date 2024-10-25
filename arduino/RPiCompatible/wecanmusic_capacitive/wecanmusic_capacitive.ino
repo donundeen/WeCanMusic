@@ -14,7 +14,7 @@ const bool no_network = false;
 
 char wecanmusic_server_ip[40] = "10.0.0.255";
 char wecanmusic_port[6] = "7005";
-char this_device_name[34] = "thread26";
+char this_device_name[34] = "thread29";
 //flag for saving data
 bool shouldSaveConfig = true;
 
