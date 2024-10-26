@@ -14,7 +14,7 @@ const bool no_network = false;
 
 char wecanmusic_server_ip[40] = "10.0.0.255";
 char wecanmusic_port[6] = "7005";
-char this_device_name[34] = "thread29";
+char this_device_name[34] = "thread32";
 //flag for saving data
 bool shouldSaveConfig = true;
 
@@ -187,7 +187,12 @@ int midimin[6] = {32,32,32,32,32,32};  //MULTIVALUE UPDATE REQUIRED
 int midimax[6] = {100,100,100,100,100,100}; //MULTIVALUE UPDATE REQUIRED
 int midi_notelength[6] = {7,7,7,7,7,7}; // these ints poin tot positions in the notelengths array
 int midi_vol[6] = {200,200,200,200,200,200};
-int noteloop_rate[6] = {7,7,7,7,7,7};
+//int noteloop_rate[6] = {7,7,7,7,7,7};
+int noteloop_rate[6] = {4,4,4,4,4,4};
+int notelength_assortment[9] = {2,3,4,5,5,6,7,8,8}; // noteloop_rates will be randomly chosen from this list. 
+                                                    //  list must be 9 elements, but you can double numbers up to incrase occurence
+ 
+int sensor_loop_rate = 10;
 ////// END MUSIC PERFORMANCE VARIABLES  
 ///////////////////////////////////////
 
@@ -256,7 +261,7 @@ int prevpeaks[6] = {0,0,0,0,0,0}; // track so we don't trigger a peak twice.
 
 void sensor_setup(){
   sensor_setup_device();
-  t.setInterval(sensor_loop, 10);
+  t.setInterval(sensor_loop, sensor_loop_rate);
   sensor_loop();
 //  t.setInterval(changerate_loop, 100);
   changerate_loop();
@@ -275,6 +280,14 @@ void note_loop(){
   for (int i = 0 ; i < NUM_MULTIVALUES; i++){
     note_loop(i);
   }
+
+  int rand_notelength = notelength_assortment[random(8)];
+  int note_timeout = pulseToMS(notelengths[rand_notelength]);
+  Serial.print("noteloop Rate: ");
+  Serial.println(note_timeout);
+//  t.setTimeout(note_loop, notelengths[noteloop_rate[0]]); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
+  t.setTimeout(note_loop, note_timeout); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
+//pulseToMS(notelengths[midi_notelength]);
 }
 
 void note_loop(int vindex){
@@ -300,7 +313,6 @@ void note_loop(int vindex){
   }else{
     sendMakeNote(vindex, midipitch, midivelocity, mididuration);  //MULTIVALUE UPDATE REQUIRED
   }
-  t.setTimeout(note_loop, noteloop_rate[vindex]); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
 }
 
 void sensor_loop(){
