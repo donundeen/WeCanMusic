@@ -342,7 +342,8 @@ $(function() {
             midi_program = parseInt(midi_program);            
             let midi_voice_index = voicelist.findIndex((v)=>{
                 return (midi_bank == parseInt(v[0]) && midi_program == parseInt(v[1]));
-            });            
+            });  
+            console.log("midi_voice_index", midi_voice_index, midi_bank, midi_program, voicelist);          
             $( ".midi-range",instr ).slider( "option", "values", [ midimin, midimax ] );
             $( ".range_display",instr ).val(  midimin + " - " + midimax );
             // this isn't right' need to find selected_index
@@ -557,6 +558,9 @@ $(function() {
                 $('.voice_display option',instr).eq(ui.value).prop('selected', 'selected');          
                 let instrtype = $(instr).data("instrtype"); // local or udp
                 let value = $('.voice_display option:eq('+ui.value+')',instr).val();
+                if(!value.toString().includes(":")){
+                    value = "0:"+value;
+                }
                 let address = "instrval"
                 let data = {id:id, 
                             instrtype: instrtype,

@@ -943,13 +943,13 @@ setTimeout(function(){
     let bundle = {
         timeTag: osc.timeTag(1),
         packets :[{
-            address: "/all/requestannounce",
+            address: "/all/req_ann", // request announce
             args: args
         }]
     }
 
     db.log("+++++++++++++++++++++++++++++++++++++++");
-    db.log("+++++++++++sending udp message /all/requestannounce", args, UDPSENDIP, UDPSENDPORT);
+    db.log("+++++++++++sending udp message /all/req_ann", args, UDPSENDIP, UDPSENDPORT);
     // send "requestannounce" to all active devices, so they'll re-send their announce message
     udpPort.send(bundle, UDPSENDIP, UDPSENDPORT);
 },2000);

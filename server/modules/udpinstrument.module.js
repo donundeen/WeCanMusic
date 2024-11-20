@@ -529,13 +529,14 @@ const UDPInstrument = class{
             this._midi_vol = 254;
         }
         // control change value to set volume.
-        this.midi_hardware_engine.send('cc',{
-            controller: 7,
-            value: this._midi_vol, // the volume, 
-            channel: this._midi_channel
-        });         
-    }
-    
+        if(this.midi_hardware_engine){
+            this.midi_hardware_engine.send('cc',{
+                controller: 7,
+                value: this._midi_vol, // the volume, 
+                channel: this._midi_channel
+            });         
+        }
+    }    
 
 
     // we might care about this, for mono things

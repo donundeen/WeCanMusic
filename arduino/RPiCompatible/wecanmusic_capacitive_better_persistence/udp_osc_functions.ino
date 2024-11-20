@@ -1,46 +1,90 @@
-//////////////////////////
-// DEFINE CONFIGS FILE
-///*************************
-// Defining all the config values
-// functions that are specific to different config values
+///////////////////////////////
+// functions to handle communication with the server/conductor via UDP/OSC
 
-/* make an array of defined vonfig vars, sorta like
-["var1","int",
-"var2", "string",
-"var3", "intarray",
-etc...]
-*/
+//  UDP SETUP/LOOP FUNCTIONS
+void sendOSCUDP(int vindex, int sendVal){  //MULTIVALUE UPDATE REQUIRED
+ if(WiFi.status() == WL_CONNECTED){   
+  Serial.println("sending udp");
+  Serial.println(UDPReceiverIP);
+  Serial.println(UDPPort);
+  //send hello world to server
+  char ipbuffer[20];
+  thisarduinoip.toCharArray(ipbuffer, 20);
+  OSCMessage oscmsg(DEVICE_ID[vindex]);  //MULTIVALUE UPDATE REQUIRED
+  oscmsg.add(sendVal).add(ipbuffer);
+  udp.beginPacket(UDPReceiverIP, UDPPort);
+//  udp.write(buffer, msg.length()+1);
+  oscmsg.send(udp);
+  udp.endPacket();
+  oscmsg.empty();
+ }else{
+  Serial.println("not sending udp, not connected");
+ }
+}
 
-//Variable List
-// int midi_bank
-// int midi_program
-// int midimin
-// int midimax
-// int midi_nlen
-// int midi_vol
+void udp_loop(){
+  configUdp();
+  if(!no_network){
+    UDPListen();
+  }    
+}
 
-void config_setup(){
-  for (int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
-    config_setup(vindex);
+void UDPListen(){
+  OSCBundle bundleIN;
+  int size;
+ 
+  if( (size = udp.parsePacket())>0)
+  {
+    Serial.println("got UDP");
+  // unsigned int outPort = Udp.remotePort();
+    while(size--){
+      byte b = udp.read();
+//      bundleIN.fill(udp.read());
+//      Serial.println(b);
+      bundleIN.fill(b);
+    }
+    if(!bundleIN.hasError()){
+      Serial.println("routing?");
+      bundleIN.route("/all/notelist", routeNotelist);
+      bundleIN.route("/all/req_ann", routeRequestAnnounce);
+      char devroute[100];
+      for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
+        sprintf(devroute,"/%s",DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+        bundleIN.route(devroute, routeDeviceMsg);
+        Serial.println("done BundleIn");
+      }
+    }else{
+      Serial.println("some error");
+      Serial.println(bundleIN.getError());
+    }
   }
 }
 
-
-void config_setup(int vindex){   //MULTIVALUE UPDATE REQUIRED
-  // midi_voice just split out into bank/program when received.
- // midi_voice[vindex] = getStoredConfigValInt(vindex, "midi_voice");  //MULTIVALUE UPDATE REQUIRED
-  midi_bank[vindex] = getStoredConfigValInt(vindex, "midi_bank");  //MULTIVALUE UPDATE REQUIRED
-  midi_program[vindex] = getStoredConfigValInt(vindex, "midi_program");  //MULTIVALUE UPDATE REQUIRED
-  midimin[vindex] = getStoredConfigValInt(vindex, "midimin");  //MULTIVALUE UPDATE REQUIRED
-  midimax[vindex] = getStoredConfigValInt(vindex, "midimax");  //MULTIVALUE UPDATE REQUIRED
-  midi_notelength[vindex] = getStoredConfigValInt(vindex, "midi_nlen");  //MULTIVALUE UPDATE REQUIRED
-  midi_vol[vindex] = getStoredConfigValInt(vindex, "midi_vol");  //MULTIVALUE UPDATE REQUIRED
-  Serial.println("setting midi bank and program and note length");
-  midiSetChannelBank(0, midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
-  midiSetChannelProgram(0, midi_program[vindex]);  //MULTIVALUE UPDATE REQUIRED
+/*
+ * connecting to UDP port on laptop runnin Max (or otherwise sending/recieving UDP data)
+ */
+void configUdp(){
+  if(WIFI_MODE_ON){
+    if(!wifi_connected && WiFi.status() == WL_CONNECTED){
+      Serial.println("HTTP server:" + WiFi.localIP().toString());
+      thisarduinoip = WiFi.localIP().toString();
+      Serial.println("SSID:" + WiFi.SSID());
+      wifi_connected = true;
+      udp.begin(UDPINPort);
+      // re-announce device
+      announceCreation();
+    }
+    if(WiFi.status() != WL_CONNECTED){
+      Serial.println("wifi not connected");
+      wifi_connected = false;
+    }
+  }
 }
+// END UDP SETUP/LOOP FUNCTIONS
+/////////////////////////
 
-
+/////////////////////////
+/// ROUTING OSC MESSAGES
 void routeDeviceMsg(OSCMessage &msg, int addrOffset ){  //MULTIVALUE UPDATE REQUIRED
   Serial.println("devicemsg");
   char devroute[100];
@@ -59,7 +103,6 @@ void routeDeviceMsg(OSCMessage &msg, int addrOffset ){  //MULTIVALUE UPDATE REQU
 void routeConfigVal(OSCMessage &msg, int addrOffset ){
   Serial.println("configvar");
   char devroute[100];
-
 
   for (int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
 
@@ -147,15 +190,13 @@ void routeConfig_midi_voice(OSCMessage &msg, int addrOffset ){  //MULTIVALUE UPD
   int bank = -1;
   int program = -1;
   midi_voice_to_bank_program(midi_voice, bank, program);
-  midi_bank[vindex] = bank;
-  midi_program[vindex] = program;
-  Serial.println("stepa");
-  midiSetChannelBank(0, midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
-  midiSetChannelProgram(0, midi_program[vindex]);  //MULTIVALUE UPDATE REQUIRED
-
-  setStoredConfigVal(vindex, "midi_bank", bank);  //MULTIVALUE UPDATE REQUIRED
-  setStoredConfigVal(vindex, "midi_program", program);  //MULTIVALUE UPDATE REQUIRED
-
+  if( midi_bank[vindex]  != bank || midi_program[vindex] != program){
+    midi_bank[vindex] = bank;
+    midi_program[vindex] = program;
+    midiSetChannelBank(0, midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    midiSetChannelProgram(0, midi_program[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    save_persistent_values(); // save all the values every time there's any new value. 
+  }  
   // deprecating this for bank:program
 //  midiSetChannelProgram(0, midi_voice[vindex]);  //MULTIVALUE UPDATE REQUIRED
 }
@@ -201,13 +242,15 @@ void routeConfig_midi_program(OSCMessage &msg, int addrOffset ){  //MULTIVALUE U
   midiSetChannelProgram(0, midi_program[vindex]);  //MULTIVALUE UPDATE REQUIRED
 }
 
-
-
 void routeConfig_midimin(OSCMessage &msg, int addrOffset ){  //MULTIVALUE UPDATE REQUIRED
   char address[32];
   msg.getAddress(address);
   int vindex = extractVindexFromRoute(address);
-  midimin[vindex] = route_int(vindex, msg, addrOffset, "midimin"); //MULTIVALUE UPDATE REQUIRED
+  int temp = route_int(vindex, msg, addrOffset, "midimin"); 
+  if(midimin[vindex] != temp){
+    midimin[vindex] = temp;    //MULTIVALUE UPDATE REQUIRED
+    save_persistent_values(); // save all the values every time there's any new value. 
+  }
   Serial.println("midimin"+String(vindex));
   Serial.println(midimin[vindex]); //MULTIVALUE UPDATE REQUIRED
 }
@@ -216,7 +259,11 @@ void routeConfig_midimax(OSCMessage &msg, int addrOffset ){ //MULTIVALUE UPDATE 
   char address[32];
   msg.getAddress(address);
   int vindex = extractVindexFromRoute(address);
-  midimax[vindex] = route_int(vindex, msg, addrOffset, "midimax");    //MULTIVALUE UPDATE REQUIRED
+    int temp = route_int(vindex, msg, addrOffset, "midimax"); 
+  if(midimax[vindex] != temp){
+    midimax[vindex] = temp;    //MULTIVALUE UPDATE REQUIRED
+    save_persistent_values(); // save all the values every time there's any new value. 
+  }
   Serial.println("midimax");
   Serial.println(midimax[vindex]);    //MULTIVALUE UPDATE REQUIRED
 }
@@ -226,7 +273,11 @@ void routeConfig_midi_notelength(OSCMessage &msg, int addrOffset ){ //MULTIVALUE
   char address[32];
   msg.getAddress(address);
   int vindex = extractVindexFromRoute(address);
-  midi_notelength[vindex] = route_int(vindex, msg, addrOffset, "midi_nlen");    //MULTIVALUE UPDATE REQUIRED
+  int temp = route_int(vindex, msg, addrOffset, "midi_nlen"); 
+  if(midi_notelength[vindex] != temp){
+    midi_notelength[vindex] = temp;    //MULTIVALUE UPDATE REQUIRED
+    save_persistent_values(); // save all the values every time there's any new value. 
+  }
   Serial.println("midi_nlen");
   Serial.println( midi_notelength[vindex]);    //MULTIVALUE UPDATE REQUIRED
 }
@@ -235,7 +286,11 @@ void routeConfig_midi_vol(OSCMessage &msg, int addrOffset ){ //MULTIVALUE UPDATE
   char address[32];
   msg.getAddress(address);
   int vindex = extractVindexFromRoute(address);
-  midi_vol[vindex] = route_int(vindex, msg, addrOffset, "midi_vol");    //MULTIVALUE UPDATE REQUIRED
+  int temp = route_int(vindex, msg, addrOffset, "midi_vol"); 
+  if(midi_vol[vindex] != temp){
+    midi_vol[vindex] = temp;    //MULTIVALUE UPDATE REQUIRED
+    save_persistent_values(); // save all the values every time there's any new value. 
+  }
   Serial.println("midi_vol");
   Serial.println( midi_vol[vindex]);    //MULTIVALUE UPDATE REQUIRED
 }
@@ -246,12 +301,11 @@ void routeConfig_velocitycurve(OSCMessage &msg, int addrOffset ){     //MULTIVAL
   char address[32];
   msg.getAddress(address);
   int vindex = extractVindexFromRoute(address);
+  save_persistent_values(); // save all the values every time there's any new value. 
 
   Serial.println("velocityCurve");
 //  Serial.println(velocitycurve[vindex]);    //MULTIVALUE UPDATE REQUIRED
 }
-
-
 
 void routeConfig_reset(OSCMessage &msg, int addrOffset ){  //MULTIVALUE UPDATE REQUIRED
   char address[32];
@@ -305,7 +359,6 @@ int route_int(int vindex, OSCMessage &msg, int addrOffset, String varname){  //M
     theval = msg.getInt(i);   //MULTIVALUE UPDATE REQUIRED
     Serial.println("got val");
     Serial.println(theval);
-    setStoredConfigVal(varname, theval);  //MULTIVALUE UPDATE REQUIRED
     i++;
   }
   return theval;
@@ -338,6 +391,66 @@ String route_string(int vindex, OSCMessage &msg, int addrOffset, String varname,
   return String(theval);
 }
 
-
-// END DEFINE CONFIGS FILE
+/////////////////////////
+/// END ROUTING OSC MESSAGES
 //////////////////////////
+
+
+
+
+void announceCreation(){
+  for(int i=0; i< NUM_MULTIVALUES; i++){
+    announceCreation(i);
+  }
+}
+// send announce message over OSC when connected
+void announceCreation(int vindex){
+  if(WiFi.status() == WL_CONNECTED){   
+    Serial.println("ANNOUNCING udp:::");
+    Serial.println(UDPReceiverIP);
+    Serial.println(UDPPort);
+    Serial.println(DEVICE_NAME[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    Serial.println(midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    Serial.println(midi_program[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    Serial.println(midi_notelength[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    Serial.println(midi_vol[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    //send hello world to server
+    char ipbuffer[20];
+    thisarduinoip.toCharArray(ipbuffer, 20);
+    Serial.println(ipbuffer);
+    OSCMessage oscmsg("/announceUDPInstrument");  
+    oscmsg.add(DEVICE_NAME[vindex]).add(midi_bank[vindex]).add(midi_program[vindex]).add(midimin[vindex]).add(midimax[vindex]).add(midi_notelength[vindex]).add(midi_vol[vindex]);  //MULTIVALUE UPDATE REQUIRED
+ //   udp.beginPacket(UDPReceiverIP, UDPPort);
+    udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...
+ 
+   // udp.beginMulticastPacket(UDPReceiverIP, UDPPort, WiFi.localIP());
+  //  udp.write(buffer, msg.length()+1);
+    oscmsg.send(udp);
+    udp.endPacket();
+    oscmsg.empty();
+  }else{
+    Serial.println("not sending udp, not connected");
+  }  
+}
+
+// send a makenote to the server (use this when device doesn't have its own speakers or synth)
+void sendMakeNote(int vindex, int pitch, int velocity, int duration){  //MULTIVALUE UPDATE REQUIRED
+  if(velocity == 0){
+    // don't send if value is 0
+//    Serial.println("no velocity, not sending");
+    return;
+  }
+  Serial.println("sending makenote");
+  OSCMessage oscmsg("/makenote");  
+  oscmsg.add(DEVICE_NAME[vindex]).add(pitch).add(velocity).add(duration);  //MULTIVALUE UPDATE REQUIRED
+  //   udp.beginPacket(UDPReceiverIP, UDPPort);
+  udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...
+
+  // udp.beginMulticastPacket(UDPReceiverIP, UDPPort, WiFi.localIP());
+  //  udp.write(buffer, msg.length()+1);
+  oscmsg.send(udp);
+  udp.endPacket();
+  oscmsg.empty();  
+}
+
+
