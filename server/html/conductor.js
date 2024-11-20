@@ -112,6 +112,9 @@ $(function() {
         scoreText = data.text;
         curscore = data.scorename;
         $(".scorenametext").val(curscore);
+        if(!scoreText){
+            return;
+        }
         let split = scoreText.split("\n");
         $(".score").empty();
 
@@ -653,17 +656,17 @@ $(function() {
 
 
     function updateInstrumentMakenote(id, data_obj){
-        console.log("updateMakenote");
-        console.log(data_obj);
+//        console.log("updateMakenote");
+//        console.log(data_obj);
         let instr = $("#"+id);
         let text = data_obj.pitch + ":"+data_obj.velocity+":"+data_obj.duration;
-        console.log(text);
+//        console.log(text);
         $( ".makenote span",instr ).text(text);
     }
 
 
     function buildVoicelistOptions(){
-        console.log("building voie list options");
+        console.log("building voice list options");
         let voptions = $("<select class='voice_display' name='midi_voice'>");
         console.log(voicelist);
         for (var i = 0; i< voicelist.length; i++){

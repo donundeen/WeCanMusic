@@ -367,6 +367,7 @@ socket.setMessageReceivedCallback(function(msg){
         // get voicelist and send as socket.sendMessage("voicelist", voicelist);
         orchestra.soundfont_file = soundfont;
         orchestra.get_voicelist(function(voicelist){    
+            console.log("sending voicelist", voicelist);
             socket.sendMessage("voicelist", voicelist);             //  trans.start();
         });        
     });
