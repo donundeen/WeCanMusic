@@ -1,7 +1,7 @@
 
 
 //////////////////////////////////
-// MUSIC PERFORMANCE FUNCTIONS
+// MUSIC THEORY FUNCTIONS
 
 void setNotelist(int* newlist, int* curlist, int size){
   Serial.println("new notelist");
@@ -10,12 +10,12 @@ void setNotelist(int* newlist, int* curlist, int size){
   memcpy(curlist, newlist, sizeof(newlist[0])*size);
 }
 
-void setRoot(int vindex, int root){  //MULTIVALUE UPDATE REQUIRED
-  rootMidi[vindex] = root;   //MULTIVALUE UPDATE REQUIRED
+void setRoot(int vindex, int root){  //
+  rootMidi[vindex] = root;   //
 }
 
 int noteFromFloat(int vindex, double value, int min, int max){
-  makeworkinglist(vindex, min, max);  //MULTIVALUE UPDATE REQUIRED
+  makeworkinglist(vindex, min, max);  //
   //Serial.print("note from value ");
   //Serial.println(value);
   //Serial.println(workinglistlength);
@@ -26,25 +26,25 @@ int noteFromFloat(int vindex, double value, int min, int max){
   return note;
 }
 
-int fixedNoteFromFloat(int vindex, float value, int min, int max){ //MULTIVALUE UPDATE REQUIRED
+int fixedNoteFromFloat(int vindex, float value, int min, int max){ //
 // in a "fixed" setup, the same float value should result in the same midi note (octave may vary), regardless of scale
 // - map the float across FULL range, from min to max
 // - move resulting value DOWN to the closest note in the scale
-  makeworkinglist(vindex, min, max); //MULTIVALUE UPDATE REQUIRED
+  makeworkinglist(vindex, min, max); //
 	int range = max - min;
 	int initial = min + floor(range * value);
-	while(indexOf(initial, workinglist[vindex], workinglistlength[vindex]) < 0){  //MULTIVALUE UPDATE REQUIRED
+	while(indexOf(initial, workinglist[vindex], workinglistlength[vindex]) < 0){  //
 		initial--;
 	}
 	return initial;
 }
 
-int getRootedBestNoteFromFloat(int vindex, int value, int min, int max){  //MULTIVALUE UPDATE REQUIRED
+int getRootedBestNoteFromFloat(int vindex, int value, int min, int max){  //
 	// for a "rooted" scale/chord, expand the min and max so that both min and max are the root
-	min = moveMinMax(vindex, rootMidi[vindex], min);  //MULTIVALUE UPDATE REQUIRED
-	max = moveMinMax(vindex, rootMidi[vindex], max);   //MULTIVALUE UPDATE REQUIRED
+	min = moveMinMax(vindex, rootMidi[vindex], min);  //
+	max = moveMinMax(vindex, rootMidi[vindex], max);   //
 
-	int note = noteFromFloat(vindex, value, min, max);  //MULTIVALUE UPDATE REQUIRED
+	int note = noteFromFloat(vindex, value, min, max);  //
 	if(!note){
 		return false;
 	}
@@ -84,15 +84,15 @@ int moveMinMax(int vindex, int root, int minmax){
 
 
 // Make a new array that's a subset of the notelist, with min and max values
-void makeworkinglist(int vindex, int minval, int maxval){  //MULTIVALUE UPDATE REQUIRED
+void makeworkinglist(int vindex, int minval, int maxval){  //
   int wi = -1;
   for(int i = 0; i < notelistlength; i ++){
     if(notelist[i] >= minval && notelist[i] <= maxval){
       wi++;
-      workinglist[vindex][wi] = notelist[i];   //MULTIVALUE UPDATE REQUIRED
+      workinglist[vindex][wi] = notelist[i];   //
     }
   }
-  workinglistlength[vindex] = wi + 1;  //MULTIVALUE UPDATE REQUIRED
+  workinglistlength[vindex] = wi + 1;  //
 }
 // END MUSIC PERFORMANCE FUNCTIONS
 /////////////////////////////////

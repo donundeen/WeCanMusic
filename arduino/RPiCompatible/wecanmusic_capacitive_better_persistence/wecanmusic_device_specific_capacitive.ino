@@ -35,7 +35,7 @@ void sensor_loop(int vindex){
   //Serial.println("read value");
   //Serial.println(ADCRaw[vindex]);
 
-  firstSense[vindex] = true;   //MULTIVALUE UPDATE REQUIRED
+  firstSense[vindex] = true;   
   /*
   if(!no_network){
     sendOSCUDP(ADCRaw);

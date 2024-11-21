@@ -108,11 +108,8 @@ void config_webpage_setup() {
   Serial.println("\twecanmusic_port : " + String(wecanmusic_port));
   Serial.println("\tthis_device_name : " + String(this_device_name));
 
-  UDPReceiverIP = wecanmusic_server_ip; // ip where UDP messages are going //presetip
-  // just for testing:
-  UDPReceiverIP = presetip;
 
-  UDPPort = atoi(wecanmusic_port); // convert to int //  7002; // the UDP port that Max is listening on
+
   for (int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
     char vindexchar[2];
     String str = String(vindex);
@@ -129,14 +126,11 @@ void config_webpage_setup() {
     Serial.println("\tDEVICE_ID : " + String(DEVICE_ID[vindex]) + " : "+ this_device_name);
   }
 
-  Serial.print("\t UDPPort ");
-  Serial.println(UDPPort);
 
   //save the custom parameters to FS
   if (shouldSaveConfig) {
-//    save_persistent_values();
+    save_persistent_values();
   }
-  save_persistent_values();
   Serial.println("local ip");
   Serial.println(WiFi.localIP());
 }

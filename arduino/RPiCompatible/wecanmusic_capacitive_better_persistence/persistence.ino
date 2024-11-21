@@ -5,10 +5,10 @@ persistent variables:
 char wecanmusic_server_ip[40] = "10.0.0.255";
 char wecanmusic_port[6] = "7005";
 char this_device_name[34] = "thread32";
-int midi_bank[6] = {0,0,0,0,0,0}; //MULTIVALUE UPDATE REQUIRED
-int midi_program[6] = {1,1,1,1,1,1}; //MULTIVALUE UPDATE REQUIRED
-int midimin[6] = {32,32,32,32,32,32};  //MULTIVALUE UPDATE REQUIRED
-int midimax[6] = {100,100,100,100,100,100}; //MULTIVALUE UPDATE REQUIRED
+int midi_bank[6] = {0,0,0,0,0,0}; //
+int midi_program[6] = {1,1,1,1,1,1}; //
+int midimin[6] = {32,32,32,32,32,32};  //
+int midimax[6] = {100,100,100,100,100,100}; //
 int midi_notelength[6] = {7,7,7,7,7,7}; // these ints poin tot positions in the notelengths array
 int midi_vol[6] = {200,200,200,200,200,200};
 

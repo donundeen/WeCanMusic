@@ -39,8 +39,8 @@ void midi_setup(int vindex){
   midiSetChannelVolume(vindex, 127);
 
   try{
-    midiSetChannelBank(vindex, midi_bank[vindex]);  //MULTIVALUE UPDATE REQUIRED
-    midiSetChannelProgram(vindex, midi_program[vindex]);  //MULTIVALUE UPDATE REQUIRED
+    midiSetChannelBank(vindex, midi_bank[vindex]);  
+    midiSetChannelProgram(vindex, midi_program[vindex]);  //
   }catch(const char* error){
     Serial.println("unable to set stored bank and program");
     midiSetChannelBank(vindex, VS1053_BANK_MELODY);
