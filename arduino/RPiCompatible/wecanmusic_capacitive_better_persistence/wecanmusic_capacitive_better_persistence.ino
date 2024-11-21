@@ -94,14 +94,6 @@ void loop() {
 
 
 
-void sensor_setup(){
-  sensor_setup_device();
-  t.setInterval(sensor_loop, sensor_loop_rate);
-  sensor_loop();
-//  t.setInterval(changerate_loop, 100);
-  changerate_loop();
-  note_loop();
-}
 
 
 
