@@ -38,10 +38,12 @@ let ScoreReader = {
             }
         }
         // opent the score 
-        this.openscore();
-        if(this.performanceUpdateCallback){
-            this.performanceUpdateCallback(this);
-        }
+        let self = this;
+        this.openscore(function(){
+            if(self.performanceUpdateCallback){
+                self.performanceUpdateCallback(self);
+            }    
+        });
     },
 
     setMessageCallback(callback){

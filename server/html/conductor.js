@@ -53,9 +53,9 @@ $(function() {
     }
 
     ws.onmessage = function(event) {
-//        console.log("got message "+ event);
+        console.log("got message "+ event);
         msg = JSON.parse(event.data);
-//        console.log(msg.address);
+        console.log(msg.address);
 
         if(msg.address == "score"){
             updateScore(msg.data);
@@ -240,7 +240,13 @@ $(function() {
         message("loadscore", newscore);        
     });
 
-
+    $(".scoreselect").change(function(event, ui){
+        let newscore = $(event.target).val();
+        curscore = newscore;
+        $(".scorenametext").val(curscore);
+        console.log("selecting   " + newscore);
+        message("loadscore", newscore);
+    }); 
 
     $(".score").on('keyup',function(e) {
         if(e.which == 13) {
@@ -723,13 +729,7 @@ $(function() {
             $(".scoreselect").append(elem);
         }
 
-        $(".scoreselect").change(function(event, ui){
-            let newscore = $(event.target).val();
-            curscore = newscore;
-            $(".scorenametext").val(curscore);
-            console.log("selecting   " + newscore);
-            message("loadscore", newscore);
-        });
+
     }
 
 
