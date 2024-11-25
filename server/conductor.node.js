@@ -699,12 +699,12 @@ udpPort.on("message", function (oscMsg) {
         });
 
         socket.sendMessage("performancename", name);     
-
     });
     
     routeFromOSC(oscMsg, "/sayperformance", function(oscMsg, address){
         let value = oscMsg.simpleValue;
         let name = value;
+        db.log("saying performance", name);
         if(value.name){
             name = value.name;
         }

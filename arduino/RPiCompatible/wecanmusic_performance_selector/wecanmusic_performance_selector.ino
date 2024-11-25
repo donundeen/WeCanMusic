@@ -16,30 +16,38 @@
 #include <WiFi.h>
 // END NETWORK INCLUDES
 ////////////////////////
-WiFiUDP udp;
 
 
+// REGEX LIBRARY FOR COMPLEX STRING PARSING
+#include <Regexp.h>
+
+// TIMING INCLUDES
+#include <AsyncTimer.h> //https://github.com/Aasim-A/AsyncTimer
 
 
-bool wifi_connected =false;
-char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
-char *presetip = "10.0.0.255"; // in case we just want to force it for testing
-int UDPOutPort = 7005; // the UDP port that Max is listening on
-int UDPINPort = 7004; // the UDP port that Max is listening on
-bool WIFI_MODE_ON = true;
-// END NETWORK CONFIGS
+////////////////////////
+// CONFIG WEBPAGE INCLUDES
+#include <FS.h>                   //this needs to be first, or it all crashes and burns...
+#include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager
+#ifdef ESP32
+  #include <SPIFFS.h>
+#endif
+#include <ArduinoJson.h>          //https://github.com/bblanchon/ArduinoJson
+// END CONFIG WEBPAGE INCLUDES
+////////////////////////
 
+
+// LOCAL HEADER FILES
+#include "headers/config_variables.h"
+#include "headers/persistent_variables.h"
+#include "headers/global_variables.h"
+#include "headers/helper_functions.h"
 
 #define ARRAYSIZE 10
 String commands[ARRAYSIZE] = { "/performance", "/performance", "/performance" };
 String arguments[ARRAYSIZE] = {"cheeseblues","veryspooky","perf1"};
 int commandsLen = 3;
 int commandIndex = 0;
-
-const char* ssid = "icanmusic";
-const char* password =  "";
-
-
 
 ESP32Encoder encoder;
 
@@ -48,37 +56,46 @@ int prevButtonRead = 1;
 
 int encoderVal = 0;
 
-void setup(){
-	Serial.begin(115200);
 
-  pinMode(buttonPin, INPUT_PULLUP);
+
+/////////////////////////////
+// SETUP AND LOOP FUNCTIONS
+// calls other setup and loop functions
+void setup() {
+  delay(1000);
+  
+  Serial.begin(115200);
+
+  persistence_setup();
+
+  if(!no_network){  
+    network_setup();
+  }
+
+  udp_setup();
+  sensor_setup();
+
+}
+
+void loop(){
+    sensor_loop();
+}
+
+
+void sensor_setup(){
+
+
+    pinMode(buttonPin, INPUT_PULLUP);
 
 	// Enable the weak pull up resistors
 	ESP32Encoder::useInternalWeakPullResistors=puType::up;
 	encoder.attachHalfQuad(19, 18);
 	// clear the encoder's raw count and set the tracked count to zero
-	encoder.clearCount();
+    encoder.clearCount();
 
-/*
-  // Set WiFi to station mode and disconnect from an AP if it was previously connected
-  WiFi.mode(WIFI_STA);
-
-  WiFi.disconnect();
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-      delay(100);
-      Serial.print(".");
-//        WiFi.begin(ssid, password);
-  //    WiFi.begin(ssid, password);
-  }
-  Serial.println("Connected to WiFi, configUdp ...");
-
-  configUdp();
-*/
 }
 
-void loop(){
+void sensor_loop(){
   static int oldEncoder=-32000;
   int encoder1=encoder.getCount();
   encoder1 = encoder1 / 2;
@@ -94,7 +111,7 @@ void loop(){
     Serial.print("encoderVal ");
     Serial.println(encoderVal);
 
- //   sendMessage("/sayperformance",arguments[encoderVal] );
+     sendMessage("/sayperformance",arguments[encoderVal] );
 
 	  delay(100);
   }
@@ -105,21 +122,13 @@ void loop(){
     Serial.println(buttonRead);
     if(buttonRead == 0){
       Serial.println("pressed!");    
-   //   sendMessage("/performance",arguments[encoderVal] );
+      sendMessage("/performance",arguments[encoderVal] );
 
     }
     prevButtonRead = buttonRead;
   }
 }
 
-
-
-/*
- * connecting to UDP port on laptop runnin Max (or otherwise sending/recieving UDP data)
- */
-void configUdp(){
-  udp.begin(UDPINPort);
-}
 
 void sendMessage(String command, String argument){
   char command_buffer[command.length() + 1];
