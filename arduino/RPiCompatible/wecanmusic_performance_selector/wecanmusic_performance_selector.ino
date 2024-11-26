@@ -43,17 +43,16 @@
 #include "headers/global_variables.h"
 #include "headers/helper_functions.h"
 
-#define ARRAYSIZE 10
-String commands[ARRAYSIZE] = { "/performance", "/performance", "/performance" };
-String arguments[ARRAYSIZE] = {"cheeseblues","veryspooky","perf1"};
-int commandsLen = 3;
-int commandIndex = 0;
+
 
 ESP32Encoder encoder;
 
-int buttonPin = 14;
-int prevButtonRead = 1;
+int buttonPin = 5 ;//14;
+int HALFQUADPINA = 19;
+int HALFQUADPINB = 18;
 
+
+int prevButtonRead = 1;
 int encoderVal = 0;
 
 
@@ -83,37 +82,32 @@ void loop(){
 
 
 void sensor_setup(){
-
-
     pinMode(buttonPin, INPUT_PULLUP);
 
-	// Enable the weak pull up resistors
-	ESP32Encoder::useInternalWeakPullResistors=puType::up;
-	encoder.attachHalfQuad(19, 18);
-	// clear the encoder's raw count and set the tracked count to zero
+    // Enable the weak pull up resistors
+    ESP32Encoder::useInternalWeakPullResistors=puType::up;
+    encoder.attachHalfQuad(HALFQUADPINA, HALFQUADPINB); // 19/18
+    // clear the encoder's raw count and set the tracked count to zero
     encoder.clearCount();
-
 }
 
 void sensor_loop(){
   static int oldEncoder=-32000;
   int encoder1=encoder.getCount();
   encoder1 = encoder1 / 2;
+  encoder1 = encoder1 * -1;
   if(encoder1 != oldEncoder) {
     oldEncoder=encoder1;
-    Serial.println(encoder1);  
-    if(encoder1 < 0){
-      encoder1 = commandsLen -1;
-    }
-    encoder1 = encoder1 % commandsLen;
-
-    encoderVal = encoder1;
+    
+    // Handle negative numbers with a proper modulo operation
+    encoderVal = ((encoder1 % commandsLen) + commandsLen) % commandsLen;
+    
     Serial.print("encoderVal ");
     Serial.println(encoderVal);
 
-     sendMessage("/sayperformance",arguments[encoderVal] );
-
-	  delay(100);
+    sendMessage("/sayperformance",arguments[encoderVal]);
+    Serial.println("said");
+    delay(100);
   }
 
   int buttonRead = digitalRead(buttonPin);
@@ -127,6 +121,10 @@ void sensor_loop(){
     }
     prevButtonRead = buttonRead;
   }
+}
+
+void announcePerformanceSelector(){
+       sendMessage("/announceperformanceselector","true");
 }
 
 

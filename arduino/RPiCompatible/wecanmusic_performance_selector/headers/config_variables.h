@@ -46,7 +46,7 @@ int UDPINPort = 7004; // the UDP port that the device is listening on
 ////////////////////////
 
 // CONFIG WEBPAGE PINS AND VARS
-int resetButtonPin = A0; // this pin starts the AP mode config page web portal
+int resetButtonPin = A1; // this pin starts the AP mode config page web portal
 /// END SETTING UP CONFIG WEBPAGE VARS
 ///////////////////////////
 

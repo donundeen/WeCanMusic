@@ -29,3 +29,9 @@ and if you are adding new variables to change from the arduino's AP mode web pag
 char wecanmusic_server_ip[40] = "10.0.0.255";
 char wecanmusic_port[6] = "7005";
 char this_device_name[34] = "thread32";
+
+#define ARRAYSIZE 10
+String commands[ARRAYSIZE] = { "/performance", "/performance", "/performance", "/performance" };
+String arguments[ARRAYSIZE] = {"cheeseblues","veryspooky","perf1","perf2"};
+int commandsLen = 4;
+int commandIndex = 0;
