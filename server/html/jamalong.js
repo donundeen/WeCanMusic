@@ -14,6 +14,7 @@ $(function() {
     console.log(host);
 
 
+    
 
     // some note characters: 
     // ♭ 𝅘𝅥𝅮𝅗𝅥°♭𝅘𝅥𝅗𝅥𝅗 𝄼 𝄽 
@@ -21,7 +22,10 @@ $(function() {
     //  const ws = new WebSocket('ws://localhost:8080');
     //const ws = new WebSocket('ws://192.168.4.34:8080');
     //const ws = new WebSocket('ws://10.102.134.110:8080');
-    const ws = new WebSocket('ws://'+host+':'+WEBSOCKET_PORT);
+
+    let websocketurl = 'ws://'+host+':'+WEBSOCKET_PORT;
+    console.log("trying to start websocket server ", websocketurl)
+    const ws = new WebSocket(websocketurl);
 
     let wsready = false;  
     // Browser WebSockets have slightly different syntax than `ws`.

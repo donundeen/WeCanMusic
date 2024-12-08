@@ -934,9 +934,9 @@ orchestra.all_local_instrument_set_value("bpm", bpm);
 score.scoreFilename = scorename;
 
 // start the socket server and the web server
-socket.startExpressWebServer();
-socket.startSocketServer();
-
+//socket.startExpressWebServer();
+//socket.startSocketServer();
+socket.startWebAndSocketServer();
 
 setTimeout(function(){
     // request that all listening instruments announce themselves:
