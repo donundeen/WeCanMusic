@@ -133,12 +133,12 @@ let SocketServer = {
     // Handle specific OS detection probes
     app.get(['/hotspot-detect.html', '/generate_204', '/connecttest.txt'], (req, res) => {
         // Respond to detection probes with either a redirect or basic content
-        res.redirect('/index.html'); // Redirect to the captive portal
+        res.redirect('/'+this.default_webpage); // Redirect to the captive portal
     });
 
     // Fallback route for unhandled requests
     app.get('*', (req, res) => {
-        res.sendFile(path.join(staticPath, 'index.html'));
+        res.sendFile(path.join(staticPath, this.default_webpage));
     });
 
     const PORT = 80; // Use port 80 for HTTP
