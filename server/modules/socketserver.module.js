@@ -2,6 +2,8 @@
 const path = require('path');
 var connect = require('connect');
 var serveStatic = require('serve-static');
+const http = require('http');
+
 let my_ip_address= "localhost";
 // figuring out IP address:
 const { networkInterfaces } = require('os');
@@ -21,15 +23,25 @@ let SocketServer = {
 
   messageReceivedCallback : false,
 
+
+  expressapp : false,
+
   startSocketServer(){
 
     this.db.log("trying to start websockets...");
 
-    this.socketserver = new WebSocket.Server({
+    // Create an HTTP server using the Express app
+    const server = http.createServer(this.expressapp);
 
+    /*
+    this.socketserver = new WebSocket.Server({
       port: this.WEBSOCKET_PORT
     });
-    
+    */
+    this.socketserver = new WebSocket.Server({
+      server
+    });
+
     let self = this;
 
     this.socketserver.on('connection', (function(socket) {
@@ -123,26 +135,25 @@ let SocketServer = {
   startExpressWebServer(){
     const express = require('express');
     const path = require('path');
-    const app = express();
+    this.expressapp = express();
 
     // Serve static files from the "public" directory
     // __dirname+"/../html"
     const staticPath = path.join(__dirname, '../html');
-    app.use(express.static(staticPath));
+    this.expressapp.use(express.static(staticPath));
 
     // Handle specific OS detection probes
-    app.get(['/hotspot-detect.html', '/generate_204', '/connecttest.txt'], (req, res) => {
+    this.expressapp.get(['/hotspot-detect.html', '/generate_204', '/connecttest.txt'], (req, res) => {
         // Respond to detection probes with either a redirect or basic content
         res.redirect('/'+this.default_webpage); // Redirect to the captive portal
     });
 
     // Fallback route for unhandled requests
-    app.get('*', (req, res) => {
+    this.expressapp.get('*', (req, res) => {
         res.sendFile(path.join(staticPath, this.default_webpage));
     });
 
-    const PORT = 80; // Use port 80 for HTTP
-    app.listen(this.WEBSERVER_PORT, () => {
+    this.expressapp.listen(this.WEBSERVER_PORT, () => {
         console.log(`Captive portal server running on port ${this.WEBSERVER_PORT}`);
     });
 
