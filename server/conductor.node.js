@@ -935,7 +935,7 @@ score.scoreFilename = scorename;
 
 // start the socket server and the web server
 socket.startSocketServer();
-socket.startWebServer();
+socket.startExpressWebServer();
 
 
 setTimeout(function(){

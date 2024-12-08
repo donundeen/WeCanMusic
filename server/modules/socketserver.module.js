@@ -118,8 +118,36 @@ let SocketServer = {
       this.db.log('UIInterface http://'+my_ip_address+':'+self.WEBSERVER_PORT+'/aiselector.html');
       this.db.log('ipaddress '+my_ip_address);
      });
-    }
+  },
+
+  startExpressWebServer(){
+    const express = require('express');
+    const path = require('path');
+    const app = express();
+
+    // Serve static files from the "public" directory
+    // __dirname+"/../html"
+    const staticPath = path.join(__dirname, '../html');
+    app.use(express.static(staticPath));
+
+    // Handle specific OS detection probes
+    app.get(['/hotspot-detect.html', '/generate_204', '/connecttest.txt'], (req, res) => {
+        // Respond to detection probes with either a redirect or basic content
+        res.redirect('/portal.html'); // Redirect to the captive portal
+    });
+
+    // Fallback route for unhandled requests
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(staticPath, 'portal.html'));
+    });
+
+    const PORT = 80; // Use port 80 for HTTP
+    app.listen(this.WEBSERVER_PORT, () => {
+        console.log(`Captive portal server running on port ${this.WEBSERVER_PORT}`);
+    });
+
   }
+}
 
 
 exports.SocketServer = SocketServer;
