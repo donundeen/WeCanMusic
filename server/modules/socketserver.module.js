@@ -22,74 +22,8 @@ let SocketServer = {
   sockets : [],
 
   messageReceivedCallback : false,
-
-
   expressapp : false,
 
-  startSocketServer(){
-
-    this.db.log("trying to start websockets...");
-
-    // Create an HTTP server using the Express app
-    const server = http.createServer(this.expressapp);
-
-    // Start the HTTP server first
-    server.listen(this.WEBSERVER_PORT, () => {
-      const address = server.address(); // Get the address of the HTTP server
-      const port = address.port; // Extract the port
-      console.log(`HTTP server is listening on port ${port}`);
-    });
-
-    /*
-    this.socketserver = new WebSocket.Server({
-      port: this.WEBSOCKET_PORT
-    });
-    */
-    this.socketserver = new WebSocket.Server({
-      server
-    });
-
-    let self = this;
-
-    this.socketserver.on("error", function(e){
-      console.log("socketserver error", e);
-    });
-
-    // Log when the WebSocket server starts listening
-    this.socketserver.on('listening', function() {
-      const address = server.address(); // Get the address of the HTTP server
-      const port = address.port; // Extract the port
-      console.log("WebSocket server is listening on port " + port);
-  });    
-
-    this.socketserver.on('connection', (function(socket) {
-      console.log("socket connection estblished");
-      this.sockets.push(socket);
-      this.db.log("STARTD websockets " +globalvar);
-//      this.db.log(this.socketserver);
-
-      // When you receive a message, send that message to every socket.
-      socket.on('message', (function(msg) {
-        //this.socketserver.onmessage = function(msg) {
-            this.db.log("got message");
-          //this.sockets.forEach(s => s.send(msg)); // send back out - we don't need to do this
-      //  	this.db.log(msg);
-      //	  this.db.log("Got message " + msg.toString());
-          //this is messages FROM the web page
-          this.db.log(msg.toString());
-          let newmsg = JSON.parse(msg.toString());          
-          this.db.log(newmsg);
-        this.messageReceived(newmsg);
-      }).bind(this));
-
-      // When a socket closes, or disconnects, remove it from the array.
-      socket.on('close', (function() {
-        this.sockets = this.sockets.filter(s => s !== socket);
-      }).bind(this));
-
-    }).bind(this));
-
-  },
 
   messageReceived(msg){
     if(this.messageReceivedCallback){
@@ -108,74 +42,6 @@ let SocketServer = {
       data : data
     }
     this.sockets.forEach(s => s.send(JSON.stringify(msg)));
-  },
-
-  startWebServer(){
-    // this is serving the web page
-    this.db.log("startWebServer");
-    this.db.log(__dirname);    
-    self= this;
-    let options = {index: this.default_webpage};
-    this.db.log(options);
-    connect()
-      .use(serveStatic(__dirname+"/../html",options))
-      .listen(this.WEBSERVER_PORT, () => 	{
-
-      const nets = networkInterfaces();
-      const results = Object.create(null); // Or just '{}', an empty object
-      for (const name of Object.keys(nets)) {
-        for (const net of nets[name]) {
-            // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
-            // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
-            const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
-            if (net.family === familyV4Value && !net.internal) {
-                if (!results[name]) {
-                    results[name] = [];
-                }
-                this.db.log(name);
-                results[name].push(net.address);
-            }
-        }
-      }
-      this.db.log(results);
-      if(results["en0"]){
-        my_ip_address = results["en0"]; 
-      }else if(results["Ethernet"]){
-        my_ip_address = results["Ethernet 2"]; 
-      }
-
-      this.db.log('Server running on '+self.WEBSERVER_PORT+'... http://'+my_ip_address+':'+self.WEBSERVER_PORT+'/aiselector.html '+__dirname);
-      this.db.log('http://'+my_ip_address+':'+self.WEBSERVER_PORT+'/aiselector.html');
-      this.db.log('UIInterface http://'+my_ip_address+':'+self.WEBSERVER_PORT+'/aiselector.html');
-      this.db.log('ipaddress '+my_ip_address);
-     });
-  },
-
-  startExpressWebServer(){
-    const express = require('express');
-    const path = require('path');
-    this.expressapp = express();
-
-    // Serve static files from the "public" directory
-    // __dirname+"/../html"
-    const staticPath = path.join(__dirname, '../html');
-    this.expressapp.use(express.static(staticPath));
-
-    // Handle specific OS detection probes
-    this.expressapp.get(['/hotspot-detect.html', '/generate_204', '/connecttest.txt'], (req, res) => {
-        // Respond to detection probes with either a redirect or basic content
-        res.redirect('/'+this.default_webpage); // Redirect to the captive portal
-    });
-
-    // Fallback route for unhandled requests
-    this.expressapp.get('*', (req, res) => {
-        res.sendFile(path.join(staticPath, this.default_webpage));
-    });
-
-    this.expressapp.listen(this.WEBSERVER_PORT, () => {
-        console.log(`Captive portal server running on port ${this.WEBSERVER_PORT}`);
-    });
-
   },
 
 
