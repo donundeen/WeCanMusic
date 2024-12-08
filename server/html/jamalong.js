@@ -1,5 +1,4 @@
-const WEBSOCKET_PORT = 8001;
-const WEBSERVER_PORT = 8002;
+const WEBSOCKET_PORT = 80;
 let curscore = "simplescore.txt";
 let curperformance = "";
 let scoreText = "";
@@ -10,7 +9,7 @@ $(function() {
 
     // chnage this depending on location of webserver. Figure out a way to make this more dynamic...
     let host =  window.location.host;
-    host = host.replace(/:[0-9]+/,"");
+    host = host.replace(/:[0-9]+/,""); // this doesn't work for a captive portal page, at least on macos
     // remove port
     console.log(host);
 

@@ -18,7 +18,7 @@ var config = {
     "UDPSENDPORT" : 7004,
     "UDPSENDIP" : "10.0.0.255",
     "UDPLISTENPORT" : 7005,
-    "WEBSOCKET_PORT" : 8001,
+    "WEBSOCKET_PORT" : 80,
 //    "WEBSERVER_PORT" : 8002
     "WEBSERVER_PORT" : 80
 }

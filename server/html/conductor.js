@@ -1,5 +1,4 @@
-const WEBSOCKET_PORT = 8001;
-const WEBSERVER_PORT = 8002;
+const WEBSOCKET_PORT = 80;
 let voicelist = [[1,79,"nodata"],[0,78,"nodata"]];
 let scorelist = ["simplescore.txt"];
 let curscore = "simplescore.txt";
