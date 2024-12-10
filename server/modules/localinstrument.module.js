@@ -193,10 +193,11 @@ const LocalInstrument = class{
         this.db.log(value);
         this.db.log("********************");
 
-        this.derive_changerate(this._sensor_value);
         this._sensor_value = value;
+        this.derive_changerate(this._sensor_value);
         this.note_trigger();
     }
+
     get sensor_value(){
         return this._sensor_value;
     }
