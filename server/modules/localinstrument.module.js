@@ -13,7 +13,6 @@ const LocalInstrument = class{
     changerate = false;
     prevChangeVal = false;
 
-
     // note lists
     _notelist = [];
     workinglist = [];
@@ -69,7 +68,6 @@ const LocalInstrument = class{
     previous_pitch = 0;
     skip_duplicate_notes = true;
     
-
     // vars that might be externally set.
     // we can send this info to a server so it can set up a UI to collect those values
     // maybe array of objects?
@@ -140,7 +138,6 @@ const LocalInstrument = class{
         return this._bpm;
     }
 
-
     get midi_voice(){
         return this._midi_voice;
     }
@@ -160,7 +157,6 @@ const LocalInstrument = class{
         this.midi_program = program;
     }
 
-
     set midi_program(program){
         this._midi_program = parseInt(program);
         this.midiSetBankProgram();
@@ -177,7 +173,6 @@ const LocalInstrument = class{
     get midi_bank(){
         return this._midi_bank;
     }
-
 
     // what to do when a new sensor value is received. Need to trigger a note here
     set sensor_value(value){
@@ -234,7 +229,6 @@ const LocalInstrument = class{
         return this._midimax;
     }
 
-
     set midimin(min){
         this._midimin = min;
     }
@@ -242,7 +236,6 @@ const LocalInstrument = class{
     get midimin(){
         return this._midimin;
     }
-
 
     /******************************* */
     /** END get/set properties   */
@@ -374,8 +367,6 @@ const LocalInstrument = class{
     /******************************* */
     /** END NOTE LENGTH FUNCTIONS   */
     /******************************* */
-
-
  
     /*******************************     */
     /** FUNCTIONS FOR INTERNAL NOTE CREATION  */
@@ -423,7 +414,6 @@ const LocalInstrument = class{
 
     sensor_loop(){
         // process the recieved sensor_value
-
     }
 
     derive_changerate(val){
@@ -601,7 +591,6 @@ const LocalInstrument = class{
             return;
         }
         this.previous_pitch = note;
-
 
         if(velocity == 0){
 //            this.db.log("no volume, no note");

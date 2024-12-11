@@ -9,9 +9,6 @@ let my_ip_address= "localhost";
 const { networkInterfaces } = require('os');
 const WebSocket = require('ws'); //https://www.npmjs.com/package/ws#sending-and-receiving-text-data
 
-
-let globalvar = "goo";
-
 let SocketServer = {
 
   WEBSOCKET_PORT : 80,
@@ -24,7 +21,6 @@ let SocketServer = {
   messageReceivedCallback : false,
   expressapp : false,
 
-
   messageReceived(msg){
     if(this.messageReceivedCallback){
       this.messageReceivedCallback(msg);
@@ -35,7 +31,6 @@ let SocketServer = {
     this.messageReceivedCallback = callback;
   },
 
-
   sendMessage(address, data){
     let msg = {
       address: address,
@@ -43,7 +38,6 @@ let SocketServer = {
     }
     this.sockets.forEach(s => s.send(JSON.stringify(msg)));
   },
-
 
   startWebAndSocketServer(){
     this.db.log("trying to start web and websocket servers...");
@@ -98,7 +92,7 @@ let SocketServer = {
     this.socketserver.on('connection', (function(socket) {
       console.log("socket connection estblished");
       this.sockets.push(socket);
-      this.db.log("STARTD websockets " +globalvar);
+      this.db.log("STARTED websockets");
 //      this.db.log(this.socketserver);
 
       // When you receive a message, send that message to every socket.
@@ -122,9 +116,6 @@ let SocketServer = {
 
     }).bind(this));
   }
-
-
 }
-
 
 exports.SocketServer = SocketServer;

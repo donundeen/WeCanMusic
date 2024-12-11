@@ -1,0 +1,15 @@
+.container{
+    height: 100%;
+    width: 100%;
+}
+
+.nav{
+    display: flex;
+    justify-content: center;
+}
+
+.navitem{
+    padding: .5em;
+    font-size: 1.2em;
+}   
+
