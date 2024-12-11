@@ -15,7 +15,7 @@ void sendOSCUDP(int vindex, int sendVal){  //
   char ipbuffer[20];
   thisarduinoip.toCharArray(ipbuffer, 20);
   OSCMessage oscmsg(DEVICE_ID[vindex]);  //
-  oscmsg.add(sendVal).add(ipbuffer);
+  oscmsg.add((int32_t)sendVal).add(ipbuffer);
   udp.beginPacket(UDPReceiverIP, UDPPort);
 //  udp.write(buffer, msg.length()+1);
   oscmsg.send(udp);
@@ -436,7 +436,7 @@ void announceCreation(int vindex){
     thisarduinoip.toCharArray(ipbuffer, 20);
     Serial.println(ipbuffer);
     OSCMessage oscmsg("/announceUDPInstrument");  
-    oscmsg.add(DEVICE_NAME[vindex]).add(midi_bank[vindex]).add(midi_program[vindex]).add(midimin[vindex]).add(midimax[vindex]).add(midi_notelength[vindex]).add(midi_vol[vindex]);  //
+    oscmsg.add(DEVICE_NAME[vindex]).add((int32_t)midi_bank[vindex]).add((int32_t)midi_program[vindex]).add((int32_t)midimin[vindex]).add((int32_t)midimax[vindex]).add((int32_t)midi_notelength[vindex]).add((int32_t)midi_vol[vindex]);  //
  //   udp.beginPacket(UDPReceiverIP, UDPPort);
     udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...
  
@@ -459,7 +459,7 @@ void sendMakeNote(int vindex, int pitch, int velocity, int duration){  //
   }
   Serial.println("sending makenote");
   OSCMessage oscmsg("/makenote");  
-  oscmsg.add(DEVICE_NAME[vindex]).add(pitch).add(velocity).add(duration);  //
+  oscmsg.add(DEVICE_NAME[vindex]).add((int32_t)pitch).add((int32_t)velocity).add((int32_t)duration);  //
   //   udp.beginPacket(UDPReceiverIP, UDPPort);
   udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...
 
