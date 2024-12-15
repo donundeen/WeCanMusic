@@ -48,8 +48,8 @@
 ESP32Encoder encoder;
 
 int buttonPin = 5 ;//14;
-int HALFQUADPINA = 19;
-int HALFQUADPINB = 18;
+int HALFQUADPINA = 18;
+int HALFQUADPINB = 19;
 
 
 int prevButtonRead = 1;
@@ -96,6 +96,7 @@ void sensor_loop(){
   int encoder1=encoder.getCount();
   encoder1 = encoder1 / 2;
   encoder1 = encoder1 * -1;
+  Serial.println(encoder1);
   if(encoder1 != oldEncoder) {
     oldEncoder=encoder1;
     
@@ -121,6 +122,7 @@ void sensor_loop(){
     }
     prevButtonRead = buttonRead;
   }
+  delay(10);
 }
 
 void announcePerformanceSelector(){
