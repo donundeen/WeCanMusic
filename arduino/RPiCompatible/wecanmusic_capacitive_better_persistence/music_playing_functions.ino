@@ -44,6 +44,9 @@ void note_loop(int vindex){
   sprintf(pbuf, "      in:%d scaled:%f p:%d v:%d d:%d", ADCRaw[vindex], value, midipitch, midivelocity, mididuration);
 //  Serial.println(pbuf);
   // this will also make it monophonic:
+  if(midipitch == 0 || midivelocity == 0 || mididuration == 0){
+    return;
+  }
   if(localSynth){
     midiMakeNote(vindex, midipitch, midivelocity, mididuration);  //
   }else{

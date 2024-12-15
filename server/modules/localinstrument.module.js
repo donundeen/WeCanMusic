@@ -103,6 +103,8 @@ const LocalInstrument = class{
         this.last_note_time = Date.now();
         this.setNoteLengths();
         this.get_config_props();
+        this.numberCruncher = new NoteNumberCruncher(this.db);
+
     }
 
     /******************************* */
@@ -188,6 +190,8 @@ const LocalInstrument = class{
         this.db.log(value);
         this.db.log("********************");
 
+        this.numberCruncher.setValue(value);
+        this.numberCruncher.crunch();
         this._sensor_value = value;
         this.derive_changerate(this._sensor_value);
         this.note_trigger();
@@ -328,6 +332,7 @@ const LocalInstrument = class{
         this.synth.allNotesOff(this._midi_channel);
         this.synth.resetAllControllers(this._midi_channel);
         this.synth.reset();
+        this.numberCruncher.reset();
     }
 
     /******************************* */
@@ -418,6 +423,11 @@ const LocalInstrument = class{
 
     derive_changerate(val){
         // derive the changerate
+
+        this.changerate = this.numberCruncher.changerate;
+        return this.changerate;
+
+/*
         this.db.log("getting changerate");
         if(this.prevChangeVal === false){
             this.prevChangeVal = val;
@@ -428,16 +438,17 @@ const LocalInstrument = class{
         this.changerate = this.changerate_scale.scale(ochange, 0, 1.0);
         this.prevChangeVal = val;
         this.db.log("changerate " + this.changerate);
-        return this.changerate;        
+        return this.changerate;       
+        */ 
     }
 
-    derive_pitch(val){
-        let pitch = this.noteFromFloat(val, this.midimin, this.midimax);
+    derive_pitch(){
+        let pitch = this.noteFromFloat(this.numberCruncher.scaledValue, this.midimin, this.midimax);
         return pitch;
     }
 
     derive_velocity(){
-        let velocity = Math.floor(127.0 * this.velocitycurve.mapvalue(this.changerate));
+        let velocity = Math.floor(127.0 * this.numberCruncher.velocityFloat);
         return velocity;
     }
 
@@ -478,7 +489,6 @@ const LocalInstrument = class{
         }      
         return t2;   
     }
-
 
     noteFromFloat(value, min, max){
         this.db.log("note from float " + value);
@@ -522,7 +532,6 @@ const LocalInstrument = class{
         }
         return note;
     }
-
 
     moveMinMax(root, minmax){
         // for a "rooted" scale/chord, expand the min and max so that both min and max are the root

@@ -13,7 +13,7 @@ void sendOSCUDP( int sendVal){  //
   char ipbuffer[20];
   thisarduinoip.toCharArray(ipbuffer, 20);
   OSCMessage oscmsg(this_device_name);  //
-  oscmsg.add(sendVal).add(ipbuffer);
+  oscmsg.add((int32_t)sendVal).add(ipbuffer);
   udp.beginPacket(UDPReceiverIP, UDPOutPort);
 //  udp.write(buffer, msg.length()+1);
   oscmsg.send(udp);
