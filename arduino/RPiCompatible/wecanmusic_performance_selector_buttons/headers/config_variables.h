@@ -57,6 +57,7 @@ int start_button_pin = 15;
 int SERIALBAUDRATE = 115200;
 
 
+int DEBOUNCE_MS = 50;
 
 // END CONFIG VARS
 //////////////////////////////

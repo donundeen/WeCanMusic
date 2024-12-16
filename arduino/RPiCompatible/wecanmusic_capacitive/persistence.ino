@@ -291,6 +291,7 @@ void save_persistent_values()
     serializeJson(json_config, Serial); // this jsut writes the json to Serial out
     serializeJson(json_config, configFile);
     configFile.close();
+    Serial.println("configfileclosed");
 }
 
 void delete_config_file(){

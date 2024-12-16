@@ -35,11 +35,11 @@ const boolean WIFI_MODE_ON = true;
 const boolean HARDCODE_SSID = false; //true; //false;
 
 // default wifi config variables
-const char *WIFI_SSID = "icanmusic";// "icanmusic"; //"JJandJsKewlPad";
+const char *WIFI_SSID = "wecanmusic_friends";// "icanmusic"; //"JJandJsKewlPad";
 const char *WIFI_PASSWORD = "";//"wecanmusic";//"wecanmusic"; //"WeL0veLettuce";
 
 boolean override_ip = false;
-char *presetip = "10.0.0.255"; // in case we just want to force it for testing
+char *presetip = "192.168.4.1:";// "10.0.0.255"; // in case we just want to force it for testing
 
 int UDPINPort = 7004; // the UDP port that the device is listening on
 // END NETWORK CONFIGS
@@ -74,12 +74,13 @@ int N83 = QN / 3;
 // array of all notelengths, for picking
 int notelengths[] = {DWN, WN, HN, HN3, QN, QN3, N8, N83, N16};
 
+int DEFAULT_NOTELENGTH = N16;
 
 ////////////////////////////////
 // MUSIC PERFORMANCE VARIABLES
 //int noteloop_rate[6] = {7,7,7,7,7,7};
 int noteloop_rate[6] = {4,4,4,4,4,4};
-int notelength_assortment[9] = {2,3,4,5,5,6,7,8,8}; // noteloop_rates will be randomly chosen from this list. 
+int notelength_assortment[9] = {2,3,4,5,5,6,7,8,8}; // noteloop_rates could be randomly chosen from this list. 
                                                     //  list must be 9 elements, but you can double numbers up to incrase occurence
 int sensor_loop_rate = 10;
 ////// END MUSIC PERFORMANCE VARIABLES  

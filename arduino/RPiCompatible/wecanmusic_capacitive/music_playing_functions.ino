@@ -18,9 +18,10 @@ void note_loop(){
   }
 
   int rand_notelength = notelength_assortment[random(8)];
-  int note_timeout = pulseToMS(notelengths[rand_notelength]);
-  Serial.print("noteloop Rate: ");
-  Serial.println(note_timeout);
+//  int note_timeout = pulseToMS(notelengths[rand_notelength]);
+  int note_timeout = derive_next_note_time();
+//  Serial.print("noteloop Rate: ");
+//  Serial.println(note_timeout);
 //  t.setTimeout(note_loop, notelengths[noteloop_rate[0]]); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
   t.setTimeout(note_loop, note_timeout); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
 //pulseToMS(notelengths[midi_notelength]);
@@ -33,10 +34,10 @@ void note_loop(int vindex){
   }
   changerate_loop(vindex);  //
   char pbuf[100];
-  sprintf(pbuf, "looppre: in:%d  min %f max %f", ADCRaw[vindex], minVal[vindex], maxVal[vindex]);
+//  sprintf(pbuf, "looppre: in:%d  min %f max %f", ADCRaw[vindex], minVal[vindex], maxVal[vindex]);
 //  Serial.println(pbuf);
   float value = dyn_rescale(ADCRaw[vindex], &minVal[vindex], &maxVal[vindex], 0.0, 1.0);  //
-  sprintf(pbuf, "loop: in:%d scaled:%f min %f max %f", ADCRaw, value, minVal, maxVal);
+ // sprintf(pbuf, "loop: in:%d scaled:%f min %f max %f", ADCRaw, value, minVal, maxVal);
 //  Serial.println(pbuf);
   int midipitch    = derive_pitch(vindex, value);  //
   int midivelocity = derive_velocity(vindex, ADCRaw[vindex]);  //
@@ -120,6 +121,8 @@ int derive_velocity(int vindex, int val){   //
 
 int derive_duration(int vindex, float val){  //
 
+ // return pulseToMS(DEFAULT_NOTELENGTH);
+
   // midi_notelength is an index to a notelength in the array notelengths. 
   // this way if the bpm changes, the notelength changes too 
   // (though we don't actually have code to change bpm on the device )
@@ -132,6 +135,11 @@ int derive_duration(int vindex, float val){  //
 */
 }
 
+// return the time from this note to the next note being calculated and triggered.
+int derive_next_note_time(){
+ //return pulseToMS(notelengths[midi_notelength[0]]  
+  return pulseToMS(DEFAULT_NOTELENGTH);
+}
 
 
 unsigned long millisecs = millis();

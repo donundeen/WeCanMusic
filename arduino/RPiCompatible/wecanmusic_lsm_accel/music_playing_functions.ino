@@ -34,10 +34,10 @@ void note_loop(int vindex){
   }
   changerate_loop(vindex);  //
   char pbuf[100];
-  sprintf(pbuf, "looppre: in:%d  min %f max %f", ADCRaw[vindex], minVal[vindex], maxVal[vindex]);
+//  sprintf(pbuf, "looppre: in:%d  min %f max %f", ADCRaw[vindex], minVal[vindex], maxVal[vindex]);
 //  Serial.println(pbuf);
   float value = dyn_rescale(ADCRaw[vindex], &minVal[vindex], &maxVal[vindex], 0.0, 1.0);  //
-  sprintf(pbuf, "loop: in:%d scaled:%f min %f max %f", ADCRaw, value, minVal, maxVal);
+ // sprintf(pbuf, "loop: in:%d scaled:%f min %f max %f", ADCRaw, value, minVal, maxVal);
 //  Serial.println(pbuf);
   int midipitch    = derive_pitch(vindex, value);  //
   int midivelocity = derive_velocity(vindex, ADCRaw[vindex]);  //
@@ -121,12 +121,12 @@ int derive_velocity(int vindex, int val){   //
 
 int derive_duration(int vindex, float val){  //
 
-  return pulseToMS(DEFAULT_NOTELENGTH);
+ // return pulseToMS(DEFAULT_NOTELENGTH);
 
   // midi_notelength is an index to a notelength in the array notelengths. 
   // this way if the bpm changes, the notelength changes too 
   // (though we don't actually have code to change bpm on the device )
- // return pulseToMS(notelengths[midi_notelength[vindex]]);
+  return pulseToMS(notelengths[midi_notelength[vindex]]);
 //  return pulseToMS(N16);
 /*
   unsigned long raw_duration = updateLastNoteTime();
@@ -137,6 +137,7 @@ int derive_duration(int vindex, float val){  //
 
 // return the time from this note to the next note being calculated and triggered.
 int derive_next_note_time(){
+ //return pulseToMS(notelengths[midi_notelength[0]]  
   return pulseToMS(DEFAULT_NOTELENGTH);
 }
 
