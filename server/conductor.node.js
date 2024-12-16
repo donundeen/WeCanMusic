@@ -696,6 +696,9 @@ udpPort.on("message", function (oscMsg) {
         performance.performanceFile = name;
         performance.loadPerformance(name, function(){
             statusmelodies.playperformancechange();
+            trans.stop();
+            trans.reset();
+            trans.start();
         });
 
         socket.sendMessage("performancename", name);     
