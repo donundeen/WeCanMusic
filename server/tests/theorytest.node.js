@@ -1,9 +1,15 @@
 let message = "C m";
 
-// thoeryEngine generates lists of notes from theory terms (eg A MINORPENTATONIC)
-const TheoryEngine = require("../modules/theoryengine.module.js").TheoryEngine;
+const Debugging = require('./modules/debugging.module.js');
+// TURN DEBUGGING ON/OFF HERE
+db = new Debugging();
+db.active = true;
+db.trace = false;
 
-theory = Object.create(TheoryEngine);
+// thoeryEngine generates lists of notes from theory terms (eg A MINORPENTATONIC)
+const TheoryEngine = require("../modules/theoryengine.module.js");
+
+theory =  new TheoryEngine({db:db});
 
 
 theory.setMidiListCallback(function(msg){
