@@ -21,8 +21,9 @@ config = {...config, ...machine_config, ...env_config};
 
 ////////////////////////////////
 // LOAD DEBUGGING FRAMEWORK
-const db = require('./modules/debugging.module.js').Debugging;
+const Debugging = require('./modules/debugging.module.js');
 // TURN DEBUGGING ON/OFF HERE
+db = new Debugging();
 db.active = config["db.active"];
 db.trace = false;
 db.log("starting","now",[1,2,3]);
@@ -32,7 +33,8 @@ db.log(config);
 
 let bluetooth = false;
 if(config["bluetooth.active"]){
-    bluetooth = require('./modules/bluetooth.module.js').Bluetooth;
+    Bluetooth = require('./modules/bluetooth.module.js');
+    bluetooth = new Bluetooth();
     bluetooth.active = config["bluetooth.active"];
     bluetooth.deviceID = config["bluetooth.deviceID"]; 
     bluetooth.keepUp();
@@ -139,42 +141,36 @@ udpPort.open();
 /////////////////////////////////////
 // SET UP THE MODULE OBJECTS
 // transport generates beat messges
-const Transport    = require("./modules/transport.module.js").Transport;
+const Transport    = require("./modules/transport.module.js");
 // Score reader outputs messages at timed intervals
-const ScoreReader  = require("./modules/scorereader.module.js").ScoreReader;
+const ScoreReader  = require("./modules/scorereader.module.js");
 // thoeryEngine generates lists of notes from theory terms (eg A MINORPENTATONIC)
-const TheoryEngine = require("./modules/theoryengine.module.js").TheoryEngine;
+const TheoryEngine = require("./modules/theoryengine.module.js");
 // socketServer is the web page that gets control messages
-const SocketServer = require("./modules/socketserver.module.js").SocketServer;
+const SocketServer = require("./modules/socketserver.module.js");
 // performance saves and restores settings that might change per performance, song, etc
-const Performance = require("./modules/performance.module.js").Performance;
+const Performance = require("./modules/performance.module.js");
 // orchestra controls local instruments that generate midi values, and /or actual tones
 const Orchestra    = require("./modules/orchestra.module.js");
 // Status Melodies = plays specific note series to announce things like startup, crashes, etc.
-const StatusMelodies = require('./modules/statusmelodies.module.js').StatusMelodies;
-
-SocketServer.WEBSOCKET_PORT  = WEBSOCKET_PORT;
-SocketServer.WEBSERVER_PORT  = WEBSERVER_PORT;
-SocketServer.default_webpage = default_webpage;
+const StatusMelodies = require('./modules/statusmelodies.module.js');
 
 
 db.log("starting");
 
 // initialize the modules
-orchestra = new Orchestra();
-orchestra.db = db
-trans  = Object.create(Transport);
-trans.db = db
-score  = Object.create(ScoreReader);
-score.db = db
-theory = Object.create(TheoryEngine);
-theory.db = db
-socket = Object.create(SocketServer);
-socket.db = db
-performance = Object.create(Performance);
-performance.db = db
-statusmelodies = Object.create(StatusMelodies);
-statusmelodies.db = db;
+orchestra = new Orchestra({db:db});
+trans  = new Transport({db:db});
+score  = new ScoreReader({db:db});
+theory = new TheoryEngine({db:db});
+socket =  new SocketServer({db:db});
+socket.WEBSOCKET_PORT  = WEBSOCKET_PORT;
+socket.WEBSERVER_PORT  = WEBSERVER_PORT;
+socket.default_webpage = default_webpage;
+
+
+performance = new Performance({db:db});
+statusmelodies = new StatusMelodies({db:db});
 statusmelodies.midi_hardware_engine = midi_hardware_engine;
 
 

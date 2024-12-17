@@ -1,28 +1,37 @@
-let StatusMelodies = {
+class StatusMelodies  {
 
-    midi_hardware_engine : false,
-    active: false,
+    constructor(options){
+        this.db = false;
+        if(options.db){
+            this.db = options.db;
+        }
+        this.midi_hardware_engine = options.midi_hardware_engine;
+        this.active = options.active;
+        this.midi_channel = options.midi_channel;
+        this.midi_bank = options.midi_bank;
+        this.midi_program = options.midi_program;
+        
+        this.midi_channel = 8;
+        this.midi_bank = 0;
+        this.midi_program = 2; 
 
-    midi_channel : 8,
-    midi_bank : 0,
-    midi_program : 2, 
-
-    readyNotes : [65, 69, 72, 65, 69, 72],
-    errorNotes : [72, 68, 65, 72, 68, 65],
-    performanceChange : [72, 65, 68, 72, 65, 68],
+        this.readyNotes = [65, 69, 72, 65, 69, 72];
+        this.errorNotes = [72, 68, 65, 72, 68, 65];
+        this.performanceChange = [72, 65, 68, 72, 65, 68];
+    }
 
     playready(){
         // play a series of notes that mean "ready";
         this.playnotes(this.readyNotes, 127, 500, 250);
-    },
+    }
 
     playerror(){
         this.playnotes(this.errorNotes, 127, 500, 250);
-    },
+    }
 
     playperformancechange(){
         this.playnotes(this.performanceChange, 127, 500, 250);
-    },
+    }
 
 
     playnotes(series, volume, duration, spacing){
@@ -39,7 +48,7 @@ let StatusMelodies = {
             }); 
             this.playnoteInSeries(series, 0, volume, duration, spacing );
         }
-    },
+    }
 
     playnoteInSeries(series, index, volume, duration, spacing){
         if(index < series.length){
@@ -54,7 +63,7 @@ let StatusMelodies = {
                 self.playnoteInSeries(series, index, volume, duration, spacing);
             }, spacing);
         }
-    },
+    }
 
     playnote(pitch, volume){
         if(this.midi_hardware_engine){
@@ -64,7 +73,7 @@ let StatusMelodies = {
                 channel: this.midi_channel
             });
         }
-    },
+    }
 
     endnote(pitch){
         if(this.midi_hardware_engine){
@@ -77,4 +86,4 @@ let StatusMelodies = {
     }
 }
 
-exports.StatusMelodies = StatusMelodies;
+module.exports = StatusMelodies;

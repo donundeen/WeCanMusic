@@ -38,26 +38,29 @@ and handle loading thier config JSON
 
 const fs = require('node:fs');
 
+class Performance {
+    constructor(options) {
+        this.orchestra = false; // the orchestra object
+        this.score = false; // the score object
+        this.transport = false; // the transport object
 
-let Performance = {
-    orchestra : false, // the orchestra object
-    score : false, // the score object
-    transport : false, // the transport object
+        this.performanceDir = false;
+        this.performanceFile = false;
 
-    performanceDir : false,
-    performanceFile : false,
+        if(options.db){
+            this.db = options.db;
+        }else{
+            this.db = false;
+        }
+    }
 
-    db: false,
-
-
-
-    savePerformance(name, callback){
+    savePerformance(name, callback) {
         //  use performanceProps in score and transport,
         // and configProps in the orchestra's udp instruments,
         // to get all the savable values
         // each of these objects has functions getPerformanceData and setPerformanceData
         this.performanceFile = name;
-        
+
         let scoreData = this.score.getPerformanceData();
         let transportData = this.transport.getPerformanceData();
         let orchestraData = this.orchestra.getPerformanceData();
@@ -74,20 +77,20 @@ let Performance = {
                 console.error(err);
             } else {
                 // file written successfully
-                if(callback){
+                if (callback) {
                     callback(this);
                 }
             }
         });
 
         // save the JSON
-    },
+    }
 
-    loadPerformance(name, callback){
+    loadPerformance(name, callback) {
         // load the performance file and extract the data
         // load the json
         this.performanceFile = name;
-        perfData = false; // load it here
+        let perfData = false; // load it here
         let self = this;
         fs.readFile(self.performanceDir + "/" + self.performanceFile, 'utf8', (err, perfData) => {
             if (err) {
@@ -95,32 +98,28 @@ let Performance = {
                 return;
             }
             perfData = JSON.parse(perfData);
-            scoreData     = perfData["score"];
-            transportData = perfData.transport;
-            orchestraData = perfData.orchestra;
+            let scoreData = perfData["score"];
+            let transportData = perfData.transport;
+            let orchestraData = perfData.orchestra;
             // send the data to the respective objects, 
             // they should know what to do with it.
             this.db.log("perfomance loadPerformanceDAta");
             this.score.loadPerformanceData(scoreData);
             this.transport.loadPerformanceData(transportData);
-
             this.orchestra.loadPerformanceData(orchestraData);
 
-            if(callback){
+            if (callback) {
                 callback(perfData);
             }
         });
-    },
+    }
 
-    getPerformanceList(callback){
+    getPerformanceList(callback) {
         // get list of all files in dir
         fs.readdir(this.performanceDir, (err, files) => {
             callback(files);
-        });        
+        });
     }
-
-
 }
 
-
-exports.Performance = Performance
+module.exports = Performance;

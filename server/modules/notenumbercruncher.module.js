@@ -19,10 +19,10 @@ class NoteNumberCruncher {
         this.changerate_scale = new dynRescale();
         this.velocity_scale = new dynRescale();
 
-        this.pitch_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0]);
-        this.velocity_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0]);
-        this.duration_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0]);
-        this.timeToNextNote_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0]);        
+        this.pitch_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
+        this.velocity_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
+        this.duration_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
+        this.timeToNextNote_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db}   );        
 
     }
 

@@ -3,8 +3,15 @@
 const fs = require('node:fs');
 const { readFileSync } = require('fs');
 
-let Persistence = {
-    storage_dir : "persistence",
+class Persistence  {
+
+    constructor(options){   
+        this.storage_dir = "persistence";
+        this.db = false;
+        if(options.db){
+            this.db = options.db;
+        }
+    }
 
     generate_filename(name){
         return this.storage_dir + "/"+name+".json";
@@ -35,4 +42,4 @@ let Persistence = {
     }
 }
 
-exports.Persistence = Persistence;
+module.exports = Persistence;

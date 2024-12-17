@@ -4,32 +4,41 @@ var connect = require('connect');
 var serveStatic = require('serve-static');
 const http = require('http');
 
-let my_ip_address= "localhost";
 // figuring out IP address:
 const { networkInterfaces } = require('os');
 const WebSocket = require('ws'); //https://www.npmjs.com/package/ws#sending-and-receiving-text-data
 
-let SocketServer = {
+class SocketServer {
 
-  WEBSOCKET_PORT : 80,
-  WEBSERVER_PORT : 80,
-  default_webpage : "index.html",
+  constructor(options){
+    this.db = false;
+    if(options.db){
+      this.db = options.db;
+    }
+    this.WEBSOCKET_PORT = 80;
+    this.WEBSERVER_PORT = 80;
+    this.default_webpage = "index.html";
+    this.socketserver = false;
+    this.sockets = [];
+    this.messageReceivedCallback = false;
+    this.expressapp = false;
+  
+    this.socketserver = false;
+    this.sockets = [];
 
-  socketserver : false,
-  sockets : [],
-
-  messageReceivedCallback : false,
-  expressapp : false,
+    this.messageReceivedCallback = false;
+    this.expressapp = false;
+  }
 
   messageReceived(msg){
     if(this.messageReceivedCallback){
       this.messageReceivedCallback(msg);
     }
-  },
+  }
 
   setMessageReceivedCallback(callback){
     this.messageReceivedCallback = callback;
-  },
+  }
 
   sendMessage(address, data){
     let msg = {
@@ -37,7 +46,7 @@ let SocketServer = {
       data : data
     }
     this.sockets.forEach(s => s.send(JSON.stringify(msg)));
-  },
+  }
 
   startWebAndSocketServer(){
     this.db.log("trying to start web and websocket servers...");
@@ -118,4 +127,4 @@ let SocketServer = {
   }
 }
 
-exports.SocketServer = SocketServer;
+module.exports = SocketServer;

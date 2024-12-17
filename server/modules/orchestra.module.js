@@ -5,25 +5,33 @@ const UDPInstrument = require("./udpinstrument.module");
 const fs = require('node:fs');
 
 class Orchestra{
-    localInstruments = {};
-    udpInstruments = {};
-    allChannels =  [0,1,2,3,4,5,6,7,8,9,10];
-    channelPool = [0,1,2,3,4,5,6,7,8,9,10];
-    _synth = false; // fluidsynth object
-    _midi_hardware_engine = false; // easymidi object
-    bpm = 120;
 
-    notelist = [];
-    _soundfont_file = false;
-    _soundfont_voicelist_file = false;
-    _soundfont_voicelist = [];
+    constructor(options){
+        this.db = false;
 
-    voicelist_ready = true;
+        if(options.db){
+            this.db = options.db;
+        }
+    
 
-    // instr, pitch, velocity, duration
-    _makenote_callback = false;
+        this.localInstruments = {};
+        this.udpInstruments = {};
+        this.allChannels =  [0,1,2,3,4,5,6,7,8,9,10];
+        this.channelPool = [0,1,2,3,4,5,6,7,8,9,10];
+        this._synth = false; // fluidsynth object
+        this._midi_hardware_engine = false; // easymidi object
+        this._bpm = 120;
 
-    db = false;
+        this.notelist = [];
+        this._soundfont_file = false;
+        this._soundfont_voicelist_file = false;
+        this._soundfont_voicelist = [];
+
+        this.voicelist_ready = true;
+
+        // instr, pitch, velocity, duration
+        this._makenote_callback = false;
+    }
 
     set soundfont_voicelist_file(filename){
         this._soundfont_voicelist_file = filename;
@@ -61,9 +69,13 @@ class Orchestra{
     }
 
     set bpm(bpm){
-        this.bpm = bpm;
-        this.all_local_instrument_set_value("bpm", this.bpm);
-        this.all_udp_instrument_set_value("bpm", this.bpm);
+        this._bpm = bpm;
+        this.all_local_instrument_set_value("bpm", this._bpm);
+        this.all_udp_instrument_set_value("bpm", this._bpm);
+    }
+
+    get bpm(){
+        return this._bpm;
     }
 
     set synth(synth){
@@ -162,13 +174,13 @@ class Orchestra{
             return this.localInstruments[name];
         }
         this.db.log("CREATING INSTRUMENT " + name);
-        this.localInstruments[name] = new LocalInstrument();
+        this.localInstruments[name] = new LocalInstrument({db:this.db});
         this.localInstruments[name].db = this.db;
         this.localInstruments[name].device_name = name;
         this.localInstruments[name].midi_channel = this.getChannel();
         this.localInstruments[name].synth = this._synth;
         this.localInstruments[name].midi_hardware_engine = this._midi_hardware_engine;
-        this.localInstruments[name].bpm = this.bpm;
+        this.localInstruments[name].bpm = this._bpm;
         this.localInstruments[name].notelist = this.notelist;
         this.localInstruments[name].start();
         this.localInstruments[name].makenote_callback = this._makenote_callback;       
@@ -180,13 +192,13 @@ class Orchestra{
             return this.udpInstruments[name];
         }
         this.db.log("CREATING INSTRUMENT " + name);
-        this.udpInstruments[name] = new UDPInstrument(this.db);
+        this.udpInstruments[name] = new UDPInstrument({db:this.db});
         this.udpInstruments[name].db = this.db;
         this.udpInstruments[name].device_name = name;
         this.udpInstruments[name].midi_channel = this.getChannel();
         this.udpInstruments[name].synth = this._synth;
         this.udpInstruments[name].midi_hardware_engine = this._midi_hardware_engine;
-        this.udpInstruments[name].bpm = this.bpm;
+        this.udpInstruments[name].bpm = this._bpm;
         this.udpInstruments[name].notelist = this.notelist;
         this.udpInstruments[name].makenote_callback = this._makenote_callback;
         this.udpInstruments[name].performanceUpdateCallback = this._performanceUpdateCallback;

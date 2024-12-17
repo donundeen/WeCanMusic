@@ -1,8 +1,11 @@
-const dynRescale = class{
-    min = false;
-    max = false;
+class dynRescale {
 
-    db = false;
+    constructor() {
+        this.min = false;
+        this.max = false;
+        this.db = false;
+    }
+
     
     scale(inval, outmin, outmax){
         this.db.log("scaling " + inval);

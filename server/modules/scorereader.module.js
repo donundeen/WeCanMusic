@@ -1,20 +1,27 @@
 const fs = require('node:fs');
 
-let ScoreReader = {
-    scoreFilename : false,
-    scoreDir : false,
-    parsedScore: false,
-    scoreText : false,
-    messageCallback: false,
+class ScoreReader  {
 
-    db: false,
+    constructor(options){
+        this.scoreFilename = false;
+        this.scoreDir = false;
+        this.parsedScore = false;
+        this.scoreText = false;
+        this.messageCallback = false;
+        this.db = false;
+        if(options.db){
+            this.db = options.db;
+        }
+    
 
-    performanceProps : [
-        {name:"scoreFilename", type:"s"}
-    ],
 
-    performanceUpdateCallback: false, // callback that gets called when a performance data is updated
-    performancePropUpdateCallback: false,
+        this.performanceProps = [
+            {name:"scoreFilename", type:"s"}
+        ];
+
+        this.performanceUpdateCallback = false; // callback that gets called when a performance data is updated
+        this.performancePropUpdateCallback = false;
+}
 
     getPerformanceData(){
         // gather the data in performanceProps and return it
@@ -23,7 +30,7 @@ let ScoreReader = {
             perfData[this.performanceProps[i].name] = this[this.performanceProps[i].name];
         }
         return perfData;
-    },
+    }
 
     loadPerformanceData(perfData){
         // extract performanceProps data, 
@@ -44,22 +51,22 @@ let ScoreReader = {
                 self.performanceUpdateCallback(self);
             }    
         });
-    },
+    }
 
     setMessageCallback(callback){
         this.messageCallback = callback;
-    },
+    }
 
     setScoreDir(dir){
         this.scoreDir = dir;
-    },
+    }
 
     getScoreList(callback){
         // get list of all files in dir
         fs.readdir(this.scoreDir, (err, files) => {
             callback(files);
         });        
-    },
+    }
 
     openscore(callback){
         let self = this;
@@ -73,7 +80,7 @@ let ScoreReader = {
                 callback(self.scoreText);
             }
         });
-    },
+    }
 
     writescore(callback){
         let fullpath = this.scoreDir + "/" + this.scoreFilename;
@@ -86,7 +93,7 @@ let ScoreReader = {
                 callback(this);
             }
         });
-    },
+    }
 
     onbeat(beatcount, bar, beat, transport){
 //        db.log("score beat");
@@ -105,7 +112,7 @@ let ScoreReader = {
                 this.processMessage(split, transport);
             }
         }
-    },
+    }
 
     processMessage(msg, transport){
         if(msg == "tostart"){
@@ -118,4 +125,4 @@ let ScoreReader = {
 
 }
 
-exports.ScoreReader = ScoreReader;
+module.exports = ScoreReader;
