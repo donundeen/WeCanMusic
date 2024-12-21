@@ -1,5 +1,6 @@
 dynRescale = require("./dynRescale.module");
 functionCurve = require("./functionCurve.module");
+NoteNumberCruncher = require("./notenumbercruncher.module");
 
 class Instrument {
 
