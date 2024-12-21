@@ -104,7 +104,7 @@ class ScoreReader  {
         let regex = new RegExp(rstring, "g");
         let matches =  [...this.scoreText.matchAll(regex)];
 //        db.log(matches);
-        for(match of matches){
+        for(let match of matches){
             let msg = match[2];
             this.db.log(match[2]);
             let splits = msg.split(" ");
