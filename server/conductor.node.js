@@ -625,7 +625,9 @@ udpPort.on("message", function (oscMsg) {
             name = value.name;
         }
         let midi_voice = midi_bank+":"+midi_program;
+        console.log(db);
         let instrument = orchestra.create_udp_instrument(name, value);
+        console.log(db);
         db.log(midi_voice, midi_bank, midi_program);
         orchestra.udp_instrument_set_value(name, "midi_voice", midi_voice);
         orchestra.udp_instrument_set_value(name, "midi_bank", midi_bank);

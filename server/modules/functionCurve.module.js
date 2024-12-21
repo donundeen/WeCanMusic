@@ -4,7 +4,7 @@ class functionCurve{
         this.curvelist = [0., 0.0, 0., 1.0, 1.0, 0.0];
         this.e = 2.71828; 
     
-        db = false;
+        this.db = false;
         if(options.db){
             this.db = options.db;
         }
