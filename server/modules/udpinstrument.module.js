@@ -5,8 +5,8 @@ class UDPInstrument extends Instrument {
 
     constructor(options){
         super(options);
-        _type = "udp";
-        type = "udp";
+        this._type = "udp";
+        this.type = "udp";
         
     }
 

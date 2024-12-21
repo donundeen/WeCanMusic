@@ -213,6 +213,7 @@ class Orchestra{
             this.udpInstruments[name].midi_program = 1;
 
         }
+        this.db.log("created udp instrument");
         return this.udpInstruments[name];
     }
 
