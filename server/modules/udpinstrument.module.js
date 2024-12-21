@@ -1,5 +1,5 @@
 
-functionCurve = require("./instrument.module");
+Instrument = require("./instrument.module");
 
 class UDPInstrument extends Instrument {
 
