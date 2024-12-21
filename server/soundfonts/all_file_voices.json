@@ -24,6 +24,46 @@
                 "New Age Organ"
             ],
             [
+                128,
+                7,
+                "TR-808 Drumset 2"
+            ],
+            [
+                128,
+                6,
+                "Electronic Drumset"
+            ],
+            [
+                128,
+                5,
+                "Kraftwerk Drumset"
+            ],
+            [
+                128,
+                4,
+                "Analog Drumset"
+            ],
+            [
+                128,
+                3,
+                "TR-909 Drumset"
+            ],
+            [
+                128,
+                2,
+                "TR-808 Drumset"
+            ],
+            [
+                128,
+                1,
+                "CR-78 Drumset"
+            ],
+            [
+                128,
+                0,
+                "TR-101 Drumset"
+            ],
+            [
                 0,
                 123,
                 "TX81Z Sqncr Bass 2"
@@ -646,6 +686,918 @@
         ]
     },
     {
+        "filename": "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/FluidSynthDefaultSoundfont.sf2",
+        "shortname": "FluidSynthDefaultSoundfont.sf2",
+        "voices": [
+            [
+                0,
+                127,
+                "Space Flute"
+            ],
+            [
+                0,
+                126,
+                "Wonderland Xylo"
+            ],
+            [
+                0,
+                125,
+                "Gated Screamer"
+            ],
+            [
+                0,
+                124,
+                "New Age Organ"
+            ],
+            [
+                128,
+                7,
+                "TR-808 Drumset 2"
+            ],
+            [
+                128,
+                6,
+                "Electronic Drumset"
+            ],
+            [
+                128,
+                5,
+                "Kraftwerk Drumset"
+            ],
+            [
+                128,
+                4,
+                "Analog Drumset"
+            ],
+            [
+                128,
+                3,
+                "TR-909 Drumset"
+            ],
+            [
+                128,
+                2,
+                "TR-808 Drumset"
+            ],
+            [
+                128,
+                1,
+                "CR-78 Drumset"
+            ],
+            [
+                128,
+                0,
+                "TR-101 Drumset"
+            ],
+            [
+                0,
+                123,
+                "TX81Z Sqncr Bass 2"
+            ],
+            [
+                0,
+                122,
+                "Filtered Stack"
+            ],
+            [
+                0,
+                121,
+                "Woody Bass"
+            ],
+            [
+                0,
+                120,
+                "Delicate Marimba"
+            ],
+            [
+                0,
+                119,
+                "Delicate Bells"
+            ],
+            [
+                0,
+                118,
+                "Wind Down"
+            ],
+            [
+                0,
+                117,
+                "Warbling Bird 2"
+            ],
+            [
+                0,
+                116,
+                "Warbling Bird 1"
+            ],
+            [
+                0,
+                115,
+                "Laser Pops"
+            ],
+            [
+                0,
+                114,
+                "Wind Blast"
+            ],
+            [
+                0,
+                113,
+                "Warble"
+            ],
+            [
+                0,
+                112,
+                "Singing Strings"
+            ],
+            [
+                0,
+                111,
+                "Distorted Lead"
+            ],
+            [
+                0,
+                110,
+                "Heavy Square"
+            ],
+            [
+                0,
+                109,
+                "Cheap Synth"
+            ],
+            [
+                0,
+                108,
+                "Polysynth 2"
+            ],
+            [
+                0,
+                107,
+                "Ping-Pong"
+            ],
+            [
+                0,
+                106,
+                "Venus Violin Hit"
+            ],
+            [
+                0,
+                105,
+                "Polysynth Hit"
+            ],
+            [
+                0,
+                104,
+                "Mono Analog Bass"
+            ],
+            [
+                0,
+                102,
+                "Cheesy Pad"
+            ],
+            [
+                0,
+                103,
+                "New Life 2"
+            ],
+            [
+                0,
+                101,
+                "Monster Strings"
+            ],
+            [
+                0,
+                100,
+                "Stab Bass Strings"
+            ],
+            [
+                0,
+                99,
+                "Killer Bass"
+            ],
+            [
+                0,
+                98,
+                "Thunder"
+            ],
+            [
+                0,
+                97,
+                "Zippy Bass"
+            ],
+            [
+                0,
+                96,
+                "Yazoo Bass Hit"
+            ],
+            [
+                0,
+                95,
+                "Yazoo Zips"
+            ],
+            [
+                0,
+                94,
+                "Oingo-Boingo"
+            ],
+            [
+                0,
+                93,
+                "Sawtooth Hit"
+            ],
+            [
+                0,
+                92,
+                "Warehouse Percussion"
+            ],
+            [
+                0,
+                91,
+                "Breath Pad"
+            ],
+            [
+                0,
+                90,
+                "Dreamy Pad"
+            ],
+            [
+                0,
+                89,
+                "Techno Bells"
+            ],
+            [
+                0,
+                88,
+                "Rough Strings"
+            ],
+            [
+                0,
+                87,
+                "Awesome Strings"
+            ],
+            [
+                0,
+                86,
+                "Sustained Harp"
+            ],
+            [
+                0,
+                85,
+                "Bonky Organ"
+            ],
+            [
+                0,
+                84,
+                "House Organ"
+            ],
+            [
+                0,
+                83,
+                "Noisy Pops"
+            ],
+            [
+                0,
+                82,
+                "Ethnic Bow"
+            ],
+            [
+                0,
+                81,
+                "Panned Stack"
+            ],
+            [
+                0,
+                80,
+                "Monster Stack Lead"
+            ],
+            [
+                0,
+                79,
+                "Acid Bass 2"
+            ],
+            [
+                0,
+                78,
+                "Echo Pop Bass"
+            ],
+            [
+                0,
+                77,
+                "Acid Sub Bass"
+            ],
+            [
+                0,
+                76,
+                "TX81Z Sqncr Bass"
+            ],
+            [
+                0,
+                75,
+                "Yazoo Blips"
+            ],
+            [
+                0,
+                74,
+                "Warble Pad"
+            ],
+            [
+                0,
+                73,
+                "Spudge Bass"
+            ],
+            [
+                0,
+                72,
+                "Undulating Pad"
+            ],
+            [
+                0,
+                71,
+                "Banshee Pad"
+            ],
+            [
+                0,
+                70,
+                "Long Bass"
+            ],
+            [
+                0,
+                69,
+                "New Life"
+            ],
+            [
+                0,
+                68,
+                "Xylophone"
+            ],
+            [
+                0,
+                67,
+                "Click Pops"
+            ],
+            [
+                0,
+                66,
+                "Blistering Bells"
+            ],
+            [
+                0,
+                65,
+                "Wah"
+            ],
+            [
+                0,
+                64,
+                "Twips Ring"
+            ],
+            [
+                0,
+                63,
+                "Melodic Vibrato"
+            ],
+            [
+                0,
+                62,
+                "Screaming Wavepad"
+            ],
+            [
+                0,
+                61,
+                "Stacked Mega-Phaser"
+            ],
+            [
+                0,
+                60,
+                "Pop Bass 2"
+            ],
+            [
+                0,
+                21,
+                "Pop Bass 1"
+            ],
+            [
+                0,
+                59,
+                "Wavepad"
+            ],
+            [
+                0,
+                58,
+                "Polysynth Warp"
+            ],
+            [
+                0,
+                57,
+                "Rubber Bass"
+            ],
+            [
+                0,
+                56,
+                "China Voices"
+            ],
+            [
+                0,
+                55,
+                "FM Clang"
+            ],
+            [
+                0,
+                54,
+                "Phasing Choir"
+            ],
+            [
+                0,
+                53,
+                "Singing Bells"
+            ],
+            [
+                0,
+                52,
+                "Harsh FM Bass"
+            ],
+            [
+                0,
+                51,
+                "Gated FM Bass"
+            ],
+            [
+                0,
+                50,
+                "Dream Hit"
+            ],
+            [
+                0,
+                49,
+                "FM Bass Hit"
+            ],
+            [
+                0,
+                48,
+                "Faerie Chorale"
+            ],
+            [
+                0,
+                47,
+                "Metallic Clink"
+            ],
+            [
+                0,
+                46,
+                "Oink Grind"
+            ],
+            [
+                0,
+                45,
+                "Wailing Hit"
+            ],
+            [
+                0,
+                44,
+                "Casio VL-1 Pops"
+            ],
+            [
+                0,
+                34,
+                "Square Pop Flute"
+            ],
+            [
+                0,
+                43,
+                "Lead Synth 3"
+            ],
+            [
+                0,
+                42,
+                "Lead Synth 2"
+            ],
+            [
+                0,
+                41,
+                "Lead Synth 1"
+            ],
+            [
+                0,
+                40,
+                "Aluminium Plate"
+            ],
+            [
+                0,
+                39,
+                "Space Warp"
+            ],
+            [
+                0,
+                38,
+                "Sine Bongos"
+            ],
+            [
+                0,
+                37,
+                "Sine Whistle"
+            ],
+            [
+                0,
+                36,
+                "Vatican Bell"
+            ],
+            [
+                0,
+                35,
+                "Phasing Strings"
+            ],
+            [
+                0,
+                23,
+                "Square Flute"
+            ],
+            [
+                0,
+                33,
+                "Water Triangle"
+            ],
+            [
+                0,
+                32,
+                "Cosmic Vibraphone"
+            ],
+            [
+                0,
+                31,
+                "Bass Dragon Choir"
+            ],
+            [
+                0,
+                30,
+                "Vatican Pipes"
+            ],
+            [
+                0,
+                29,
+                "Fantasy"
+            ],
+            [
+                0,
+                28,
+                "Electric Slap Bass"
+            ],
+            [
+                0,
+                27,
+                "Bingo Bells"
+            ],
+            [
+                0,
+                26,
+                "D50-ish Bells"
+            ],
+            [
+                0,
+                25,
+                "Breezy Calliope"
+            ],
+            [
+                0,
+                24,
+                "Chorale"
+            ],
+            [
+                0,
+                22,
+                "Distorted Sweep Bass"
+            ],
+            [
+                0,
+                20,
+                "TX81Z Lately Bass"
+            ],
+            [
+                0,
+                19,
+                "FM Electric Bass"
+            ],
+            [
+                0,
+                18,
+                "Smooth Strings 1"
+            ],
+            [
+                0,
+                17,
+                "Smooth Flute"
+            ],
+            [
+                0,
+                16,
+                "Triangle Simple"
+            ],
+            [
+                0,
+                15,
+                "Triangle Dream Flute"
+            ],
+            [
+                0,
+                14,
+                "Thin Sawtooth"
+            ],
+            [
+                0,
+                13,
+                "Classic FM Bass"
+            ],
+            [
+                0,
+                12,
+                "Church Organ"
+            ],
+            [
+                0,
+                11,
+                "Meat Grinder"
+            ],
+            [
+                0,
+                10,
+                "FM Christmas Bells"
+            ],
+            [
+                0,
+                9,
+                "Hard Grunge Bass"
+            ],
+            [
+                0,
+                8,
+                "Resonating Pad"
+            ],
+            [
+                0,
+                7,
+                "Sheet Bass"
+            ],
+            [
+                0,
+                6,
+                "Dragon Sweep"
+            ],
+            [
+                0,
+                5,
+                "El Cheapo Organ"
+            ],
+            [
+                0,
+                4,
+                "Detuned Saws"
+            ],
+            [
+                0,
+                3,
+                "Grungy Ramp Bass"
+            ],
+            [
+                0,
+                2,
+                "Simple Square Floot"
+            ],
+            [
+                0,
+                1,
+                "FM Carillion"
+            ],
+            [
+                0,
+                0,
+                "FM Bells 1"
+            ]
+        ]
+    },
+    {
+        "filename": "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/DayOfTheDeadSF.sf2",
+        "shortname": "DayOfTheDeadSF.sf2",
+        "voices": [
+            [
+                0,
+                6,
+                "Rain"
+            ],
+            [
+                0,
+                0,
+                "DeepSea Life"
+            ],
+            [
+                0,
+                1,
+                "FM Bells 1"
+            ],
+            [
+                0,
+                27,
+                "Bingo Bells"
+            ],
+            [
+                0,
+                32,
+                "Cosmic Vibraphone"
+            ],
+            [
+                0,
+                38,
+                "Warble Pad"
+            ],
+            [
+                0,
+                39,
+                "Breath Pad"
+            ],
+            [
+                0,
+                40,
+                "Space Flute"
+            ],
+            [
+                0,
+                2,
+                "Vibraphone"
+            ],
+            [
+                0,
+                3,
+                "AAAHs"
+            ],
+            [
+                0,
+                4,
+                "Cyberspace"
+            ],
+            [
+                0,
+                5,
+                "Dig:ital Air"
+            ],
+            [
+                0,
+                7,
+                "Dream I"
+            ],
+            [
+                0,
+                8,
+                "Dream II"
+            ],
+            [
+                0,
+                9,
+                "KenongBnang"
+            ],
+            [
+                0,
+                10,
+                "Suwak Wave"
+            ],
+            [
+                0,
+                11,
+                "Nu Age"
+            ],
+            [
+                0,
+                12,
+                "Ney Flute"
+            ],
+            [
+                0,
+                13,
+                "Empyrean"
+            ],
+            [
+                0,
+                14,
+                "Flautaland"
+            ],
+            [
+                0,
+                15,
+                "Flautissmo"
+            ],
+            [
+                0,
+                16,
+                "Fwink Loop"
+            ],
+            [
+                0,
+                17,
+                "Golan"
+            ],
+            [
+                0,
+                18,
+                "Golan R"
+            ],
+            [
+                0,
+                19,
+                "Golan Filter"
+            ],
+            [
+                0,
+                20,
+                "Golan Filter Rel"
+            ],
+            [
+                0,
+                21,
+                "Hanoi Drone"
+            ],
+            [
+                0,
+                22,
+                "Steel Sea (Pad)"
+            ],
+            [
+                0,
+                23,
+                "Ocarina"
+            ],
+            [
+                0,
+                24,
+                "Odd Vibes"
+            ],
+            [
+                0,
+                25,
+                "Psaltines"
+            ],
+            [
+                0,
+                26,
+                "Shakuhachi"
+            ],
+            [
+                0,
+                28,
+                "Shimmer Attack"
+            ],
+            [
+                0,
+                29,
+                "Shimmer Ways"
+            ],
+            [
+                0,
+                30,
+                "SlipperyBass"
+            ],
+            [
+                0,
+                31,
+                "Synthibell"
+            ],
+            [
+                0,
+                33,
+                "Tremolo Vibe"
+            ],
+            [
+                0,
+                34,
+                "Tubular Bell"
+            ],
+            [
+                0,
+                35,
+                "Uduhachi"
+            ],
+            [
+                0,
+                36,
+                "Vampirical"
+            ],
+            [
+                0,
+                37,
+                "Vibes&Choir"
+            ],
+            [
+                0,
+                41,
+                "ElectroKit"
+            ],
+            [
+                0,
+                42,
+                "TR-808Kit"
+            ],
+            [
+                0,
+                43,
+                "RoomKit"
+            ]
+        ]
+    },
+    {
         "filename": "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/GeneralUserGS/GeneralUserGS.sf2",
         "shortname": "GeneralUserGS.sf2",
         "voices": [
@@ -663,6 +1615,66 @@
                 0,
                 6,
                 "Harpsichord"
+            ],
+            [
+                120,
+                56,
+                "SFX Kit"
+            ],
+            [
+                120,
+                48,
+                "Orchestral Perc."
+            ],
+            [
+                120,
+                40,
+                "Brush Drums"
+            ],
+            [
+                120,
+                32,
+                "Jazz Drums"
+            ],
+            [
+                120,
+                26,
+                "Dance Drums"
+            ],
+            [
+                120,
+                25,
+                "808/909 Drums"
+            ],
+            [
+                120,
+                24,
+                "Electronic Drums"
+            ],
+            [
+                120,
+                16,
+                "Power Drums"
+            ],
+            [
+                120,
+                8,
+                "Room Drums"
+            ],
+            [
+                120,
+                1,
+                "Standard 2 Drums"
+            ],
+            [
+                120,
+                0,
+                "Standard Drums"
+            ],
+            [
+                128,
+                0,
+                "Standard"
             ],
             [
                 0,
@@ -683,6 +1695,11 @@
                 0,
                 109,
                 "Bagpipes"
+            ],
+            [
+                128,
+                25,
+                "808/909"
             ],
             [
                 0,
@@ -815,6 +1832,11 @@
                 "Solo French Horn"
             ],
             [
+                128,
+                26,
+                "Dance"
+            ],
+            [
                 0,
                 65,
                 "Alto Sax"
@@ -928,6 +1950,46 @@
                 0,
                 48,
                 "Stereo Strings Fast"
+            ],
+            [
+                128,
+                56,
+                "SFX"
+            ],
+            [
+                128,
+                48,
+                "Orchestral"
+            ],
+            [
+                128,
+                40,
+                "Brush"
+            ],
+            [
+                128,
+                32,
+                "Jazz"
+            ],
+            [
+                128,
+                24,
+                "Electronic"
+            ],
+            [
+                128,
+                16,
+                "Power"
+            ],
+            [
+                128,
+                8,
+                "Room"
+            ],
+            [
+                128,
+                1,
+                "Standard 2"
             ],
             [
                 0,
