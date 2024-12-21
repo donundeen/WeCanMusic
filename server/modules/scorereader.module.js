@@ -108,7 +108,7 @@ class ScoreReader  {
             let msg = match[2];
             this.db.log(match[2]);
             let splits = msg.split(" ");
-            for (split of splits){
+            for (let split of splits){
                 this.processMessage(split, transport);
             }
         }
