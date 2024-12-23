@@ -29,8 +29,6 @@ db.trace = false;
 db.log("starting","now",[1,2,3]);
 db.log(config);
 
-
-
 let bluetooth = false;
 if(config["bluetooth.active"]){
     Bluetooth = require('./modules/bluetooth.module.js');
@@ -45,30 +43,17 @@ let synthtype = config.synthtype; // tiny or fluidsynth or false
 let bad_tiny_voices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,65,66,67,68,69,71,72, 84, 90, 105,110,118,119,120,121,122,123,124,125,126,127];
 
 
-// midi hardware setup:
-let use_midi_out = config.use_midi_out; // whether or not to send midi values through a hardware output, via easymidi
-let midi_hardware_engine = false;
-let midi_out_portname = config.midi_out_portname; // FLUID for on-baord synth, UM-ONE for the midi cable, or other things"; 
-let midi = require('midi');
-let easymidi = require('easymidi');
-if(use_midi_out){
-    while(!midi_hardware_engine){
-        // if it can't find the named midi port, this part will just keep looping and hang the app
-        let midi_outputs = easymidi.getOutputs();
-        db.log(midi_outputs);
-        let real_portname = false;
-        for(let i = 0; i<midi_outputs.length; i++){
-            if(midi_outputs[i].includes(midi_out_portname)){
-                real_portname = midi_outputs[i];
-            }
-        }
-        if(real_portname){
-            midi_hardware_engine = new easymidi.Output(real_portname);   
-            midi_hardware_engine.send('reset'); 
 
-        }
-    }
-}
+///////////////////////////////////////////////////////////////
+// midi hardware setup:
+///////////////////////////////////////////////////////////////
+
+const MidiOuts = require('./modules/midiouts.module.js');
+let use_midi_out = config.use_midi_out; // whether or not to send midi values through a hardware output, via easymidi
+midi_outs = new MidiOuts({db:db, active: use_midi_out, matches: "all"});
+midi_outs.init();
+
+
 
 
 let bpm = 120; // this should eventually be configurable as a performance variable in the UI
@@ -171,7 +156,7 @@ socket.default_webpage = default_webpage;
 
 performance = new Performance({db:db});
 statusmelodies = new StatusMelodies({db:db});
-statusmelodies.midi_hardware_engine = midi_hardware_engine;
+statusmelodies.midi_hardware_engine = midi_outs;
 
 
 // config score obect
@@ -300,7 +285,7 @@ let global_notecount = 0; // used as a hack for the fluidsynth software synth
 // SET UP ORCHESTRA
 orchestra.synth = synth;
 orchestra.synthDeviceVoices = synthDeviceVoices;
-orchestra.midi_hardware_engine = midi_hardware_engine;
+orchestra.midi_hardware_engine = midi_outs;
 
 orchestra.soundfont_file = soundfont;
 orchestra.soundfont_voicelist_file = soundfont_instrument_list;
@@ -900,27 +885,17 @@ function resetFluidSynth(){
     });
     setTimeout(function(){
         let midifound = false;
-        while(!midifound){
-            // if it can't find the named midi port, this part will just keep looping and hang the app
-            easymidi = require('easymidi');
-            let midi_outputs = easymidi.getOutputs();
-            console.log(midi_outputs);
-            let real_portname = false;
-            for(let i = 0; i<midi_outputs.length; i++){
-                if(midi_outputs[i].includes(midi_out_portname)){
-                    real_portname = midi_outputs[i];
-                }
-            }
-            if(real_portname){
-                midifound = true;
-                midi_hardware_engine = new easymidi.Output(real_portname);  
-                midi_hardware_engine.send('reset');
-                statusmelodies.midi_hardware_engine = midi_hardware_engine;
-                orchestra.midi_hardware_engine = midi_hardware_engine;
-                orchestra.resendInstrumentsBankProgramChannel();
-                statusmelodies.playready();
-            }
-        }
+        const MidiOuts = require('./modules/midiouts.module.js');
+        let use_midi_out = config.use_midi_out; // whether or not to send midi values through a hardware output, via easymidi
+        midi_outs = new MidiOuts({db:db, active: use_midi_out});
+        midi_outs.init();
+        
+        statusmelodies.midi_hardware_engine = midi_outs;
+        orchestra.midi_hardware_engine = midi_outs;
+        orchestra.resendInstrumentsBankProgramChannel();
+        statusmelodies.playready();
+    
+        
     },5000);    
 }
 

@@ -12,7 +12,7 @@ var config = {
     "defaultWebpage" : "jamalong.html",
     "soundfont_instrument_list" : "./soundfonts/DayOfTheDeadSF.sf2.voicelist.json",
     "use_midi_out" : true,
-    "midi_out_portname" : "FLUID",
+    "midi_out_portname" : "all", /// "all" to use all ports, or an array of regex matches to check against the portnames
     "fluidpath" : '/usr/bin/fluidsynth', // OS-specific, overrider in [mac/rpi].conductor.config.js
     "fluidargs" : ["a", "pulseaudio","-R", 1, "-C", 1], // OS-specific, overrider in [mac/rpi].conductor.config.js
     "UDPSENDPORT" : 7004,

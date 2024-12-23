@@ -1,27 +1,8 @@
 // midi hardward setup:
 let use_midi_out = true; // whether or not to send midi values through a hardware output, via easymidi
-let midi_hardware_engine = false;
-let midi_out_portname = "FLUID"; // FLUID for on-baord synth, UM-ONE for the midi cable, or other things"; 
-let midi_channel = 1;
-if(use_midi_out){
-    const midi = require('midi');
-    const easymidi = require('easymidi');
-    while(!midi_hardware_engine){
-        let midi_outputs = easymidi.getOutputs();
-        console.log(midi_outputs);
-        let real_portname = false;
-        for(let i = 0; i<midi_outputs.length; i++){
-            if(midi_outputs[i].includes(midi_out_portname)){
-                real_portname = midi_outputs[i];
-            }
-        }
-        if(real_portname){
-            console.log("using port " + real_portname);
-            midi_hardware_engine = new easymidi.Output(real_portname);   
-            midi_hardware_engine.send('reset'); 
-        }
-    }
-}
+const MidiOuts = require('./modules/midiouts.module.js');
+midi_outs = new MidiOuts({db:db, active: use_midi_out});
+midi_outs.init();
 midiSetBankProgram(midi_channel, 0, 5);
 
 
@@ -53,25 +34,25 @@ setTimeout(function(){
 
 function midiSetBankProgram(midi_channel, bank, midi_voice){
     console.log("set channel bank progam", midi_channel, bank, midi_voice);
-    if(midi_hardware_engine){
-        midi_hardware_engine.send('cc',{
+    if(midi_outs){
+        midi_outs.send('cc',{
             controller: 0,
             value: bank, 
             channel: midi_channel
         }); 
         /*
-        midi_hardware_engine.send('cc',{
+        midi_outs.send('cc',{
             controller: "000",
             value: MSB, 
             channel: midi_channel
         }); 
-        midi_hardware_engine.send('cc',{
+        midi_outs.send('cc',{
             controller: "032",
             value: LSB, 
             channel: midi_channel
         }); 
         */
-        midi_hardware_engine.send('program',{
+        midi_outs.send('program',{
             number: midi_voice, 
             channel: midi_channel
         }); 
@@ -80,8 +61,8 @@ function midiSetBankProgram(midi_channel, bank, midi_voice){
 
 
 function midiSetInstrument(midi_channel, midi_voice){
-    if(midi_hardware_engine){
-       midi_hardware_engine.send('program',{
+    if(midi_outs){
+        midi_outs.send('program',{
             number: midi_voice, 
             channel: midi_channel
         }); 
@@ -91,7 +72,7 @@ function midiSetInstrument(midi_channel, midi_voice){
 function midiSetVolume(midi_channel,volume){
     // control change value to set volume.
     console.log("set volume ", midi_channel, volume);
-    midi_hardware_engine.send('cc',{
+    midi_outs.send('cc',{
         controller: 7,
         value: volume, // the volume, 
         channel: midi_channel
@@ -102,15 +83,15 @@ function midiSetVolume(midi_channel,volume){
 function midiMakeNote(midi_channel, note, velocity, duration){
     // if there's a hardware midi device attached to this instrument
     console.log("midiMakeNote " , midi_channel, note, velocity);
-    if(midi_hardware_engine){
+    if(midi_outs){
         console.log("HARDWARE NOTE");
-        midi_hardware_engine.send('noteon', {
+        midi_outs.send('noteon', {
             note: note,
             velocity: velocity,
             channel: midi_channel
         });
         setTimeout(()=>{
-            midi_hardware_engine.send('noteoff', {
+            midi_outs.send('noteoff', {
                 note: note,
                 velocity: 0,
                 channel: midi_channel
