@@ -94,7 +94,6 @@ class Transport {
     }
 
     onquantize(){
-        this.db.log("quantize");
         if (this.quantizecallback) {
             this.quantizecallback(this);
         } else {

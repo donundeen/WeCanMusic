@@ -252,7 +252,6 @@ midi_hardware_engine.quantize_time = config.quantize_time;
 trans.quantize_time = config.quantize_time;
 if(config.quantize_time){   
     trans.quantizecallback = function(transport){
-        db.log("quantize callback");
         midi_hardware_engine.process_makenote_queue();
     }
 }

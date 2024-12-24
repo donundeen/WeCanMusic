@@ -104,7 +104,7 @@ class MidiOuts {
 
     makenote(channel, note, velocity, duration){
         if(this.quantize_time){
-            this.makenote_queue(channel, note, velocity, duration);
+            this.makenote_add_to_queue(channel, note, velocity, duration);
         }else{
             this.makenote_now(channel, note, velocity, duration);
         }
@@ -125,7 +125,7 @@ class MidiOuts {
         }, duration);
     }
 
-    makenote_queue(channel, note, velocity, duration){
+    makenote_add_to_queue(channel, note, velocity, duration){
         this.makenote_queue.push({
             channel: channel,
             note: note,
@@ -139,7 +139,7 @@ class MidiOuts {
         if(!this.processing_queue){
             this.processing_queue = true;
             for(let item of this.makenote_queue){
-                this.makenote(item.channel, item.note, item.velocity, item.duration);
+                this.makenote_now(item.channel, item.note, item.velocity, item.duration);
             }
             this.makenote_queue = [];
             this.processing_queue = false;
