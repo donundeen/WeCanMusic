@@ -65,8 +65,14 @@ let UDPSENDIP = config.UDPSENDIP; //"10.0.0.255";
 let UDPSENDPORT = config.UDPSENDPORT;//7004;
 let UDPLISTENPORT = config.UDPLISTENPORT;//7005;
 
-let WEBSOCKET_PORT = config.WEBSOCKET_PORT //8001;
-let WEBSERVER_PORT = config.WEBSERVER_PORT //8002;
+
+let USE_HTTPS = config.HTTPS;
+let WEBSOCKET_PORT = config.WEBSOCKET_PORT;
+let WEBSERVER_PORT = config.WEBSERVER_PORT;
+if(USE_HTTPS){
+    WEBSOCKET_PORT = config.HTTPS_WEBSOCKET_PORT;
+    WEBSERVER_PORT = config.HTTPS_WEBSERVER_PORT;
+}
 
 let default_webpage = config.defaultWebpage; //"conductor.html";
 
@@ -149,6 +155,7 @@ trans  = new Transport({db:db});
 score  = new ScoreReader({db:db});
 theory = new TheoryEngine({db:db});
 socket =  new SocketServer({db:db});
+socket.USE_HTTPS = USE_HTTPS;
 socket.WEBSOCKET_PORT  = WEBSOCKET_PORT;
 socket.WEBSERVER_PORT  = WEBSERVER_PORT;
 socket.default_webpage = default_webpage;

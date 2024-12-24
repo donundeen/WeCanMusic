@@ -1,11 +1,17 @@
-const WEBSOCKET_PORT = 80;
+let USE_HTTPS = true;
+let WEBSOCKET_PORT = 80;
+let WEBSOCKET_PROTOCOL = "ws://";
+if(USE_HTTPS){
+    WEBSOCKET_PORT = 443;
+    WEBSOCKET_PROTOCOL = "wss://";
+}
 let curscore = "simplescore.txt";
 let curperformance = "";
 let scoreText = "";
 
 $(function() {
 
-    console.log("starting");
+    console.log("starting", window.location.host);
 
     // chnage this depending on location of webserver. Figure out a way to make this more dynamic...
     let host =  window.location.host;
@@ -23,7 +29,7 @@ $(function() {
     //const ws = new WebSocket('ws://192.168.4.34:8080');
     //const ws = new WebSocket('ws://10.102.134.110:8080');
 
-    let websocketurl = 'ws://'+host+':'+WEBSOCKET_PORT;
+    let websocketurl = WEBSOCKET_PROTOCOL+host+':'+WEBSOCKET_PORT;
     console.log("trying to start websocket server ", websocketurl)
     const ws = new WebSocket(websocketurl);
 

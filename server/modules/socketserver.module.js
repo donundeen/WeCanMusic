@@ -2,7 +2,8 @@
 const path = require('path');
 var connect = require('connect');
 var serveStatic = require('serve-static');
-const http = require('http');
+const fs=require('fs')
+
 
 // figuring out IP address:
 const { networkInterfaces } = require('os');
@@ -17,6 +18,7 @@ class SocketServer {
     }
     this.WEBSOCKET_PORT = 80;
     this.WEBSERVER_PORT = 80;
+    this.USE_HTTPS = false;
     this.default_webpage = "index.html";
     this.socketserver = false;
     this.sockets = [];
@@ -56,14 +58,27 @@ class SocketServer {
     const path = require('path');
     this.expressapp = express();
 
+    let http = require('http');
+    if(this.USE_HTTPS){
+      http = require('https');
+    }
+
+
     // Create the HTTP server instance
 //    const server = http.createServer((req, res) => {
 //      this.expressapp(req, res); // Handle requests with the Express app
 //    });
-    let options = {
-      key:fs.readFileSync(path.join(__dirname,'./cert/key.pem')),
-      cert:fs.readFileSync(path.join(__dirname,'./cert/cert.pem'))
-    };
+
+    let options = {};
+    try{
+      options = {
+        key:fs.readFileSync(path.join(__dirname,'./../cert/key.pem')),
+        cert:fs.readFileSync(path.join(__dirname,'./../cert/cert.pem'))
+      };
+      console.log("ssl certs found, using https");
+    }catch(e){
+      console.log("no ssl certs found, using http");
+    }
 
     const server = http.createServer(options, this.expressapp);
 

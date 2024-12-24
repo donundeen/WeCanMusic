@@ -1,4 +1,12 @@
-const WEBSOCKET_PORT = 80;
+
+//const WEBSOCKET_PORT = 80;
+let USE_HTTPS = true;
+let WEBSOCKET_PORT = 80;
+let WEBSOCKET_PROTOCOL = "ws://";
+if(USE_HTTPS){
+    WEBSOCKET_PORT = 443;
+    WEBSOCKET_PROTOCOL = "wss://";
+}
 let voicelist = [[1,79,"nodata"],[0,78,"nodata"]];
 let scorelist = ["simplescore.txt"];
 let curscore = "simplescore.txt";
@@ -26,7 +34,9 @@ $(function() {
     //  const ws = new WebSocket('ws://localhost:8080');
     //const ws = new WebSocket('ws://192.168.4.34:8080');
     //const ws = new WebSocket('ws://10.102.134.110:8080');
-    const ws = new WebSocket('ws://'+host+':'+WEBSOCKET_PORT);
+    let websocketurl = WEBSOCKET_PROTOCOL+host+':'+WEBSOCKET_PORT;
+    console.log("trying to start websocket server ", websocketurl);
+    const ws = new WebSocket(websocketurl);
 
     let wsready = false;  
     // Browser WebSockets have slightly different syntax than `ws`.
