@@ -10,10 +10,8 @@ class Transport {
         this.bar = false;
         this.beat = false;
         this.interval = false;
-        this.QN = false;
-        this.HN = false;
-        this.WN = false;
-        this.N8 = false;
+        this.notelengths = {};
+        this.notelength_values = [];
         this.beatcallback = false;
 
         this.performanceProps = [
@@ -21,6 +19,10 @@ class Transport {
         ];
         this.performanceUpdateCallback = false; // callback that gets called when a performance data is updated
         this.performancePropUpdateCallback = false;
+
+        this.quantize_time = false; // or array of note length names ("QN, N16, N83, etc")
+        this.quantizecallback = false; // callback that gets called when a quantize time is reached
+        this.quantize_intervals = [];
     }
 
     getPerformanceData() {
@@ -55,11 +57,30 @@ class Transport {
     updateBpm(bpm) {
         this.db.log("set bpm " + bpm);
         this.bpm = bpm;
-        this.QN = this.bpmToMS(bpm);
-        this.HN = this.QN * 2;
-        this.WN = this.QN * 4;
-        this.N8 = this.QN / 2;
+        this.setNoteLengths();
     }
+
+    setNoteLengths(){
+        // set note constant lengths, depending on bpms
+        this.notelength_values = [];
+        this.notelengths.QN = this.bpmToMS();
+        this.notelengths.WN = this.notelengths.QN * 4;
+        this.notelengths.HN = this.notelengths.QN * 2;
+        this.notelengths.N8 = this.notelengths.QN / 2;
+        this.notelengths.N16 = this.notelengths.QN / 4;
+        this.notelengths.QN3 = this.notelengths.HN / 3;
+        this.notelengths.HN3 = this.notelengths.WN / 3;
+        this.notelengths.N83 = this.notelengths.QN / 3;
+        this.notelength_values.push(this.notelengths.QN);
+        this.notelength_values.push(this.notelengths.WN);
+        this.notelength_values.push(this.notelengths.HN);
+        this.notelength_values.push(this.notelengths.N8);
+        this.notelength_values.push(this.notelengths.N16);
+        this.notelength_values.push(this.notelengths.QN3);
+        this.notelength_values.push(this.notelengths.HN3);
+        this.notelength_values.push(this.notelengths.N83);
+        this.notelength_values.sort(function(a, b){return a - b});        
+    }  
 
     onbeat() {
         this.bar = Math.floor(this.beatcount / 4) + 1;
@@ -72,16 +93,44 @@ class Transport {
         }
     }
 
+    onquantize(){
+        this.db.log("quantize");
+        if (this.quantizecallback) {
+            this.quantizecallback(this);
+        } else {
+            this.db.log("no callback");
+        }        
+    }
+
     start() {
         if (!this.interval) {
-            if (this.QN) {
-                this.db.log("Starting " + this.QN);
-                this.interval = setInterval((function () { this.onbeat(); }).bind(this), this.QN);
+            if (this.notelengths.QN) {
+                this.db.log("Starting " + this.notelengths.QN);
+                this.interval = setInterval((function () { this.onbeat(); }).bind(this), this.notelengths.QN);
             } else {
                 this.db.log("no BPM set");
                 this.db.log(this);
             }
         }
+        this.startquantize();
+
+    }
+
+    startquantize(){
+        if(this.quantize_time){
+            this.stopquantize();
+            for(let quantize_time of this.quantize_time){
+                this.quantize_intervals.push(setInterval((function () { this.onquantize(); }).bind(this), this.notelengths[quantize_time]));
+            }
+        }
+    }
+
+    stopquantize(){
+        // Clear all intervals in the quantize_intervals array
+        for (let interval of this.quantize_intervals) {
+            clearInterval(interval);
+        }
+        this.quantize_intervals = [];
     }
 
     stop() {

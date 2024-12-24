@@ -23,7 +23,8 @@ var config = {
     "WEBSERVER_PORT" : 80,
     "HTTPS" : true,
     "HTTPS_WEBSOCKET_PORT" : 443,
-    "HTTPS_WEBSERVER_PORT" : 443
+    "HTTPS_WEBSERVER_PORT" : 443,
+    "quantize_time" : false // or array of note length names ("QN, N16, N83, etc")
 }
 
 module.exports = config;

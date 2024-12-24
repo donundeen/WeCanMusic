@@ -615,23 +615,10 @@ class Instrument {
         }
         // if there's a hardware midi device attached to this instrument
         if(this.midi_hardware_engine){
-//            this.db.log("HARDWARE NOTE");
-            this.midi_hardware_engine.send('noteon', {
-                note: note,
-                velocity: velocity,
-                channel: this.midi_channel
-            });
-            setTimeout(()=>{
-                this.midi_hardware_engine.send('noteoff', {
-                    note: note,
-                    velocity: 0,
-                    channel: this.midi_channel
-                });
-            }, duration);
+            this.midi_hardware_engine.makenote(this.midi_channel, note, velocity, duration);
         }else{
             this.db.log("NNNNNNNNNNNNNNNo hardware engine");
         }
-
 
         if(this.makenote_callback){
             this.makenote_callback(this, note, velocity, duration);

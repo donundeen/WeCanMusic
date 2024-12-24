@@ -8,7 +8,6 @@ const fs = require('node:fs');
 
 var exec = require('child_process').exec;
   
-
 ////////////////////////
 // LOAD MAIN CONFIG FILE
 const merge = require('deepmerge')
@@ -51,8 +50,10 @@ let bad_tiny_voices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,
 const MidiOuts = require('./modules/midiouts.module.js');
 let midi_waitfor_portnames = config.midi_waitfor_portnames;
 let use_midi_out = config.use_midi_out; // whether or not to send midi values through a hardware output, via easymidi
-midi_outs = new MidiOuts({db:db, active: use_midi_out, matches: "all", waitfor : midi_waitfor_portnames});
-midi_outs.init();
+midi_hardware_engine = new MidiOuts({db:db, active: use_midi_out, matches: "all", waitfor : midi_waitfor_portnames});
+midi_hardware_engine.init();
+
+midi_hardware_engine.quantize_time = config.quantize_time;
 
 
 
@@ -111,7 +112,7 @@ let synthDeviceVoices = {
 //////////////////////////////////////////////////////////////////
 ///// Defining Note Length Names /////////////////////////////////
 ///// the order needs to match the order in the arduino code 
-///// int notelengths[] = {WN, HN, HN3, QN, QN3, N8, N83, N16};
+let  notelengths = ["WN", "HN", "HN3", "QN", "QN3", "N8", "N83", "N16"];
 
 let notelengthNames = ["Whole", "Half","Half Triplet","Quarter","Quarter Triplet","Eighth","Eighth Triplet","Sixteenth"];
 
@@ -164,7 +165,7 @@ socket.default_webpage = default_webpage;
 
 performance = new Performance({db:db});
 statusmelodies = new StatusMelodies({db:db});
-statusmelodies.midi_hardware_engine = midi_outs;
+statusmelodies.midi_hardware_engine = midi_hardware_engine;
 
 
 // config score obect
@@ -245,6 +246,16 @@ orchestra.performancePropUpdateCallback = function(instrument, propname, proptyp
 };
 
 
+// setting up quantization in instruments
+
+midi_hardware_engine.quantize_time = config.quantize_time;
+trans.quantize_time = config.quantize_time;
+if(config.quantize_time){   
+    trans.quantizecallback = function(transport){
+        db.log("quantize callback");
+        midi_hardware_engine.process_makenote_queue();
+    }
+}
 
 // intialize the midi synth (fluid or tiny)
 let synth = false;
@@ -293,7 +304,7 @@ let global_notecount = 0; // used as a hack for the fluidsynth software synth
 // SET UP ORCHESTRA
 orchestra.synth = synth;
 orchestra.synthDeviceVoices = synthDeviceVoices;
-orchestra.midi_hardware_engine = midi_outs;
+orchestra.midi_hardware_engine = midi_hardware_engine;
 
 orchestra.soundfont_file = soundfont;
 orchestra.soundfont_voicelist_file = soundfont_instrument_list;
@@ -895,11 +906,11 @@ function resetFluidSynth(){
         let midifound = false;
         const MidiOuts = require('./modules/midiouts.module.js');
         let use_midi_out = config.use_midi_out; // whether or not to send midi values through a hardware output, via easymidi
-        midi_outs = new MidiOuts({db:db, active: use_midi_out});
-        midi_outs.init();
+        midi_hardware_engine = new MidiOuts({db:db, active: use_midi_out});
+        midi_hardware_engine.init();
         
-        statusmelodies.midi_hardware_engine = midi_outs;
-        orchestra.midi_hardware_engine = midi_outs;
+        statusmelodies.midi_hardware_engine = midi_hardware_engine;
+        orchestra.midi_hardware_engine = midi_hardware_engine;
         orchestra.resendInstrumentsBankProgramChannel();
         statusmelodies.playready();
     

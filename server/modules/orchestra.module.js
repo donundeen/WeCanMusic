@@ -250,6 +250,13 @@ class Orchestra{
             this.db.log("no instrument " + name);
         }
     }
+
+    all_instrument_set_value(prop, value){
+        this.all_local_instrument_set_value(prop, value);
+        this.all_udp_instrument_set_value(prop, value);
+    }
+
+    // set a value for all instruments
     all_local_instrument_set_value(prop, value){
         this.db.log("setting value for " +prop);
         this.db.log(value);
@@ -292,6 +299,12 @@ class Orchestra{
             this.udpInstruments[name][prop] = value;
         }
     }    
+
+
+    allInstruments(callback){
+        this.allLocalInstruments(callback);
+        this.allUDPInstruments(callback);
+    }
 
     // call a callback function on all instruments.
     allLocalInstruments(callback){

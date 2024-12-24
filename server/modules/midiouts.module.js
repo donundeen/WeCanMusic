@@ -18,11 +18,19 @@ class MidiOuts {
             this.waitfor = options.waitfor;
         }
 
+        this.quantize_time = null;
+        // things like 
+        if(options.quantize_time){
+            this.quantize_time = options.quantize_time;
+        }
+
         this.portnames = [];
         this.midi_hardware_engines = [];
 
         this.midi = require('midi');
         this.easymidi = require('easymidi');
+
+        this.makenote_queue = [];
         
     }
     // need a way to pick just some portnames sometimes, or an array of matches.
@@ -83,6 +91,51 @@ class MidiOuts {
             if(this.midi_hardware_engines.filter(engine => engine.name == portname).length == 0){
                 this.midi_hardware_engines.push(new this.easymidi.Output(portname));
             }
+        }
+    }
+
+
+    makenote(channel, note, velocity, duration){
+        if(this.quantize_time){
+            this.makenote_queue(channel, note, velocity, duration);
+        }else{
+            this.makenote_now(channel, note, velocity, duration);
+        }
+    }   
+
+    makenote_now(channel, note, velocity, duration){
+        this.send("noteon", {
+            note: note,
+            velocity: velocity,
+            channel: channel
+        });
+        setTimeout(()=>{
+            this.send('noteoff', {
+                note: note,
+                velocity: 0,
+                channel: channel
+            });
+        }, duration);
+    }
+
+    makenote_queue(channel, note, velocity, duration){
+        this.makenote_queue.push({
+            channel: channel,
+            note: note,
+            velocity: velocity,
+            duration: duration
+        });
+    }
+
+
+    process_makenote_queue(){
+        if(!this.processing_queue){
+            this.processing_queue = true;
+            for(let item of this.makenote_queue){
+                this.makenote(item.channel, item.note, item.velocity, item.duration);
+            }
+            this.makenote_queue = [];
+            this.processing_queue = false;
         }
     }
 }   
