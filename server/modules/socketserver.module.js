@@ -57,9 +57,15 @@ class SocketServer {
     this.expressapp = express();
 
     // Create the HTTP server instance
-    const server = http.createServer((req, res) => {
-        this.expressapp(req, res); // Handle requests with the Express app
-    });
+//    const server = http.createServer((req, res) => {
+//      this.expressapp(req, res); // Handle requests with the Express app
+//    });
+    let options = {
+      key:fs.readFileSync(path.join(__dirname,'./cert/key.pem')),
+      cert:fs.readFileSync(path.join(__dirname,'./cert/cert.pem'))
+    };
+
+    const server = http.createServer(options, this.expressapp);
 
     // Start the HTTP server
     server.listen(this.WEBSERVER_PORT, () => {
