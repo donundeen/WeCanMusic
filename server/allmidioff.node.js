@@ -7,7 +7,7 @@ db = new Debugging();
 
 
 const MidiOuts = require('./modules/midiouts.module.js');
-midi_outs = new MidiOuts({db:db, active: use_midi_out, matches: ["UM-ONE"]});
+midi_outs = new MidiOuts({db:db, active: use_midi_out, matches: "all", waitfor : ["UM-ONE","Port 1"]});
 midi_outs.init();
 midi_outs.send("reset");
 

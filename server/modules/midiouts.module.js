@@ -13,6 +13,11 @@ class MidiOuts {
             this.matches = options.matches;
         }
 
+        this.waitfor = [];
+        if(options.waitfor){
+            this.waitfor = options.waitfor;
+        }
+
         this.portnames = [];
         this.midi_hardware_engines = [];
 
@@ -49,10 +54,19 @@ class MidiOuts {
     }
 
     get_midi_portnames(){
-        let midi_outputs = this.easymidi.getOutputs();
-        console.log(midi_outputs);
-        for(let i = 0; i<midi_outputs.length; i++){
-            this.portnames.push(midi_outputs[i]);
+
+        let waiting = true;
+        while(waiting){
+            let midi_outputs = this.easymidi.getOutputs();
+            console.log(midi_outputs);
+            for(let i = 0; i<midi_outputs.length; i++){
+                this.portnames.push(midi_outputs[i]);
+            }
+            let result = this.waitfor.filter(regex => this.portnames.some(portname => new RegExp(regex).test(portname)));
+            console.log("result", result);
+            if(result.length == this.waitfor.length){
+                waiting = false;
+            }
         }
         return this.portnames;
     }

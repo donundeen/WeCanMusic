@@ -49,8 +49,9 @@ let bad_tiny_voices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,
 ///////////////////////////////////////////////////////////////
 
 const MidiOuts = require('./modules/midiouts.module.js');
+let midi_waitfor_portnames = config.midi_waitfor_portnames;
 let use_midi_out = config.use_midi_out; // whether or not to send midi values through a hardware output, via easymidi
-midi_outs = new MidiOuts({db:db, active: use_midi_out, matches: "all"});
+midi_outs = new MidiOuts({db:db, active: use_midi_out, matches: "all", waitfor : midi_waitfor_portnames});
 midi_outs.init();
 
 
