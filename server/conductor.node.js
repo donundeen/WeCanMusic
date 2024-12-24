@@ -912,9 +912,7 @@ function resetFluidSynth(){
         statusmelodies.midi_hardware_engine = midi_hardware_engine;
         orchestra.midi_hardware_engine = midi_hardware_engine;
         orchestra.resendInstrumentsBankProgramChannel();
-        statusmelodies.playready();
-    
-        
+        statusmelodies.playready();  
     },5000);    
 }
 

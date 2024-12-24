@@ -61,6 +61,8 @@ class MidiOuts {
         }        
     }
 
+
+
     get_midi_portnames(){
 
         let waiting = true;
@@ -70,16 +72,21 @@ class MidiOuts {
             for(let i = 0; i<midi_outputs.length; i++){
                 this.portnames.push(midi_outputs[i]);
             }
-            let result = this.waitfor.filter(regex => this.portnames.some(portname => new RegExp(regex).test(portname)));
-            console.log("result", result);
-            if(result.length == this.waitfor.length){
+            if(this.waitfor == "all"){
                 waiting = false;
             }else{
-                
+                let result = this.waitfor.filter(regex => this.portnames.some(portname => new RegExp(regex).test(portname)));
+                console.log("result", result);
+                if(result.length == this.waitfor.length){
+                    waiting = false;
+                }else{
+                    this.db.log("waiting for portnames", this.waitfor, "result", result);
+                }
             }
         }
         return this.portnames;
     }
+
 
     filter_portnames(regex_array){
         let result = this.portnames.filter(portname => regex_array.some(pattern => new RegExp(pattern).test(portname)));

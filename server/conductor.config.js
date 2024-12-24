@@ -21,7 +21,7 @@ var config = {
     "UDPLISTENPORT" : 7005,
     "WEBSOCKET_PORT" : 80,
     "WEBSERVER_PORT" : 80,
-    "HTTPS" : true,
+    "HTTPS" : false,
     "HTTPS_WEBSOCKET_PORT" : 443,
     "HTTPS_WEBSERVER_PORT" : 443,
     "quantize_time" : false // or array of note length names ("QN, N16, N83, etc")

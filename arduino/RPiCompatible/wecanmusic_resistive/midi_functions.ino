@@ -28,17 +28,24 @@
 ////////////////////////////
 // MIDI FUNCTIONS
 void midi_setup(){
+  VS1053_MIDI.begin(31250); // MIDI uses a 'strange baud rate'
   for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
     midi_setup(vindex);
   }
 }
 
 void midi_setup(int vindex){
-  VS1053_MIDI.begin(31250); // MIDI uses a 'strange baud rate'
-  
-  midiSetChannelBank(vindex, VS1053_BANK_MELODY);
+
   midiSetChannelVolume(vindex, 127);
-  midiSetChannelProgram(vindex, midi_program[vindex]);
+
+  try{
+    midiSetChannelBank(vindex, midi_bank[vindex]);  
+    midiSetChannelProgram(vindex, midi_program[vindex]);  //
+  }catch(const char* error){
+    Serial.println("unable to set stored bank and program");
+    midiSetChannelBank(vindex, VS1053_BANK_MELODY);
+    midiSetChannelProgram(vindex, 0);
+  }
 }
 
 // Makenote: pith, velocity, duration
