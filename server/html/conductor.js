@@ -1,6 +1,6 @@
 
 //const WEBSOCKET_PORT = 80;
-let USE_HTTPS = true;
+let USE_HTTPS = false;
 let WEBSOCKET_PORT = 80;
 let WEBSOCKET_PROTOCOL = "ws://";
 if(USE_HTTPS){
