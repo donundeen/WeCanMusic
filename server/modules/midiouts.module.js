@@ -66,6 +66,8 @@ class MidiOuts {
             console.log("result", result);
             if(result.length == this.waitfor.length){
                 waiting = false;
+            }else{
+                
             }
         }
         return this.portnames;
