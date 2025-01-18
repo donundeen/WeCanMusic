@@ -63,7 +63,7 @@ class Transport {
     setNoteLengths(){
         // set note constant lengths, depending on bpms
         this.notelength_values = [];
-        this.notelengths.QN = this.bpmToMS();
+        this.notelengths.QN = this.bpmToMS(this.bpm);
         this.notelengths.WN = this.notelengths.QN * 4;
         this.notelengths.HN = this.notelengths.QN * 2;
         this.notelengths.N8 = this.notelengths.QN / 2;
