@@ -351,11 +351,15 @@ $(function() {
             console.log("updating form");
             let instr = $("#"+id);
             let midi_voice = options.data.filter((item)=>item.name=="midi_voice")[0].value;
+            let midi_bank = options.data.filter((item)=>item.name=="midi_bank")[0].value;
+            let midi_program = options.data.filter((item)=>item.name=="midi_program")[0].value;
+            midi_voice = midi_bank + ":"+midi_program; // this should already be true, but in case it's not, we take midi_bank and midi_program as the true values.
             let midimin = options.data.filter((item)=>item.name=="midimin")[0].value;
             let midimax = options.data.filter((item)=>item.name=="midimax")[0].value;
             let midi_nlen = options.data.filter((item)=>item.name=="midi_nlen")[0].value;
             let midi_vol = options.data.filter((item)=>item.name=="midi_vol")[0].value;
-            [midi_bank, midi_program] = midi_voice.split(":");
+            
+            //[midi_bank, midi_program] = midi_voice.split(":");
             midi_bank = parseInt(midi_bank);
             midi_program = parseInt(midi_program);            
             let midi_voice_index = voicelist.findIndex((v)=>{

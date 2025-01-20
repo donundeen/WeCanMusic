@@ -162,6 +162,7 @@ class Instrument {
 
     set midi_program(program){
         this._midi_program = parseInt(program);
+        this._midi_voice = this._midi_bank +":"+ this._midi_program;
         this.midiSetBankProgram();
     }
     get midi_program(){
@@ -170,6 +171,7 @@ class Instrument {
 
     set midi_bank(bank){
         this._midi_bank = parseInt(bank);
+        this._midi_voice = this._midi_bank +":"+ this._midi_program;        
         this.midiSetBankProgram(); // program and bank might come in reverse order, better to set it both times; at least the second time you set it the bank and program will be legit.
     }
 
