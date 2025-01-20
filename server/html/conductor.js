@@ -62,9 +62,9 @@ $(function() {
     }
 
     ws.onmessage = function(event) {
-        console.log("got message "+ event);
+//        console.log("got message "+ event);
         msg = JSON.parse(event.data);
-        console.log(msg.address);
+//        console.log(msg.address);
 
         if(msg.address == "score"){
             updateScore(msg.data);
