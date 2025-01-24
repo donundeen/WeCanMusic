@@ -35,6 +35,7 @@
             align-items: center; /* Center text vertically */
             justify-content: center; /* Center text horizontally */
             position: relative; /* For positioning the number */
+            border-radius: 4px;
         }
         .selected {
             background-color: lightcoral; /* Light red color for selected bars */
@@ -63,7 +64,7 @@
             margin: 0;
             display: flex;
             align-items: center; /* Center text vertically */
-            justify-content: center; /* Center text horizontally */
+            justify-content: flex-start; /* Align text to the left */
             position: absolute; /* Position it over the bar */
             top: 0; /* Align to the top */
             left: 0; /* Align to the left */
@@ -159,6 +160,7 @@
                 // Double-click to edit
                 bar.addEventListener('dblclick', () => {
                     const textDiv = bar.querySelector('.text');
+                    bar.classList.add("editing");
                     const currentText = textDiv.innerText;
                     const input = document.createElement('input');
                     input.value = currentText;
@@ -170,12 +172,16 @@
                     // Handle enter key to save changes
                     input.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter') {
+                            console.log("enter in text");
+                            bar.classList.remove("editing");
                             textDiv.innerText = input.value; // Set the text div to the input value
                         }
                     });
 
                     // Handle blur event to save changes when input loses focus
                     input.addEventListener('blur', () => {
+                        console.log("blur in text");
+                        bar.classList.remove("editing");
                         textDiv.innerText = input.value; // Set the text div to the input value
                     });
                 });
@@ -231,6 +237,48 @@
                                 parent.insertBefore(selectedBar, previousBar); // Move each selected bar before the previous bar
                             });
                             updateNumbers(); // Update numbering after moving
+                        }
+                    }
+                } else if (e.key === 'Enter') { // Open the first selected element for editing
+                    const selectedBars = Array.from(document.querySelectorAll('.bar.selected'));
+                    console.log("enter in score");
+                    console.log("selectedBars", selectedBars);
+                    if (selectedBars.length > 0) {
+                        const firstSelectedBar = selectedBars[0];
+                        console.log("firstSelectedBar", firstSelectedBar);
+                        const textDiv = firstSelectedBar.querySelector('.text');
+                        console.log("textDiv", textDiv);
+                        const currentInput = textDiv.querySelector('input');
+                        console.log("currentInput", currentInput);
+                        if (currentInput) {
+                            console.log("is current input");
+                            // If already editing, save the text and close the input
+                            textDiv.innerText = currentInput.value; // Save the text
+                        } else {
+                            // Open for editing
+                            const currentText = textDiv.innerText;
+                            const input = document.createElement('input');
+                            input.value = currentText;
+                            input.className = 'edit-input';
+                            textDiv.innerHTML = ''; // Clear the text div content
+                            textDiv.appendChild(input);
+                            input.focus();
+
+                            // Handle enter key to save changes
+                            input.addEventListener('keydown', (e) => {
+                                if (e.key === 'Enter') {
+                                    firstSelectedBar.classList.remove("editing");                                    
+                                    console.log("enter in input 1 ");
+                                    textDiv.innerText = input.value; // Set the text div to the input value
+                                }
+                            });
+
+                            // Handle blur event to save changes when input loses focus
+                            input.addEventListener('blur', () => {
+                                firstSelectedBar.classList.remove("editing");                                    
+                                console.log("blur in input 1 ");
+                                textDiv.innerText = input.value; // Set the text div to the input value
+                            });
                         }
                     }
                 }
