@@ -203,6 +203,36 @@
                         scoreDiv.insertBefore(newBar, scoreDiv.firstChild); // Add before all other bars
                     }
                     updateNumbers(); // Update numbering after addition
+                } else if (e.key === 'ArrowRight') { // Add this block for moving selected bars forward
+                    let selectedBars = document.querySelectorAll('.bar.selected');
+                    selectedBars = Array.from(selectedBars).reverse();
+                    selectedBars.forEach(selectedBar => {
+                        if(!selectedBar.previousElementSibling ||!selectedBar.previousElementSibling.classList.contains('selected')){    
+                            let nextBar = selectedBar.nextElementSibling;
+                            while(nextBar && nextBar.classList.contains('selected')){
+                                nextBar = nextBar.nextElementSibling;
+                            }
+                            if (nextBar && nextBar.classList.contains('bar')) {
+                                selectedBar.parentNode.insertBefore(nextBar, selectedBar); // Move next bar before the selected bar
+                            }
+                        }
+                    });
+                    updateNumbers(); // Update numbering after moving
+                 } else if (e.key === 'ArrowLeft') { // Move selected bars backward
+                    const selectedBars = Array.from(document.querySelectorAll('.bar.selected'));
+                    if (selectedBars.length > 0) {
+                        let firstSelectedBar = selectedBars[0];
+                        let previousBar = firstSelectedBar.previousElementSibling;
+
+                        if (previousBar && previousBar.classList.contains('bar')) {
+                            selectedBars.forEach(selectedBar => {
+                                previousBar = selectedBar.previousElementSibling;
+                                const parent = selectedBar.parentNode;
+                                parent.insertBefore(selectedBar, previousBar); // Move each selected bar before the previous bar
+                            });
+                            updateNumbers(); // Update numbering after moving
+                        }
+                    }
                 }
             });
         });
