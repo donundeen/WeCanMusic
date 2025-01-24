@@ -34,6 +34,7 @@
             display: flex;
             align-items: center; /* Center text vertically */
             justify-content: center; /* Center text horizontally */
+            position: relative; /* For positioning the number */
         }
         .selected {
             background-color: lightcoral; /* Light red color for selected bars */
@@ -47,19 +48,66 @@
             font-size: 16px;
             text-align: center;
         }
+        .number {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 12px;
+            color: white; /* Color for the number */
+        }
+        .text {
+            height: 100%; /* Same height as the bar */
+            width: 100%; /* Same width as the bar */
+            border: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center; /* Center text vertically */
+            justify-content: center; /* Center text horizontally */
+            position: absolute; /* Position it over the bar */
+            top: 0; /* Align to the top */
+            left: 0; /* Align to the left */
+            padding-left: 20px; /* Leave space for the number */
+            box-sizing: border-box; /* Include padding in width/height */
+        }
     </style>
     <script>
         // Inline JavaScript
         document.addEventListener('DOMContentLoaded', function() {
-            const bars = document.querySelectorAll('.bar');
+            const barsContainer = document.querySelector('.score');
             let lastSelectedIndex = -1;
+
+            function updateNumbers() {
+                const bars = document.querySelectorAll('.bar');
+                bars.forEach((bar, index) => {
+                    const numberElement = bar.querySelector('.number');
+                    if (numberElement) {
+                        numberElement.innerText = index + 1; // Update the number
+                    } else {
+                        const newNumberElement = document.createElement('div');
+                        newNumberElement.className = 'number';
+                        newNumberElement.innerText = index + 1; // Set the number
+                        bar.appendChild(newNumberElement);
+                    }
+                });
+            }
+
+            for (let i = 0; i < 8; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.innerHTML = `<div class="number"></div><div class="text"></div>`; // Create number and text divs
+                barsContainer.appendChild(bar);
+            }
+
+            const bars = document.querySelectorAll('.bar');
+            updateNumbers(); // Initial numbering
 
             bars.forEach((bar, index) => {
                 bar.setAttribute('draggable', true);
 
                 bar.addEventListener('dragstart', (e) => {
                     const selectedBars = document.querySelectorAll('.bar.selected');
-                    const selectedTexts = Array.from(selectedBars).map(selectedBar => selectedBar.innerText);
+                    const selectedTexts = Array.from(selectedBars).map(selectedBar => selectedBar.querySelector('.text').innerText);
                     e.dataTransfer.setData('text/plain', JSON.stringify(selectedTexts));
                     e.dataTransfer.effectAllowed = 'move';
                 });
@@ -69,22 +117,27 @@
                 });
 
                 bar.addEventListener('drop', (e) => {
-                    console.log('drop');
+                    console.log("drop");
                     e.preventDefault();
                     const draggedTexts = JSON.parse(e.dataTransfer.getData('text/plain'));
-                    const target = e.target;
+                    let target = e.target;
+                    if(!target.classList.contains('bar')){
+                        target = target.parentNode;
+                    }
                     console.log(target);
                     if (target.classList.contains('bar')) {
                         const parent = target.parentNode;
-                        const targetIndex = Array.from(parent.children).indexOf(target);
                         const selectedBars = Array.from(parent.querySelectorAll('.bar.selected'));
-                        console.log(selectedBars);
+                        const targetIndex = Array.from(parent.children).indexOf(target);
                         // Insert dragged elements in the order they were selected
+                        /*DO NOT CHANGE THIS CODE*/
                         selectedBars.forEach(draggedElement => {
                             console.log(draggedElement);
-//                            parent.insertBefore(draggedElement, parent.children[targetIndex]);
                             parent.insertBefore(draggedElement, target);
                         });
+                        /* END DO NOT CHANGE THIS CODE*/
+
+                        updateNumbers(); // Update numberinshg after drop
                     }
                 });
 
@@ -105,24 +158,25 @@
 
                 // Double-click to edit
                 bar.addEventListener('dblclick', () => {
-                    const currentText = bar.innerText;
+                    const textDiv = bar.querySelector('.text');
+                    const currentText = textDiv.innerText;
                     const input = document.createElement('input');
                     input.value = currentText;
                     input.className = 'edit-input';
-                    bar.innerHTML = ''; // Clear the bar content
-                    bar.appendChild(input);
+                    textDiv.innerHTML = ''; // Clear the text div content
+                    textDiv.appendChild(input);
                     input.focus();
 
                     // Handle enter key to save changes
                     input.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter') {
-                            bar.innerText = input.value; // Set the bar text to the input value
+                            textDiv.innerText = input.value; // Set the text div to the input value
                         }
                     });
 
                     // Handle blur event to save changes when input loses focus
                     input.addEventListener('blur', () => {
-                        bar.innerText = input.value; // Set the bar text to the input value
+                        textDiv.innerText = input.value; // Set the text div to the input value
                     });
                 });
             });
@@ -134,11 +188,12 @@
                     selectedBars.forEach(selectedBar => {
                         selectedBar.remove();
                     });
+                    updateNumbers(); // Update numbering after deletion
                 } else if (e.key === '+') {
                     const selectedBars = document.querySelectorAll('.bar.selected');
                     const newBar = document.createElement('div');
                     newBar.className = 'bar';
-                    newBar.innerText = `Item ${document.querySelectorAll('.bar').length + 1}`; // Incremental item name
+                    newBar.innerHTML = `<div class="number"></div><div class="text"></div>`; // Create number and text divs
 
                     if (selectedBars.length > 0) {
                         const lastSelectedBar = selectedBars[selectedBars.length - 1];
@@ -147,6 +202,7 @@
                         const scoreDiv = document.querySelector('.score');
                         scoreDiv.insertBefore(newBar, scoreDiv.firstChild); // Add before all other bars
                     }
+                    updateNumbers(); // Update numbering after addition
                 }
             });
         });
@@ -156,14 +212,7 @@
     <h1>Welcome to Your Page</h1>
     <p>This is a basic HTML structure.</p>
     <div class="score">
-        <div class="bar">Item 1</div>
-        <div class="bar">Item 2</div>
-        <div class="bar">Item 3</div>
-        <div class="bar">Item 4</div>
-        <div class="bar">Item 5</div>
-        <div class="bar">Item 6</div>
-        <div class="bar">Item 7</div>
-        <div class="bar">Item 8</div>
+        <!-- Bar elements will be dynamically created in JavaScript -->
     </div>
     <!-- Add your content here -->
 </body>
