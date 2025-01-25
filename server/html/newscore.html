@@ -172,7 +172,7 @@
                     // Handle enter key to save changes
                     input.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter') {
-                            console.log("enter in text");
+                            e.stopPropagation();
                             bar.classList.remove("editing");
                             textDiv.innerText = input.value; // Set the text div to the input value
                         }
@@ -180,7 +180,6 @@
 
                     // Handle blur event to save changes when input loses focus
                     input.addEventListener('blur', () => {
-                        console.log("blur in text");
                         bar.classList.remove("editing");
                         textDiv.innerText = input.value; // Set the text div to the input value
                     });
@@ -267,6 +266,7 @@
                             // Handle enter key to save changes
                             input.addEventListener('keydown', (e) => {
                                 if (e.key === 'Enter') {
+                                    e.stopPropagation();
                                     firstSelectedBar.classList.remove("editing");                                    
                                     console.log("enter in input 1 ");
                                     textDiv.innerText = input.value; // Set the text div to the input value
