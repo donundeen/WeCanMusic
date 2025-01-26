@@ -82,24 +82,12 @@
         let lastSelectedIndex = -1;
         let highlightedBar = null; // Variable to keep track of the currently highlighted bar
         let highlightedBeat = null; // Variable to keep track of the currently highlighted beat
+        let copiedBars = []; // Array to hold copied bar elements
 
         document.addEventListener('DOMContentLoaded', function() {
             const barsContainer = document.querySelector('.score');
 
-            function updateNumbers() {
-                const bars = document.querySelectorAll('.bar');
-                bars.forEach((bar, index) => {
-                    const numberElement = bar.querySelector('.number');
-                    if (numberElement) {
-                        numberElement.innerText = index + 1; // Update the number
-                    } else {
-                        const newNumberElement = document.createElement('div');
-                        newNumberElement.className = 'number';
-                        newNumberElement.innerText = index + 1; // Set the number
-                        bar.appendChild(newNumberElement);
-                    }
-                });
-            }
+
 
             for (let i = 0; i < 8; i++) {
                 bar = createBar();
@@ -162,15 +150,21 @@
                 } else if (e.key === 'Enter') { // Open the first selected element for editing
                     console.log("enter in score");
                    
+                } else if (e.key === 'c' && e.ctrlKey) { // Ctrl + C to copy
+                    copySelectedBars();
+                } else if (e.key === 'v' && e.ctrlKey) { // Ctrl + V to paste
+                    pasteCopiedBars();
                 }
             });
 
-            runTestTime();
+            //runTestTime();
+
+            textToScore("1:1 Gm\n2:1 Fm\n6:2 A M\n8:1 Fm\n9:1 Gm");
         });
 
 
         function createBar(){
-            const bar = document.createElement('div');
+            let bar = document.createElement('div');
                 bar.className = 'bar';
                 bar.innerHTML = `<div class="number"></div>
                                  <div class="beat" contenteditable="true"></div>
@@ -179,6 +173,12 @@
                                  <div class="beat" contenteditable="true"></div>`; // Create number and beat divs
                                  bar.setAttribute('draggable', true);
 
+            attachBarEvents(bar);
+            return bar;
+        }
+
+
+        function attachBarEvents(bar){
             bar.addEventListener('dragstart', (e) => {
                 const selectedBars = document.querySelectorAll('.bar.selected');
                 const selectedTexts = Array.from(selectedBars).map(selectedBar => {
@@ -247,7 +247,6 @@
         }
 
 
-
         function runTestTime(){
             let numBars =  document.querySelectorAll('.bar').length;
             console.log("numBars: " + numBars);
@@ -303,6 +302,114 @@
 
         // Example usage: highlightBeat(1, 2); // Highlights the second beat of the first bar
         // Call this function with the specific bar number and beat number you want to highlight
+
+        // Function to copy selected bars
+        function copySelectedBars() {
+            console.log("copying selected bars");
+            const selectedBars = document.querySelectorAll('.bar.selected');
+            copiedBars = Array.from(selectedBars).map(bar => {
+                let clonedBar = bar.cloneNode(true); // Clone the selected bar
+                return clonedBar; // Return the cloned bar
+            });
+        }
+
+        // Function to paste copied bars
+        function pasteCopiedBars() {
+            console.log("pasting copied bars");
+            const barsContainer = document.querySelector('.score');
+            const selectedBars = document.querySelectorAll('.bar.selected');
+            
+            if (selectedBars.length > 0) {
+                const lastSelectedBar = selectedBars[selectedBars.length - 1];
+                copiedBars.forEach(copiedBar => {
+                    const newBar = copiedBar.cloneNode(true); // Clone the copied bar
+                    attachBarEvents(newBar);
+
+                    barsContainer.insertBefore(newBar, lastSelectedBar.nextSibling); // Insert after the last selected bar
+                });
+                updateNumbers(); // Update numbering after pasting
+            }
+        }
+
+        function updateNumbers() {
+                const bars = document.querySelectorAll('.bar');
+                bars.forEach((bar, index) => {
+                    const numberElement = bar.querySelector('.number');
+                    if (numberElement) {
+                        numberElement.innerText = index + 1; // Update the number
+                    } else {
+                        const newNumberElement = document.createElement('div');
+                        newNumberElement.className = 'number';
+                        newNumberElement.innerText = index + 1; // Set the number
+                        bar.appendChild(newNumberElement);
+                    }
+                });
+
+                console.log(scoreToText());
+            }
+
+        function scoreToText() {
+            const bars = document.querySelectorAll('.bar');
+            const lines = []; // Array to hold the formatted lines
+
+            bars.forEach((bar, barIndex) => {
+                const beats = bar.querySelectorAll('.beat');
+                beats.forEach((beat, beatIndex) => {
+                    const textContent = beat.innerText.trim(); // Get the text content of the beat
+                    if (textContent) { // Check if the beat has text content
+                        const line = `${barIndex + 1}:${beatIndex + 1} ${textContent}`; // Format the line
+                        lines.push(line); // Add the line to the array
+                    }
+                });
+            });
+
+            return lines.join('\n'); // Return the formatted lines as a single string
+        }
+
+        function textToScore(text) {
+            const barsContainer = document.querySelector('.score');
+            barsContainer.innerHTML = ''; // Clear existing content in the score div
+
+            const lines = text.trim().split('\n'); // Split the input text into lines
+
+            // Create a map to hold the bars
+            const barsMap = {};
+
+            lines.forEach(line => {
+                const [barBeat, ...contentParts] = line.split(' ');
+                const [barNumber, beatNumber] = barBeat.split(':').map(Number); // Parse bar and beat numbers
+                const textContent = contentParts.join(' '); // Join the remaining parts as text content
+
+                // Create the bar if it doesn't exist
+                if (!barsMap[barNumber]) {
+                    barsMap[barNumber] = createBar(); // Create a new bar
+                    barsContainer.appendChild(barsMap[barNumber]); // Append the new bar to the container
+                }
+
+                // Get the corresponding bar
+                const bar = barsMap[barNumber];
+
+                // Find the existing beat div based on beatNumber
+                const beats = bar.querySelectorAll('.beat');
+                const beatIndex = beatNumber - 1; // Convert to zero-based index
+
+                if (beats[beatIndex]) {
+                    // Set the text content of the existing beat div
+                    beats[beatIndex].innerText = textContent; // Set the text content
+                } else {
+                    // If the beat div does not exist, create it
+                    const beatDiv = document.createElement('div');
+                    beatDiv.className = 'beat';
+                    beatDiv.contentEditable = true; // Make the beat editable
+                    beatDiv.innerText = textContent; // Set the text content
+                    bar.appendChild(beatDiv); // Append the new beat to the bar
+                }
+            });
+
+            updateNumbers(); // Update numbering after creating bars and beats
+        }
+
+        // Example usage: textToScore("1:1 Hello\n1:2 World\n2:1 Foo\n2:2 Bar");
     </script>
 </head>
 <body>
