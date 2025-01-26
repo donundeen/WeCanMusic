@@ -32,22 +32,12 @@
             margin: 2px;
             cursor: move; /* Change cursor to indicate draggable */
             display: flex;
-            align-items: center; /* Center text vertically */
-            justify-content: center; /* Center text horizontally */
             position: relative; /* For positioning the number */
-            border-radius: 4px;
+            white-space: nowrap; /* Prevent text from wrapping */
+            overflow: visible; /* Allow overflowing text to be visible */
         }
         .selected {
             background-color: lightcoral; /* Light red color for selected bars */
-        }
-        .edit-input {
-            height: 32px;
-            width: 128px;
-            border: none;
-            padding: 0;
-            margin: 0;
-            font-size: 16px;
-            text-align: center;
         }
         .number {
             position: absolute;
@@ -56,27 +46,31 @@
             font-size: 12px;
             color: white; /* Color for the number */
         }
-        .text {
-            height: 100%; /* Same height as the bar */
-            width: 100%; /* Same width as the bar */
+        .beat {
+            flex: 1; /* Equal size for all beat divs */
+            margin-left: 5px; /* Small margin for the number */
+            display: flex;
+            align-items: center; /* Center text vertically */
+            justify-content: center; /* Center text horizontally */
+            border: 1px solid black; /* Optional: border for visual separation */
+            
+        }
+        .edit-input {
+            height: 100%; /* Full height of the beat div */
+            width: 90%; /* Slightly less than full width */
             border: none;
             padding: 0;
             margin: 0;
-            display: flex;
-            align-items: center; /* Center text vertically */
-            justify-content: flex-start; /* Align text to the left */
-            position: absolute; /* Position it over the bar */
-            top: 0; /* Align to the top */
-            left: 0; /* Align to the left */
-            padding-left: 20px; /* Leave space for the number */
-            box-sizing: border-box; /* Include padding in width/height */
+            font-size: 16px;
+            text-align: center;
         }
     </style>
     <script>
+        let lastSelectedIndex = -1;
         // Inline JavaScript
+
         document.addEventListener('DOMContentLoaded', function() {
             const barsContainer = document.querySelector('.score');
-            let lastSelectedIndex = -1;
 
             function updateNumbers() {
                 const bars = document.querySelectorAll('.bar');
@@ -94,97 +88,12 @@
             }
 
             for (let i = 0; i < 8; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                bar.innerHTML = `<div class="number"></div><div class="text"></div>`; // Create number and text divs
+                bar = createBar();
                 barsContainer.appendChild(bar);
             }
 
-            const bars = document.querySelectorAll('.bar');
             updateNumbers(); // Initial numbering
 
-            bars.forEach((bar, index) => {
-                bar.setAttribute('draggable', true);
-
-                bar.addEventListener('dragstart', (e) => {
-                    const selectedBars = document.querySelectorAll('.bar.selected');
-                    const selectedTexts = Array.from(selectedBars).map(selectedBar => selectedBar.querySelector('.text').innerText);
-                    e.dataTransfer.setData('text/plain', JSON.stringify(selectedTexts));
-                    e.dataTransfer.effectAllowed = 'move';
-                });
-
-                bar.addEventListener('dragover', (e) => {
-                    e.preventDefault(); // Allow drop
-                });
-
-                bar.addEventListener('drop', (e) => {
-                    console.log("drop");
-                    e.preventDefault();
-                    const draggedTexts = JSON.parse(e.dataTransfer.getData('text/plain'));
-                    let target = e.target;
-                    if(!target.classList.contains('bar')){
-                        target = target.parentNode;
-                    }
-                    console.log(target);
-                    if (target.classList.contains('bar')) {
-                        const parent = target.parentNode;
-                        const selectedBars = Array.from(parent.querySelectorAll('.bar.selected'));
-                        const targetIndex = Array.from(parent.children).indexOf(target);
-                        // Insert dragged elements in the order they were selected
-                        /*DO NOT CHANGE THIS CODE*/
-                        selectedBars.forEach(draggedElement => {
-                            console.log(draggedElement);
-                            parent.insertBefore(draggedElement, target);
-                        });
-                        /* END DO NOT CHANGE THIS CODE*/
-
-                        updateNumbers(); // Update numberinshg after drop
-                    }
-                });
-
-                bar.addEventListener('click', (e) => {
-                    if (e.shiftKey && lastSelectedIndex !== -1) {
-                        // Select range of bars
-                        const start = Math.min(lastSelectedIndex, index);
-                        const end = Math.max(lastSelectedIndex, index);
-                        for (let i = start; i <= end; i++) {
-                            bars[i].classList.add('selected');
-                        }
-                    } else {
-                        // Toggle selection of the clicked bar
-                        bar.classList.toggle('selected');
-                    }
-                    lastSelectedIndex = index; // Update last selected index
-                });
-
-                // Double-click to edit
-                bar.addEventListener('dblclick', () => {
-                    const textDiv = bar.querySelector('.text');
-                    bar.classList.add("editing");
-                    const currentText = textDiv.innerText;
-                    const input = document.createElement('input');
-                    input.value = currentText;
-                    input.className = 'edit-input';
-                    textDiv.innerHTML = ''; // Clear the text div content
-                    textDiv.appendChild(input);
-                    input.focus();
-
-                    // Handle enter key to save changes
-                    input.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter') {
-                            e.stopPropagation();
-                            bar.classList.remove("editing");
-                            textDiv.innerText = input.value; // Set the text div to the input value
-                        }
-                    });
-
-                    // Handle blur event to save changes when input loses focus
-                    input.addEventListener('blur', () => {
-                        bar.classList.remove("editing");
-                        textDiv.innerText = input.value; // Set the text div to the input value
-                    });
-                });
-            });
 
             // Event listener for deleting selected bars
             document.addEventListener('keydown', (e) => {
@@ -196,9 +105,7 @@
                     updateNumbers(); // Update numbering after deletion
                 } else if (e.key === '+') {
                     const selectedBars = document.querySelectorAll('.bar.selected');
-                    const newBar = document.createElement('div');
-                    newBar.className = 'bar';
-                    newBar.innerHTML = `<div class="number"></div><div class="text"></div>`; // Create number and text divs
+                    const newBar = createBar();
 
                     if (selectedBars.length > 0) {
                         const lastSelectedBar = selectedBars[selectedBars.length - 1];
@@ -239,51 +146,88 @@
                         }
                     }
                 } else if (e.key === 'Enter') { // Open the first selected element for editing
-                    const selectedBars = Array.from(document.querySelectorAll('.bar.selected'));
                     console.log("enter in score");
-                    console.log("selectedBars", selectedBars);
-                    if (selectedBars.length > 0) {
-                        const firstSelectedBar = selectedBars[0];
-                        console.log("firstSelectedBar", firstSelectedBar);
-                        const textDiv = firstSelectedBar.querySelector('.text');
-                        console.log("textDiv", textDiv);
-                        const currentInput = textDiv.querySelector('input');
-                        console.log("currentInput", currentInput);
-                        if (currentInput) {
-                            console.log("is current input");
-                            // If already editing, save the text and close the input
-                            textDiv.innerText = currentInput.value; // Save the text
-                        } else {
-                            // Open for editing
-                            const currentText = textDiv.innerText;
-                            const input = document.createElement('input');
-                            input.value = currentText;
-                            input.className = 'edit-input';
-                            textDiv.innerHTML = ''; // Clear the text div content
-                            textDiv.appendChild(input);
-                            input.focus();
-
-                            // Handle enter key to save changes
-                            input.addEventListener('keydown', (e) => {
-                                if (e.key === 'Enter') {
-                                    e.stopPropagation();
-                                    firstSelectedBar.classList.remove("editing");                                    
-                                    console.log("enter in input 1 ");
-                                    textDiv.innerText = input.value; // Set the text div to the input value
-                                }
-                            });
-
-                            // Handle blur event to save changes when input loses focus
-                            input.addEventListener('blur', () => {
-                                firstSelectedBar.classList.remove("editing");                                    
-                                console.log("blur in input 1 ");
-                                textDiv.innerText = input.value; // Set the text div to the input value
-                            });
-                        }
-                    }
+                   
                 }
             });
         });
+
+        function createBar(){
+            const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.innerHTML = `<div class="number"></div>
+                                 <div class="beat" contenteditable="true"></div>
+                                 <div class="beat" contenteditable="true"></div>
+                                 <div class="beat" contenteditable="true"></div>
+                                 <div class="beat" contenteditable="true"></div>`; // Create number and beat divs
+                                 bar.setAttribute('draggable', true);
+
+            bar.addEventListener('dragstart', (e) => {
+                const selectedBars = document.querySelectorAll('.bar.selected');
+                const selectedTexts = Array.from(selectedBars).map(selectedBar => {
+                    return Array.from(selectedBar.querySelectorAll('.beat')).map(beat => beat.innerText).join(', ');
+                });
+                e.dataTransfer.setData('text/plain', JSON.stringify(selectedTexts));
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            bar.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Allow drop
+            });
+
+            bar.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const draggedTexts = JSON.parse(e.dataTransfer.getData('text/plain'));
+                let target = e.target;
+                if(!target.classList.contains('bar')){
+                    target = target.parentNode;
+                }
+                console.log(target);
+                if (target.classList.contains('bar')) {
+                    const parent = target.parentNode;
+                    const targetIndex = Array.from(parent.children).indexOf(target);
+                    const selectedBars = Array.from(parent.querySelectorAll('.bar.selected'));
+
+                    // Insert dragged elements in the order they were selected
+                    /*DO NOT CHANGE THIS CODE*/
+                    selectedBars.forEach(draggedElement => {
+                        console.log(draggedElement);
+                        parent.insertBefore(draggedElement, target);
+                    });
+                    /* END DO NOT CHANGE THIS CODE*/
+
+                    updateNumbers(); // Update numberinshg after drop
+                }
+            });
+
+            bar.addEventListener('click', (e) => {
+                if (e.shiftKey && lastSelectedIndex !== -1) {
+                    // Select range of bars
+                    const bars = document.querySelectorAll('.bar');
+                    const currentIndex = Array.from(bars).indexOf(bar);
+                    const start = Math.min(lastSelectedIndex, currentIndex);
+                    const end = Math.max(lastSelectedIndex, currentIndex);
+                    for (let i = start; i <= end; i++) {
+                        bars[i].classList.add('selected');
+                    }
+                } else {
+                    // Toggle selection of the clicked bar
+                    bar.classList.toggle('selected');
+                }
+                lastSelectedIndex = Array.from(document.querySelectorAll('.bar')).indexOf(bar); // Update last selected index
+            });
+
+            // Add event listener for the beat divs
+            const beats = bar.querySelectorAll('.beat');
+            beats.forEach(beat => {
+                beat.addEventListener('keydown', (e) => {
+                    if (e.key === 'Delete' || e.key === 'Backspace' ||  e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                        e.stopPropagation(); // Prevent the event from bubbling up
+                    }
+                });
+            });
+            return bar;
+        }
     </script>
 </head>
 <body>
