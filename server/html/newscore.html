@@ -27,34 +27,40 @@
         }
         .bar {
             height: 32px;
-            width: 128px;
+            width: auto;
             background-color: #007BFF;
             margin: 2px;
+            padding-left: 4px;
+            padding-right: 2px;
             cursor: move; /* Change cursor to indicate draggable */
-            display: flex;
-            position: relative; /* For positioning the number */
-            white-space: nowrap; /* Prevent text from wrapping */
-            overflow: visible; /* Allow overflowing text to be visible */
+            position: relative; /* Set position to relative for absolute positioning of children */
+            display: flex; /* Ensure flex display is set */
+            flex-wrap: nowrap; /* Prevent wrapping of child elements */
+            align-items: flex-start; /* Align items to the start */
         }
+        .beat {
+            flex: 0 1 auto;
+            min-width: 36px;
+            height: 85%;
+            white-space: nowrap;
+            overflow: visible;
+            margin-left: 5px;
+            margin-top: 2px;
+            border: 1px solid black;
+            background-color: #007BFF;
+        }
+
         .selected {
             background-color: lightcoral; /* Light red color for selected bars */
         }
         .number {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            font-size: 12px;
-            color: white; /* Color for the number */
+            position: absolute; /* Position the number div absolutely */
+            top: 2px; /* Adjust as needed */
+            left: 2px; /* Adjust as needed */
+            font-size: 12px; /* Keep the existing font size */
+            color: rgb(255, 255, 255); /* Keep the existing color */
         }
-        .beat {
-            flex: 1; /* Equal size for all beat divs */
-            margin-left: 5px; /* Small margin for the number */
-            display: flex;
-            align-items: center; /* Center text vertically */
-            justify-content: center; /* Center text horizontally */
-            border: 1px solid black; /* Optional: border for visual separation */
-            
-        }
+
         .edit-input {
             height: 100%; /* Full height of the beat div */
             width: 90%; /* Slightly less than full width */
@@ -64,10 +70,18 @@
             font-size: 16px;
             text-align: center;
         }
+
+        .highlighted-bar {
+            background-color: yellow; /* Highlight color for the bar */
+        }
+        .highlighted-beat {
+            background-color: yellow; /* Highlight color for the beat */
+        }
     </style>
     <script>
         let lastSelectedIndex = -1;
-        // Inline JavaScript
+        let highlightedBar = null; // Variable to keep track of the currently highlighted bar
+        let highlightedBeat = null; // Variable to keep track of the currently highlighted beat
 
         document.addEventListener('DOMContentLoaded', function() {
             const barsContainer = document.querySelector('.score');
@@ -150,7 +164,10 @@
                    
                 }
             });
+
+            runTestTime();
         });
+
 
         function createBar(){
             const bar = document.createElement('div');
@@ -228,6 +245,64 @@
             });
             return bar;
         }
+
+
+
+        function runTestTime(){
+            let numBars =  document.querySelectorAll('.bar').length;
+            console.log("numBars: " + numBars);
+            let currentBar = 1;
+            let currentBeat = 1;
+            
+            setInterval(() => {
+                console.log("highlighting beat " + currentBeat + " of bar " + currentBar);
+                highlightBeat(currentBar, currentBeat);
+                currentBeat++;
+                if(currentBeat > 4){
+                    currentBar++;
+                    currentBeat = 1;
+                }
+                if(currentBar > numBars){
+                    currentBar = 1;
+                }
+            }, 1000);
+        }
+
+
+        function highlightBeat(barNumber, beatNumber) {
+            // Unhighlight previously highlighted elements
+            if (highlightedBar) {
+                highlightedBar.classList.remove('highlighted-bar'); // Remove highlight class from the previously highlighted bar
+            }
+            if (highlightedBeat) {
+                highlightedBeat.classList.remove('highlighted-beat'); // Remove highlight class from the previously highlighted beat
+            }
+
+            // Find the bar element based on barNumber
+            const bars = document.querySelectorAll('.bar');
+            const bar = bars[barNumber - 1]; // Convert to zero-based index
+
+            if (bar) {
+                // Highlight the specified bar
+                bar.classList.add('highlighted-bar'); // Add highlight class to the bar
+
+                // Find the beat element based on beatNumber
+                const beats = bar.querySelectorAll('.beat');
+                const beat = beats[beatNumber - 1]; // Convert to zero-based index
+
+                if (beat) {
+                    // Highlight the specified beat
+                    beat.classList.add('highlighted-beat'); // Add highlight class to the beat
+                    highlightedBeat = beat; // Update the highlighted beat variable
+                }
+            }
+
+            // Update the highlighted bar variable
+            highlightedBar = bar; // Update the highlighted bar variable
+        }
+
+        // Example usage: highlightBeat(1, 2); // Highlights the second beat of the first bar
+        // Call this function with the specific bar number and beat number you want to highlight
     </script>
 </head>
 <body>
