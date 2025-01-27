@@ -382,8 +382,6 @@ class Orchestra {
         this.buildVoicelistOptions();
     }
 
-
-
     buildVoicelistOptions(){
         console.log("building voice list options");
         let voptions = $("<select class='voice_display' name='midi_voice'>");
