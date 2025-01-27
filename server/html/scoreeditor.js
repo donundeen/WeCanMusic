@@ -22,12 +22,26 @@ class NewScore {
     }
 
     setupEventListeners() {
+        let self = this;
+        
+        document.addEventListener('keydown', (e) => {
+            console.log("keydown", document.activeElement);
+        });
+             
+
+        this.barsContainer.addEventListener('focus', (e) => {
+            console.log("focus", e.target);
+        });
+
         this.barsContainer.addEventListener('keydown', (e) => {
+            console.log("keydown", e.key);
             if (e.key === 'c' && e.ctrlKey) { // Ctrl + C to copy
-                this.copySelectedBars();
+                console.log("copySelectedBars");
+                self.copySelectedBars();
             } else if (e.key === 'v' && e.ctrlKey) { // Ctrl + V to paste
-                this.pasteCopiedBars();
-                this.scoreChanged();
+                console.log("pasteCopiedBars");
+                self.pasteCopiedBars();
+                self.scoreChanged();
 
             } else if (e.key === 'Delete' || e.key === 'Backspace') {
                 const selectedBars = this.barsContainer.querySelectorAll('.bar.selected');
@@ -146,6 +160,8 @@ class NewScore {
         });
 
         bar.addEventListener('click', (e) => {
+            console.log(" bar click", e.target);
+            this.barsContainer.focus();
             if (e.shiftKey && this.lastSelectedIndex !== -1) {
                 // Select range of bars
                 const bars = this.barsContainer .querySelectorAll('.bar');
@@ -160,6 +176,8 @@ class NewScore {
                 bar.classList.toggle('selected');
             }
             this.lastSelectedIndex = Array.from(this.barsContainer.querySelectorAll('.bar')).indexOf(bar); // Update last selected index
+            this.barsContainer.focus();
+
         });
 
         // Add event listener for the beat divs
@@ -168,11 +186,17 @@ class NewScore {
         beats.forEach(beat => {
             let originalText = beat.innerText; // Store the original text content
 
+            beat.addEventListener('click', () => {
+                console.log("beat click", beat.innerText);
+            });
+
             beat.addEventListener('focus', () => {
+                console.log("beat focus", beat.innerText);
                 originalText = beat.innerText; // Update original text on focus
             });
 
             beat.addEventListener('blur', () => {
+                console.log("beat blur", beat.innerText);
                 if (beat.innerText !== originalText) {
                     // Trigger an event or perform an action if the text has changed
                     console.log(`Text changed in beat: ${beat.innerText}`);

@@ -9,28 +9,28 @@ class Transport {
     }
 
     init() {
-
+        let self = this;
         $(".play", this.transportContainer).click(function(){
-            if(this.playClicked){
-                this.playClicked();
+            if(self.playClicked){
+                self.playClicked();
             }
         });
 
         $(".stop", this.transportContainer).click(function(){
-            if(this.stopClicked){
-                this.stopClicked();
+            if(self.stopClicked){
+                self.stopClicked();
             }
         });
 
         $(".pause", this.transportContainer).click(function(){
-            if(this.pauseClicked){
-                this.pauseClicked();
+            if(self.pauseClicked){
+                self.pauseClicked();
             }
         });
 
         $(".reset", this.transportContainer).click(function(){
-            if(this.resetClicked){
-                this.resetClicked();
+            if(self.resetClicked){
+                self.resetClicked();
             }
         });
 
