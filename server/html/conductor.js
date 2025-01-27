@@ -29,19 +29,6 @@ $(function() {
     // remove port
     console.log(host);
 
-    let score = new NewScore('scoreDivID'); // Initialize with the ID of the score div
- //   score.textToScore("1:1 Gm\n2:1 Fm\n6:2 A M\n8:1 Fm\n9:1 Gm");
-
-    score.changeCallback = function(){
-        console.log("score changed");
-        sendScore();
-    }
-
-
-    let orchestra = new Orchestra("#orchestraDiv");
-    // some note characters: 
-    // ♭ 𝅘𝅥𝅮𝅗𝅥°♭𝅘𝅥𝅗𝅥𝅗 𝄼 𝄽 
-
     //  const ws = new WebSocket('ws://localhost:8080');
     //const ws = new WebSocket('ws://192.168.4.34:8080');
     //const ws = new WebSocket('ws://10.102.134.110:8080');
@@ -49,9 +36,84 @@ $(function() {
     console.log("trying to start websocket server ", websocketurl);
     let ws = new WebSocket(websocketurl);
 
-    orchestra.ws = ws;
-
     ws.wsready = false;  
+
+
+    /***************** SCORE EDITOR SETUP *****************/
+    let score = new NewScore('scoreDivID'); // Initialize with the ID of the score div
+ //   score.textToScore("1:1 Gm\n2:1 Fm\n6:2 A M\n8:1 Fm\n9:1 Gm");
+    score.changeCallback = function(){
+        console.log("score changed");
+        sendScore();
+    }
+    /***************** END SCORE EDITOR SETUP *****************/
+
+
+    /***************** ORCHESTRA SETUP *****************/
+    let orchestra = new Orchestra("#orchestraDiv");
+    // some note characters: 
+    // ♭ 𝅘𝅥𝅮𝅗𝅥°♭𝅘𝅥𝅗𝅥𝅗 𝄼 𝄽 
+    orchestra.ws = ws;
+    /***************** END ORCHESTRA SETUP *****************/
+
+
+    /***************** PERFORMANCE MANAGER SETUP*****************/
+    let performancemanager = new PerformanceManager("#performancemanager");
+
+    performancemanager.sendScoreCallback = function(){
+        let text = score.scoreToText();
+        let scorename = performancemanager.currentScoreName;
+        curscore = $(".scorenametext").val();
+        console.log("sending score ", scorename, text);
+        let msg = {scorename: scorename, 
+                text: text
+        }
+        message("savescore", msg);
+    }
+
+    performancemanager.sendPerformanceCallback = function(){
+        let performancename = performancemanager.currentPerformanceName;
+        console.log("sending performance ", performancename);
+        let msg = {performancename: performancename}
+        message("saveperformance", msg); 
+    }
+
+    performancemanager.getPerformanceCallback = function(performancename){
+        console.log("selecting   " + performancename);
+        message("loadperformance", performancename);        
+    }
+
+    performancemanager.getScoreCallback = function(scorename){
+        console.log("selecting   " + scorename);
+        message("loadscore", scorename);        
+    }
+    /***************** END PERFORMANCE MANAGER SETUPs*****************/
+
+
+
+    /***************** TRANSPORT SETUP *****************/
+    let transport = new Transport("#transportDiv");
+    /****** PLAYER CONTROLS */
+    transport.playClicked = function(){
+        message("play", 1);
+    }
+
+    transport.stopClicked = function(){
+        message("stop", 1);
+    }
+
+    transport.pauseClicked = function(){
+        message("pause", 1);
+    }
+
+    transport.resetClicked = function(){
+        message("reset", 1);
+    }
+    /****** END PLAYER CONTROLS */
+
+    /***************** END TRANSPORT SETUP *****************/   
+
+    
     // Browser WebSockets have slightly different syntax than `ws`.
     // Instead of EventEmitter syntax `on('open')`, you assign a callback
     // to the `onopen` property.
@@ -81,23 +143,43 @@ $(function() {
 
 
         if(msg.address == "curbeat"){
-            updateBeat(msg.data[0],msg.data[1],msg.data[2]);
+            let bar = msg.data[1];
+            let beat = msg.data[2];
+            transport.updateBeat(bar, beat);
+            score.highlightBeat(bar, beat);
         }
 
         if(msg.address == "score"){
             console.log("got score", msg);
-            updateScore(msg.data);
+            console.log("updating score", msg.data);
+            scoreText = msg.data.text;
+            curscore = msg.data.scorename;
+    
+            performancemanager.updateCurrentScoreName(curscore);
+            performancemanager.buildScoreListOptions();
+            
+            if(!scoreText){
+                return;
+            }
+            score.textToScore(scoreText);
         }
 
         if(msg.address == "scorelist"){
-            updateScoreList(msg.data);
+            console.log("got scorelist", msg);
+            scorelist = msg.data;
+            performancemanager.scorelist = scorelist;
+            performancemanager.buildScoreListOptions();
         }
         if(msg.address == "performancelist"){
             console.log("got performancelist", msg);
-            updatePerformanceList(msg.data);
+            let performancelist = msg.data;
+            performancemanager.performanceList = performancelist;
+            performancemanager.buildPerformanceListOptions();
         }
         if(msg.address == "performancename"){
-            updatePerformanceName(msg.data);
+            let curperformance = msg.data;
+            performancemanager.updateCurrentPerformanceName(curperformance);
+            performancemanager.buildPerformanceListOptions();            
         }
 
 
@@ -132,143 +214,9 @@ $(function() {
         }
     }
 
-    function updateScore(data){
-        console.log("updating score", data);
-        scoreText = data.text;
-        curscore = data.scorename;
-
-        $(".scorenametext").val(curscore);
-        if(!scoreText){
-            return;
-        }
-        score.textToScore(scoreText);
-        buildScoreListOptions();
-    }
 
 
-    function updateScoreList(rscorelist){
-        console.log("got scorelist");
-        scorelist = rscorelist;
-        buildScoreListOptions();
-    }
-
-    function updatePerformanceList(rperformancelist){
-        console.log("got performancelist", rperformancelist);
-        performancelist = rperformancelist;
-        buildPerformanceListOptions();
-    }    
-
-    function updatePerformanceName(rperformancename){
-        curperformance = rperformancename;
-        buildPerformanceListOptions();
-    }
-
-    function updateBeat(position, bar, beat){
-        $(".position").text(bar+":"+beat);
-        score.highlightBeat(bar, beat);
-    }
-        
-    function sendScore(){
-        let text = score.scoreToText();
-        curscore = $(".scorenametext").val();
-        console.log("sending score ", curscore, text);
-        let msg = {scorename: curscore, 
-                text: text
-        }
-        message("savescore", msg);
-    }
-
-    $(".sendscore").click(function(){
-        sendScore();
-    });
-
-    function sendPerformance(){
-        curperformance = $(".performancenametext").val();
-        console.log("sending curperformance ", curperformance);
-        let msg = {performancename: curperformance}
-        message("saveperformance", msg);
-    }
-
-    $(".sendperformance").click(function(){
-        sendPerformance();
-    });
 
 
-    /****** PLAYER CONTROLS */
-    $(".play").click(function(){
-        message("play", 1);
-    });
 
-    $(".stop").click(function(){
-        message("stop", 1);
-    });
-
-    $(".reset").click(function(){
-        console.log("sending reset");
-        message("reset", 1);
-    });
-
-    $(".pause").click(function(){
-        message("pause",1);
-    });
-    /****** END PLAYER CONTROLS */
-
-
-    $(".getperformance").click(function(){
-        let newperformance = $(".performanceselect").val();
-        console.log("selecting   " + newperformance);
-        message("loadperformance", newperformance);        
-    });
-
-    $(".getscore").click(function(){
-        let newscore = $(".scoreselect").val();
-        console.log("selecting   " + newscore);
-        message("loadscore", newscore);        
-    });
-
-    $(".scoreselect").change(function(event, ui){
-        let newscore = $(event.target).val();
-        curscore = newscore;
-        $(".scorenametext").val(curscore);
-        console.log("selecting   " + newscore);
-        message("loadscore", newscore);
-    }); 
-
-
-    function buildScoreListOptions(){
-        $(".scoreselect").empty();
-        $(".scoreselect").append('<option value="">SELECT SCORE</option>');
-
-        for(let i = 0; i < scorelist.length; i++){
-            let selected = "";
-            if(scorelist[i] == curscore){
-                selected = "SELECTED"
-            }
-            let elem = $("<option value='"+scorelist[i]+"' "+selected+">"+scorelist[i]+"</option>");
-            $(".scoreselect").append(elem);
-        }
-    }
-
-
-    function buildPerformanceListOptions(){
-        $(".performanceselect").empty();
-        $(".performanceselect").append('<option value="">SELECT PERFORMANCE</option>');
-
-        for(let i = 0; i < performancelist.length; i++){
-            let selected = "";
-            if(performancelist[i] == curperformance){
-                selected = "SELECTED"
-            }
-            let elem = $("<option value='"+performancelist[i]+"' "+selected+">"+performancelist[i]+"</option>");
-            $(".performanceselect").append(elem);
-        }
-
-        $(".performanceselect").change(function(event, ui){
-            let newperformance = $(event.target).val();
-            curperformance = newperformance;
-            $(".performancenametext").val(curperformance);
-            console.log("selecting   " + newperformance);
-            message("loadperformance", newperformance);
-        });
-    }
 });

@@ -5,8 +5,8 @@ class NewScore {
         this.highlightedBar = null;
         this.highlightedBeat = null;
         this.barsContainer = document.getElementById(divID);
-        this.changeCallback = null;
         this.selectedBarNumbers = [];
+        this.changeCallback = null;
         this.init();
     }
 

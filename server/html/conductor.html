@@ -15,7 +15,7 @@
     <div class="container">
         <div class="column column1 item">
 
-            <div class="transport container buttonset">
+            <div class="transport container buttonset" id="transportDiv">
                 <div class="item button"><a href="aiselector.html">live</a></div>
                 <div class="item button stop">Stop</div>
                 <div class="item button play">Play</div>            
@@ -26,28 +26,30 @@
             <div class="scoreeditor">
                     <div class="score" id="scoreDivID"></div>
             </div>
-            <div class="scoreselection container buttonset">
-                <div class="item getscore  button ">Get Score</div>
-                <div class="item">
-                    <select class="scoreselect centerme">
-                        <option value="">SELECT SCORE</option>
-                    </select>
+            <div class="performancemanager" id="performancemanager">
+                <div class="scoreselection container buttonset">
+                    <div class="item getscore  button ">Get Score</div>
+                    <div class="item">
+                        <select class="scoreselect centerme">
+                            <option value="">SELECT SCORE</option>
+                        </select>
+                    </div>
+                    <div class="item sendscore button">Send Score</div>
+                    <div class="item">
+                        <input type="text" class="scorenametext centerme" size="25">
+                    </div>
                 </div>
-                <div class="item sendscore button">Send Score</div>
-                <div class="item">
-                    <input type="text" class="scorenametext centerme" size="25">
-                </div>
-            </div>
-            <div class="performanceselection container buttonset">
-                <div class="item getperformance  button ">Get Performance</div>
-                <div class="item">
-                    <select class="performanceselect centerme">
-                        <option value="">SELECT Performance</option>
-                    </select>
-                </div>
-                <div class="item sendperformance button">Send Performance</div>
-                <div class="item">
-                    <input type="text" class="performancenametext centerme" size="25">
+                <div class="performanceselection container buttonset">
+                    <div class="item getperformance  button ">Get Performance</div>
+                    <div class="item">
+                        <select class="performanceselect centerme">
+                            <option value="">SELECT Performance</option>
+                        </select>
+                    </div>
+                    <div class="item sendperformance button">Send Performance</div>
+                    <div class="item">
+                        <input type="text" class="performancenametext centerme" size="25">
+                    </div>
                 </div>
             </div>
 
