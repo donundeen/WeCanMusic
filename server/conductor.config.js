@@ -7,7 +7,7 @@ var config = {
     "soundfont" : "./soundfonts/DayOfTheDeadSF.sf2",
     "common_soundfont" : "./soundfonts/FluidSynthDefaultSoundfont.sf2", // the file that the soundfont file in use gets copied to. 
     "scoreDir" : "./scores",
-    "scorename" : "cheeseBlues.txt",
+    "scorename" : "simplescore.txt",
     "performanceDir" : "./performances",
     "defaultWebpage" : "jamalong.html",
     "soundfont_instrument_list" : "./soundfonts/DayOfTheDeadSF.sf2.voicelist.json",

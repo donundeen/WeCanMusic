@@ -15,55 +15,54 @@ class PerformanceManager {
     }
 
     init(){
-
+        let self = this;
         $(".sendscore", this.performanceContainer).click(function(){
-            this.currentScoreName = $(".scorenametext", this.performanceContainer).val();
-            if(this.sendScoreCallback){
-                this.sendScoreCallback();
+            self.currentScoreName = $(".scorenametext", self.performanceContainer).val();
+            if(self.sendScoreCallback){
+                self.sendScoreCallback();
             }
         });
 
         $(".sendperformance", this.performanceContainer).click(function(){
-            this.currentPerformanceName = $(".performancenametext", this.performanceContainer).val();
-            if(this.sendPerformanceCallback){
-                this.sendPerformanceCallback();
+            console.log("sendperformance clicked");
+            self.currentPerformanceName = $(".performancenametext", this.performanceContainer).val();
+            if(self.sendPerformanceCallback){
+                console.log("sendPerformanceCallback");
+                self.sendPerformanceCallback();
             }
         });
 
         $(".getperformance", this.performanceContainer).click(function(){
             let newperformance = $(".performanceselect").val();
-            if(this.getPerformanceCallback){
-                this.getPerformanceCallback(newperformance);
+            if(self.getPerformanceCallback){
+                self.getPerformanceCallback(newperformance);
             }
         });
 
         $(".performanceselect", this.performanceContainer ).change(function(event, ui){
             let newperformance = $(event.target).val();
-            this.currentPerformanceName = newperformance;
-            $(".performancenametext", this.performanceContainer).val(newperformance);
+            self.currentPerformanceName = newperformance;
+            $(".performancenametext", self.performanceContainer).val(newperformance);
             console.log("selecting   " + newperformance);
-            if(this.getPerformanceCallback){
-                this.getPerformanceCallback(newperformance);
+            if(self.getPerformanceCallback){
+                self.getPerformanceCallback(newperformance);
             }
         });        
-    
-
-
 
         $(".getscore", this.performanceContainer).click(function(){
             let newscore = $(".scoreselect").val();
-            if(this.getScoreCallback){
-                this.getScoreCallback(newscore);
+            if(self.getScoreCallback){
+                self.getScoreCallback(newscore);
             }
         });
 
         $(".scoreselect", this.performanceContainer).change(function(event, ui){
             let newscore = $(event.target).val();
-            this.currentScoreName = newscore;   
-            $(".scorenametext", this.performanceContainer).val(newscore);
+            self.currentScoreName = newscore;   
+            $(".scorenametext", self.performanceContainer).val(newscore);
             console.log("selecting   " + newscore);
-            if(this.getScoreCallback){
-                this.getScoreCallback(newscore);
+            if(self.getScoreCallback){
+                self.getScoreCallback(newscore);
             }
         }); 
 
@@ -81,6 +80,8 @@ class PerformanceManager {
     }
 
     buildScoreListOptions(){
+
+        console.log("building score list options", this.scoreList);
         $(".scoreselect", this.performanceContainer).empty();
         $(".scoreselect", this.performanceContainer).append('<option value="">SELECT SCORE</option>');
 
@@ -99,6 +100,9 @@ class PerformanceManager {
         $(".performanceselect", this.performanceContainer).empty();
         $(".performanceselect", this.performanceContainer).append('<option value="">SELECT PERFORMANCE</option>');
 
+        if(!this.performanceList || this.performanceList.length == 0){
+            return;
+        }
         for(let i = 0; i < this.performanceList.length; i++){
             let selected = "";
             if(this.performanceList[i] == this.currentPerformanceName){

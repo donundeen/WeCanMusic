@@ -43,8 +43,14 @@ $(function() {
     let score = new NewScore('scoreDivID'); // Initialize with the ID of the score div
  //   score.textToScore("1:1 Gm\n2:1 Fm\n6:2 A M\n8:1 Fm\n9:1 Gm");
     score.changeCallback = function(){
-        console.log("score changed");
-        sendScore();
+        let text = score.scoreToText();
+        let scorename = performancemanager.currentScoreName;
+        curscore = $(".scorenametext").val();
+        console.log("sending score ", scorename, text);
+        let msg = {scorename: scorename, 
+                text: text
+        }
+        message("savescore", msg);
     }
     /***************** END SCORE EDITOR SETUP *****************/
 
@@ -165,9 +171,10 @@ $(function() {
         }
 
         if(msg.address == "scorelist"){
-            console.log("got scorelist", msg);
+            console.log("got scorelist");
             scorelist = msg.data;
-            performancemanager.scorelist = scorelist;
+            console.log("scorelist", scorelist);
+            performancemanager.scoreList = scorelist;
             performancemanager.buildScoreListOptions();
         }
         if(msg.address == "performancelist"){

@@ -22,7 +22,7 @@ class NewScore {
     }
 
     setupEventListeners() {
-        document.addEventListener('keydown', (e) => {
+        this.barsContainer.addEventListener('keydown', (e) => {
             if (e.key === 'c' && e.ctrlKey) { // Ctrl + C to copy
                 this.copySelectedBars();
             } else if (e.key === 'v' && e.ctrlKey) { // Ctrl + V to paste
@@ -30,7 +30,7 @@ class NewScore {
                 this.scoreChanged();
 
             } else if (e.key === 'Delete' || e.key === 'Backspace') {
-                const selectedBars = document.querySelectorAll('.bar.selected');
+                const selectedBars = this.barsContainer.querySelectorAll('.bar.selected');
                 selectedBars.forEach(selectedBar => {
                     selectedBar.remove();
                 });
@@ -38,20 +38,19 @@ class NewScore {
                 this.scoreChanged();
 
             } else if (e.key === '+') {
-                const selectedBars = document.querySelectorAll('.bar.selected');
+                const selectedBars = this.barsContainer.querySelectorAll('.bar.selected');
                 const newBar = this.createBar();
 
                 if (selectedBars.length > 0) {
                     const lastSelectedBar = selectedBars[selectedBars.length - 1];
-                lastSelectedBar.parentNode.insertBefore(newBar, lastSelectedBar.nextSibling);
+                    lastSelectedBar.parentNode.insertBefore(newBar, lastSelectedBar.nextSibling);
                 } else {
-                    const scoreDiv = document.querySelector('.score');
-                    scoreDiv.insertBefore(newBar, scoreDiv.firstChild); // Add before all other bars
+                    this.barsContainer.insertBefore(newBar, scoreDiv.firstChild); // Add before all other bars
                 }
                 this.updateNumbers(); // Update numbering after addition
                 this.scoreChanged();
             } else if (e.key === 'ArrowRight') { // Add this block for moving selected bars forward
-                let selectedBars = document.querySelectorAll('.bar.selected');
+                let selectedBars = this.barsContainer.querySelectorAll('.bar.selected');
                 selectedBars = Array.from(selectedBars).reverse();
                 selectedBars.forEach(selectedBar => {
                     if(!selectedBar.previousElementSibling ||!selectedBar.previousElementSibling.classList.contains('selected')){    
@@ -68,7 +67,7 @@ class NewScore {
                 this.scoreChanged();
 
             } else if (e.key === 'ArrowLeft') { // Move selected bars backward
-                const selectedBars = Array.from(document.querySelectorAll('.bar.selected'));
+                const selectedBars = Array.from(this.barsContainer.querySelectorAll('.bar.selected'));
                 if (selectedBars.length > 0) {
                     let firstSelectedBar = selectedBars[0];
                     let previousBar = firstSelectedBar.previousElementSibling;
@@ -108,7 +107,7 @@ class NewScore {
 
     attachBarEvents(bar){
         bar.addEventListener('dragstart', (e) => {
-            const selectedBars = document.querySelectorAll('.bar.selected');
+            const selectedBars = this.barsContainer.querySelectorAll('.bar.selected');
             const selectedTexts = Array.from(selectedBars).map(selectedBar => {
                 return Array.from(selectedBar.querySelectorAll('.beat')).map(beat => beat.innerText).join(', ');
             });
@@ -149,7 +148,7 @@ class NewScore {
         bar.addEventListener('click', (e) => {
             if (e.shiftKey && this.lastSelectedIndex !== -1) {
                 // Select range of bars
-                const bars = document.querySelectorAll('.bar');
+                const bars = this.barsContainer .querySelectorAll('.bar');
                 const currentIndex = Array.from(bars).indexOf(bar);
                 const start = Math.min(this.lastSelectedIndex, currentIndex);
                 const end = Math.max(this.lastSelectedIndex, currentIndex);
@@ -160,7 +159,7 @@ class NewScore {
                 // Toggle selection of the clicked bar
                 bar.classList.toggle('selected');
             }
-            this.lastSelectedIndex = Array.from(document.querySelectorAll('.bar')).indexOf(bar); // Update last selected index
+            this.lastSelectedIndex = Array.from(this.barsContainer.querySelectorAll('.bar')).indexOf(bar); // Update last selected index
         });
 
         // Add event listener for the beat divs
@@ -313,7 +312,7 @@ class NewScore {
         }
 
         // Find the bar element based on barNumber
-        const bars = document.querySelectorAll('.bar');
+        const bars = this.barsContainer.querySelectorAll('.bar');
         const bar = bars[barNumber - 1]; // Convert to zero-based index
 
         if (bar) {
