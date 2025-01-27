@@ -1,0 +1,72 @@
+ /* Inline CSS styles */
+ body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+}
+h1 {
+    color: #007BFF;
+}
+.score {
+    width: 50%;
+    height: 80%;
+    min-width: 200px;
+    min-height: 200px;
+    resize: both;
+    overflow: auto;
+    border: 1px solid #333;
+    display: flex;
+    flex-wrap: wrap;
+}
+.bar {
+    height: 32px;
+    width: auto;
+    background-color: #007BFF;
+    margin: 2px;
+    padding-left: 6px;
+    padding-right: 2px;
+    cursor: move; /* Change cursor to indicate draggable */
+    position: relative; /* Set position to relative for absolute positioning of children */
+    display: flex; /* Ensure flex display is set */
+    flex-wrap: nowrap; /* Prevent wrapping of child elements */
+    align-items: flex-start; /* Align items to the start */
+}
+.beat {
+    flex: 0 1 auto;
+    min-width: 36px;
+    height: 85%;
+    white-space: nowrap;
+    overflow: visible;
+    margin-left: 5px;
+    margin-top: 2px;
+    border: 1px solid black;
+    background-color: #007BFF;
+}
+
+.selected {
+    background-color: lightcoral; /* Light red color for selected bars */
+}
+.number {
+    position: absolute; /* Position the number div absolutely */
+    top: 2px; /* Adjust as needed */
+    left: 2px; /* Adjust as needed */
+    font-size: 12px; /* Keep the existing font size */
+    color: rgb(255, 255, 255); /* Keep the existing color */
+}
+
+.edit-input {
+    height: 100%; /* Full height of the beat div */
+    width: 90%; /* Slightly less than full width */
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    text-align: center;
+}
+
+.highlighted-bar {
+    background-color: yellow; /* Highlight color for the bar */
+}
+.highlighted-beat {
+    background-color: yellow; /* Highlight color for the beat */
+}
