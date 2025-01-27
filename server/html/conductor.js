@@ -26,7 +26,13 @@ $(function() {
     // remove port
     console.log(host);
 
+    let score = new NewScore('scoreDivID'); // Initialize with the ID of the score div
+ //   score.textToScore("1:1 Gm\n2:1 Fm\n6:2 A M\n8:1 Fm\n9:1 Gm");
 
+    score.changeCallback = function(){
+        console.log("score changed");
+        sendScore();
+    }
 
     // some note characters: 
     // ♭ 𝅘𝅥𝅮𝅗𝅥°♭𝅘𝅥𝅗𝅥𝅗 𝄼 𝄽 
@@ -67,6 +73,7 @@ $(function() {
 //        console.log(msg.address);
 
         if(msg.address == "score"){
+            console.log("got score", msg);
             updateScore(msg.data);
         }
 
@@ -120,27 +127,14 @@ $(function() {
         console.log("updating score", data);
         scoreText = data.text;
         curscore = data.scorename;
+
         $(".scorenametext").val(curscore);
         if(!scoreText){
             return;
         }
-        let split = scoreText.split("\n");
-        $(".score").empty();
 
-        for (let i = 0; i < split.length; i++){
-            line = split[i];
-            let matches = line.match(/([0-9]+):([0-9]+)(.*)/);
-            if(matches){
-                let elem = $("<div>").appendTo(".score");
-                $(elem).text(line);
-                bar = parseInt(matches[1]);
-                beat = parseInt(matches[2]);
-                curpos = barBeatToPos(bar, beat);
-                $(elem).addClass("line"); 
-                $(elem).data("position", curpos);
-                $(elem).attr("data-position", curpos);
-            }
-        }
+
+        score.textToScore(scoreText);
         buildScoreListOptions();
     }
 
@@ -171,21 +165,13 @@ $(function() {
 
     function updateBeat(position, bar, beat){
         $(".position").text(bar+":"+beat);
-        let selector = ".line[data-position='"+position+"']";
-        if($(selector).length){
-            $(".line").removeClass("curbeat");
-            $(selector).addClass("curbeat");
-        }
+
+        score.highlightBeat(bar, beat);
     }
         
     function sendScore(){
   //      let text = $(".score").text();
-        let text = $.map(
-            $(".line"), 
-            function(element) {
-                return $(element).text()
-            })
-            .join("\n");
+        let text = score.scoreToText();
         curscore = $(".scorenametext").val();
         console.log("sending score ", curscore, text);
         let msg = {scorename: curscore, 
@@ -257,14 +243,6 @@ $(function() {
         message("loadscore", newscore);
     }); 
 
-    $(".score").on('keyup',function(e) {
-        if(e.which == 13) {
-            addLinesToScore();
-        }
-        setFocus();
-    });
-    $(".score").on("mouseup", setFocus);
-
     function posToBeatBar(curpos){
         let bar = Math.ceil(curpos / 4);
         let beat = ((curpos - 1) % 4) + 1;        
@@ -275,65 +253,7 @@ $(function() {
         return curpos;
     }
 
-    function addLinesToScore(){
 
-        let curpos = 0;
-        let bar = Math.floor(curpos / 4) + 1;
-        let beat = ((curpos - 1) % 4) + 1;    
-        var startPosition = $(".score").selectionStart;
-        var endPosition = $(".score").selectionEnd;    
-        $(".score div").each(function(key, elem){
-            // go line by line, and make sure
-            // each line has a "line" class
-            // - each line starts with a bar:beat that matches the data-position value
-            // (change the data-position to mathc the written text)
-            let content = $(elem).text();
-            let matches = content.match(/([0-9]+):([0-9]+)(.*)/);
-            if(matches){
-                bar = parseInt(matches[1]);
-                beat = parseInt(matches[2]);
-                curpos = barBeatToPos(bar, beat);
-                $(elem).addClass("line"); 
-                $(elem).data("position", curpos);
-                $(elem).attr("data-position", curpos);
-            }else{
-                curpos++;
-                [bar, beat] = posToBeatBar(curpos);
-                $(elem).addClass("line");
-                content = bar+":"+beat+ " " +content;
-                $(elem).data("position", curpos);
-                $(elem).attr("data-position", curpos);
-                $(elem).text(content);
-            }
-        });
-
-        let lastpos = $(".score .line").last().data("position");
-        $(".score div").not(".line").each(function(key,elem){
-            curpos++
-            let content = $(elem).text();
-            let bar = Math.floor(curpos / 4) + 1;
-            let beat = ((curpos - 1) % 4) + 1;
-            content = bar+":"+beat+ " " +content;
-            $(elem).addClass("line");
-            $(elem).data("position", curpos);
-            $(elem).attr("data-position", curpos);
-            $(elem).text(content);
-        });
-
-        // send updated score here:
-        sendScore();
-    }
-
-    var selectedElement = null;
-    function setFocus(e) {
-        $(".line").removeClass("highlight");
-        selectedElement = window.getSelection().focusNode.parentNode;
-            // walk up the DOM tree until the parent node is contentEditable
-        while (selectedElement.parentNode && selectedElement.parentNode.contentEditable != 'true') {
-            selectedElement = selectedElement.parentNode;
-        }
-        $(selectedElement).addClass("highlight");
-    }
 
     $(".copyme").hide();
 

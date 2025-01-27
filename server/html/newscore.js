@@ -6,6 +6,7 @@ class NewScore {
         this.highlightedBeat = null;
         this.barsContainer = document.getElementById(divID);
         this.changeCallback = null;
+        this.selectedBarNumbers = [];
         this.init();
     }
 
@@ -225,9 +226,14 @@ class NewScore {
     }
 
     textToScore(text) {
+        // Populate selectedBarNumbers with the numbers of all selected bars
+        this.selectedBarNumbers = Array.from(this.barsContainer.querySelectorAll('.bar.selected')).map(bar => {
+            return Array.from(this.barsContainer.children).indexOf(bar) + 1; // Store bar numbers (1-based)
+        });
+
         this.barsContainer.innerHTML = ''; // Clear existing content in the score div
         const lines = text.trim().split('\n'); // Split the input text into lines
-        console.log(lines);
+
         let lastBarNumber = 0; // Track the last processed bar number
         this.barsMap = {};
 
@@ -238,7 +244,6 @@ class NewScore {
 
             // Create empty bars for any gaps between lastBarNumber and barNumber
             for (let i = lastBarNumber + 1; i < barNumber; i++) {
-                console.log("creating blank bar", i);
                 const blankBar = this.createBar(); // Create a blank bar
                 this.barsContainer.appendChild(blankBar); // Append the blank bar to the container
                 this.barsMap[i] = blankBar; // Store the blank bar in the map
@@ -246,7 +251,6 @@ class NewScore {
 
             // Create the bar if it doesn't exist
             if (!this.barsMap[barNumber]) {
-                console.log("creating bar", barNumber);
                 this.barsMap[barNumber] = this.createBar(); // Create a new bar
                 this.barsContainer.appendChild(this.barsMap[barNumber]); // Append the new bar to the container
             }
@@ -271,6 +275,14 @@ class NewScore {
         });
 
         this.updateNumbers(); // Update numbering after creating bars and beats
+
+        // Select bars that were previously selected
+        this.selectedBarNumbers.forEach(barNumber => {
+            const bar = this.barsMap[barNumber];
+            if (bar) {
+                bar.classList.add('selected'); // Add selected class to the bar
+            }
+        });
     }
 
     scoreToText() {
