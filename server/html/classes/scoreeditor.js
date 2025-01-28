@@ -28,54 +28,26 @@ class NewScore {
     setupEventListeners() {
         let self = this;
 
-
-        $("div").not("#"+this.scoreDivID).on('click', (e) => {
-            console.log("outside score click , not #"+this.scoreDivID, e.target);
-        });
-
-/*
-        $("div").focusin(function(e){
-            console.log("div focus", e.target);
-        });
-*/
         this.barsContainer.addEventListener('click', (e) => {
-            console.log("score click", e.target);
             this.focusInScore = true;
-        });
-        
-             
-
+        });       
+            
         this.barsContainer.addEventListener('focusout', (e) => {
-            console.log("score focusout", e.target);
             this.focusInScore = false;
 
         });
         this.barsContainer.addEventListener('focusin', (e) => {
-            console.log("score focus", e.target);
             this.focusInScore = true;
-        });
-
-        $(this.barsContainer).on('focusin', (e) => {
-            console.log("score jquery focusin", e.target);
-            this.focusInScore = true;
-        });
-
-        $(this.barsContainer).on('focusout', (e) => {
-            console.log("score jquery focusout", e.target);
-            this.focusInScore = false;
         });
 
         document.addEventListener('keydown', (e) => {
-            console.log("keydown", e.key, e.target);
             if(!this.focusInScore){
                 console.log("not in score");
                 return;
             }
             if (e.key === 'c' && e.ctrlKey) { // Ctrl + C to copy
-                console.log("copySelectedBars");
                 self.copySelectedBars();
             } else if (e.key === 'v' && e.ctrlKey) { // Ctrl + V to paste
-                console.log("pasteCopiedBars");
                 self.pasteCopiedBars();
                 self.scoreChanged();
 
@@ -134,8 +106,6 @@ class NewScore {
                     }
                 }
             } else if (e.key === 'Enter') { // Open the first selected element for editing
-                console.log("enter in score");
-            
             } 
                 
             // Add other keydown logic as needed
@@ -196,7 +166,6 @@ class NewScore {
         });
 
         bar.addEventListener('click', (e) => {
-            console.log("bar click", e.target);
             const bars = this.barsContainer.querySelectorAll('.bar');
 
             if (e.shiftKey && this.lastSelectedIndex !== -1) {
@@ -219,26 +188,13 @@ class NewScore {
         });
 
 
-        bar.addEventListener('focus', (e) => {
-            console.log("bar focus", e.target);
-        });
-
-        bar.addEventListener('blur', (e) => {
-            console.log("bar blur", e.target);
-        });
-
         // Add event listener for the beat divs
         const beats = bar.querySelectorAll('.beat');
         let self = this;
         beats.forEach(beat => {
             let originalText = beat.innerText; // Store the original text content
 
-
             beat.addEventListener('click', (e) => {
-
-
-
-                console.log("beat click", beat.innerText);
                 if(self.editingBeat){   
                     self.editingBeat.classList.remove('editing');
                     self.editingBeat.contentEditable = false;
@@ -249,12 +205,8 @@ class NewScore {
                 self.editingBeat = beat;
             });
 
-            beat.addEventListener('focus', (e) => {
-                console.log("beat focus", beat.innerText);
-            });
 
             beat.addEventListener('blur', (e) => {
-                console.log("beat blur", beat.innerText);
                 if (beat.innerText !== originalText) {
                     // Trigger an event or perform an action if the text has changed
                     console.log(`Text changed in beat: ${beat.innerText}`);
@@ -262,12 +214,10 @@ class NewScore {
                     // You can also dispatch a custom event here if needed
                 }
                 beat.classList.remove('active'); // Remove active class on blur
-           //     e.stopPropagation(); // Prevent the event from bubbling up
 
             });
 
             beat.addEventListener('keydown', (e) => {
-                console.log("beat keydown", e.key);
 
                 if (e.key === 'Delete' || e.key === 'Backspace' || e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
                     e.stopPropagation(); // Prevent the event from bubbling up
