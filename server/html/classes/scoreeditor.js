@@ -5,8 +5,11 @@ class NewScore {
         this.highlightedBar = null;
         this.highlightedBeat = null;
         this.barsContainer = document.getElementById(divID);
-        this.selectedBarNumbers = [];
+        this.lastSelectedIndex = -1; // Track the last selected index
+        this.selectedBarNumbers = []; // Track selected bar numbers
         this.changeCallback = null;
+        this.focusInScore = false;
+        this.editingBeat = null;
         this.init();
     }
 
@@ -23,18 +26,29 @@ class NewScore {
 
     setupEventListeners() {
         let self = this;
-        
-        document.addEventListener('keydown', (e) => {
-            console.log("keydown", document.activeElement);
+        this.barsContainer.addEventListener('click', (e) => {
+            console.log("score click", e.target);
+            this.focusInScore = true;
         });
+        
              
 
-        this.barsContainer.addEventListener('focus', (e) => {
-            console.log("focus", e.target);
+        this.barsContainer.addEventListener('focusout', (e) => {
+            console.log("score blur", e.target);
+            this.focusInScore = false;
+
+        });
+        this.barsContainer.addEventListener('focusin', (e) => {
+            console.log("score focus", e.target);
+            this.focusInScore = true;
         });
 
-        this.barsContainer.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', (e) => {
             console.log("keydown", e.key);
+            if(!this.focusInScore){
+                console.log("not in score");
+                return;
+            }
             if (e.key === 'c' && e.ctrlKey) { // Ctrl + C to copy
                 console.log("copySelectedBars");
                 self.copySelectedBars();
@@ -110,10 +124,10 @@ class NewScore {
         let bar = document.createElement('div');
         bar.className = 'bar';
         bar.innerHTML = `<div class="number"></div>
-                         <div class="beat" contenteditable="true"></div>
-                         <div class="beat" contenteditable="true"></div>
-                         <div class="beat" contenteditable="true"></div>
-                         <div class="beat" contenteditable="true"></div>`;
+                         <div class="beat" contenteditable="false"></div>
+                         <div class="beat" contenteditable="false"></div>
+                         <div class="beat" contenteditable="false"></div>
+                         <div class="beat" contenteditable="false"></div>`;
         bar.setAttribute('draggable', true);
         this.attachBarEvents(bar);
         return bar;
@@ -160,11 +174,11 @@ class NewScore {
         });
 
         bar.addEventListener('click', (e) => {
-            console.log(" bar click", e.target);
-            this.barsContainer.focus();
+            console.log("bar click", e.target);
+            const bars = this.barsContainer.querySelectorAll('.bar');
+
             if (e.shiftKey && this.lastSelectedIndex !== -1) {
                 // Select range of bars
-                const bars = this.barsContainer .querySelectorAll('.bar');
                 const currentIndex = Array.from(bars).indexOf(bar);
                 const start = Math.min(this.lastSelectedIndex, currentIndex);
                 const end = Math.max(this.lastSelectedIndex, currentIndex);
@@ -172,12 +186,23 @@ class NewScore {
                     bars[i].classList.add('selected');
                 }
             } else {
-                // Toggle selection of the clicked bar
-                bar.classList.toggle('selected');
+                // Unselect all other bars
+                bars.forEach(b => b.classList.remove('selected'));
+                // Select the clicked bar
+                bar.classList.add('selected');
             }
-            this.lastSelectedIndex = Array.from(this.barsContainer.querySelectorAll('.bar')).indexOf(bar); // Update last selected index
-            this.barsContainer.focus();
 
+            // Update last selected index
+            this.lastSelectedIndex = Array.from(bars).indexOf(bar); // Update last selected index
+        });
+
+
+        bar.addEventListener('focus', (e) => {
+            console.log("bar focus", e.target);
+        });
+
+        bar.addEventListener('blur', (e) => {
+            console.log("bar blur", e.target);
         });
 
         // Add event listener for the beat divs
@@ -186,16 +211,27 @@ class NewScore {
         beats.forEach(beat => {
             let originalText = beat.innerText; // Store the original text content
 
-            beat.addEventListener('click', () => {
+
+            beat.addEventListener('click', (e) => {
+
+
+
                 console.log("beat click", beat.innerText);
+                if(self.editingBeat){   
+                    self.editingBeat.classList.remove('editing');
+                    self.editingBeat.contentEditable = false;
+                }
+                beat.contentEditable = true;
+                beat.classList.add('editing');
+                beat.focus();
+                self.editingBeat = beat;
             });
 
-            beat.addEventListener('focus', () => {
+            beat.addEventListener('focus', (e) => {
                 console.log("beat focus", beat.innerText);
-                originalText = beat.innerText; // Update original text on focus
             });
 
-            beat.addEventListener('blur', () => {
+            beat.addEventListener('blur', (e) => {
                 console.log("beat blur", beat.innerText);
                 if (beat.innerText !== originalText) {
                     // Trigger an event or perform an action if the text has changed
@@ -203,11 +239,21 @@ class NewScore {
                     self.scoreChanged();
                     // You can also dispatch a custom event here if needed
                 }
+                beat.classList.remove('active'); // Remove active class on blur
+           //     e.stopPropagation(); // Prevent the event from bubbling up
+
             });
 
             beat.addEventListener('keydown', (e) => {
                 if (e.key === 'Delete' || e.key === 'Backspace' || e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
                     e.stopPropagation(); // Prevent the event from bubbling up
+                }
+                if(e.key === 'Enter'){
+                    self.editingBeat.classList.remove('editing');
+                    self.editingBeat.contentEditable = false;
+                    self.editingBeat.blur();
+                    self.editingBeat = null;
+                    self.barsContainer.click();
                 }
             });
         });
