@@ -28,15 +28,19 @@ div{
     padding: .5em;
     text-align: center;
 }
+.scoreperfselection{
+    height:fit-content;
+    margin-bottom: 1em;
 
-.scoreselection .item{
+}
+.scoreperfselection .item{
     padding:unset;
     padding-top: .1em;
     padding-left: .5em;
     padding-right: .5em;
+    height:fit-content;
 }
-
-.scoreselection .item .centerme{
+.scoreperfselection .item .centerme{
     padding:unset;
     margin-top: .7em;
     padding-left: .5em;
@@ -44,20 +48,6 @@ div{
     border:1px solid purple;
 }
 
-.scoreeditor{
-    
-}
-
-.score {
-    font-family:sans;
-    font-size:1.2em;
-    border: 2px solid blue;
-    border-radius: 10x;
-    height: 80%;
-    width:400px;
-    margin:auto;
-    caret-color: rgb(0, 0, 255);
-}
   
 .line { 
     display:block;

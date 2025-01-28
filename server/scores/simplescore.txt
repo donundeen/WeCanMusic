@@ -1,6 +1,6 @@
-1:1 F m
-2:1 G M
-2:2 Fm
-3:4 Em
-4:1 C M
+1:1 G M
+1:2 Fm
+2:4 Em
+3:1 C M
+4:1 A major
 5:4 tostart
