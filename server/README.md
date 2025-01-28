@@ -16,6 +16,13 @@ The Raspberry Pi Server does these things:
 
 - Get a Pi. I use a Pi4, but you can probably use a pi 3
 
+try installing the the latest img file for the WeCanMusic server, here:
+https://drive.google.com/file/d/1BpK8xNUTFqRBdYjhz0Nw-2aI-1M7PVTC/view?usp=sharing
+
+If that doesn't work try the instructions below.
+
+Fair warning: getting all the audio/midi synth/systemd/node/npm/etc working is a bit of a pain. I try to keep these instructions up to date, but I'm always learning better ways to set things up.
+
 # Update and upgrade
 
 ```
@@ -173,6 +180,7 @@ npm install
 chmod a+x hotspotup.sh
 ```
 
+
 ## Create machine-specific config file
 
 ```
@@ -201,8 +209,6 @@ copy it to the filename `FluidSynthDefaultSoundfont.sf2`
 
 Whenever you change this, you'll need to restart the server (really just Fluidsynth.service then wecanmusic.service, but it's easier to just reboot the machine))
 
-create a “workingsoundfont.sf2” file, and we copy whatever sf2 file we want to use to this name.
-
 
 
 # Fix some permissions
@@ -225,6 +231,8 @@ node conductor.node.js
 
 should see no errors or anything else.
 
+If fluidsynth is working, it should play a few notes when you run the conductor.node.js command, and whenever you boot the machine.
+
 # Setup networking: hotspot and internet access
 
 The Hotspot mode runs a local wifi access point that all your instruments, and any control interfaces, ipads, etc can connect to. You need it running to run wecanmusic and have it do stuff.
@@ -232,12 +240,12 @@ The Hotspot mode runs a local wifi access point that all your instruments, and a
 The internet access mode is for getting code updates.
 
 ```
-sudo nmcli con add con-name hotspot ifname wlan0 type wifi ssid "icanmusic"
+sudo nmcli con add con-name hotspot ifname wlan0 type wifi ssid "wecanmusic_friends"
 sudo nmcli con modify hotspot wifi-sec.key-mgmt wpa-psk
 sudo nmcli con modify hotspot 802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared
 sudo nmtui
 ```
-change the icanmusic security to “None” - no password
+change the wecanmusic_friends security to “None” - no password
 
 change IPv4 Configuration:
 
@@ -248,6 +256,7 @@ addresses: 10.0.0.1/24
 change the preconfigured connection name to mediawifi (or whatever you want)
 
 switch back and forth between hotspot and internet access with
+note: you might have a different connection name than "mediawifi"
 ```
 # get internet access
 nmcli con down hotspot
@@ -256,7 +265,6 @@ nmcli con up mediawifi
 # run hotspot for wecanmusic
 nmcli con down mediawifi
 nmcli con up hotspot
-
 ```
 
 # Setup Systemd
