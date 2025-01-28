@@ -4,6 +4,7 @@ class NewScore {
         this.copiedBars = [];
         this.highlightedBar = null;
         this.highlightedBeat = null;
+        this.scoreDivID = divID;
         this.barsContainer = document.getElementById(divID);
         this.lastSelectedIndex = -1; // Track the last selected index
         this.selectedBarNumbers = []; // Track selected bar numbers
@@ -26,6 +27,17 @@ class NewScore {
 
     setupEventListeners() {
         let self = this;
+
+
+        $("div").not("#"+this.scoreDivID).on('click', (e) => {
+            console.log("outside score click , not #"+this.scoreDivID, e.target);
+        });
+
+/*
+        $("div").focusin(function(e){
+            console.log("div focus", e.target);
+        });
+*/
         this.barsContainer.addEventListener('click', (e) => {
             console.log("score click", e.target);
             this.focusInScore = true;
@@ -34,7 +46,7 @@ class NewScore {
              
 
         this.barsContainer.addEventListener('focusout', (e) => {
-            console.log("score blur", e.target);
+            console.log("score focusout", e.target);
             this.focusInScore = false;
 
         });
@@ -43,8 +55,18 @@ class NewScore {
             this.focusInScore = true;
         });
 
+        $(this.barsContainer).on('focusin', (e) => {
+            console.log("score jquery focusin", e.target);
+            this.focusInScore = true;
+        });
+
+        $(this.barsContainer).on('focusout', (e) => {
+            console.log("score jquery focusout", e.target);
+            this.focusInScore = false;
+        });
+
         document.addEventListener('keydown', (e) => {
-            console.log("keydown", e.key);
+            console.log("keydown", e.key, e.target);
             if(!this.focusInScore){
                 console.log("not in score");
                 return;
@@ -245,6 +267,8 @@ class NewScore {
             });
 
             beat.addEventListener('keydown', (e) => {
+                console.log("beat keydown", e.key);
+
                 if (e.key === 'Delete' || e.key === 'Backspace' || e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
                     e.stopPropagation(); // Prevent the event from bubbling up
                 }
@@ -254,6 +278,7 @@ class NewScore {
                     self.editingBeat.blur();
                     self.editingBeat = null;
                     self.barsContainer.click();
+                    self.barsContainer.focus();
                 }
             });
         });
@@ -352,6 +377,10 @@ class NewScore {
                 bar.classList.add('selected'); // Add selected class to the bar
             }
         });
+        this.barsContainer.click();
+        this.barsContainer.focus();
+
+
     }
 
     scoreToText() {
