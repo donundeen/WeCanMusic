@@ -51,8 +51,8 @@
 #include "headers/config_variables.h"
 #include "headers/persistent_variables.h"
 #include "headers/global_variables.h"
-#include "headers/scaling.h"
-#include "headers/helper_functions.h"
+#include "../common_headers/scaling.h"
+#include "../common_headers/helper_functions.h"
 
 
 
