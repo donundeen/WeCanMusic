@@ -20,7 +20,7 @@
 #include <Adafruit_LIS3MDL.h>
 // END SENSOR INCLUDES  
 /////////////////////////////////////////
-#include <PeakDetection.h> // import peak/bounce detection lib
+#include <PeakDetection.h> // import peak/bounce detection lib, install fromhttps://github.com/leandcesar/PeakDetection
 
 PeakDetection peakDetections[6]; 
 
