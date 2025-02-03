@@ -212,6 +212,15 @@ class Instrument {
         return this._midi_channel;
     }
 
+    get midi_vol(){
+        return this._midi_vol;
+    }
+
+    set midi_vol(vol){
+        this._midi_vol = vol;
+        this.midiSetVolume();
+    }
+
    ////////////////////////
     // MUSIC FUNCTIONS
     set notelist(notelist){
