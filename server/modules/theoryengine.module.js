@@ -60,8 +60,8 @@ const teoriaChordProgression = require('teoria-chord-progression');
     */
 
 class TheoryEngine {
-    constructor() {
-        this.db = false;
+    constructor(options) {
+        this.db = options.db;
 
         this.notes = [
             "C",	//0  
