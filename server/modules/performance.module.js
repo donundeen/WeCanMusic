@@ -47,6 +47,9 @@ class Performance {
         this.performanceDir = false;
         this.performanceFile = false;
 
+        this.performanceList = []; // array of objects with params filename and sayname
+        this.currentPerformanceIndex = 0;
+
         if(options.db){
             this.db = options.db;
         }else{
@@ -120,6 +123,21 @@ class Performance {
             callback(files);
         });
     }
+
+    selectNextPerformance(callback) {
+        this.currentPerformanceIndex++;
+        if(this.currentPerformanceIndex >= this.performanceList.length){
+            this.currentPerformanceIndex = 0;
+        }
+        callback(this.currentPerformanceIndex, this.performanceList[this.currentPerformanceIndex]);
+    }
+
+    getSelectedPerformanceData() {
+        return this.performanceList[this.currentPerformanceIndex];
+    }
+
+
+
 }
 
 module.exports = Performance;

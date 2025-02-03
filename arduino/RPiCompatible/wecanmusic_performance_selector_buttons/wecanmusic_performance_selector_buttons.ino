@@ -131,7 +131,9 @@ void sensor_loop(){
 
 void handleStartButton(){
     Serial.println("start");
-    sendMessage("/performance", arguments[encoderVal]);
+ //   sendMessage("/performance", arguments[encoderVal]);
+    sendMessage("/playselper", 1);
+
 }
 
 void handleSelectButton(){
@@ -140,7 +142,8 @@ void handleSelectButton(){
     Serial.println("Select button pressed!");    
     Serial.print("encoderVal ");
     Serial.println(encoderVal);
-    sendMessage("/sayperformance", arguments[encoderVal]);
+//    sendMessage("/sayperformance", arguments[encoderVal]);
+    sendMessage("/selnextper", 1);
 }
 
 

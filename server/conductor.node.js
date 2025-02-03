@@ -687,7 +687,6 @@ udpPort.on("message", function (oscMsg) {
         performance.loadPerformance(msg);
     });
 */
-    // processing request to destroy UDP instruments
     routeFromOSC(oscMsg, "/performance", function(oscMsg, address){
         let value = oscMsg.simpleValue;
         let name = value;
@@ -716,6 +715,25 @@ udpPort.on("message", function (oscMsg) {
         exec(command);
     });
 
+    routeFromOSC(oscMsg, "/selnextper", function(oscMsg, address){
+        performance.selectNextPerformance(function(index, performanceObj){
+            let sayname = performanceObj.sayname;
+            let command = "flite -t \""+sayname+"\"";
+            exec(command);
+        });
+    });
+
+    routeFromOSC(oscMsg, "/playselper", function(oscMsg, address){
+       let performanceObj = performance.getCurrentSelectedPerformanceData();
+       performance.performanceFile = performanceObj.filename;
+       performance.loadPerformance(performanceObj.filename, function(){
+            statusmelodies.playperformancechange();
+            trans.stop();
+            trans.reset();
+            trans.start();
+        });
+        socket.sendMessage("performancename", performanceObj.filename);
+    });
 
     // setting config values for instruments
     // for if a UDP message is sent to change settings on a localInstrument

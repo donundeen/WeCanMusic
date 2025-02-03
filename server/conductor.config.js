@@ -24,7 +24,25 @@ var config = {
     "HTTPS" : false,
     "HTTPS_WEBSOCKET_PORT" : 443,
     "HTTPS_WEBSERVER_PORT" : 443,
-    "quantize_time" : ["N16", "N83"]// or array of note length names ("QN, N16, N83, etc")
+    "quantize_time" : ["N16", "N83"],// or array of note length names ("QN, N16, N83, etc")
+    "performance_list" : [
+        {
+            "filename" : "blessingWand",
+            "sayname" : "Blessing Wand"
+        },
+        {
+            "filename" : "cheeseBlues",
+            "sayname" : "Cheese Blues"
+        },
+        {
+            "filename" : "Day of Dead",
+            "sayname" : "Day of Dead"
+        },
+        {
+            "filename" : "voicesinmyhead",
+            "sayname" : "Voices in My Head"
+        }
+    ]
 }
 
 module.exports = config;
