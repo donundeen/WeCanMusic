@@ -5,8 +5,8 @@
                                                     3V3 | o  LiPoly Batt |  |
                                                      NC | o   USB charge |  |
   L3G Power --config mode button - power switch --- GND | o              ---|
-                             power switch---  A0 / DAC2 | o               o | VBAT
-                                              A1 / DAC1 | o               o | EN  ------- config mode button
+                     config mode button  ---  A0 / DAC2 | o               o | VBAT
+                                              A1 / DAC1 | o               o | EN  ------- power switch 
                                                 A2 / 34 | o               o | VUSB
                                                 A3 / 39 | o               o | 13  / A12 / T4
                                                 A4 / 36 | o               o | 12  / A11 / T5
@@ -15,8 +15,8 @@
                                               MOSI / 18 | o               o | 15  / A8 / T3
                                               MISO / 19 | o               o | 32  / A7 / T9  
                                                 RX / 16 | o               o | 14  / A6 / T6
-                                                TX / 17 | o               o | SCL / 22  -- L3G SCL
-                                                     21 | o               o | SDA / 23  -- L3G SDA
+                                                TX / 17 | o               o | SCL / 22  -- L3G SCL (green wire)
+                                                     21 | o               o | SDA / 23  -- L3G SDA (white wire)
                                                         |                   |
                                                         | O               O |
                                                         +-------------------+

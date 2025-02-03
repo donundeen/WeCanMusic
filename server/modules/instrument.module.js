@@ -677,11 +677,14 @@ class Instrument {
         }
         // control change value to set volume.
         if(this.midi_hardware_engine){
+            this.db.log("setting volume to ", this._midi_vol, "channel " , this._midi_channel);
             this.midi_hardware_engine.send('cc',{
                 controller: 7,
                 value: this._midi_vol, // the volume, 
                 channel: this._midi_channel
             });         
+        }else{
+            this.db.log("no hardware engine, setting volume to ", this._midi_vol, "channel " , this._midi_channel);
         }
     }    
 
