@@ -385,6 +385,13 @@ class Orchestra {
     buildVoicelistOptions(){
         console.log("building voice list options");
         let voptions = $("<select class='voice_display' name='midi_voice'>");
+        this.voicelist.sort((a,b)=>{
+            if(a.bank === b.bank){
+                return a.program < b.program;
+            }else{
+                return a.bank < b.bank;
+            }
+        });
         for (var i = 0; i< this.voicelist.length; i++){
             let [bank, program, name] = this.voicelist[i];
            // console.log(bank, program, name);
@@ -405,7 +412,7 @@ class Orchestra {
                 midi_voice_index = this.voicelist.findIndex((v)=>{
                     return (midi_bank == v[0] && midi_program == v[1]);
                 });
-            }catch(e){}
+            }catch(e){console.log("error ", e);}
             midi_voice_index = (midi_voice_index >=0 ? midi_voice_index : 0);
             console.log(midi_voice, midi_bank, midi_program, midi_voice_index); 
             $( ".midi-voice",this ).slider({
