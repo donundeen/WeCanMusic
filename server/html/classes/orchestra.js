@@ -251,7 +251,7 @@ class Orchestra {
         $( ".midi-voice",instr ).slider({
             range: false,
             min: 0,
-            max: 127,// (voicelist.length > 0 ? voicelist.length : 127),//voicelist.length - 1,
+            max: (voicelist.length > 0 ? voicelist.length : 127),//voicelist.length - 1,
             value: midi_voice_index, //q0,//(midi_voice_index >=0 ? midi_voice_index : 0),// midi_voice,
             
             slide: function( event, ui ) {
