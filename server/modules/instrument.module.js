@@ -104,7 +104,7 @@ class Instrument {
         this.last_note_time = Date.now();
         this.setNoteLengths();
         this.get_config_props();
-        this.numberCruncher = new NoteNumberCruncher(this.db);
+        this.numberCruncher = new NoteNumberCruncher({db: this.db});
 
     }
 

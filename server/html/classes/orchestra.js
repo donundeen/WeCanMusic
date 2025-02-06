@@ -376,24 +376,22 @@ class Orchestra {
     }
 
     updateVoicelist(rvoicelist){
-        console.log("got voicelist");
       //  console.log(rvoicelist);
         this.voicelist = rvoicelist;
         this.voicelist.sort((a,b)=>{
-            if(a.bank === b.bank){
-                return parseInt(a.program) - parseInt(b.program);
+            if(a[0] === b[0]){
+                return parseInt(a[1]) - parseInt(b[1]);
             }else{
-                return parseInt(a.bank) - parseInt(b.bank);
+                return parseInt(a[0]) - parseInt(b[0]);
             }
-        });        
+        });       
         this.buildVoicelistOptions();
     }
 
     buildVoicelistOptions(){
-        console.log("building voice list options");
         let voptions = $("<select class='voice_display' name='midi_voice'>");
-
-        for (var i = 0; i< this.voicelist.length; i++){
+        let self = this;
+        for (var i = 0; i< self.voicelist.length; i++){
             let [bank, program, name] = this.voicelist[i];
            // console.log(bank, program, name);
             let id = bank.toString()+":"+program.toString(); 
@@ -402,7 +400,6 @@ class Orchestra {
         }
         $(".voice_display").replaceWith(voptions);    
         // also need to update the voice slider to link with the new select options...
-        console.log($(".instrument").not(".copyme").length);
         $(".instrument").not(".copyme").each(function(index,instr){
             let midi_voice = $(this).data("midi_voice");
             console.log("voice", midi_voice);
@@ -411,14 +408,14 @@ class Orchestra {
             try{
                 [midi_bank, midi_program] = midi_voice.split(":");
                 // figure out midi_voice index in voicelist
-                midi_voice_index = this.voicelist.findIndex((v)=>{
+                midi_voice_index = self.voicelist.findIndex((v)=>{
                     return (midi_bank == v[0] && midi_program == v[1]);
                 });
             }catch(e){console.log("error ", e);}
             midi_voice_index = (midi_voice_index >=0 ? midi_voice_index : 0);
             console.log(midi_voice, midi_bank, midi_program, midi_voice_index); 
             $( ".midi-voice",this ).slider({
-                max: (this.voicelist.length > 0 ? this.voicelist.length - 1 : 127),//voicelist.length - 1,
+                max: (self.voicelist.length > 0 ? self.voicelist.length - 1 : 127),//voicelist.length - 1,
                 value: midi_voice_index,//(midi_voice_index >=0 ? midi_voice_index : 0),// midi_voice,
             });
             $('.voice_display',this).val(midi_voice);
@@ -427,7 +424,7 @@ class Orchestra {
                 console.log($(event.target).val());
                 let selectedIndex = $(event.target).prop('selectedIndex');
                 let voiceval = $(event.target).val();
-                this.parseVoiceVal(voiceval, instr, selectedIndex);
+                self.parseVoiceVal(voiceval, instr, selectedIndex);
             });            
         });
     }

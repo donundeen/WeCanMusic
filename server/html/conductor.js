@@ -202,6 +202,7 @@ $(function() {
             orchestra.updateInstrumentMakenote(msg.data.device_name, msg.data);
         }
         if(msg.address == "voicelist"){
+            console.log("got voicelist");
             orchestra.updateVoicelist(msg.data);
         }
         // add message about adding a new instrument here

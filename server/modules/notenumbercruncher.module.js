@@ -2,9 +2,11 @@ dynRescale = require("./dynRescale.module");
 functionCurve = require("./functionCurve.module");
 
 class NoteNumberCruncher {
-    constructor(db){
+    constructor({options}){
         
-        this.db = db;
+        if(options.db){
+            this.db = db;
+        }
         this.firstRead = true;
         this.prevValue = 0;
         this.rawValue = 0;
@@ -15,9 +17,9 @@ class NoteNumberCruncher {
         this.timeToNextNoteFloat = false;
         this.changeRate = 0;
         this.prevChangeTime = 0;
-        this.input_scale = new dynRescale();
-        this.changerate_scale = new dynRescale();
-        this.velocity_scale = new dynRescale();
+        this.input_scale = new dynRescale({db: db});
+        this.changerate_scale = new dynRescale({db: db});
+        this.velocity_scale = new dynRescale({db: db});
 
         this.pitch_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
         this.velocity_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});

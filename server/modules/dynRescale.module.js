@@ -1,9 +1,11 @@
 class dynRescale {
 
-    constructor() {
+    constructor(options) {
         this.min = false;
         this.max = false;
-        this.db = false;
+        if(options.db){
+            this.db = options.db;
+        }
     }
 
     
