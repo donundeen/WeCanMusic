@@ -2,7 +2,7 @@ dynRescale = require("./dynRescale.module");
 functionCurve = require("./functionCurve.module");
 
 class NoteNumberCruncher {
-    constructor({options}){
+    constructor(options){
         
         if(options.db){
             this.db = db;
