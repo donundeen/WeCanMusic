@@ -379,19 +379,20 @@ class Orchestra {
         console.log("got voicelist");
       //  console.log(rvoicelist);
         this.voicelist = rvoicelist;
+        this.voicelist.sort((a,b)=>{
+            if(a.bank === b.bank){
+                return parseInt(a.program) - parseInt(b.program);
+            }else{
+                return parseInt(a.bank) - parseInt(b.bank);
+            }
+        });        
         this.buildVoicelistOptions();
     }
 
     buildVoicelistOptions(){
         console.log("building voice list options");
         let voptions = $("<select class='voice_display' name='midi_voice'>");
-        this.voicelist.sort((a,b)=>{
-            if(a.bank === b.bank){
-                return a.program < b.program;
-            }else{
-                return a.bank < b.bank;
-            }
-        });
+
         for (var i = 0; i< this.voicelist.length; i++){
             let [bank, program, name] = this.voicelist[i];
            // console.log(bank, program, name);
@@ -401,6 +402,7 @@ class Orchestra {
         }
         $(".voice_display").replaceWith(voptions);    
         // also need to update the voice slider to link with the new select options...
+        console.log($(".instrument").not(".copyme").length);
         $(".instrument").not(".copyme").each(function(index,instr){
             let midi_voice = $(this).data("midi_voice");
             console.log("voice", midi_voice);
