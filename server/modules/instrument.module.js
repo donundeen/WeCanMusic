@@ -54,9 +54,9 @@ class Instrument {
         this._velocitycurve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
         this._changeratecurve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
         // dyn rescaling
-        this.input_scale = new dynRescale();
-        this.changerate_scale = new dynRescale();
-        this.velocity_scale = new dynRescale();
+        this.input_scale = new dynRescale({db:this.db});
+        this.changerate_scale = new dynRescale({db:this.db});
+        this.velocity_scale = new dynRescale({db:this.db});
 
         this.last_note_time = Date.now();
 
