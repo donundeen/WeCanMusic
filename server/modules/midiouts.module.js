@@ -30,6 +30,8 @@ class MidiOuts {
         this.midi = require('midi');
         this.easymidi = require('easymidi');
 
+
+
         this.makenote_queue = [];
         
     }
@@ -68,7 +70,8 @@ class MidiOuts {
         let waiting = true;
         while(waiting){
             let midi_outputs = this.easymidi.getOutputs();
-            console.log(midi_outputs);
+            console.log("midi_outputs", midi_outputs);
+            console.log("midi_inputs", this.easymidi.getInputs());
             for(let i = 0; i<midi_outputs.length; i++){
                 this.portnames.push(midi_outputs[i]);
             }
@@ -84,6 +87,7 @@ class MidiOuts {
                 }
             }
         }
+        console.log("portnames", this.portnames);
         return this.portnames;
     }
 

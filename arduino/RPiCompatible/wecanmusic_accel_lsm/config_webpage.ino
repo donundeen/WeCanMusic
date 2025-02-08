@@ -103,7 +103,11 @@ void config_webpage_setup() {
   strcpy(wecanmusic_server_ip, custom_wecanmusic_server_ip.getValue());
   strcpy(wecanmusic_port, custom_wecanmusic_port.getValue());
   strcpy(this_device_name, custom_this_device_name.getValue());  
-  Serial.println("The values in the file are: ");
+  Serial.println("The values from form are: ");
+  Serial.println("\twecanmusic_server_ip : " + String(custom_wecanmusic_server_ip.getValue()));
+  Serial.println("\twecanmusic_port : " + String(custom_wecanmusic_port.getValue()));
+  Serial.println("\tthis_device_name : " + String(custom_this_device_name.getValue()));
+  Serial.println("The new values to save are: ");
   Serial.println("\twecanmusic_server_ip : " + String(wecanmusic_server_ip));
   Serial.println("\twecanmusic_port : " + String(wecanmusic_port));
   Serial.println("\tthis_device_name : " + String(this_device_name));

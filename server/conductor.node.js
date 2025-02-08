@@ -263,39 +263,7 @@ let synth = false;
 let soundfont = config.soundfont;//'./soundfonts/141-Compleet bank synth.sf2'
 let soundfont_instrument_list = config.soundfont_instrument_list; //'./soundfonts/141-Compleet bank synth.sf2.voicelist.json'
 
-////////////////////////////////////////////
-// SET UP SOFTWARE SYNTH 
-// (as opposed to sending midi to an external or internal synth)
-// - we've found that this approach exposes bugs in these software synths
-// so we don't use this. Intead we use easymidi to send MIDI data to
-// either external MIDI outs, or internal midi outs to the Fluidsynth
-if(synthtype){
-    // jzz controls a local synthesizer and connected midi devices
-    const JZZ = require('jzz');
-    if(synthtype == "fluidsynth"){
-        let fluidpath = config.fluidpath; //'/usr/bin/fluidsynth';
-        let fluidargs = config.fluidargs; // ["a", "pulseaudio","-R", 1, "-C", 1];
-        
-        require('jzz-synth-fluid')(JZZ);
-        synth = JZZ.synth.Fluid({ path: fluidpath, 
-            sf: soundfont,
-            args: fluidargs });            
-    }
-    if(synthtype == "tiny"){
-        const WAAPI = require('node-web-audio-api');
-        require('jzz-synth-tiny')(JZZ);
-        global.window = { AudioContext: WAAPI.AudioContext };   
-        synth = JZZ.synth.Tiny({quality:0, useReverb:0, voices:32});
-        let tiny_voices = [];
-        for(let i = 0; i<=127;i++){
-            if(!bad_tiny_voices.includes(i)){
-                tiny_voices.push(i);
-            }
-        }
-        synth.good_voices = tiny_voices;         
-    }
-}
-let global_notecount = 0; // used as a hack for the fluidsynth software synth
+
 
 
 //db.testSynth(synth, bluetooth);
@@ -824,24 +792,7 @@ function routeFromOSC(oscMsg, route, callback){
 orchestra.makenote_callback = function(instr, pitch, velocity, duration){
     let device_name = instr.device_name;
 
-//    db.log(global_notecount + synth.foothing +  "******************************** makenote_callback ", device_name, pitch, velocity, duration);
 
-    global_notecount++;
-    
-    if(synthtype == "fluidsynth"){
-        if(global_notecount >= 300){
-            db.log("RRRrrrrrrrrrr Reseting Synth +++++++++++++++++++++++++++++++++++++++");
-            synth.close();
-            synth = JZZ.synth.Fluid({ path: fluidpath, 
-                sf: soundfont,
-                args: fluidargs });
-            synth.start();
-            global_notecount = 0;
-            synth.foothing = "NEXT";
-            orchestra.all_udp_instrument_set_value("synth", synth);
-        }
-    }
-    
     // tell the webpage what devices played what note, so it can update the UI
     // NOTE: this might eat up a lot of network, so we could take it out.
     // it's just useful to show that an instrument is still active

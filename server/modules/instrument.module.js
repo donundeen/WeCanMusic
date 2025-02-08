@@ -626,6 +626,7 @@ class Instrument {
         }
         // if there's a hardware midi device attached to this instrument
         if(this.midi_hardware_engine){
+            console.log("midi_hardware_engine makenote");
             this.midi_hardware_engine.makenote(this.midi_channel, note, velocity, duration);
         }else{
             this.db.log("NNNNNNNNNNNNNNNo hardware engine");
