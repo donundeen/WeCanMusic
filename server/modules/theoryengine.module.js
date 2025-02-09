@@ -280,21 +280,39 @@ class TheoryEngine {
     }
 
     transpose(theinterval) {
-    //	this.debugmsg("+++++ transposing "+ theinterval);
+        if(!theinterval){
+            this.db.log("no interval");
+            return;
+        }
     //	this.debugmsg("now note");
         if(this.curNote){
-            this.curNote = this.curNote.interval(theinterval);
+            try{
+                this.curNote = this.curNote.interval(theinterval);
+            }catch(e){
+                this.db.log("error transposing "+ theinterval);
+                this.db.log(JSON.stringify(e, null, "  "));
+            }
         }
     //	this.debugmsg("now scale");
         if(this.curScale){
-            this.curScale = this.curNote.scale(curScaleName);
-            this.createScaleSet();
+            try{
+                this.curScale = this.curNote.scale(this.curScaleName);
+                this.createScaleSet();
+            }catch(e){
+                this.db.log("error transposing scale "+ theinterval);
+                this.db.log(JSON.stringify(e, null, "  "));
+            }
         }
     //	this.debugmsg("now chord");
         if(this.curChord){
-            this.curChord = this.curChord.interval(theinterval);
-            this.curChordName = this.curChord.name.toLowerCase().replace(this.curChord.root.toString(true),"");
-            this.createChordSet();
+            try{
+                this.curChord = this.curChord.interval(theinterval);
+                this.curChordName = this.curChord.name.toLowerCase().replace(this.curChord.root.toString(true),"");
+                this.createChordSet();
+            }catch(e){
+                this.db.log("error transposing chord "+ theinterval);
+                this.db.log(JSON.stringify(e, null, "  "));
+            }
         }
 
     }
