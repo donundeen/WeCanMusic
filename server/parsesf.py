@@ -3,7 +3,7 @@ import json
 
 
 #sf2dir = "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/"
-f2dir = "/home/pi/wecanmusic/server/soundfonts/"
+sf2dir = "/home/pi/wecanmusic/server/soundfonts/"
 
 all_data_file = sf2dir+"all_file_voices.json"
 
