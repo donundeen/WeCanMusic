@@ -2,16 +2,12 @@ from sf2utils.sf2parse import Sf2File
 import json
 
 
-sf2dir = "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/"
-#sf2dir = "/home/pi/wecanmusic/server/soundfonts/"
-
-filename1 = "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/Collections part 2/bloodwar.sf2"
-filename2 = "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/804 SoundFonts/141-Compleet bank  synth.sf2"
+#sf2dir = "/Users/donundeen/Documents/htdocs/WeCanMusic/server/soundfonts/"
+f2dir = "/home/pi/wecanmusic/server/soundfonts/"
 
 all_data_file = sf2dir+"all_file_voices.json"
 
 all_file_data  = []
-
 
 def parsesf2file(filename):
     data= []
