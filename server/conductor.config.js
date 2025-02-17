@@ -36,10 +36,6 @@ var config = {
             "sayname" : "Cheese Blues"
         },
         {
-            "filename" : "Day of Dead",
-            "sayname" : "Day of Dead"
-        },
-        {
             "filename" : "voicesinmyhead",
             "sayname" : "Voices in My Head"
         }
