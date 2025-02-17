@@ -14,6 +14,11 @@ class Transport {
         this.notelength_values = [];
         this.beatcallback = false;
 
+        this.startCallback = false;
+        this.stopCallback = false;
+        this.pauseCallback = false;
+        this.resetCallback = false;
+
         this.performanceProps = [
             {name: "bpm", type: "i"}
         ];
@@ -111,8 +116,10 @@ class Transport {
                 this.db.log(this);
             }
         }
+        if (this.startCallback) {
+            this.startCallback(this);
+        }
         this.startquantize();
-
     }
 
     startquantize(){
@@ -136,15 +143,24 @@ class Transport {
         clearInterval(this.interval);
         this.interval = false;
         this.reset();
+        if (this.stopCallback) {
+            this.stopCallback(this);
+        }
     }
 
     pause() {
         clearInterval(this.interval);
         this.interval = false;
+        if (this.pauseCallback) {
+            this.pauseCallback(this);
+        }
     }
 
     reset() {
         this.beatcount = 0;
+        if (this.resetCallback) {
+            this.resetCallback(this);
+        }
     }
 
     setBeatCallback(callback) {

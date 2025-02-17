@@ -30,10 +30,7 @@ class MidiOuts {
         this.midi = require('midi');
         this.easymidi = require('easymidi');
 
-
-
         this.makenote_queue = [];
-        
     }
     // need a way to pick just some portnames sometimes, or an array of matches.
     init(){
@@ -62,8 +59,6 @@ class MidiOuts {
             engine.send(message, options);
         }        
     }
-
-
 
     get_midi_portnames(){
 
@@ -108,8 +103,10 @@ class MidiOuts {
 
     makenote(channel, note, velocity, duration){
         if(this.quantize_time){
+            this.db.log("quantize makenote");
             this.makenote_add_to_queue(channel, note, velocity, duration);
         }else{
+            this.db.log("no quantize makenote");
             this.makenote_now(channel, note, velocity, duration);
         }
     }   

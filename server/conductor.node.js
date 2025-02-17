@@ -199,6 +199,9 @@ trans.performanceUpdateCallback = function(transportobj){
 trans.performancePropUpdateCallback =function(transportobj, propname, proptype, propvalue ){
     db.log("trans.performancePropUpdateCallback") 
 };
+
+
+
 orchestra.performanceUpdateCallback = function(instrument, perfData){
     db.log("instrument.performanceUpdateCallback")
 
@@ -246,15 +249,25 @@ orchestra.performancePropUpdateCallback = function(instrument, propname, proptyp
 };
 
 
-// setting up quantization in instruments
-
-midi_hardware_engine.quantize_time = config.quantize_time;
-trans.quantize_time = config.quantize_time;
-if(config.quantize_time){   
-    trans.quantizecallback = function(transport){
-        midi_hardware_engine.process_makenote_queue();
+// setting up quantization in instruments on transport start, 
+// disable on transport stop
+trans.startCallback = function(transportobj){
+    db.log("trans.startCallback");
+    midi_hardware_engine.quantize_time = config.quantize_time;
+    trans.quantize_time = config.quantize_time;
+    if(config.quantize_time){   
+        db.log("setting quantizecallback");
+        trans.quantizecallback = function(transport){
+            midi_hardware_engine.process_makenote_queue();
+        }
     }
-}
+};
+trans.stopCallback = function(transportobj){
+    db.log("trans.stopCallback");
+    midi_hardware_engine.quantize_time = null;
+    trans.quantize_time = null;
+    trans.quantizecallback = null;
+};
 
 // intialize the midi synth (fluid or tiny)
 let synth = false;
@@ -539,12 +552,14 @@ socket.setMessageReceivedCallback(function(msg){
     });
 });
 
+
+
 // handling messages over OSC/UDP
 udpPort.on("message", function (oscMsg) {
     // when an OSC messages comes in
     db.log("An OSC message just arrived!", oscMsg);
     // pass the message to the orchestra, which controls all the instruments
-//    orchestra.parseOSC(oscMsg.address, oscMsg.args);
+    // orchestra.parseOSC(oscMsg.address, oscMsg.args);
 
     // announcing local instruments to create them in the orchestra
     // NOTE: all localInstrument stuff is broken, needs updating
@@ -646,15 +661,6 @@ udpPort.on("message", function (oscMsg) {
         orchestra.destroy_udp_instrument(name);
     });    
 
-
-/*
-    // loadperformance sends a performance name, 
-    // and triggers the loading of all those configurations where they are needed
-    routeFromWebsocket(msg,"loadperformance", function(msg){
-        performance.performanceFile = msg;
-        performance.loadPerformance(msg);
-    });
-*/
     routeFromOSC(oscMsg, "/performance", function(oscMsg, address){
         let value = oscMsg.simpleValue;
         let name = value;
