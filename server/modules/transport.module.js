@@ -94,7 +94,7 @@ class Transport {
         if (this.beatcallback) {
             this.beatcallback(this.beatcount, this.bar, this.beat, this);
         } else {
-            this.db.log("no callback");
+//            this.db.log("no callback");
         }
     }
 
@@ -102,7 +102,6 @@ class Transport {
         if (this.quantizecallback) {
             this.quantizecallback(this);
         } else {
-            this.db.log("no callback");
         }        
     }
 

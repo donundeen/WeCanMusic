@@ -2,8 +2,8 @@ Instrument = require("./instrument.module");
 
 class LocalInstrument extends Instrument {
 
-    constructor() {
-        super();
+    constructor(options) {
+        super(options);
         this._type = "local";
         this.type = "local";
     }

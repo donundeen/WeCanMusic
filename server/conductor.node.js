@@ -561,31 +561,9 @@ udpPort.on("message", function (oscMsg) {
     // pass the message to the orchestra, which controls all the instruments
     // orchestra.parseOSC(oscMsg.address, oscMsg.args);
 
-    // announcing local instruments to create them in the orchestra
-    // NOTE: all localInstrument stuff is broken, needs updating
-    routeFromOSC(oscMsg, "/announceLocalInstrument", function(oscMsg, address){
-        let value = oscMsg.simpleValue;
-        db.log(value);
-        let name = value;
-        if(value.name){
-            name = value.name;
-        }
-        let instrument = orchestra.create_local_instrument(name, value);
-        let props = instrument.get_config_props();
-        props.push({name: "instrtype", value: "local"});
-        socket.sendMessage("addinstrument", props);
-        instrument.start();
-    });
 
-    // processing request to destroy and instruments
-    routeFromOSC(oscMsg, "/removeLocalInstrument", function(oscMsg, address){
-        let value = oscMsg.simpleValue;
-        let name = value;
-        if(value.name){
-            name = value.name;
-        }
-        orchestra.destroy_local_instrument(name);
-    });
+
+
 
     // announcind UDP (arduino esp32 mostly) instruments to create them in the orchestra
     routeFromOSC(oscMsg, "/announceUDPInstrument", function(oscMsg, address){
@@ -707,6 +685,51 @@ udpPort.on("message", function (oscMsg) {
             trans.start();
         });
         socket.sendMessage("performancename", performanceObj.filename);
+    });
+
+
+    /***
+     * Dealing with local instruments , aka "dumb instruments" that send on number values, and their ID
+     * the rest of their data is stored locally, and notes are generated locally
+     */
+
+    // announcing local instruments to create them in the orchestra
+    // NOTE: all localInstrument stuff is broken, needs updating
+    routeFromOSC(oscMsg, "/announceLocalInstrument", function(oscMsg, address){
+        db.log("announcing local instrument", oscMsg);
+        let value = oscMsg.simpleValue;
+        db.log(value);
+        let name = value;
+        if(value.name){
+            name = value.name;
+        }
+        let instrument = orchestra.create_local_instrument(name, value);
+        let props = instrument.get_config_props();
+        props.push({name: "instrtype", value: "local"});
+        socket.sendMessage("addinstrument", props);
+        instrument.start();
+    });
+
+    // processing request to destroy and instruments
+    routeFromOSC(oscMsg, "/removeLocalInstrument", function(oscMsg, address){
+        let value = oscMsg.simpleValue;
+        let name = value;
+        if(value.name){
+            name = value.name;
+        }
+        orchestra.destroy_local_instrument(name);
+    });  
+    
+    
+    routeFromOSC(oscMsg, "/rawval", function(oscMsg, address){
+        let value = oscMsg.simpleValue;
+        db.log("rawval", oscMsg);
+        let name = value[0];
+        let rawval = parseFloat(value[1]);
+        let instrument = orchestra.get_local_instrument(name);
+        if(instrument){
+            instrument.sensor_value = rawval;
+        }
     });
 
     // setting config values for instruments

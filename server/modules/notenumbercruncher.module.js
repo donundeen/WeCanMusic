@@ -30,7 +30,7 @@ class NoteNumberCruncher {
 
     reset(){
         this.firstRead = true;
-        this.prevvalue = 0;
+        this.prevValue = 0;
         this.rawValue = 0;
         this.scaledValue = 0;
         this.pitchFloat = false;
@@ -46,8 +46,10 @@ class NoteNumberCruncher {
     }
 
     setValue(value){
+        this.db.log("notenumbercrunchersetValue", value);
         this.rawValue = value;
         this.scaledValue = this.input_scale.scale(value, 0, 1);
+        this.db.log("notenumbercruncher. got scaledValue", this.scaledValue);
     }
 
     crunch(){
@@ -62,6 +64,7 @@ class NoteNumberCruncher {
     processChangeRate(){
 
         if(this.firstRead){ //
+            this.db.log("notenumbercruncher. changerate firstRead");
             this.prevValue = this.rawValue;    //
             this.prevChangeTime = Date.now(); //
             this.changeRate = 0;
@@ -69,10 +72,13 @@ class NoteNumberCruncher {
         }
 
         let millis = Date.now();
+        this.db.log("notenumbercruncher. millis", millis.toString(), this.prevChangeTime.toString());
         let millisDiff = millis - this.prevChangeTime;
 
-        let ochange = Math.abs(this.rawValue - this.prevvalue);
+        let ochange = Math.abs(this.rawValue - this.prevValue);
+        this.db.log("notenumbercruncher. ochange", ochange, millisDiff);
         let change = ochange / millisDiff;
+        this.db.log("notenumbercruncher. change", change);
         this.changeRate = this.changerate_scale.scale(change, 0, 1);
         this.prevChangeTime = millis;
         this.prevvalue = this.rawValue;

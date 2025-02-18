@@ -285,6 +285,20 @@ class Orchestra{
         }
     }    
 
+
+    get_local_instrument(name){
+        if(this.localInstruments[name]){
+            return this.localInstruments[name];
+        }
+        return false;
+    }
+
+    get_udp_instrument(name){
+        if(this.udpInstruments[name]){
+            return this.udpInstruments[name];
+        }
+        return false;
+    }
     local_instrument_set_value(name, prop, value){
         this.db.log("setting instr value" , name, prop, value);
         if(this.localInstruments[name]){

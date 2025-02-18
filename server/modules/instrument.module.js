@@ -14,7 +14,7 @@ class Instrument {
 
     // input values
         this._sensor_value = false;;
-        this.changerate = false;
+        this.changeRate = false;
         this.prevChangeVal = false;
 
     // note lists
@@ -193,10 +193,13 @@ class Instrument {
         this.db.log(value);
         this.db.log("********************");
 
+        this.db.log("isntruemtn numberCruncher.setValue", value);
         this.numberCruncher.setValue(value);
         this.numberCruncher.crunch();
+        this.db.log("numberCruncher.crunch", this.numberCruncher.scaledValue);
         this._sensor_value = value;
         this.derive_changerate(this._sensor_value);
+        this.db.log("derive_changerate", this.changeRate);
         this.note_trigger();
     }
 
@@ -436,22 +439,9 @@ class Instrument {
     derive_changerate(val){
         // derive the changerate
 
-        this.changerate = this.numberCruncher.changerate;
-        return this.changerate;
+        this.changeRate = this.numberCruncher.changeRate;
+        return this.changeRate;
 
-/*
-        this.db.log("getting changerate");
-        if(this.prevChangeVal === false){
-            this.prevChangeVal = val;
-            return 0;
-        }
-        let ochange = val - this.prevChangeVal;
-        ochange = Math.abs(ochange);
-        this.changerate = this.changerate_scale.scale(ochange, 0, 1.0);
-        this.prevChangeVal = val;
-        this.db.log("changerate " + this.changerate);
-        return this.changerate;       
-        */ 
     }
 
     derive_pitch(){
@@ -486,6 +476,9 @@ class Instrument {
             let t = this.notelength_values[i];
             if(!t1){
                 t1 = t;
+                if(duration < t){
+                    return t;
+                }
                 continue;
             }else{
                 t1 = t2;
