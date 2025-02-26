@@ -67,10 +67,10 @@ class Bluetooth {
         var hasBluetooth = this.blue.checkBluetoothController();
         this.db.log('system has bluetooth controller:' + hasBluetooth);
 
-        this.blue.on(this.blue.bluetoothEvents.Device, function (devices) {
+        this.blue.on(this.blue.bluetoothEvents.device, function (devices) {
             this.db.log('devices:' + JSON.stringify(devices, null, 2));
-            device = devices.filter((d) => { return d.mac = this.deviceID })[0];
-            this.db.log(device);
+            deviceFound = devices.filter((d) => { return d.mac = this.deviceID })[0];
+            this.db.log(deviceFound);
         });
 
         if (hasBluetooth) {

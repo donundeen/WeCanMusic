@@ -16,20 +16,16 @@ class SocketServer {
     if(options.db){
       this.db = options.db;
     }
-    this.WEBSOCKET_PORT = 80;
-    this.WEBSERVER_PORT = 80;
-    this.USE_HTTPS = false;
-    this.default_webpage = "index.html";
-    this.socketserver = false;
+    this.websocketPort = 80;
+    this.webserverPort = 80;
+    this.useHttps = false;
+    this.defaultWebpage = "index.html";
+    this.websocketServer = false;
     this.sockets = [];
     this.messageReceivedCallback = false;
-    this.expressapp = false;
-  
-    this.socketserver = false;
-    this.sockets = [];
+    this.expressApp = false;
 
     this.messageReceivedCallback = false;
-    this.expressapp = false;
   }
 
   messageReceived(msg){
@@ -56,10 +52,10 @@ class SocketServer {
     // Initialize the Express app
     const express = require('express');
     const path = require('path');
-    this.expressapp = express();
+    this.expressApp = express();
 
     let http = require('http');
-    if(this.USE_HTTPS){
+    if(this.useHttps){
       http = require('https');
     }
 
@@ -80,10 +76,10 @@ class SocketServer {
       console.log("no ssl certs found, using http");
     }
 
-    const server = http.createServer(options, this.expressapp);
+    const server = http.createServer(options, this.expressApp);
 
     // Start the HTTP server
-    server.listen(this.WEBSERVER_PORT, () => {
+    server.listen(this.webserverPort, () => {
       const address = server.address(); // Get the address of the HTTP server
       const port = address.port; // Extract the port      
       console.log(`HTTP server is listening on port ${port}`);
@@ -91,35 +87,35 @@ class SocketServer {
 
     // Serve static files from the "public" directory
     const staticPath = path.join(__dirname, '../html');
-    this.expressapp.use(express.static(staticPath));
+    this.expressApp.use(express.static(staticPath));
 
     // Handle specific OS detection probes
-    this.expressapp.get(['/hotspot-detect.html', '/generate_204', '/connecttest.txt'], (req, res) => {
+    this.expressApp.get(['/hotspot-detect.html', '/generate_204', '/connecttest.txt'], (req, res) => {
         // Respond to detection probes with either a redirect or basic content
-        res.redirect('/' + this.default_webpage); // Redirect to the captive portal
+        res.redirect('/' + this.defaultWebpage); // Redirect to the captive portal
     });
 
     // Fallback route for unhandled requests
-    this.expressapp.get('*', (req, res) => {
-        res.sendFile(path.join(staticPath, this.default_webpage));
+    this.expressApp.get('*', (req, res) => {
+        res.sendFile(path.join(staticPath, this.defaultWebpage));
     });
 
     // Initialize the WebSocket server using the same HTTP server
-    this.socketserver = new WebSocket.Server({ server });
+    this.socketServer = new WebSocket.Server({ server });
 
     let self = this;
 
-    this.socketserver.on("error", function(e) {
-        console.log("socketserver error", e);
+    this.socketServer.on("error", function(e) {
+        console.log("socketServer error", e);
     });
 
-    this.socketserver.on('listening', function() {
+    this.socketServer.on('listening', function() {
         const address = server.address(); // Get the address of the HTTP server
         const port = address.port; // Extract the port
         console.log("WebSocket server is listening on port " + port);
     });
 
-    this.socketserver.on('connection', (function(socket) {
+    this.socketServer.on('connection', (function(socket) {
       console.log("socket connection estblished");
       this.sockets.push(socket);
       this.db.log("STARTED websockets");

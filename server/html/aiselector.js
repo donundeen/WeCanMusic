@@ -23,25 +23,25 @@ console.log(host);
 const ws = new WebSocket('ws://'+host+':'+WEBSOCKET_PORT);
 
 // 1 2 3 4 6 8 16
-const notelengths = [4,2,1.33333,1,.66667,.5]; // multiples of a quarter note (1)
-const lengthnames = ["Whole Note",
+const noteLengths = [4,2,1.33333,1,.66667,.5]; // multiples of a quarter note (1)
+const lengthNames = ["Whole Note",
                     "Half Note",
                     "Half Triplet",
                     "Quarter",
                     "Quarter Triplet",
                     "Eighth Note"];
 // lengths as fractions of whole notes
-const notefracts = ["1","1/2","1/3","1/4","1/6","1/8"]; 
+const noteFracts = ["1","1/2","1/3","1/4","1/6","1/8"]; 
 let nlindex = 1;
-let curnotelength = notelengths[nlindex];
-let curnotefract = notefracts[nlindex];
-let curnotelengthname = lengthnames[nlindex];
+let curNoteLength = noteLengths[nlindex];
+let curNoteFract = noteFracts[nlindex];
+let curNoteLengthName = lengthNames[nlindex];
 
-let selectednotelengthobj = false;
-let prevnlStroke = false;
-let prevnlFill = false;
+let selectedNoteLengthObj = false;
+let prevNoteLengthStroke = false;
+let prevNoteLengthFill = false;
 
-let wsready = false;  
+let wsReady = false;  
 
 
 let prevChords = [];
@@ -52,7 +52,7 @@ let numPrevChords = 5;
   // Instead of EventEmitter syntax `on('open')`, you assign a callback
   // to the `onopen` property.
 ws.onopen = function() {
-    wsready = true;
+    wsReady = true;
     console.log("opened " + ws.readyState);
     message("ready", "READY NOW");
 
@@ -200,7 +200,7 @@ function sendChord(chord){
     chord = chord.replace(/[0-9]/,"");
     console.log("sending: " + chord);
     console.log(ws.readyState);
-    if(wsready){
+    if(wsReady){
         message("chord", chord);
 //        ws.send("chord", chord);
     }else{
@@ -237,9 +237,9 @@ $(".prevchord").click(function(target){
     sendChord($(this).text());
 });
 
-function sendNoteLength(notelength, notefract){
-    if(wsready){
-        ws.send("notelength " + notelength + " " + notefract);
+function sendNoteLength(noteLength, noteFract){
+    if(wsReady){
+        ws.send("notelength " + noteLength + " " + noteFract);
     }else{
         console.log("ws not ready");
     }
@@ -349,7 +349,7 @@ function markselectednotelength(obj){
 
 function sendMoveCursor(direction, obj){
     console.log("move cursor " + direction);
-    if(wsready){
+    if(wsReady){
         ws.send("movecursor " + direction );
     }else{
         console.log("ws not ready");
@@ -377,9 +377,9 @@ function setupFormElements(){
     console.log(nlelem);
 
 
-    selectednotelengthobj = false;
-    prevnlStroke = false;
-    prevnlFill = false;    
+    selectedNoteLengthObj = false;
+    prevNoteLengthStroke = false;
+    prevNoteLengthFill = false;    
 //    noteLengthSelected(4, nlelem)
 
 }
@@ -388,7 +388,7 @@ function setupFormElements(){
 function message(address, data){
     let msg = {address : address,
         data: data};  
-    if(wsready){
+    if(wsReady){
     //    var buf = new Buffer.from(JSON.stringify(msg));
         ws.send(JSON.stringify(msg));
     }else{

@@ -73,9 +73,9 @@ class Performance {
             orchestra: orchestraData
         }
 
-        let fullpath = this.performanceDir + "/" + this.performanceFile;
-        this.db.log("writing perf file", this.performanceDir, this.performanceFile, perfData, fullpath);
-        fs.writeFile(fullpath, JSON.stringify(perfData, null, "  "), err => {
+        let fullPath = this.performanceDir + "/" + this.performanceFile;
+        this.db.log("writing perf file", this.performanceDir, this.performanceFile, perfData, fullPath);
+        fs.writeFile(fullPath, JSON.stringify(perfData, null, "  "), err => {
             if (err) {
                 console.error(err);
             } else {

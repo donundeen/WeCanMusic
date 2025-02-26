@@ -78,7 +78,7 @@ class TheoryEngine {
             "B",	//11
         ];
 
-        this.currentNotelist = [43, 47, 49];
+        this.currentNoteList = [43, 47, 49];
 
         this.curNote = false;
         this.curScale = false;
@@ -554,10 +554,10 @@ class TheoryEngine {
 
 
     noteList() {
-        var output = "noteList " +   this.currentNotelist.join(" ");
+        var output = "noteList " +   this.currentNoteList.join(" ");
     //	this.debugmsg(output);
 
-        this.sendOutput(output)//+ currentNotelist.join(" "));
+        this.sendOutput(output)//+ currentNoteList.join(" "));
     }
 
 
@@ -708,18 +708,18 @@ class TheoryEngine {
     }
 
 
-    selectFixedFromFloat(value, thelist, min, max) {
+    selectFixedFromFloat(value, theList, min, max) {
     // in a "fixed" setup, the same float value should result in the same midi note (octave may vary), regardless of scale
     // - map the float across FULL range, from min to max
     // - move resulting value DOWN to the closest note in the scale
 
-        if(!thelist){
+        if(!theList){
             return false;
         }
 
         let range = max - min;
         let initial = min + Math.floor(range * value);
-        while(thelist.indexOf(initial) < 0){
+        while(theList.indexOf(initial) < 0){
             initial--;
         }
         return initial;
@@ -727,12 +727,12 @@ class TheoryEngine {
 
 
 
-    selectFromFloat(value, thelist, min, max) {
-        if(!thelist){
+    selectFromFloat(value, theList, min, max) {
+        if(!theList){
             return false;
         }
 
-        var workingList = thelist.filter(function(note){
+        var workingList = theList.filter(function(note){
             if(note >= min && note <= max){
                 return true;
             }
@@ -746,11 +746,11 @@ class TheoryEngine {
     }
 
 
-    selectFromInt(value, thelist, min, max) {
-        if(!thelist){
+    selectFromInt(value, theList, min, max) {
+        if(!theList){
             return false;
         }
-        var workingList = thelist.filter(function(note){
+        var workingList = theList.filter(function(note){
             if(note >= min && note <= max){
                 return true;
             }

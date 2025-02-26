@@ -1,80 +1,80 @@
-class functionCurve{
+class FunctionCurve{
 
     constructor(curve, options){
-        this.curvelist = [0., 0.0, 0., 1.0, 1.0, 0.0];
+        this.curveList = [0., 0.0, 0., 1.0, 1.0, 0.0];
         this.e = 2.71828; 
     
         this.db = false;
         if(options.db){
             this.db = options.db;
         }
-    
-        this.curvelist = curve;
+        
+        this.curveList = curve;
     }
 
-    mapvalue(x){
+    mapValue(x){
         // where is x in the curvelist?
-        let xindex = 0;
-        while(xindex < this.curvelist.length){
-            let curx = this.curvelist[xindex];
-            let nextx = this.curvelist[xindex + 3];
-            if(x >= curx && x <= nextx ){
+        let xIndex = 0;
+        while(xIndex < this.curveList.length){
+            let curX = this.curveList[xIndex];
+            let nextX = this.curveList[xIndex + 3];
+            if(x >= curX && x <= nextX ){
                 break;
             }
-            xindex = xindex + 3;
+            xIndex = xIndex + 3;
         }
-        let minx = this.curvelist[xindex];
-        let maxx = this.curvelist[xindex + 3];
-        let miny = this.curvelist[xindex+1];
-        let maxy = this.curvelist[xindex + 4];
-        let curve = this.curvelist[xindex + 5];
-        if(x == minx){
-            return miny;
+        let minX = this.curveList[xIndex];
+        let maxX = this.curveList[xIndex + 3];
+        let minY = this.curveList[xIndex+1];
+        let maxY = this.curveList[xIndex + 4];
+        let curve = this.curveList[xIndex + 5];
+        if(x == minX){
+            return minY;
         }
-        if(x == maxx){
-            return maxy;
+        if(x == maxX){
+            return maxY;
         }
-        return this.curvescale(x, minx, maxx, miny, maxy, curve);
+        return this.curvescale(x, minX, maxX, minY, maxY, curve);
     }
 
-    curvescale(x , inmin, inmax, outmin, outmax, curve ){
+    curveScale(x , inMin, inMax, outMin, outMax, curve ){
         // treat input and output like it's scaled 0-1, then do the curve on it, then scale back to the output scaling
-        let inscaled = this.floatmap(x, inmin, inmax, 0.0, 1.0);
-        let outscaled = inscaled;
+        let inScaled = this.floatMap(x, inMin, inMax, 0.0, 1.0);
+        let outScaled = inScaled;
         if(curve < 0){
-          outscaled = this.logscale(inscaled, curve);
+          outScaled = this.logScale(inScaled, curve);
         }else if (curve > 0){
-          outscaled = this.expscale(inscaled, curve);
+          outScaled = this.expScale(inScaled, curve);
         }
-        outscaled = this.floatmap(outscaled, 0.0, 1.0, outmin, outmax);
-        return outscaled;
+        outScaled = this.floatMap(outScaled, 0.0, 1.0, outMin, outMax);
+        return outScaled;
     }
       
-    floatmap(inval, inmin, inmax, outmin, outmax){
+    floatMap(inVal, inMin, inMax, outMin, outMax){
         // assume all values are 0-1
-        let inrange = inmax - inmin;
-        let outrange = outmax - outmin;
-        let ratio = outrange / inrange;
-        let inflat = inval - inmin;
-        let outflat = inflat * ratio;
-        let out = outmin + outflat;
+        let inRange = inMax - inMin;
+        let outRange = outMax - outMin;
+        let ratio = outRange / inRange;
+        let inFlat = inVal - inMin;
+        let outFlat = inFlat * ratio;
+        let out = outMin + outFlat;
         return out;
     }
 
-    logscale(x, curve){
+    logScale(x, curve){
         // assume input is 0-1.0
-        let innerpow = (1 / (1+ curve)) - 1;
-        let pow1 =  Math.pow(e, -1 * x * innerpow) ;
-        let pow2 = Math.pow(e, -1 * innerpow);
+        let innerPow = (1 / (1+ curve)) - 1;
+        let pow1 =  Math.pow(this.e, -1 * x * innerPow) ;
+        let pow2 = Math.pow(this.e, -1 * innerPow);
         let y = (1 - pow1) / (1 - pow2 );  
         return y;
     }
 
-    expscale(x, curve){
+    expScale(x, curve){
         // assume input is 0-1.0
-        let innerpow = (1 / (1-curve)) - 1;
-        let pow1 =  pow(e, x * innerpow) ;
-        let pow2 = pow(e, innerpow);
+        let innerPow = (1 / (1-curve)) - 1;
+        let pow1 =  Math.pow(this.e, x * innerPow) ;
+        let pow2 = Math.pow(this.e, innerPow);
         let y = (1 - pow1) / (1 - pow2 );  
         return y;
       }
@@ -82,4 +82,4 @@ class functionCurve{
 
 }
 
-module.exports = functionCurve;
+module.exports = FunctionCurve;

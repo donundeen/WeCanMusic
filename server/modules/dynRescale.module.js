@@ -1,4 +1,4 @@
-class dynRescale {
+class DynRescale {
 
     constructor(options) {
         this.min = false;
@@ -21,7 +21,7 @@ class dynRescale {
             this.max = inval;
         }
         this.db.log(this.min +" , "+this.max);
-        let mapped = this.floatmap(inval, this.min, this.max, outmin, outmax);
+        let mapped = this.floatMap(inval, this.min, this.max, outmin, outmax);
         return mapped;
     }
 
@@ -41,24 +41,24 @@ class dynRescale {
         return inval;
     }
 
-    floatmap(inval, inmin, inmax, outmin, outmax){
-        this.db.log("floatmap : " + inval + " : " + inmin + " : " + inmax);
+    floatMap(inValue, inMin, inMax, outMin, outMax){
+        this.db.log("floatMap : " + inValue + " : " + inMin + " : " + inMax);
         // assume all values are 0-1
-        let inrange = inmax - inmin;
-        this.db.log(inrange);
-        if(inrange == 0){
-            this.db.log("0 range, returning outmin " +outmin);
-            //bad division, just return the outmin
-            return outmin;
+        let inRange = inMax - inMin;
+        this.db.log(inRange);
+        if(inRange == 0){
+            this.db.log("0 range, returning outMin " +outMin);
+            //bad division, just return the outMin
+            return outMin;
         }
-        let outrange = outmax - outmin;
-        let ratio = outrange / inrange; 
-        let inflat = inval - inmin;
-        let outflat = inflat * ratio;
-        let out = outmin + outflat;
+        let outRange = outMax - outMin;
+        let ratio = outRange / inRange; 
+        let inFlat = inValue - inMin;
+        let outFlat = inFlat * ratio;
+        let out = outMin + outFlat;
         return out;
       }
 
 }
 
-module.exports = dynRescale;
+module.exports = DynRescale;

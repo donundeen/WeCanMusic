@@ -4,40 +4,40 @@ var config = {
     "synthtype" : false,  // tiny or fluidsynth or false
     "bluetooth.active" : false,
     "bluetooth.deviceID" :  "40:EF:4C:6F:C8:45", //relay: 40:EF:4C:6F:C8:45, oontz 74:F0:F0:AB:D5:21
-    "player_state" : "play", // stop or play
+    "playerState" : "play", // stop or play
     "soundfont" : "./soundfonts/DayOfTheDeadSF.sf2",
-    "common_soundfont" : "./soundfonts/FluidSynthDefaultSoundfont.sf2", // the file that the soundfont file in use gets copied to. 
-    "soundfont_instrument_list" : "./soundfonts/DayOfTheDeadSF.sf2.voicelist.json",
+    "commonSoundfont" : "./soundfonts/FluidSynthDefaultSoundfont.sf2", // the file that the soundfont file in use gets copied to. 
+    "soundfontInstrumentList" : "./soundfonts/DayOfTheDeadSF.sf2.voicelist.json",
     "scoreDir" : "./scores",
-    "scorename" : "simplescore.txt",
+    "scoreName" : "simplescore.txt",
     "performanceDir" : "./performances",
     "defaultWebpage" : "jamalong.html",
-    "use_midi_out" : true,
-    "midi_out_portname" : "all", /// "all" to use all ports, or an array of regex matches to check against the portnames
-    "midi_waitfor_portnames" : ["FLUID"], // make SURE these ports are all present before starting the conductor
-    "fluidpath" : '/usr/bin/fluidsynth', // OS-specific, overrider in [mac/rpi].conductor.config.js
-    "fluidargs" : ["a", "pulseaudio","-R", 1, "-C", 1], // OS-specific, overrider in [mac/rpi].conductor.config.js
-    "UDPSENDPORT" : 7004,
-    "UDPSENDIP" : "10.0.0.255",
-    "UDPLISTENPORT" : 7005,
-    "WEBSOCKET_PORT" : 80,
-    "WEBSERVER_PORT" : 80,
-    "HTTPS" : false,
-    "HTTPS_WEBSOCKET_PORT" : 443,
-    "HTTPS_WEBSERVER_PORT" : 443,
-    "quantize_time" : ["N16", "N83"],// or array of note length names ("QN, N16, N83, etc")
-    "performance_list" : [
+    "useMidiOut" : true,
+    "midiOutPortname" : "all", /// "all" to use all ports, or an array of regex matches to check against the portnames
+    "midiWaitForPortnames" : ["FLUID"], // make SURE these ports are all present before starting the conductor
+    "fluidPath" : '/usr/bin/fluidsynth', // OS-specific, overrider in [mac/rpi].conductor.config.js
+    "fluidArgs" : ["a", "pulseaudio","-R", 1, "-C", 1], // OS-specific, overrider in [mac/rpi].conductor.config.js
+    "UDPSendPort" : 7004,
+    "UDPSendIP" : "10.0.0.255",
+    "UDPListenPort" : 7005,
+    "websocketPort" : 80,
+    "webserverPort" : 80,
+    "useHttps" : false,
+    "httpsWebsocketPort" : 443,
+    "httpsWebserverPort" : 443,
+    "quantizeTime" : ["N16", "N83"],// or array of note length names ("QN, N16, N83, etc")
+    "performanceList" : [
         {
-            "filename" : "blessingWand",
-            "sayname" : "Blessing Wand"
+            "fileName" : "blessingWand",
+            "sayName" : "Blessing Wand"
         },
         {
-            "filename" : "cheeseBlues",
-            "sayname" : "Cheese Blues"
+            "fileName" : "cheeseBlues",
+            "sayName" : "Cheese Blues"
         },
         {
-            "filename" : "voicesinmyhead",
-            "sayname" : "Voices in My Head"
+            "fileName" : "voicesinmyhead",
+            "sayName" : "Voices in My Head"
         }
     ]
 }

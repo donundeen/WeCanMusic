@@ -13,8 +13,6 @@ class ScoreReader  {
             this.db = options.db;
         }
     
-
-
         this.performanceProps = [
             {name:"scoreFilename", type:"s"}
         ];
@@ -36,7 +34,7 @@ class ScoreReader  {
         // extract performanceProps data, 
         // set internally, 
         // and do any announcing you need to do
-        this.db.log("scorereader loadPErformanceDAta");
+        this.db.log("scoreReader loadPErformanceDAta");
         this.db.log(perfData);
         for(let i = 0; i < this.performanceProps.length; i++){
             this[this.performanceProps[i].name] = perfData[this.performanceProps[i].name];
@@ -46,7 +44,7 @@ class ScoreReader  {
         }
         // opent the score 
         let self = this;
-        this.openscore(function(){
+        this.openScore(function(){
             if(self.performanceUpdateCallback){
                 self.performanceUpdateCallback(self);
             }    
@@ -68,7 +66,7 @@ class ScoreReader  {
         });        
     }
 
-    openscore(callback){
+    openScore(callback){
         let self = this;
         fs.readFile(self.scoreDir + "/" + self.scoreFilename, 'utf8', (err, data) => {
             if (err) {
@@ -82,10 +80,10 @@ class ScoreReader  {
         });
     }
 
-    writescore(callback){
-        let fullpath = this.scoreDir + "/" + this.scoreFilename;
-        this.db.log("writing score", this.scoreFilename, this.scoreText, this.scoreDir, fullpath);
-        fs.writeFile(fullpath, this.scoreText, err => {
+    writeScore(callback){
+        let fullPath = this.scoreDir + "/" + this.scoreFilename;
+        this.db.log("writing score", this.scoreFilename, this.scoreText, this.scoreDir, fullPath);
+        fs.writeFile(fullPath, this.scoreText, err => {
             if (err) {
                 console.error(err);
             } else {
@@ -95,9 +93,9 @@ class ScoreReader  {
         });
     }
 
-    onbeat(beatcount, bar, beat, transport){
+    onBeat(beatCount, bar, beat, transport){
 //        db.log("score beat");
-        this.db.log(beatcount + ": " + bar + ":" + beat);
+        this.db.log(beatCount + ": " + bar + ":" + beat);
 //        db.log(this.scoreText);
         let rstring = "(^|\r|\n|\r\n)"+bar+":"+beat+" (.*)($|\r|\n|\r\n)";
 //        db.log(rstring);

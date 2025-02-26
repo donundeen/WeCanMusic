@@ -6,19 +6,20 @@ const { readFileSync } = require('fs');
 class Persistence  {
 
     constructor(options){   
-        this.storage_dir = "persistence";
+        this.storageDir = "persistence";
         this.db = false;
         if(options.db){
             this.db = options.db;
         }
     }
 
-    generate_filename(name){
-        return this.storage_dir + "/"+name+".json";
-    },
+    generateFilename(name){
+        return this.storageDir + "/"+name+".json";
+    }
 
-    get_json(name){
-        let path = this.generate_filename(name);
+
+    getJSON(name){
+        let path = this.generateFilename(name);
         try{
             const datastring = readFileSync(path);
             let data = JSON.parse(datastring);        
@@ -27,10 +28,10 @@ class Persistence  {
             console.log("file load error ", e);
             return false;
         }
-    },
+    }
 
-    save_json(name, json){
-        let path = this.generate_filename(name);
+    saveJSON(name, json){
+        let path = this.generateFilename(name);
         try {
             writeFileSync(path, JSON.stringify(json, null, 2), 'utf8');
             console.log('Data successfully saved to disk');

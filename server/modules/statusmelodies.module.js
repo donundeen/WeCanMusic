@@ -5,82 +5,82 @@ class StatusMelodies  {
         if(options.db){
             this.db = options.db;
         }
-        this.midi_hardware_engine = options.midi_hardware_engine;
+        this.midiHardwareEngine = options.midiHardwareEngine;
         this.active = options.active;
-        this.midi_channel = options.midi_channel;
-        this.midi_bank = options.midi_bank;
-        this.midi_program = options.midi_program;
+        this.midiChannel = options.midiChannel;
+        this.midiBank = options.midiBank;
+        this.midiProgram = options.midiProgram;
         
-        this.midi_channel = 8;
-        this.midi_bank = 0;
-        this.midi_program = 2; 
+        this.midiChannel = 8;
+        this.midiBank = 0;
+        this.midiProgram = 2; 
 
         this.readyNotes = [65, 69, 72, 65, 69, 72];
         this.errorNotes = [72, 68, 65, 72, 68, 65];
         this.performanceChange = [72, 65, 68, 72, 65, 68];
     }
 
-    playready(){
+    playReady(){
         // play a series of notes that mean "ready";
-        this.playnotes(this.readyNotes, 127, 500, 250);
+        this.playNotes(this.readyNotes, 127, 500, 250);
     }
 
-    playerror(){
-        this.playnotes(this.errorNotes, 127, 500, 250);
+    playError(){
+        this.playNotes(this.errorNotes, 127, 500, 250);
     }
 
-    playperformancechange(){
-        this.playnotes(this.performanceChange, 127, 500, 250);
+    playPerformanceChange(){
+        this.playNotes(this.performanceChange, 127, 500, 250);
     }
 
 
-    playnotes(series, volume, duration, spacing){
-        if(this.midi_hardware_engine){
-            this.midi_hardware_engine.send('cc',{
+    playNotes(series, volume, duration, spacing){
+        if(this.midiHardwareEngine){
+            this.midiHardwareEngine.send('cc',{
                 controller: 0,
-                value: this.midi_bank, 
-                channel: this.midi_channel
+                value: this.midiBank, 
+                channel: this.midiChannel
             }); 
   //          this.db.log(this._midi_program);
-            this.midi_hardware_engine.send('program',{
-                number: this.midi_program, 
-                channel: this.midi_channel
+            this.midiHardwareEngine.send('program',{
+                number: this.midiProgram, 
+                channel: this.midiChannel
             }); 
-            this.playnoteInSeries(series, 0, volume, duration, spacing );
+            this.playNoteInSeries(series, 0, volume, duration, spacing );
         }
     }
 
-    playnoteInSeries(series, index, volume, duration, spacing){
+    playNoteInSeries(series, index, volume, duration, spacing){
         if(index < series.length){
 
-            this.playnote(series[index], volume);
+            this.playNote(series[index], volume);
             let self= this;
             setTimeout(function(){
-                self.endnote(series[index])
+                self.endNote(series[index])
             }, duration);
             index++;
             setTimeout(function(){
-                self.playnoteInSeries(series, index, volume, duration, spacing);
+                self.playNoteInSeries(series, index, volume, duration, spacing);
             }, spacing);
         }
     }
 
-    playnote(pitch, volume){
-        if(this.midi_hardware_engine){
-            this.midi_hardware_engine.send('noteon', {
+    playNote(pitch, volume){
+        if(this.midiHardwareEngine){
+            this.midiHardwareEngine.send('noteon', {
                 note: pitch,
                 velocity: volume,
-                channel: this.midi_channel
+                channel: this.midiChannel
             });
         }
     }
 
-    endnote(pitch){
-        if(this.midi_hardware_engine){
-            this.midi_hardware_engine.send('noteoff', {
+    endNote(pitch){
+        if(this.midiHardwareEngine){
+            this.midiHardwareEngine.send('noteoff', {
                 note: pitch,
                 velocity: 0,
-                channel: this.midi_channel
+                channel: this.midiChannel
             });
         }
     }

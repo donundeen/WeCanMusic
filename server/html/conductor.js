@@ -1,26 +1,25 @@
 
-//const WEBSOCKET_PORT = 80;
-let USE_HTTPS = false;
-let WEBSOCKET_PORT = 80;
-let WEBSOCKET_PROTOCOL = "ws://";
-if(USE_HTTPS){
-    WEBSOCKET_PORT = 443;
-    WEBSOCKET_PROTOCOL = "wss://";
+let useHttps = false;
+let websocketPort = 80;
+let websocketProtocol = "ws://";
+if(useHttps){
+    websocketPort = 443;
+    websocketProtocol = "wss://";
 }
-let voicelist = [[1,79,"nodata"],[0,78,"nodata"]];
-let scorelist = ["simplescore.txt"];
-let curscore = "simplescore.txt";
-let performancelist = [];
-let curperformance = "";
+let voiceList = [[1,79,"nodata"],[0,78,"nodata"]];
+let scoreList = ["simplescore.txt"];
+let curScore = "simplescore.txt";
+let performanceList = [];
+let curPerformance = "";
 
-let notelength_names = ["Double Whole", "Whole", "Half","Half Triplet","Quarter","Quarter Triplet","Eighth","Eighth Triplet","Sixteenth"];
+let noteLengthNames = ["Double Whole", "Whole", "Half","Half Triplet","Quarter","Quarter Triplet","Eighth","Eighth Triplet","Sixteenth"];
 
 
 $(function() {
 
     console.log("starting");
 
-    $(".copyme").hide();
+    $(".copyMe").hide();
 
 
     // chnage this depending on location of webserver. Figure out a way to make this more dynamic...
@@ -32,9 +31,9 @@ $(function() {
     //  const ws = new WebSocket('ws://localhost:8080');
     //const ws = new WebSocket('ws://192.168.4.34:8080');
     //const ws = new WebSocket('ws://10.102.134.110:8080');
-    let websocketurl = WEBSOCKET_PROTOCOL+host+':'+WEBSOCKET_PORT;
-    console.log("trying to start websocket server ", websocketurl);
-    let ws = new WebSocket(websocketurl);
+    let websocketUrl = websocketProtocol+host+':'+websocketPort;
+    console.log("trying to start websocket server ", websocketUrl);
+    let ws = new WebSocket(websocketUrl);
 
     ws.wsready = false;  
 
@@ -44,13 +43,13 @@ $(function() {
  //   score.textToScore("1:1 Gm\n2:1 Fm\n6:2 A M\n8:1 Fm\n9:1 Gm");
     score.changeCallback = function(){
         let text = score.scoreToText();
-        let scorename = performancemanager.currentScoreName;
-        curscore = $(".scorenametext").val();
-        console.log("sending score ", scorename, text);
-        let msg = {scorename: scorename, 
+        let scoreName = performanceManager.currentScoreName;
+        curScore = $(".scoreNameText").val();
+        console.log("sending score ", scoreName, text);
+        let msg = {scoreName: scoreName, 
                 text: text
         }
-        message("savescore", msg);
+        message("saveScore", msg);
     }
     /***************** END SCORE EDITOR SETUP *****************/
 
@@ -64,34 +63,34 @@ $(function() {
 
 
     /***************** PERFORMANCE MANAGER SETUP*****************/
-    let performancemanager = new PerformanceManager("#performancemanager");
+    let performanceManager = new PerformanceManager("#performanceManager");
 
-    performancemanager.sendScoreCallback = function(){
+    performanceManager.sendScoreCallback = function(){
         let text = score.scoreToText();
-        let scorename = performancemanager.currentScoreName;
-        curscore = $(".scorenametext").val();
-        console.log("sending score ", scorename, text);
-        let msg = {scorename: scorename, 
+        let scoreName = performanceManager.currentScoreName;
+        curScore = $(".scoreNameText").val();
+        console.log("sending score ", scoreName, text);
+        let msg = {scoreName: scoreName, 
                 text: text
         }
-        message("savescore", msg);
+        message("saveScore", msg);
     }
 
-    performancemanager.sendPerformanceCallback = function(){
-        let performancename = performancemanager.currentPerformanceName;
-        console.log("sending performance ", performancename);
-        let msg = {performancename: performancename}
-        message("saveperformance", msg); 
+    performanceManager.sendPerformanceCallback = function(){
+        let performanceName = performanceManager.currentPerformanceName;
+        console.log("sending performance ", performanceName);
+        let msg = {performanceName: performanceName}
+        message("savePerformance", msg); 
     }
 
-    performancemanager.getPerformanceCallback = function(performancename){
-        console.log("selecting   " + performancename);
-        message("loadperformance", performancename);        
+    performanceManager.getPerformanceCallback = function(performanceName){
+        console.log("selecting   " + performanceName);
+        message("loadPerformance", performanceName);        
     }
 
-    performancemanager.getScoreCallback = function(scorename){
-        console.log("selecting   " + scorename);
-        message("loadscore", scorename);        
+    performanceManager.getScoreCallback = function(scoreName){
+        console.log("selecting   " + scoreName);
+        message("loadScore", scoreName);        
     }
     /***************** END PERFORMANCE MANAGER SETUPs*****************/
 
@@ -126,9 +125,9 @@ $(function() {
     ws.onopen = function() {
         ws.wsready = true;
         console.log("opened " + ws.readyState);
-        message("getvoicelist",1);        
-        message("getperformancelist",1);
-        message("getscorelist",1);
+        message("getVoiceList",1);        
+        message("getPerformanceList",1);
+        message("getScoreList",1);
         message("ready", "READY NOW")
     };
 
@@ -148,7 +147,7 @@ $(function() {
 //        console.log(msg.address);
 
 
-        if(msg.address == "curbeat"){
+        if(msg.address == "curBeat"){
             let bar = msg.data[1];
             let beat = msg.data[2];
             transport.updateBeat(bar, beat);
@@ -159,10 +158,10 @@ $(function() {
             console.log("got score", msg);
             console.log("updating score", msg.data);
             scoreText = msg.data.text;
-            curscore = msg.data.scorename;
+            curScore = msg.data.scoreName;
     
-            performancemanager.updateCurrentScoreName(curscore);
-            performancemanager.buildScoreListOptions();
+            performanceManager.updateCurrentScoreName(curScore);
+            performanceManager.buildScoreListOptions();
             
             if(!scoreText){
                 return;
@@ -170,40 +169,41 @@ $(function() {
             score.textToScore(scoreText);
         }
 
-        if(msg.address == "scorelist"){
+        if(msg.address == "scoreList"){
             console.log("got scorelist");
-            scorelist = msg.data;
-            console.log("scorelist", scorelist);
-            performancemanager.scoreList = scorelist;
-            performancemanager.buildScoreListOptions();
+            scoreList = msg.data;
+            console.log("scorelist", scoreList);
+            performanceManager.scoreList = scoreList;
+            performanceManager.buildScoreListOptions();
         }
-        if(msg.address == "performancelist"){
+        if(msg.address == "performanceList"){
             console.log("got performancelist", msg);
-            let performancelist = msg.data;
-            performancemanager.performanceList = performancelist;
-            performancemanager.buildPerformanceListOptions();
+            let performanceList = msg.data;
+            performanceManager.performanceList = performanceList;
+            performanceManager.buildPerformanceListOptions();
         }
-        if(msg.address == "performancename"){
-            let curperformance = msg.data;
-            performancemanager.updateCurrentPerformanceName(curperformance);
-            performancemanager.buildPerformanceListOptions();            
+        if(msg.address == "performanceName"){
+            let curPerformance = msg.data;
+            performanceManager.updateCurrentPerformanceName(curPerformance);
+            performanceManager.buildPerformanceListOptions();            
         }
 
 
-        if(msg.address =="addinstrument"){
+        if(msg.address =="addInstrument"){
             console.log("adding instrument");
             orchestra.instrumentAnnounced(msg);
         }
         //     // I don't think this is used. It doesn't make any sense..
-        if(msg.address =="updateinstrument"){
-            orchestra.updateInstrumentData(msg.data.device_name, msg.data);
+        if(msg.address =="updateInstrument"){
+            orchestra.updateInstrumentData(msg.data.deviceName, msg.data);
         }
-        if(msg.address =="makenote"){
-            orchestra.updateInstrumentMakenote(msg.data.device_name, msg.data);
+        if(msg.address =="makeNote"){
+            console.log("got makeNote", msg);
+            orchestra.updateInstrumentMakenote(msg.data.deviceName, msg.data);
         }
-        if(msg.address == "voicelist"){
-            console.log("got voicelist");
-            orchestra.updateVoicelist(msg.data);
+        if(msg.address == "voiceList"){
+            console.log("got voiceList");
+            orchestra.updateVoiceList(msg.data);
         }
         // add message about adding a new instrument here
     }

@@ -16,41 +16,41 @@ class PerformanceManager {
 
     init(){
         let self = this;
-        $(".sendscore", this.performanceContainer).click(function(){
-            self.currentScoreName = $(".scorenametext", self.performanceContainer).val();
+        $(".sendScore", this.performanceContainer).click(function(){
+            self.currentScoreName = $(".scoreNameText", self.performanceContainer).val();
             if(self.sendScoreCallback){
                 self.sendScoreCallback();
             }
         });
 
-        $(".sendperformance", this.performanceContainer).click(function(){
+        $(".sendPerformance", this.performanceContainer).click(function(){
             console.log("sendperformance clicked");
-            self.currentPerformanceName = $(".performancenametext", this.performanceContainer).val();
+            self.currentPerformanceName = $(".performanceNameText", this.performanceContainer).val();
             if(self.sendPerformanceCallback){
                 console.log("sendPerformanceCallback");
                 self.sendPerformanceCallback();
             }
         });
 
-        $(".getperformance", this.performanceContainer).click(function(){
-            let newperformance = $(".performanceselect").val();
+        $(".getPerformance", this.performanceContainer).click(function(){
+            let newperformance = $(".performanceSelect").val();
             if(self.getPerformanceCallback){
                 self.getPerformanceCallback(newperformance);
             }
         });
 
-        $(".performanceselect", this.performanceContainer ).change(function(event, ui){
+        $(".performanceSelect", this.performanceContainer ).change(function(event, ui){
             let newperformance = $(event.target).val();
             self.currentPerformanceName = newperformance;
-            $(".performancenametext", self.performanceContainer).val(newperformance);
+            $(".performanceNameText", self.performanceContainer).val(newperformance);
             console.log("selecting   " + newperformance);
             if(self.getPerformanceCallback){
                 self.getPerformanceCallback(newperformance);
             }
         });        
 
-        $(".getscore", this.performanceContainer).click(function(){
-            let newscore = $(".scoreselect").val();
+        $(".getScore", this.performanceContainer).click(function(){
+            let newscore = $(".scoreSelect").val();
             if(self.getScoreCallback){
                 self.getScoreCallback(newscore);
             }
@@ -59,7 +59,7 @@ class PerformanceManager {
         $(".scoreselect", this.performanceContainer).change(function(event, ui){
             let newscore = $(event.target).val();
             self.currentScoreName = newscore;   
-            $(".scorenametext", self.performanceContainer).val(newscore);
+            $(".scoreNameText", self.performanceContainer).val(newscore);
             console.log("selecting   " + newscore);
             if(self.getScoreCallback){
                 self.getScoreCallback(newscore);
@@ -71,19 +71,19 @@ class PerformanceManager {
     
     updateCurrentScoreName(scorename){
         this.currentScoreName = scorename;
-        $(".scorenametext", this.performanceContainer).val(scorename);
+        $(".scoreNameText", this.performanceContainer).val(scorename);
     }
 
     updateCurrentPerformanceName(performancename){
         this.currentPerformanceName = performancename;
-        $(".performancenametext", this.performanceContainer).val(performancename);
+        $(".performanceNameText", this.performanceContainer).val(performancename);
     }
 
     buildScoreListOptions(){
 
         console.log("building score list options", this.scoreList);
-        $(".scoreselect", this.performanceContainer).empty();
-        $(".scoreselect", this.performanceContainer).append('<option value="">SELECT SCORE</option>');
+        $(".scoreSelect", this.performanceContainer).empty();
+        $(".scoreSelect", this.performanceContainer).append('<option value="">SELECT SCORE</option>');
 
         for(let i = 0; i < this.scoreList.length; i++){
             let selected = "";
@@ -91,14 +91,14 @@ class PerformanceManager {
                 selected = "SELECTED"
             }
             let elem = $("<option value='"+this.scoreList[i]+"' "+selected+">"+this.scoreList[i]+"</option>");
-            $(".scoreselect", this.performanceContainer).append(elem);
+            $(".scoreSelect", this.performanceContainer).append(elem);
         }
     }
 
 
     buildPerformanceListOptions(){
-        $(".performanceselect", this.performanceContainer).empty();
-        $(".performanceselect", this.performanceContainer).append('<option value="">SELECT PERFORMANCE</option>');
+        $(".performanceSelect", this.performanceContainer).empty();
+        $(".performanceSelect", this.performanceContainer).append('<option value="">SELECT PERFORMANCE</option>');
 
         if(!this.performanceList || this.performanceList.length == 0){
             return;
@@ -109,7 +109,7 @@ class PerformanceManager {
                 selected = "SELECTED"
             }
             let elem = $("<option value='"+this.performanceList[i]+"' "+selected+">"+this.performanceList[i]+"</option>");
-            $(".performanceselect", this.performanceContainer).append(elem);
+            $(".performanceSelect", this.performanceContainer).append(elem);
         }
 
 

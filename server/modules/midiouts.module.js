@@ -13,105 +13,105 @@ class MidiOuts {
             this.matches = options.matches;
         }
 
-        this.waitfor = [];
-        if(options.waitfor){
-            this.waitfor = options.waitfor;
+        this.waitFor = [];
+        if(options.waitFor){
+            this.waitFor = options.waitFor;
         }
 
-        this.quantize_time = null;
+        this.quantizeTime = null;
         // things like 
-        if(options.quantize_time){
-            this.quantize_time = options.quantize_time;
+        if(options.quantizeTime){
+            this.quantizeTime = options.quantizeTime;
         }
 
-        this.portnames = [];
-        this.midi_hardware_engines = [];
+        this.portNames = [];
+        this.midiHardwareEngines = [];
 
         this.midi = require('midi');
-        this.easymidi = require('easymidi');
+        this.easyMidi = require('easymidi');
 
-        this.makenote_queue = [];
+        this.makeNoteQueue = [];
     }
     // need a way to pick just some portnames sometimes, or an array of matches.
     init(){
-        this.get_midi_portnames();
+        this.getMidiPortnames();
 
         console.log(typeof this.matches);
         if(typeof this.matches == "object"){
-            console.log("filtering portnames", this.portnames, this.matches);
-            this.portnames = this.filter_portnames(this.matches);
-            console.log("filtered portnames", this.portnames);
+            console.log("filtering portnames", this.portNames, this.matches);
+            this.portNames = this.filterPortnames(this.matches);
+            console.log("filtered portnames", this.portNames);
         }
 
-        this.init_midi_hardware_engines();
+        this.initMidiHardwareEngines();
         this.send("reset");
     }
 
 
     send(message){
-        for(let engine of this.midi_hardware_engines){
+        for(let engine of this.midiHardwareEngines){
             engine.send(message);
         }
     }
 
     send (message, options){
-        for(let engine of this.midi_hardware_engines){
+        for(let engine of this.midiHardwareEngines){
             engine.send(message, options);
         }        
     }
 
-    get_midi_portnames(){
+    getMidiPortnames(){
 
         let waiting = true;
         while(waiting){
-            let midi_outputs = this.easymidi.getOutputs();
-            console.log("midi_outputs", midi_outputs);
-            console.log("midi_inputs", this.easymidi.getInputs());
-            for(let i = 0; i<midi_outputs.length; i++){
-                this.portnames.push(midi_outputs[i]);
+            let midiOutputs = this.easyMidi.getOutputs();
+            console.log("midi_outputs", midiOutputs);
+            console.log("midi_inputs", this.easyMidi.getInputs());
+            for(let i = 0; i < midiOutputs.length; i++){
+                this.portNames.push(midiOutputs[i]);
             }
-            if(this.waitfor == "all"){
+            if(this.waitFor == "all"){
                 waiting = false;
             }else{
-                let result = this.waitfor.filter(regex => this.portnames.some(portname => new RegExp(regex).test(portname)));
+                let result = this.waitFor.filter(regex => this.portNames.some(portname => new RegExp(regex).test(portname)));
                 console.log("result", result);
-                if(result.length == this.waitfor.length){
+                if(result.length == this.waitFor.length){
                     waiting = false;
                 }else{
-                    this.db.log("waiting for portnames", this.waitfor, "result", result);
+                    this.db.log("waiting for portnames", this.waitFor, "result", result);
                 }
             }
         }
-        console.log("portnames", this.portnames);
-        return this.portnames;
+        console.log("portnames", this.portNames);
+        return this.portNames;
     }
 
 
-    filter_portnames(regex_array){
-        let result = this.portnames.filter(portname => regex_array.some(pattern => new RegExp(pattern).test(portname)));
+    filterPortnames(regexArray){
+        let result = this.portNames.filter(portname => regexArray.some(pattern => new RegExp(pattern).test(portname)));
         return result;
     }
 
-    init_midi_hardware_engines(){
-        for(let portname of this.portnames){
-            if(this.midi_hardware_engines.filter(engine => engine.name == portname).length == 0){
-                this.midi_hardware_engines.push(new this.easymidi.Output(portname));
+    initMidiHardwareEngines(){
+        for(let portname of this.portNames){
+            if(this.midiHardwareEngines.filter(engine => engine.name == portname).length == 0){
+                this.midiHardwareEngines.push(new this.easyMidi.Output(portname));
             }
         }
     }
 
 
-    makenote(channel, note, velocity, duration){
-        if(this.quantize_time){
-            this.db.log("quantize makenote");
-            this.makenote_add_to_queue(channel, note, velocity, duration);
+    makeNote(channel, note, velocity, duration){
+        if(this.quantizeTime){
+            this.db.log("quantize makeNote");
+            this.makeNoteAddToQueue(channel, note, velocity, duration);
         }else{
-            this.db.log("no quantize makenote");
-            this.makenote_now(channel, note, velocity, duration);
+            this.db.log("no quantize makeNote");
+            this.makeNoteNow(channel, note, velocity, duration);
         }
     }   
 
-    makenote_now(channel, note, velocity, duration){
+    makeNoteNow(channel, note, velocity, duration){
         this.send("noteon", {
             note: note,
             velocity: velocity,
@@ -126,8 +126,8 @@ class MidiOuts {
         }, duration);
     }
 
-    makenote_add_to_queue(channel, note, velocity, duration){
-        this.makenote_queue.push({
+    makeNoteAddToQueue(channel, note, velocity, duration){
+        this.makeNoteQueue.push({
             channel: channel,
             note: note,
             velocity: velocity,
@@ -136,14 +136,14 @@ class MidiOuts {
     }
 
 
-    process_makenote_queue(){
-        if(!this.processing_queue){
-            this.processing_queue = true;
-            for(let item of this.makenote_queue){
-                this.makenote_now(item.channel, item.note, item.velocity, item.duration);
+    processMakeNoteQueue(){
+        if(!this.processingQueue){
+            this.processingQueue = true;
+            for(let item of this.makeNoteQueue){
+                this.makeNoteNow(item.channel, item.note, item.velocity, item.duration);
             }
-            this.makenote_queue = [];
-            this.processing_queue = false;
+            this.makeNoteQueue = [];
+            this.processingQueue = false;
         }
     }
 }   

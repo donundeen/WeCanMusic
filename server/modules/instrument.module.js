@@ -1,6 +1,6 @@
-dynRescale = require("./dynRescale.module");
-functionCurve = require("./functionCurve.module");
-NoteNumberCruncher = require("./notenumbercruncher.module");
+const DynRescale = require("./dynRescale.module");
+const FunctionCurve = require("./functionCurve.module");
+const NoteNumberCruncher = require("./notenumbercruncher.module");
 
 class Instrument {
 
@@ -13,52 +13,52 @@ class Instrument {
         this.type = "local";
 
     // input values
-        this._sensor_value = false;;
+        this._sensorValue = false;;
         this.changeRate = false;
         this.prevChangeVal = false;
 
     // note lists
-        this._notelist = [];
-        this.workinglist = [];
-        this._device_name = "RENAME_ME";
+        this._noteList = [];
+        this.workingList = [];
+        this._deviceName = "RENAME_ME";
 
         // networking info
-        this._wecanmusic_server_ip = "10.0.0.174";
-        this._wecanmusic_port = "7002";
+        this._wecanmusicServerIp = "10.0.0.174";
+        this._wecanmusicPort = "7002";
 
-        // midi vars
-        this._midi_voice = "0:1"; // in format bank:program, when this is set, parse and set bank and program
-        this._midi_bank = 0; // bank and program together select the tone.
-        this._midi_program = 1;
-        this._midi_channel = 1;
+        // midi vars    
+        this._midiVoice = "0:1"; // in format bank:program, when this is set, parse and set bank and program
+        this._midiBank = 0; // bank and program together select the tone.
+        this._midiProgram = 1;
+        this._midiChannel = 1;
         this._rootMidi = 0;
-        this._midimin = 32;
-        this._midimax = 100;
-        this._midi_vol = 200; //(0-254) // sometimes we use shorter names because of arduino restrictions in OSC routes
+        this._midiMin = 32;
+        this._midiMax = 100;
+        this._midiVol = 200; //(0-254) // sometimes we use shorter names because of arduino restrictions in OSC routes
 
         this._reset = false; // if the "reset" value is set, call the reset function 
 
     // dictionary of note names and their lengths
-        this.notelengths = {};
-        this.notelength_values = [];
+        this.noteLengths = {};
+        this.noteLengthValues = [];
 
-        this.currentnotes = []; // need to keep track of all playing notes to to a panic stop
+        this.currentNotes = []; // need to keep track of all playing notes to to a panic stop
 
         // set fluidSynth object
         this.synth = false;
 
         // set hardware synth out object (easymidi)
-        this.midi_hardware_engine = false;
+        this.midiHardwareEngine = false;
 
         // velocity curve starts as a straight line
-        this._velocitycurve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
-        this._changeratecurve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
+        this._velocityCurve = new FunctionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
+        this._changeRateCurve = new FunctionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
         // dyn rescaling
-        this.input_scale = new dynRescale({db:this.db});
-        this.changerate_scale = new dynRescale({db:this.db});
-        this.velocity_scale = new dynRescale({db:this.db});
+        this.inputScale = new DynRescale({db:this.db});
+        this.changeRateScale = new DynRescale({db:this.db});
+        this.velocityScale = new DynRescale({db:this.db});
 
-        this.last_note_time = Date.now();
+        this.lastNoteTime = Date.now();
 
         // timing for different common note values.
         this._bpm = 120;
@@ -66,31 +66,31 @@ class Instrument {
         this.running = false;
 
         // instr, pitch, velocity, duration
-        this.makenote_callback = false;
+        this.makeNoteCallback = false;
 
         // track the previous note, so we don't play the same note twice in a row
-        this._previous_pitch = 0;
-        this.skip_duplicate_notes = true;
+        this._previousPitch = 0;
+        this.skipDuplicateNotes = true;
     
         // vars that might be externally set.
         // we can send this info to a server so it can set up a UI to collect those values
         // maybe array of objects?
         this.configProps = [
-            {name:"device_name", type:"s"},
+            {name:"deviceName", type:"s"},
             {name:"type", type:"s"},
-            {name:"sensor_value", type:"f"},
-            {name:"notelist", type:"ia"},
-            {name:"wecanmusic_server_ip", type:"s"},
-            {name:"wecanmusic_port", type:"i"},
-            {name:"midi_voice", type:"s"},
-            {name:"midi_bank", type:"i"},
-            {name:"midi_program", type:"i"},
-            {name:"midi_channel", type:"i"},
-            {name:"midi_nlen", type:"i"},
-            {name:"midi_vol", type:"i"},
+            {name:"sensorValue", type:"f"},
+            {name:"noteList", type:"ia"},
+            {name:"wecanmusicServerIp", type:"s"},
+            {name:"wecanmusicPort", type:"i"},
+            {name:"midiVoice", type:"s"},
+            {name:"midiBank", type:"i"},
+            {name:"midiProgram", type:"i"},
+            {name:"midiChannel", type:"i"},
+            {name:"midiNlen", type:"i"},
+            {name:"midiVol", type:"i"},
             {name:"rootMidi", type:"i"},
-            {name:"midimin", type:"i"},
-            {name:"midimax", type:"i"},
+            {name:"midiMin", type:"i"},
+            {name:"midiMax", type:"i"},
             /* // TBD: saving of the data in these curve objects.
             {name:"velocitycurve", type:"fa"},
             {name:"changeratecurve", type:"fa"},
@@ -99,11 +99,10 @@ class Instrument {
         ];
 
 
-
         this.db.log("CONSTRUCTING");
-        this.last_note_time = Date.now();
+        this.lastNoteTime = Date.now();
         this.setNoteLengths();
-        this.get_config_props();
+        this.getConfigProps();
         this.numberCruncher = new NoteNumberCruncher({db: this.db});
 
     }
@@ -114,22 +113,22 @@ class Instrument {
 
     set reset(resetval){
         // don't need to set the reset value, just call the reset function
-        this.reset_instrument();
+        this.resetInstrument();
     }
 
-    set velocitycurve(curve){
-        this._velocitycurve.curvelist = curve;
+    set velocityCurve(curve){
+        this._velocityCurve.curveList = curve;
     }
 
-    get velocitycurve(){
-        return this._velocitycurve;
+    get velocityCurve(){
+        return this._velocityCurve;
     }
 
-    set changeratecurve(curve){
-        this._changeratecurve.curvelist = curve;
+    set changeRateCurve(curve){
+        this._changeRateCurve.curveList = curve;
     }
-    get changeratecurve(){
-        return this._changeratecurve;
+    get changeRateCurve(){
+        return this._changeRateCurve;
     }
 
     set bpm(bpm){
@@ -141,12 +140,12 @@ class Instrument {
         return this._bpm;
     }
 
-    get midi_voice(){
-        return this._midi_voice;
+    get midiVoice(){
+        return this._midiVoice;
     }
 
-    set midi_voice(voice){
-        this.db.log("setting midi_voice ", voice);
+    set midiVoice(voice){
+        this.db.log("setting midiVoice ", voice);
         let split = voice.split(":");
         let bank = 0;
         let program = 1;
@@ -156,31 +155,31 @@ class Instrument {
             bank = split[0];
             program = split[1];
         }
-        this.midi_bank = bank;
-        this.midi_program = program;
+        this.midiBank = bank;
+        this.midiProgram = program;
     }
 
-    set midi_program(program){
-        this._midi_program = parseInt(program);
-        this._midi_voice = this._midi_bank +":"+ this._midi_program;
+    set midiProgram(program){
+        this._midiProgram = parseInt(program);
+        this._midiVoice = this._midiBank +":"+ this._midiProgram;
         this.midiSetBankProgram();
     }
-    get midi_program(){
-        return this._midi_program;
+    get midiProgram(){
+        return this._midiProgram;
     }
 
-    set midi_bank(bank){
-        this._midi_bank = parseInt(bank);
-        this._midi_voice = this._midi_bank +":"+ this._midi_program;        
+    set midiBank(bank){
+        this._midiBank = parseInt(bank);
+        this._midiVoice = this._midiBank +":"+ this._midiProgram;        
         this.midiSetBankProgram(); // program and bank might come in reverse order, better to set it both times; at least the second time you set it the bank and program will be legit.
     }
 
-    get midi_bank(){
-        return this._midi_bank;
+    get midiBank(){
+        return this._midiBank;
     }
 
     // what to do when a new sensor value is received. Need to trigger a note here
-    set sensor_value(value){
+    set sensorValue(value){
         // might be a number or an OSC-formatted value message
         if(typeof value == "number"){
             value = value;
@@ -197,40 +196,40 @@ class Instrument {
         this.numberCruncher.setValue(value);
         this.numberCruncher.crunch();
         this.db.log("numberCruncher.crunch", this.numberCruncher.scaledValue);
-        this._sensor_value = value;
-        this.derive_changerate(this._sensor_value);
+        this._sensorValue = value;
+        this.deriveChangeRate(this._sensorValue);
         this.db.log("derive_changerate", this.changeRate);
         this.note_trigger();
     }
 
-    get sensor_value(){
-        return this._sensor_value;
+    get sensorValue(){
+        return this._sensorValue;
     }
 
-    set midi_channel(channel){
+    set midiChannel(channel){
         this.db.log("changing midi channel to " + channel);
-        this._midi_channel = channel;
+        this._midiChannel = channel;
     }
-    get midi_channel(){
-        return this._midi_channel;
-    }
-
-    get midi_vol(){
-        return this._midi_vol;
+    get midiChannel(){
+        return this._midiChannel;
     }
 
-    set midi_vol(vol){
-        this._midi_vol = vol;
+    get midiVol(){
+        return this._midiVol;
+    }
+
+    set midiVol(vol){
+        this._midiVol = vol;
         this.midiSetVolume();
     }
 
    ////////////////////////
     // MUSIC FUNCTIONS
-    set notelist(notelist){
-        this._notelist = notelist;
+    set noteList(notelist){
+        this._noteList = notelist;
     }
-    get notelist(){
-        return this._notelist;
+    get noteList(){
+        return this._noteList;
     }
 
     set rootMidi(root){
@@ -240,20 +239,20 @@ class Instrument {
         return this._rootMidi;
     }
 
-    set midimax(max){
-        this._midimax = max;
+    set midiMax(max){
+        this._midiMax = max;
     }
 
-    get midimax(){
-        return this._midimax;
+    get midiMax(){
+        return this._midiMax;
     }
 
-    set midimin(min){
-        this._midimin = min;
+    set midiMin(min){
+        this._midiMin = min;
     }
 
-    get midimin(){
-        return this._midimin;
+    get midiMin(){
+        return this._midiMin;
     }
 
     /******************************* */
@@ -263,12 +262,12 @@ class Instrument {
     /******************************* */
     /** Configurable properties FUNCTIONS   */
     /******************************* */
-    get_config_props(){
-        this.populate_config_props();
+    getConfigProps(){
+        this.populateConfigProps();
         return this.configProps;
     }
 
-    populate_config_props(){
+    populateConfigProps(){
         for(let i =0; i< this.configProps.length; i++){
             this.configProps[i]["value"] = this[this.configProps[i]["name"]];
         }
@@ -338,14 +337,14 @@ class Instrument {
     /** RESET FUNCTIONS   */
     /******************************* */     
 
-    reset_instrument(){
+    resetInstrument(){
         this.db.log("RESETTING LOCAL---------------------------------------");
-        this.input_scale.reset();
-        this.velocity_scale.reset();
-        this.changerate_scale.reset();
-        this._sensor_value = false;
-        this.synth.allNotesOff(this._midi_channel);
-        this.synth.resetAllControllers(this._midi_channel);
+        this.inputScale.reset();
+        this.velocityScale.reset();
+        this.changeRateScale.reset();
+        this._sensorValue = false;
+        this.synth.allNotesOff(this._midiChannel);
+            this.synth.resetAllControllers(this._midiChannel);
         this.synth.reset();
         this.numberCruncher.reset();
     }
@@ -359,24 +358,24 @@ class Instrument {
     /******************************* */
     setNoteLengths(){
         // set note constant lengths, depending on bpms
-        this.notelength_values = [];
-        this.notelengths.QN = this.bpmToMS();
-        this.notelengths.WN = this.notelengths.QN * 4;
-        this.notelengths.HN = this.notelengths.QN * 2;
-        this.notelengths.N8 = this.notelengths.QN / 2;
-        this.notelengths.N16 = this.notelengths.QN / 4;
-        this.notelengths.QN3 = this.notelengths.HN / 3;
-        this.notelengths.HN3 = this.notelengths.WN / 3;
-        this.notelengths.N83 = this.notelengths.QN / 3;
-        this.notelength_values.push(this.notelengths.QN);
-        this.notelength_values.push(this.notelengths.WN);
-        this.notelength_values.push(this.notelengths.HN);
-        this.notelength_values.push(this.notelengths.N8);
-        this.notelength_values.push(this.notelengths.N16);
-        this.notelength_values.push(this.notelengths.QN3);
-        this.notelength_values.push(this.notelengths.HN3);
-        this.notelength_values.push(this.notelengths.N83);
-        this.notelength_values.sort(function(a, b){return a - b});        
+        this.noteLengthValues = [];
+        this.noteLengths.QN = this.bpmToMS();
+        this.noteLengths.WN = this.noteLengths.QN * 4;
+        this.noteLengths.HN = this.noteLengths.QN * 2;
+        this.noteLengths.N8 = this.noteLengths.QN / 2;
+        this.noteLengths.N16 = this.noteLengths.QN / 4;
+        this.noteLengths.QN3 = this.noteLengths.HN / 3;
+        this.noteLengths.HN3 = this.noteLengths.WN / 3;
+        this.noteLengths.N83 = this.noteLengths.QN / 3;
+        this.noteLengthValues.push(this.noteLengths.QN);
+        this.noteLengthValues.push(this.noteLengths.WN);
+        this.noteLengthValues.push(this.noteLengths.HN);
+        this.noteLengthValues.push(this.noteLengths.N8);
+        this.noteLengthValues.push(this.noteLengths.N16);
+        this.noteLengthValues.push(this.noteLengths.QN3);
+        this.noteLengthValues.push(this.noteLengths.HN3);
+        this.noteLengthValues.push(this.noteLengths.N83);
+        this.noteLengthValues.sort(function(a, b){return a - b});        
     }   
 
     bpmToMS(){
@@ -394,49 +393,49 @@ class Instrument {
     // not using this function, 
     // which constantly produces notes even if there's no sensor value coming in.
     // calling note_trigger when a new sensor value comes in instead.
-    note_loop(){
+    noteLoop(){
         // process the input and send a note
-        if(this.sensor_value === false){
+        if(this.sensorValue === false){
             setTimeout((function(){
-                this.note_loop();
+                this.noteLoop();
             }).bind(this), 500);            
             return false;
         }
         if(this.running === false){
             setTimeout((function(){
-                this.note_loop();
+                this.noteLoop();
             }).bind(this), 500);              
             return false;
         }
-        this.note_trigger();
+        this.noteTrigger();
         
         setTimeout((function(){
-            this.note_loop()
+            this.noteLoop()
         }).bind(this), mididuration);
     }
 
-    note_trigger(){
-        if(this.sensor_value === false){         
+    noteTrigger(){
+        if(this.sensorValue === false){         
             return false;
         }
         if(this.running === false){            
             return false;
         }
-        this.db.log("sensor value " + this.sensor_value);
-        let value        = this.input_scale.scale(this.sensor_value,0,1);
+        this.db.log("sensor value " + this.sensorValue);
+        let value        = this.inputScale.scale(this.sensorValue,0,1);
         this.db.log("scaled value is " + value);
-        let midipitch    = this.derive_pitch(value);
-        let midivelocity = this.derive_velocity();
-        let mididuration = this.derive_duration();
-        this.midiMakeNote(midipitch, midivelocity, mididuration);
+        let midiPitch    = this.derivePitch(value);
+        let midiVelocity = this.deriveVelocity();
+        let midiDuration = this.deriveDuration();
+        this.midiMakeNote(midiPitch, midiVelocity, midiDuration);
        
     }
 
-    sensor_loop(){
+    sensorLoop(){
         // process the recieved sensor_value
     }
 
-    derive_changerate(val){
+    deriveChangeRate(val){
         // derive the changerate
 
         this.changeRate = this.numberCruncher.changeRate;
@@ -444,36 +443,36 @@ class Instrument {
 
     }
 
-    derive_pitch(){
-        let pitch = this.noteFromFloat(this.numberCruncher.scaledValue, this.midimin, this.midimax);
+    derivePitch(){
+        let pitch = this.noteFromFloat(this.numberCruncher.scaledValue, this.midiMin, this.midiMax);
         return pitch;
     }
 
-    derive_velocity(){
+    deriveVelocity(){
         let velocity = Math.floor(127.0 * this.numberCruncher.velocityFloat);
         return velocity;
     }
 
-    derive_duration(){
-        let duration = this.update_last_note_time();
-        let qduration = this.quantize_duration(duration);
+    deriveDuration(){
+        let duration = this.updateLastNoteTime();
+        let qduration = this.quantizeDuration(duration);
         return qduration;
     }
 
-    update_last_note_time(){
+    updateLastNoteTime(){
         let now = Date.now();
-        let duration = now - this.last_note_time;
-        this.last_note_time = now;
+        let duration = now - this.lastNoteTime;
+        this.lastNoteTime = now;
         return duration;
     }
 
     // convert milliseconds into nearest note length.
-    quantize_duration(duration){
+    quantizeDuration(duration){
         // iterate through note lengths and find the closest one
         let t1 = false;
         let t2 = false;
-        for (let i in this.notelength_values) {
-            let t = this.notelength_values[i];
+        for (let i in this.noteLengthValues) {
+            let t = this.noteLengthValues[i];
             if(!t1){
                 t1 = t;
                 if(duration < t){
@@ -498,18 +497,13 @@ class Instrument {
     noteFromFloat(value, min, max){
         this.db.log("note from float " + value);
         this.makeWorkingList(min, max);
-        //Serial.print("note from value ");
-        //Serial.println(value);
-        //Serial.println(workinglistlength);
-        let index = Math.floor(this.workinglist.length * value);
-        if(index == this.workinglist.length){
-            index = this.workinglist.length -1;
+        let index = Math.floor(this.workingList.length * value);
+        if(index == this.workingList.length){
+            index = this.workingList.length -1;
         }
         this.db.log(index);
-        //Serial.println(index);
-        let note  = this.workinglist[index];// % workingList.length]
+        let note  = this.workingList[index];// % workingList.length]
         this.db.log("returning note " + note);
-        //Serial.println(note);
         return note;
     }
 
@@ -517,10 +511,10 @@ class Instrument {
         // in a "fixed" setup, the same float value should result in the same midi note (octave may vary), regardless of scale
         // - map the float across FULL range, from min to max
         // - move resulting value DOWN to the closest note in the scale
-        this.makeworkinglist(min, max);
+        this.makeWorkingList(min, max);
         let range = max - min;
         let initial = min + Math.floor(range * value);
-        while(indexOf(initial, workinglist) < 0){
+        while(this.workingList.indexOf(initial) < 0){
             initial--;
         }
         return initial;
@@ -528,54 +522,54 @@ class Instrument {
 
     getRootedBestNoteFromFlat(value, min, max){
         // for a "rooted" scale/chord, expand the min and max so that both min and max are the root
-        min = moveMinMax(this.rootMidi, min);
-        max = moveMinMax(this.rootMidi, max);
+        min = this.moveMinMax(this.rootMidi, min);
+        max = this.moveMinMax(this.rootMidi, max);
 
-        let note = noteFromFloat(value, min, max);
+        let note = this.noteFromFloat(value, min, max);
         if(!note){
             return false;
         }
         return note;
     }
 
-    moveMinMax(root, minmax){
+    moveMinMax(root, minMax){
         // for a "rooted" scale/chord, expand the min and max so that both min and max are the root
         //		maxApi.post("getChordNoteFromFloat "+labelid + ", " + value);
         //		maxApi.post(chordNoteSetMidi);
-        let orig = minmax;
-        let mindiff = (minmax % 12) - (root % 12);
-        let minmove = abs(6 - mindiff);
+        let orig = minMax;
+        let minDiff = (minMax % 12) - (root % 12);
+        let minMove = Math.abs(6 - minDiff);
 
-        if(mindiff == 0){
+        if(minDiff == 0){
             // do nothing
         }
-        else if (mindiff < -6){
-            mindiff = -12 - mindiff;
-            minmax = minmax - mindiff;
+        else if (minDiff < -6){
+            minDiff = -12 - minDiff;
+            minMax = minMax - minDiff;
             //big distance, go opposite way around
         }
-        else if (mindiff < 0){
+        else if (minDiff < 0){
             // small different, go toward
-            minmax = minmax - mindiff;
+            minMax = minMax - minDiff;
         }
-        else if(mindiff < 6){
-            minmax = minmax - mindiff;
+        else if(minDiff < 6){
+            minMax = minMax - minDiff;
         }
-        else if (mindiff < 12){
-            mindiff = 12 - mindiff;
-            minmax = minmax + mindiff;
+        else if (minDiff < 12){
+            minDiff = 12 - minDiff;
+            minMax = minMax + minDiff;
         }
-        return minmax;
+        return minMax;
     }
 
     // Make a new array that's a subset of the notelist, with min and max values
     makeWorkingList(min, max){
         let wi = -1;
-        this.workinglist = [];
-        for(let i = 0; i < this.notelist.length; i ++){
-          if(this.notelist[i] >= min && this.notelist[i] <= max){
+        this.workingList = [];
+        for(let i = 0; i < this.noteList.length; i ++){
+          if(this.noteList[i] >= min && this.noteList[i] <= max){
             wi++;
-            this.workinglist[wi] = this.notelist[i];
+            this.workingList[wi] = this.noteList[i];
           }
         }
     }
@@ -588,23 +582,23 @@ class Instrument {
 
     ////////////////////////
     // MIDI FUNCTIONS
-    midi_setup(){
+    midiSetup(){
 
     }
 
     midiMakeNote(note, velocity, duration){
         // this.db.log(this.synth.foothing + " MAKING NOTE UDP " + this._midi_channel + " : " + note + " : " + velocity + " : " + duration);
         // note: each instrument needs its own channel, or the instrument will be the same tone.
-        this.db.log("mideMakeNote : ", this._midi_vol, this.midi_channel, this._midi_bank, this._midi_program,  note, velocity, duration);
+        this.db.log("midiMakeNote : ", this._midiVol, this._midiChannel, this._midiBank, this._midiProgram,  note, velocity, duration);
         if(!Number.isFinite(note) || !Number.isFinite(velocity) || !Number.isFinite(duration)){
             this.db.log("bad midi values, returning");
             return;
         }
-        if(!this.skip_duplicate_notes || note != this.previous_pitch ){
+        if(!this.skipDuplicateNotes || note != this._previousPitch ){
         }else{
             return;
         }
-        this.previous_pitch = note;
+        this._previousPitch = note;
 
         if(velocity == 0){
 //            this.db.log("no volume, no note");
@@ -613,45 +607,45 @@ class Instrument {
 //        this.midiSetInstrument(); // do we really need to set the bank an program for every note? seems like overkill...
         if(this.synth){
             this.synth
-            .noteOn(this.midi_channel, note, velocity)
+            .noteOn(this._midiChannel, note, velocity)
             .wait(duration)
-            .noteOff(this.midi_channel, note);
+            .noteOff(this._midiChannel, note);
         }
         // if there's a hardware midi device attached to this instrument
-        if(this.midi_hardware_engine){
-            console.log("midi_hardware_engine makenote");
-            this.midi_hardware_engine.makenote(this.midi_channel, note, velocity, duration);
+        if(this.midiHardwareEngine){
+            console.log("midi_hardware_engine makeNote");
+            this.midiHardwareEngine.makeNote(this._midiChannel, note, velocity, duration);
         }else{
             this.db.log("NNNNNNNNNNNNNNNo hardware engine");
         }
 
-        if(this.makenote_callback){
-            this.makenote_callback(this, note, velocity, duration);
+        if(this.makeNoteCallback){
+            this.makeNoteCallback(this, note, velocity, duration);
         }
     }
 
     midiSetInstrument(){
         if(this.synth){
-            this.synth.allNotesOff(this._midi_channel);  
-            if(this.synth.good_voices){
-                let realvoice = this.synth.good_voices[this._midi_program % this.synth.good_voices.length]
+            this.synth.allNotesOff(this._midiChannel);  
+            if(this.synth.goodVoices){
+                let realvoice = this.synth.goodVoices[this._midiProgram % this.synth.goodVoices.length]
                 this.synth
-                .program(this._midi_channel, realvoice)        
+                .program(this._midiChannel, realvoice)        
 
             }else{
                 this.synth
-                .program(this._midi_channel, this._midi_voice)        
+                .program(this._midiChannel, this._midiVoice)        
             }
         }
-        if(this.midi_hardware_engine){
-            this.midi_hardware_engine.send('cc',{
+        if(this.midiHardwareEngine){
+            this.midiHardwareEngine.send('cc',{
                 controller: 0,
-                value: this._midi_bank, 
-                channel: this._midi_channel
+                value: this._midiBank, 
+                channel: this._midiChannel
             });  
-            this.midi_hardware_engine.send('program',{
-                number: this._midi_program, 
-                channel: this._midi_channel
+            this.midiHardwareEngine.send('program',{
+                number: this._midiProgram, 
+                channel: this._midiChannel
             }); 
         }
     }
@@ -660,46 +654,46 @@ class Instrument {
     midiSetBankProgram(){
         if(this.midi_hardware_engine){
 //            this.db.log(this._midi_bank);
-            this.midi_hardware_engine.send('cc',{
+            this.midiHardwareEngine.send('cc',{
                 controller: 0,
                 value: 0, //this._midi_bank, 
-                channel: this._midi_channel
+                channel: this._midiChannel
             }); 
   //          this.db.log(this._midi_program);
-            this.midi_hardware_engine.send('program',{
-                number: this._midi_program, 
-                channel: this._midi_channel
+            this.midiHardwareEngine.send('program',{
+                number: this._midiProgram, 
+                channel: this._midiChannel
             }); 
         }    
     }
 
     midiSetVolume(){
         // don't allow volumes over 254
-        if(this._midi_vol > 254){
-            this._midi_vol = 254;
+        if(this._midiVol > 254){
+            this._midiVol = 254;
         }
         // control change value to set volume.
         if(this.midi_hardware_engine){
-            this.db.log("setting volume to ", this._midi_vol, "channel " , this._midi_channel);
-            this.midi_hardware_engine.send('cc',{
+            this.db.log("setting volume to ", this._midiVol, "channel " , this._midiChannel);
+            this.midiHardwareEngine.send('cc',{
                 controller: 7,
-                value: this._midi_vol, // the volume, 
-                channel: this._midi_channel
+                value: this._midiVol, // the volume, 
+                channel: this._midiChannel
             });         
         }else{
-            this.db.log("no hardware engine, setting volume to ", this._midi_vol, "channel " , this._midi_channel);
+            this.db.log("no hardware engine, setting volume to ", this._midiVol, "channel " , this._midiChannel);
         }
     }    
 
     // we might care about this, for mono things
     midiNoteOn(channel, pitch, velocity){
         this.synth
-        .noteOn(this._midi_channel, pitch, velocit)
+        .noteOn(this._midiChannel, pitch, velocity);
     }
 
     midiNoteOff(channel, pitch){
         this.synth
-        .noteOff(this._midi_channel, pitch);
+        .noteOff(this._midiChannel, pitch);
     }
     // END MIDI FUNCTIONS
     ////////////////////////

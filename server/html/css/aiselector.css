@@ -1,11 +1,11 @@
-.prevchords {
+.prevChords {
     display: flex;
     margin: auto;
     width: 80%;
     justify-content: space-evenly;
 }
 
-.prevchord{
+.prevChord{
     border: 1px solid blue;
     border-radius: 10px;
     flex-grow: 1;
@@ -18,17 +18,17 @@
     align-items: center;
 }
 
-.prevchordtext{
+.prevChordText{
     border:1px solid green;
     margin: 1px;
 }
 
-.conductorlink {
+.conductorLink {
     position: absolute;
     top:5px;
     left: 5px;
 }
 
-.selectedprevchord{
+.selectedPrevChord{
     background-color: lightgray;
 }

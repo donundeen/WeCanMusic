@@ -7,13 +7,13 @@ if(USE_HTTPS){
     WEBSOCKET_PORT = 443;
     WEBSOCKET_PROTOCOL = "wss://";
 }
-let voicelist = [[1,79,"nodata"],[0,78,"nodata"]];
-let scorelist = ["simplescore.txt"];
-let curscore = "simplescore.txt";
-let performancelist = [];
-let curperformance = "";
+let voiceList = [[1,79,"nodata"],[0,78,"nodata"]];
+let scoreList = ["simplescore.txt"];
+let curScore = "simplescore.txt";
+let performanceList = [];
+let curPerformance = "";
 
-let notelength_names = ["Double Whole", "Whole", "Half","Half Triplet","Quarter","Quarter Triplet","Eighth","Eighth Triplet","Sixteenth"];
+let noteLengthNames = ["Double Whole", "Whole", "Half","Half Triplet","Quarter","Quarter Triplet","Eighth","Eighth Triplet","Sixteenth"];
 
 
 $(function() {
@@ -335,7 +335,7 @@ $(function() {
         $(selectedElement).addClass("highlight");
     }
 
-    $(".copyme").hide();
+    $(".copyMe").hide();
 
     function instrumentAnnounced(options){
         /*
@@ -391,7 +391,7 @@ $(function() {
 
     function createInstrumentForm(id, options_array, options_object){
         console.log("coptying");
-        let instr = $(".copyme").clone(true,true).removeClass("copyme").show().attr("id",id).appendTo(".instruments");
+        let instr = $(".copyMe").clone(true,true).removeClass("copyMe").show().attr("id",id).appendTo(".instruments");
         //***** Setting up instrument nodes,  */
         let midimin = options_object.midimin  ? options_object.midimin : 32;
         let midimax = options_object.midimax  ? options_object.midimax : 100;
@@ -695,29 +695,29 @@ $(function() {
             let elem = $("<option value='"+id+"'>"+id+" "+name+"</option>");
             $(voptions).append(elem);
         }
-        $(".voice_display").replaceWith(voptions);    
+        $(".voiceDisplay").replaceWith(voptions);    
         // also need to update the voice slider to link with the new select options...
-        $(".instrument").not(".copyme").each(function(index,instr){
-            let midi_voice = $(this).data("midi_voice");
-            console.log("voice", midi_voice);
-            let midi_voice_index = 0;
-            let [midi_bank, midi_program] = [0,0];
+        $(".instrument").not(".copyMe").each(function(index,instr){
+            let midiVoice = $(this).data("midiVoice");
+            console.log("voice", midiVoice);
+            let midiVoiceIndex = 0;
+            let [midiBank, midiProgram] = [0,0];
             try{
-                [midi_bank, midi_program] = midi_voice.split(":");
+                [midiBank, midiProgram] = midiVoice.split(":");
                 // figure out midi_voice index in voicelist
-                midi_voice_index = voicelist.findIndex((v)=>{
-                    return (midi_bank == v[0] && midi_program == v[1]);
+                midiVoiceIndex = voicelist.findIndex((v)=>{
+                    return (midiBank == v[0] && midiProgram == v[1]);
                 });
             }catch(e){}
-            midi_voice_index = (midi_voice_index >=0 ? midi_voice_index : 0);
-            console.log(midi_voice, midi_bank, midi_program, midi_voice_index); 
+            midiVoiceIndex = (midiVoiceIndex >=0 ? midiVoiceIndex : 0);
+            console.log(midiVoice, midiBank, midiProgram, midiVoiceIndex); 
             $( ".midi-voice",this ).slider({
                 max: (voicelist.length > 0 ? voicelist.length - 1 : 127),//voicelist.length - 1,
-                value: midi_voice_index,//(midi_voice_index >=0 ? midi_voice_index : 0),// midi_voice,
+                value: midiVoiceIndex,//(midi_voice_index >=0 ? midi_voice_index : 0),// midi_voice,
             });
-            $('.voice_display',this).val(midi_voice);
-            $( ".voice_display",this ).on("change",function(event){
-                console.log("voice_display. change");
+            $('.voiceDisplay',this).val(midiVoice);
+            $( ".voiceDisplay",this ).on("change",function(event){
+                console.log("voiceDisplay. change");
                 console.log($(event.target).val());
                 let selectedIndex = $(event.target).prop('selectedIndex');
                 let voiceval = $(event.target).val();
@@ -730,16 +730,16 @@ $(function() {
     }
 
     function buildScoreListOptions(){
-        $(".scoreselect").empty();
-        $(".scoreselect").append('<option value="">SELECT SCORE</option>');
+        $(".scoreSelect").empty();
+        $(".scoreSelect").append('<option value="">SELECT SCORE</option>');
 
-        for(let i = 0; i < scorelist.length; i++){
+        for(let i = 0; i < scoreList.length; i++){
             let selected = "";
-            if(scorelist[i] == curscore){
+            if(scoreList[i] == curscore){
                 selected = "SELECTED"
             }
-            let elem = $("<option value='"+scorelist[i]+"' "+selected+">"+scorelist[i]+"</option>");
-            $(".scoreselect").append(elem);
+            let elem = $("<option value='"+scoreList[i]+"' "+selected+">"+scoreList[i]+"</option>");
+            $(".scoreSelect").append(elem);
         }
 
 
@@ -747,24 +747,24 @@ $(function() {
 
 
     function buildPerformanceListOptions(){
-        $(".performanceselect").empty();
-        $(".performanceselect").append('<option value="">SELECT PERFORMANCE</option>');
+        $(".performanceSelect").empty();
+        $(".performanceSelect").append('<option value="">SELECT PERFORMANCE</option>');
 
-        for(let i = 0; i < performancelist.length; i++){
+        for(let i = 0; i < performanceList.length; i++){
             let selected = "";
-            if(performancelist[i] == curperformance){
+            if(performanceList[i] == curPerformance){
                 selected = "SELECTED"
             }
-            let elem = $("<option value='"+performancelist[i]+"' "+selected+">"+performancelist[i]+"</option>");
-            $(".performanceselect").append(elem);
+            let elem = $("<option value='"+performanceList[i]+"' "+selected+">"+performanceList[i]+"</option>");
+            $(".performanceSelect").append(elem);
         }
 
-        $(".performanceselect").change(function(event, ui){
-            let newperformance = $(event.target).val();
-            curperformance = newperformance;
-            $(".performancenametext").val(curperformance);
-            console.log("selecting   " + newperformance);
-            message("loadperformance", newperformance);
+        $(".performanceSelect").change(function(event, ui){
+            let newPerformance = $(event.target).val();
+            curPerformance = newPerformance;
+            $(".performanceNameText").val(curPerformance);
+            console.log("selecting   " + newPerformance);
+            message("loadPerformance", newPerformance);
         });
     }
 

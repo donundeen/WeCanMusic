@@ -1,5 +1,5 @@
-dynRescale = require("./dynRescale.module");
-functionCurve = require("./functionCurve.module");
+const DynRescale = require("./dynRescale.module");
+const FunctionCurve = require("./functionCurve.module");
 
 class NoteNumberCruncher {
     constructor(options){
@@ -17,14 +17,14 @@ class NoteNumberCruncher {
         this.timeToNextNoteFloat = false;
         this.changeRate = 0;
         this.prevChangeTime = 0;
-        this.input_scale = new dynRescale({db: db});
-        this.changerate_scale = new dynRescale({db: db});
-        this.velocity_scale = new dynRescale({db: db});
+        this.inputScale = new DynRescale({db: db});
+        this.changeRateScale = new DynRescale({db: db});
+        this.velocityScale = new DynRescale({db: db});
 
-        this.pitch_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
-        this.velocity_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
-        this.duration_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
-        this.timeToNextNote_curve = new functionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db}   );        
+        this.pitchCurve = new FunctionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
+        this.velocityCurve = new FunctionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
+        this.durationCurve = new FunctionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
+        this.timeToNextNoteCurve = new FunctionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});        
 
     }
 
@@ -39,16 +39,16 @@ class NoteNumberCruncher {
         this.timeToNextNoteFloat = false;
         this.changeRate = 0;
         this.prevChangeTime = 0;
-        this.input_scale.reset();
-        this.changerate_scale.reset();
-        this.velocity_scale.reset();      
+        this.inputScale.reset();
+        this.changeRateScale.reset();
+        this.velocityScale.reset();      
         
     }
 
     setValue(value){
         this.db.log("notenumbercrunchersetValue", value);
         this.rawValue = value;
-        this.scaledValue = this.input_scale.scale(value, 0, 1);
+        this.scaledValue = this.inputScale.scale(value, 0, 1);
         this.db.log("notenumbercruncher. got scaledValue", this.scaledValue);
     }
 
@@ -64,7 +64,7 @@ class NoteNumberCruncher {
     processChangeRate(){
 
         if(this.firstRead){ //
-            this.db.log("notenumbercruncher. changerate firstRead");
+            this.db.log("notenumbercruncher. changeRate firstRead");
             this.prevValue = this.rawValue;    //
             this.prevChangeTime = Date.now(); //
             this.changeRate = 0;
@@ -79,18 +79,18 @@ class NoteNumberCruncher {
         this.db.log("notenumbercruncher. ochange", ochange, millisDiff);
         let change = ochange / millisDiff;
         this.db.log("notenumbercruncher. change", change);
-        this.changeRate = this.changerate_scale.scale(change, 0, 1);
+        this.changeRate = this.changeRateScale.scale(change, 0, 1);
         this.prevChangeTime = millis;
-        this.prevvalue = this.rawValue;
+        this.prevValue = this.rawValue;
 
     }
 
     derivePitchFloat(){
-        this.pitchFloat = this.pitch_curve.mapvalue(this.scaledValue);
+        this.pitchFloat = this.pitchCurve.mapvalue(this.scaledValue);
     }
 
     deriveVelocityFloat(){
-        this.velocityFloat = this.velocity_curve.mapvalue(this.changeRate);
+        this.velocityFloat = this.velocityCurve.mapvalue(this.changeRate);
     }
 
     deriveDurationFloat(){
