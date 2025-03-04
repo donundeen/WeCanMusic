@@ -35,6 +35,7 @@ class Instrument {
         this._midiMin = 32;
         this._midiMax = 100;
         this._midiVol = 200; //(0-254) // sometimes we use shorter names because of arduino restrictions in OSC routes
+        this._midiNlen = 6;
 
         this._reset = false; // if the "reset" value is set, call the reset function 
 
@@ -176,6 +177,14 @@ class Instrument {
 
     get midiBank(){
         return this._midiBank;
+    }
+
+    get midiNlen(){
+        return this._midiNlen;
+    }
+
+    set midiNlen(nlen){
+        this._midiNlen = parseInt(nlen);
     }
 
     // what to do when a new sensor value is received. Need to trigger a note here
@@ -363,21 +372,23 @@ class Instrument {
         this.noteLengthValues = [];
         this.noteLengths.QN = this.bpmToMS();
         this.noteLengths.WN = this.noteLengths.QN * 4;
+        this.noteLengths.DWN = this.noteLengths.WN * 2;
         this.noteLengths.HN = this.noteLengths.QN * 2;
         this.noteLengths.N8 = this.noteLengths.QN / 2;
         this.noteLengths.N16 = this.noteLengths.QN / 4;
         this.noteLengths.QN3 = this.noteLengths.HN / 3;
         this.noteLengths.HN3 = this.noteLengths.WN / 3;
         this.noteLengths.N83 = this.noteLengths.QN / 3;
-        this.noteLengthValues.push(this.noteLengths.QN);
         this.noteLengthValues.push(this.noteLengths.WN);
+        this.noteLengthValues.push(this.noteLengths.DWN);
         this.noteLengthValues.push(this.noteLengths.HN);
+        this.noteLengthValues.push(this.noteLengths.QN);
         this.noteLengthValues.push(this.noteLengths.N8);
         this.noteLengthValues.push(this.noteLengths.N16);
         this.noteLengthValues.push(this.noteLengths.QN3);
         this.noteLengthValues.push(this.noteLengths.HN3);
         this.noteLengthValues.push(this.noteLengths.N83);
-        this.noteLengthValues.sort(function(a, b){return a - b});        
+        this.noteLengthValues.sort(function(a, b){return b - a});        
     }   
 
     bpmToMS(){
@@ -456,6 +467,10 @@ class Instrument {
     }
 
     deriveDuration(){
+        this.db.log("deriveDuration", this.midiNlen, this.noteLengthValues);
+        return this.noteLengthValues[this.midiNlen];
+
+        // the apprach below doesn't work so great.
         let duration = this.updateLastNoteTime();
         let qduration = this.quantizeDuration(duration);
         return qduration;
@@ -617,7 +632,7 @@ class Instrument {
         }
         // if there's a hardware midi device attached to this instrument
         if(this.midiHardwareEngine){
-            console.log("midi_hardware_engine makeNote");
+            console.log("midiHardwareEngine makeNote");
             this.midiHardwareEngine.makeNote(this._midiChannel, note, velocity, duration);
         }else{
             this.db.log("NNNNNNNNNNNNNNNo hardware engine");
@@ -656,14 +671,14 @@ class Instrument {
 
 
     midiSetBankProgram(){
-        if(this.midi_hardware_engine){
-//            this.db.log(this._midi_bank);
+        if(this.midiHardwareEngine){
+            this.db.log(this._midiBank);
             this.midiHardwareEngine.send('cc',{
                 controller: 0,
-                value: 0, //this._midi_bank, 
+                value: this._midiBank, 
                 channel: this._midiChannel
             }); 
-  //          this.db.log(this._midi_program);
+            this.db.log(this._midiProgram);
             this.midiHardwareEngine.send('program',{
                 number: this._midiProgram, 
                 channel: this._midiChannel
@@ -677,7 +692,7 @@ class Instrument {
             this._midiVol = 254;
         }
         // control change value to set volume.
-        if(this.midi_hardware_engine){
+        if(this.midiHardwareEngine){
             this.db.log("setting volume to ", this._midiVol, "channel " , this._midiChannel);
             this.midiHardwareEngine.send('cc',{
                 controller: 7,

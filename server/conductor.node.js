@@ -512,7 +512,7 @@ socket.setMessageReceivedCallback(function(msg){
             orchestra.allUDPInstrumentSetValue("synth", synth);      
             orchestra.allLocalInstrumentSetValue("synth", synth);      
         }
-        // midi_hardware_engine
+        // midiHardwareEngine
         orchestra.midiHardwareEngine.send('reset'); 
     });
 
@@ -534,6 +534,7 @@ socket.setMessageReceivedCallback(function(msg){
         let value = data.val;
         let instrType = data.instrType;
         if(instrType == "local"){
+            db.log("setting local instr value", deviceName, prop, value);
             orchestra.localInstrumentSetValue(deviceName, prop, value);
         }else if(instrType == "udp"){
             // set locally in orchestra AND remotely on device.
