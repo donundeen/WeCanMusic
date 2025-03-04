@@ -6,13 +6,13 @@ class Transport {
         }
         this.play = false;
         this.bpm = false;
-        this.beatcount = 0;
+        this.beatCount = 0;
         this.bar = false;
         this.beat = false;
         this.interval = false;
-        this.notelengths = {};
-        this.notelength_values = [];
-        this.beatcallback = false;
+        this.noteLengths = {};
+        this.noteLengthValues = [];
+        this.beatCallback = false;
 
         this.startCallback = false;
         this.stopCallback = false;
@@ -25,9 +25,9 @@ class Transport {
         this.performanceUpdateCallback = false; // callback that gets called when a performance data is updated
         this.performancePropUpdateCallback = false;
 
-        this.quantize_time = false; // or array of note length names ("QN, N16, N83, etc")
-        this.quantizecallback = false; // callback that gets called when a quantize time is reached
-        this.quantize_intervals = [];
+        this.quantizeTime = false; // or array of note length names ("QN, N16, N83, etc")
+        this.quantizeCallback = false; // callback that gets called when a quantize time is reached
+        this.quantizeIntervals = [];
     }
 
     getPerformanceData() {
@@ -67,49 +67,49 @@ class Transport {
 
     setNoteLengths(){
         // set note constant lengths, depending on bpms
-        this.notelength_values = [];
-        this.notelengths.QN = this.bpmToMS(this.bpm);
-        this.notelengths.WN = this.notelengths.QN * 4;
-        this.notelengths.HN = this.notelengths.QN * 2;
-        this.notelengths.N8 = this.notelengths.QN / 2;
-        this.notelengths.N16 = this.notelengths.QN / 4;
-        this.notelengths.QN3 = this.notelengths.HN / 3;
-        this.notelengths.HN3 = this.notelengths.WN / 3;
-        this.notelengths.N83 = this.notelengths.QN / 3;
-        this.notelength_values.push(this.notelengths.QN);
-        this.notelength_values.push(this.notelengths.WN);
-        this.notelength_values.push(this.notelengths.HN);
-        this.notelength_values.push(this.notelengths.N8);
-        this.notelength_values.push(this.notelengths.N16);
-        this.notelength_values.push(this.notelengths.QN3);
-        this.notelength_values.push(this.notelengths.HN3);
-        this.notelength_values.push(this.notelengths.N83);
-        this.notelength_values.sort(function(a, b){return a - b});        
+        this.noteLengthValues = [];
+        this.noteLengths.QN = this.bpmToMS(this.bpm);
+        this.noteLengths.WN = this.noteLengths.QN * 4;
+        this.noteLengths.HN = this.noteLengths.QN * 2;
+        this.noteLengths.N8 = this.noteLengths.QN / 2;
+        this.noteLengths.N16 = this.noteLengths.QN / 4;
+        this.noteLengths.QN3 = this.noteLengths.HN / 3;
+        this.noteLengths.HN3 = this.noteLengths.WN / 3;
+        this.noteLengthValues.N83 = this.noteLengthValues.QN / 3;
+        this.noteLengthValues.push(this.noteLengths.QN);
+        this.noteLengthValues.push(this.noteLengths.WN);
+        this.noteLengthValues.push(this.noteLengths.HN);
+        this.noteLengthValues.push(this.noteLengths.N8);
+        this.noteLengthValues.push(this.noteLengths.N16);
+        this.noteLengthValues.push(this.noteLengths.QN3);
+        this.noteLengthValues.push(this.noteLengths.HN3);
+        this.noteLengthValues.push(this.noteLengthValues.N83);
+        this.noteLengthValues.sort(function(a, b){return a - b});        
     }  
 
-    onbeat() {
-        this.bar = Math.floor(this.beatcount / 4) + 1;
-        this.beat = (this.beatcount % 4) + 1;
-        this.beatcount++;
-        if (this.beatcallback) {
-            this.beatcallback(this.beatcount, this.bar, this.beat, this);
+    onBeat() {
+        this.bar = Math.floor(this.beatCount / 4) + 1;
+        this.beat = (this.beatCount % 4) + 1;
+        this.beatCount++;
+        if (this.beatCallback) {
+            this.beatCallback(this.beatCount, this.bar, this.beat, this);
         } else {
 //            this.db.log("no callback");
         }
     }
 
-    onquantize(){
-        if (this.quantizecallback) {
-            this.quantizecallback(this);
+    onQuantize(){
+        if (this.quantizeCallback) {
+            this.quantizeCallback(this);
         } else {
         }        
     }
 
     start() {
         if (!this.interval) {
-            if (this.notelengths.QN) {
-                this.db.log("Starting " + this.notelengths.QN);
-                this.interval = setInterval((function () { this.onbeat(); }).bind(this), this.notelengths.QN);
+            if (this.noteLengths.QN) {
+                this.db.log("Starting " + this.noteLengths.QN);
+                this.interval = setInterval((function () { this.onBeat(); }).bind(this), this.noteLengths.QN);
             } else {
                 this.db.log("no BPM set");
                 this.db.log(this);
@@ -118,24 +118,24 @@ class Transport {
         if (this.startCallback) {
             this.startCallback(this);
         }
-        this.startquantize();
+        this.startQuantize();
     }
 
-    startquantize(){
-        if(this.quantize_time){
-            this.stopquantize();
-            for(let quantize_time of this.quantize_time){
-                this.quantize_intervals.push(setInterval((function () { this.onquantize(); }).bind(this), this.notelengths[quantize_time]));
+    startQuantize(){
+        if(this.quantizeTime){
+            this.stopQuantize();
+            for(let quantizeTime of this.quantizeTime){
+                this.quantizeIntervals.push(setInterval((function () { this.onQuantize(); }).bind(this), this.noteLengths[quantizeTime]));
             }
         }
     }
 
-    stopquantize(){
+    stopQuantize(){
         // Clear all intervals in the quantize_intervals array
-        for (let interval of this.quantize_intervals) {
+        for (let interval of this.quantizeIntervals) {
             clearInterval(interval);
         }
-        this.quantize_intervals = [];
+        this.quantizeIntervals = [];
     }
 
     stop() {
@@ -156,14 +156,14 @@ class Transport {
     }
 
     reset() {
-        this.beatcount = 0;
+        this.beatCount = 0;
         if (this.resetCallback) {
             this.resetCallback(this);
         }
     }
 
     setBeatCallback(callback) {
-        this.beatcallback = callback;
+        this.beatCallback = callback;
     }
 }
 

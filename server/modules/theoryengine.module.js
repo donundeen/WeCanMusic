@@ -154,11 +154,15 @@ class TheoryEngine {
     runSetter(command, labelid) {
         // if there's spaces, split and run each one
         command = command.trim();
+        this.db.log("runSetter " , this.db);
+        let self = this;
         if(command.match(/ /)){
             let split = command.split(" ");
-            for (com of split){
-                this.runSetter(com.trim());
-            }
+            this.db.log("split " , this.db);
+            split.forEach(function(com){
+                self.db.log("com " , com);
+                self.runSetter(com.trim());
+            });
             return;
         }
         if(command.match(/^[a-gA-G][b#♭]?[0-9]?$/)){

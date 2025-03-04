@@ -4,6 +4,7 @@ class DynRescale {
         this.min = false;
         this.max = false;
         this.db = false;
+        this.name = false;
         if(options.db){
             this.db = options.db;
         }
@@ -11,17 +12,20 @@ class DynRescale {
 
     
     scale(inval, outmin, outmax){
-        this.db.log("scaling " + inval);
+        this.db.log("scaling " + this.name + " " + inval);
         this.db.log(this.min +" , "+this.max);
         // do thje math
         if(this.min === false || inval < this.min){
+            this.db.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< setting min " + inval);
             this.min = inval;
         }
         if(this.max === false || inval > this.max){
+            this.db.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setting max " + inval);
             this.max = inval;
         }
         this.db.log(this.min +" , "+this.max);
         let mapped = this.floatMap(inval, this.min, this.max, outmin, outmax);
+        this.db.log("mapped " + mapped);
         return mapped;
     }
 

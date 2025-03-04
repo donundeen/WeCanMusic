@@ -369,7 +369,7 @@ class Orchestra {
 //        console.log("updateMakenote");
 //        console.log(data_obj);
         let instr = $("#"+id);
-        let text = dataObj.pitch + ":"+dataObj.velocity+":"+dataObj.duration;
+        let text = dataObj.pitch + ":"+dataObj.velocity+":"+parseInt(dataObj.duration);
 //        console.log(text);
         $( ".makeNote span",instr ).text(text);
     }

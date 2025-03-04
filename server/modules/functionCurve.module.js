@@ -34,7 +34,7 @@ class FunctionCurve{
         if(x == maxX){
             return maxY;
         }
-        return this.curvescale(x, minX, maxX, minY, maxY, curve);
+        return this.curveScale(x, minX, maxX, minY, maxY, curve);
     }
 
     curveScale(x , inMin, inMax, outMin, outMax, curve ){

@@ -11,6 +11,7 @@ var config = {
     "scoreDir" : "./scores",
     "scoreName" : "simplescore.txt",
     "performanceDir" : "./performances",
+    "initialTheoryMsgs" : ["C M"],
     "defaultWebpage" : "jamalong.html",
     "useMidiOut" : true,
     "midiOutPortname" : "all", /// "all" to use all ports, or an array of regex matches to check against the portnames

@@ -18,6 +18,7 @@ class MidiOuts {
             this.waitFor = options.waitFor;
         }
 
+        this.quantizeActive = false;
         this.quantizeTime = null;
         // things like 
         if(options.quantizeTime){
@@ -102,8 +103,8 @@ class MidiOuts {
 
 
     makeNote(channel, note, velocity, duration){
-        if(this.quantizeTime){
-            this.db.log("quantize makeNote");
+        if(this.quantizeActive && this.quantizeTime){
+            this.db.log("quantize makeNote", this.quantizeTime);
             this.makeNoteAddToQueue(channel, note, velocity, duration);
         }else{
             this.db.log("no quantize makeNote");
@@ -140,6 +141,7 @@ class MidiOuts {
         if(!this.processingQueue){
             this.processingQueue = true;
             for(let item of this.makeNoteQueue){
+                this.db.log("processing makeNoteQueue item", item);
                 this.makeNoteNow(item.channel, item.note, item.velocity, item.duration);
             }
             this.makeNoteQueue = [];

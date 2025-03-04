@@ -254,9 +254,9 @@ trans.startCallback = function(transportobj){
     midiHardwareEngine.quantizeTime = config.quantizeTime;
     trans.quantizeTime = config.quantizeTime;
     if(config.quantizeTime){   
-        db.log("setting quantizecallback");
-        trans.quantizecallback = function(transport){
-            midiHardwareEngine.processMakenoteQueue();
+        db.log("setting quantizeCallback");
+        trans.quantizeCallback = function(transport){
+            midiHardwareEngine.processMakeNoteQueue();
         }
     }
 };
@@ -264,7 +264,7 @@ trans.stopCallback = function(transportObj){
     db.log("trans.stopCallback");
     midiHardwareEngine.quantizeTime = null;
     trans.quantizeTime = null;
-    trans.quantizecallback = null;
+    trans.quantizeCallback = null;
 };
 
 // intialize the midi synth (fluid or tiny)
@@ -306,6 +306,11 @@ score.setMessageCallback(function(msg){
     theory.runSetter(msg, "fromScore");
 });
 
+// set up the theory engine with any initial messages from the config
+// this way there can be a default theory state before any messages are received
+config.initialTheoryMsgs.forEach(function(msg){
+    theory.runSetter(msg, "fromConfig");
+});
 
 
 ////////////////////////////////////////
@@ -399,7 +404,7 @@ socket.setMessageReceivedCallback(function(msg){
         score.scoreFilename = filename;
         score.scoreText = scoreText;
 
-        score.writescore(function(scoreobj){
+        score.writeScore(function(scoreobj){
             db.log("score written");
             score.openScore(function(scoreText){   
                 let data = {scoreName : score.scoreFilename,
@@ -419,16 +424,19 @@ socket.setMessageReceivedCallback(function(msg){
     // stop tells the transport to stop (stop and go to beginning)
     routeFromWebsocket(msg, "stop", function(msg){
         trans.stop();
+        midiHardwareEngine.quantizeActive = false;
     });
 
     // play tells the transport to play from current point
     routeFromWebsocket(msg, "play", function(msg){
         trans.start();
+        midiHardwareEngine.quantizeActive = true;
     });
 
     // pause tells the transport to stop playing but don't change position
     routeFromWebsocket(msg, "pause", function(msg){
         trans.pause();
+        midiHardwareEngine.quantizeActive = false;
     });
 
     // set bpm changes the bpm. might not be fully implemented
@@ -607,8 +615,8 @@ udpPort.on("message", function (oscMsg) {
     });
 
 
-    // processign makenote messages from UDP connected devices (eg, if they aren't using their own speakers)
-    routeFromOSC(oscMsg, "/makenote", function(oscMsg, address){
+    // processign makeNote messages from UDP connected devices (eg, if they aren't using their own speakers)
+    routeFromOSC(oscMsg, "/makeNote", function(oscMsg, address){
         db.log("MAKING NOTE in routeFromOSC");
         let value = oscMsg.simpleValue;
         let name = value[0];
@@ -949,5 +957,9 @@ score.openScore(function(){
     statusMelodies.playReady();
     if(config.playerState == "play"){
         trans.start();
+    }else{
+        // even if the player state is not play, we want to read the very first score line
+        // so that the theory engine has a starting point
+        score.onBeat(1, 1, 1, trans);
     }
 });

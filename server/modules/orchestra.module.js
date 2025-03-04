@@ -286,7 +286,7 @@ class Orchestra{
             this.noteList = value;
         }
         for (let key in this.localInstruments) {
-            this.local_instrument_set_value(key, prop, value);
+            this.localInstrumentSetValue(key, prop, value);
         }
     }
 

@@ -199,7 +199,7 @@ class Instrument {
         this._sensorValue = value;
         this.deriveChangeRate(this._sensorValue);
         this.db.log("derive_changerate", this.changeRate);
-        this.note_trigger();
+        this.noteTrigger();
     }
 
     get sensorValue(){
@@ -343,9 +343,11 @@ class Instrument {
         this.velocityScale.reset();
         this.changeRateScale.reset();
         this._sensorValue = false;
-        this.synth.allNotesOff(this._midiChannel);
+        if(this.synth){
+            this.synth.allNotesOff(this._midiChannel);
             this.synth.resetAllControllers(this._midiChannel);
-        this.synth.reset();
+            this.synth.reset();
+        }
         this.numberCruncher.reset();
     }
 
@@ -497,6 +499,7 @@ class Instrument {
     noteFromFloat(value, min, max){
         this.db.log("note from float " + value);
         this.makeWorkingList(min, max);
+        this.db.log("working list " , this.workingList);
         let index = Math.floor(this.workingList.length * value);
         if(index == this.workingList.length){
             index = this.workingList.length -1;
@@ -596,12 +599,13 @@ class Instrument {
         }
         if(!this.skipDuplicateNotes || note != this._previousPitch ){
         }else{
+            this.db.log("skipping duplicate note " + note);
             return;
         }
         this._previousPitch = note;
 
         if(velocity == 0){
-//            this.db.log("no volume, no note");
+            this.db.log("no volume, no note");
             return;
         }
 //        this.midiSetInstrument(); // do we really need to set the bank an program for every note? seems like overkill...
