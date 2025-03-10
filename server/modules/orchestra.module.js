@@ -329,7 +329,7 @@ class Orchestra{
     }
     
     getPersistenceFilename(name){
-        return "localInstrument_"+name+".json";
+        return "localInstrument_"+name;
     }
 
     // set a value for an instrument

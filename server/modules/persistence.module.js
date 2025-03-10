@@ -1,7 +1,7 @@
 // Handle storage and retreival of data
 
 const fs = require('node:fs');
-const { readFileSync } = require('fs');
+const { readFileSync, writeFileSync } = require('fs');
 
 class Persistence  {
 
