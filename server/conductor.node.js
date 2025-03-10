@@ -147,7 +147,8 @@ const Performance = require("./modules/performance.module.js");
 const Orchestra    = require("./modules/orchestra.module.js");
 // Status Melodies = plays specific note series to announce things like startup, crashes, etc.
 const StatusMelodies = require('./modules/statusmelodies.module.js');
-
+// persistence saves and restores settings that might change per performance, song, etc
+const Persistence = require('./modules/persistence.module.js');
 
 db.log("starting");
 
@@ -157,6 +158,7 @@ trans  = new Transport({db:db});
 score  = new ScoreReader({db:db});
 theory = new TheoryEngine({db:db});
 socket =  new SocketServer({db:db});
+persistence = new Persistence({db:db});
 socket.useHTTPS = useHTTPS;
 socket.websocketPort  = websocketPort;
 socket.webserverPort  = webserverPort;
@@ -283,6 +285,7 @@ let soundfontInstrumentList = config.soundfontInstrumentList; //'./soundfonts/14
 orchestra.synth = synth;
 orchestra.synthDeviceVoices = synthDeviceVoices;
 orchestra.midiHardwareEngine = midiHardwareEngine;
+orchestra.persistence = persistence;
 
 orchestra.soundfontFile = soundfont;
 orchestra.soundfontVoiceListFile = soundfontInstrumentList;

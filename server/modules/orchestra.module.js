@@ -31,6 +31,8 @@ class Orchestra{
         // instr, pitch, velocity, duration
         this._makeNoteCallback = false;
 
+        this.persistence = null;
+
 
         this.configPropMap = {
             "deviceName": "device_name",
@@ -203,7 +205,13 @@ class Orchestra{
         this.localInstruments[name].bpm = this._bpm;
         this.localInstruments[name].noteList = this.noteList;
         this.localInstruments[name].start();
-        this.localInstruments[name].makeNoteCallback = this._makeNoteCallback;       
+        this.localInstruments[name].makeNoteCallback = this._makeNoteCallback; 
+        
+        let props = this.persistence.getJSON(this.getPersistenceFilename(name));
+        if(props){
+            this.localInstruments[name].loadPerformanceData(props);
+        }
+
         return this.localInstruments[name];
     }
 
@@ -320,10 +328,22 @@ class Orchestra{
         return false;
     }
     
+    getPersistenceFilename(name){
+        return "localInstrument_"+name+".json";
+    }
+
+    // set a value for an instrument
     localInstrumentSetValue(name, prop, value){
         this.db.log("setting instr value" , name, prop, value);
         if(this.localInstruments[name]){
             this.localInstruments[name][prop] = value;
+            // save the value to the local instruments persistence file
+            const localConfigProps = this.localInstruments[name].getPerformanceData();
+            if(this.persistence){
+                this.db.log("saving localConfigProps");
+                this.db.log(localConfigProps);
+                this.persistence.saveJSON(this.getPersistenceFilename(name), localConfigProps);
+            }
         }
     }
 

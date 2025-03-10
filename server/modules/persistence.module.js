@@ -6,15 +6,18 @@ const { readFileSync } = require('fs');
 class Persistence  {
 
     constructor(options){   
-        this.storageDir = "persistence";
+        this.persistenceDir = "persistence";
         this.db = false;
         if(options.db){
             this.db = options.db;
         }
+        if(options.persistenceDir){
+            this.persistenceDir = options.persistenceDir;
+        }
     }
 
     generateFilename(name){
-        return this.storageDir + "/"+name+".json";
+        return this.persistenceDir + "/"+name+".json";
     }
 
 

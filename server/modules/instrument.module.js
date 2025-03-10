@@ -86,7 +86,7 @@ class Instrument {
             {name:"midiVoice", type:"s"},
             {name:"midiBank", type:"i"},
             {name:"midiProgram", type:"i"},
-            {name:"midiChannel", type:"i"},
+//            {name:"midiChannel", type:"i"}, // i think we always want to dynamically set this.
             {name:"midiNlen", type:"i"},
             {name:"midiVol", type:"i"},
             {name:"rootMidi", type:"i"},
