@@ -2,7 +2,7 @@
 var config = {
     "db.active" : true,
     "playerState" : "play", // stop or play
-    "soundfont" : ./soundfonts/FluidSynthDefaultSoundfont.sf2",
+    "soundfont" : "./soundfonts/FluidSynthDefaultSoundfont.sf2",
     "commonSoundfont" : "./soundfonts/FluidSynthDefaultSoundfont.sf2", // the file that the soundfont file in use gets copied to. 
     "soundfontInstrumentList" : "./soundfonts/FluidSynthDefaultSoundfont.sf2.voicelist.json",
     "scoreName" : "simplescore.txt",
