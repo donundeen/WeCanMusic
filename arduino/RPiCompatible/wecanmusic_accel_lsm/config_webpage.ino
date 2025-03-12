@@ -8,14 +8,20 @@ void saveConfigCallback () {
 
 void config_webpage_setup() {
   // put your setup code here, to run once:
-
   pinMode(resetButtonPin, INPUT_PULLUP);
+
+  Serial.print("reading configMode Pin ");
+  Serial.println(resetButtonPin);
+  int value = digitalRead(resetButtonPin);
+  Serial.println(value);
+  Serial.println(LOW);
   bool configMode = false;
-  if(digitalRead(resetButtonPin) == LOW){
+  if(value == LOW){
     Serial.println("config Mode ON");
     digitalWrite(BUILTIN_LED, HIGH);
     configMode = true;
   }else{
+    Serial.println("config Mode OFF");
     digitalWrite(BUILTIN_LED, LOW);
   }
 
@@ -64,6 +70,7 @@ void config_webpage_setup() {
   wifiManager.setConfigPortalTimeout(120);
 
   if(configMode){
+    Serial.println("starting config portal");
     if(!wifiManager.startConfigPortal(apname)){
       Serial.println("failed to connect and hit timeout");
       delay(3000);

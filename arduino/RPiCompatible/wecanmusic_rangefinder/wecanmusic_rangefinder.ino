@@ -2,7 +2,7 @@
 // CONFIG VARS
 
 // if the device has a synth/speakers attached, set this to true
-// if false, it will send a makenote message out over the netework,
+// if false, it will send a makeNote message out over the netework,
 // for the server to play.
 boolean localSynth = false;
 

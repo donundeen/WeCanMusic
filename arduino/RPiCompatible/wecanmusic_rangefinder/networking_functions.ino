@@ -137,13 +137,13 @@ void announceCreation(int vindex){
   }  
 }
 
-// send a makenote to the server (use this when device doesn't have its own speakers or synth)
+// send a makeNote to the server (use this when device doesn't have its own speakers or synth)
 void sendMakeNote(int vindex, int pitch, int velocity, int duration){  //MULTIVALUE UPDATE REQUIRED
   if(velocity == 0){
     // don't send if value is 0
     return;
   }
-  OSCMessage oscmsg("/makenote");  
+  OSCMessage oscmsg("/makeNote");  
   oscmsg.add(DEVICE_NAME[vindex]).add(pitch).add(velocity).add(duration);  //MULTIVALUE UPDATE REQUIRED
   //   udp.beginPacket(UDPReceiverIP, UDPPort);
   udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...

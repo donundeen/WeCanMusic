@@ -450,15 +450,15 @@ void announceCreation(int vindex){
   }  
 }
 
-// send a makenote to the server (use this when device doesn't have its own speakers or synth)
+// send a makeNote to the server (use this when device doesn't have its own speakers or synth)
 void sendMakeNote(int vindex, int pitch, int velocity, int duration){  //
   if(velocity == 0){
     // don't send if value is 0
 //    Serial.println("no velocity, not sending");
     return;
   }
-  Serial.println("sending makenote");
-  OSCMessage oscmsg("/makenote");  
+  Serial.println("sending makeNote");
+  OSCMessage oscmsg("/makeNote");  
   oscmsg.add(DEVICE_NAME[vindex]).add((int32_t)pitch).add((int32_t)velocity).add((int32_t)duration);  //
   //   udp.beginPacket(UDPReceiverIP, UDPPort);
   udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...

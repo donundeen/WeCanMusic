@@ -1,3 +1,6 @@
+This is a FeatherWing that onto the top of the Feather Huzzah32. 
+
+
                                             +-------------------+
                                             | O    | USB |    O |
                                             |      -------   ---|
