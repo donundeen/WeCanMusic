@@ -742,6 +742,13 @@ udpPort.on("message", function (oscMsg) {
         }
     });
 
+
+    routeFromOSC(oscMsg, "/circle_rhythm", function(oscMsg, address){
+        let value = oscMsg.simpleValue;
+        db.log("circle_rhythm", oscMsg);
+        db.log(value);
+    });
+
     // setting config values for instruments
     // for if a UDP message is sent to change settings on a localInstrument
     // THIS NEEDS REVIEW

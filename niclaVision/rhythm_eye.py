@@ -1,111 +1,230 @@
 import sensor, image, time, math
+import network  # Import network library for Wi-Fi
+#import usocket as socket  # Import socket library for UDP
+from uosc.client import Bundle, Client, create_message
 
 # image library: https://docs.openmv.io/library/omv.image.html#
 # Sensor library: https://docs.openmv.io/library/omv.sensor.html
 
 # Configuration
-N = 36  # Number of steps for the triangle sweep (360/N degrees)
+#
+bars_per_cycle = 8
+pulse_per_bar = 16 # quantitze to 16th notes
+N = bars_per_cycle * pulse_per_bar  # Number of steps for the triangle sweep (360/N degrees)
+angle_per_pulse = 360 / N
 X = 125  # Time in milliseconds to wait between sweeps
 
-screen_width = 320
-screen_height = 240
+circle_rhythm_hash = {}
+
+draw_results = True
+
+max_x = 0
+max_y = 0
+screen_width = 240
+screen_height = 160
 
 # Initialize the camera
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.HVGA)
 sensor.skip_frames(time=2000)
-sensor.set_windowing((screen_width, screen_height))
+
+sensor.set_windowing(screen_width, screen_height)
 sensor.set_auto_whitebal(False)  # must be turned off for color tracking
 
-# Function to check if two line segments intersect
-def line_intersects_segment(p1, p2, p3, p4):
-    def ccw(a, b, c):
-        return (c[1] - a[1]) * (b[0] - a[0]) > (b[1] - a[1]) * (c[0] - a[0])
+print(screen_width)
+print(screen_height)
 
-    return ccw(p1, p3, p4) != ccw(p2, p3, p4) and ccw(p1, p2, p3) != ccw(p1, p2, p4)
+draw_center_x = screen_width / 4
+draw_center_y = screen_height / 4
+draw_center_point = (draw_center_x, draw_center_y)
 
-# Function to check if a line segment intersects with the triangle
-def line_intersects_triangle(line_segment, triangle):
-    tip, left_base, right_base = triangle
-    # Check intersection with each edge of the triangle
-    return (line_intersects_segment(line_segment[0:2], line_segment[2:4], tip, left_base) or
-            line_intersects_segment(line_segment[0:2], line_segment[2:4], left_base, right_base) or
-            line_intersects_segment(line_segment[0:2], line_segment[2:4], right_base, tip))
+measure_center_x = screen_width / 2
+measure_center_y = screen_height / 2
+measure_center_point = (measure_center_x, measure_center_y)
 
-# Function to draw a triangle
-def draw_triangle(img, angle):
-    (tip, left_base, right_base) = get_triangle_coords(img, angle)
-    # Draw the triangle using lines, converting coordinates to integers
-    img.draw_line(int(tip[0]), int(tip[1]), int(left_base[0]), int(left_base[1]), color=(255, 0, 0))
-    img.draw_line(int(left_base[0]), int(left_base[1]), int(right_base[0]), int(right_base[1]), color=(255, 0, 0))
-    img.draw_line(int(right_base[0]), int(right_base[1]), int(tip[0]), int(tip[1]), color=(255, 0, 0))
+# Wi-Fi Configuration
+#SSID = 'wecanmusic_friends'  # Replace with your Wi-Fi SSID
+SSID = 'JJandJsKewlPad'  # Replace with your Wi-Fi SSID
+PASSWORD = 'WeL0veLettuce'  # Replace with your Wi-Fi password
+#PASSWORD = 'WeL0veLettuce'  # Replace with your Wi-Fi password
 
+# Initialize Wi-Fi
+wlan = network.WLAN(network.STA_IF)
+wlan.active(True)
+wlan.connect(SSID, PASSWORD)
 
+# Wait for connection
+while not wlan.isconnected():
+    print("not connecteD")
+    time.sleep(1)
+print("Connected to Wi-Fi:", wlan.ifconfig())
 
-def get_triangle_coords(img, angle):
-    # Calculate triangle points based on the angle
-    center_x = img.width() // 2
-    center_y = img.height() // 2
-    size = 40  # Length from tip to base
-    height = min(img.width() // 2, img.height() // 2)  # Height of the triangle
+# Set up UDP socket
+#udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#udp_address = ('10.0.0.174', 7005)  # Replace with the destination IP and port
+osc = Client('10.0.0.174', 7005)
 
-    # Calculate the vertices of the triangle
-    tip = (center_x, center_y)  # Tip of the triangle (narrow point)
-    left_base = (center_x + height * math.cos(math.radians(angle + 180 / N)), 
-                 center_y + height * math.sin(math.radians(angle + 180 / N)))  # Bottom left
-    right_base = (center_x + height * math.cos(math.radians(angle - 180 / N)), 
-                  center_y + height * math.sin(math.radians(angle - 180 / N)))  # Bottom right
-    return (tip, left_base, right_base)
-
-def find_circles(img):
-    circles = img.find_circles(
-        threshold=3500,
-        x_margin=10,
-        y_margin=10,
-        r_margin=10,
-        r_min=5,
-        r_max=100,
-        r_step=2)
-    print("finding circles")
-    print(len(circles))
-    for circle in circles:
-        print("printing circle")
-        img.draw_circle(circle.x(), circle.y(), circle.r(), color=(0, 255, 0))
-    print("returning")
-    return circles
 
 def find_lines(img):
     lines = img.find_line_segments()
     print("finding lines")
     print(len(lines))
-    for line in lines:
-        img.draw_line(line.line(), color=(0, 0, 255))
+    if draw_results:
+        for line in lines:
+            print(line)
+            img.draw_line(line.line(), color=(0, 0, 255))
     return lines
 
-while False:
-    img = sensor.snapshot()
-    img.crop(x_scale=.5, y_scale=.5)
-    circles = find_circles(img)
-    lines = find_lines(img)
-    print("returned, waiting");
-    time.sleep(1)
+def get_angle(line):
+    return get_angle_between_points((line.x1(), line.y1()), (line.x2(), line.y2()))
 
-# Main loop
+def get_length(line):
+    return get_distance_between_points((line.x1(), line.y1()), (line.x2(), line.y2()))
+
+def get_distance_from_center(point):
+    result = get_distance_between_points(point, (measure_center_x, measure_center_y))
+    return result
+
+def get_angle_from_center(point):
+    return get_angle_between_points((measure_center_x, measure_center_y), point)
+
+def get_distance_between_points(point1, point2):
+    return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
+
+def get_angle_between_points(point1, point2):
+    """Calculate the angle of the line segment from p1 to p2."""
+    delta_y = point2[1] - point1[1]
+    delta_x = point2[0] - point1[0]
+    return math.degrees(math.atan2(delta_y, delta_x))  # Convert radians to degrees
+
+def get_pulse_from_angle(angle):
+    # given a circle divived into N segments, return the number of the segment that corresponts to this angle
+    # the segments are numbered 0 to N-1
+    # the angle is the angle of the line segment from the center of the circle to the point
+    # the angle is in degrees
+    # the segments are in the range of 0 to N-1
+    return round(angle / (360 / N)) % N
+
+
+def get_second_line_point(point1, length, angle):
+    # given an initial point, a length, and an angle, return the second point
+    # the angle is the angle of the line segment from the center of the circle to the point
+    # the angle is in degrees
+    # the segments are in the range of 0 to N-1
+    # round the returned point to the nearest integer
+    # (𝑥2,𝑦2)=(𝑥1+𝑙⋅cos(𝑎),𝑦1+𝑙⋅sin(𝑎)).
+    return (round(point1[0] + length * math.cos(math.radians(angle))), round(point1[1] + length * math.sin(math.radians(angle))))
+
+
 while True:
-    for i in range(N):
-        angle = (360 / N) * i
+    circle_rhythm_hash = {}
+
+    img = sensor.snapshot()  # Move snapshot inside the loop
+    img.crop(x_scale=.5, y_scale=.5)
+
+    line_segments = find_lines(img)
+
+        # for each line:
+    for line in line_segments:
+        print("line")
+        print(line)
+        img.draw_line(line.line(), color=(0, 0, 255))
+        length = get_length(line)
+        endpoint1 = (line.x1(), line.y1())
+        endpoint2 = (line.x2(), line.y2())
+        p1_line_angle = get_angle_between_points(endpoint1, endpoint2)
+        p1_distance_from_center = get_distance_from_center(endpoint1)
+        p1_angle_from_center = get_angle_from_center(endpoint1)
+        p1_rounded_angle_from_center = round(p1_angle_from_center / (360 / N)) * (360 / N)
+        pulse_number = get_pulse_from_angle(p1_rounded_angle_from_center)
+        recalculated_point = get_second_line_point(measure_center_point, p1_distance_from_center, p1_angle_from_center)
+
+        note_hash_1 = {
+            "endpoint": endpoint1,
+            "other_endpoint": endpoint2,
+            "center_point": measure_center_point,
+            "distance_from_center": p1_distance_from_center,
+            "angle_from_center": p1_angle_from_center,
+            "rounded_angle_from_center": p1_rounded_angle_from_center,
+            "length": length,
+            "line_angle" : p1_line_angle,
+            "pulse" : pulse_number,
+            "recalculated_point": recalculated_point
+        }
+        if not pulse_number in circle_rhythm_hash:
+            circle_rhythm_hash[pulse_number] = []
+        circle_rhythm_hash[pulse_number].append(note_hash_1)
+
+        p2_distance_from_center = get_distance_from_center(endpoint2)
+        p2_line_angle = get_angle_between_points(endpoint2, endpoint1)
+        p2_angle_from_center = get_angle_from_center(endpoint2)
+        p2_rounded_angle_from_center = round(p2_angle_from_center / (360 / N)) * (360 / N)
+        pulse_number = get_pulse_from_angle(p2_rounded_angle_from_center)
+        recalculated_point = get_second_line_point(measure_center_point, p2_distance_from_center, p2_angle_from_center)
+
+        note_hash_2 = {
+            "endpoint": endpoint2,
+            "other_endpoint": endpoint1,
+            "center_point": measure_center_point,
+            "distance_from_center": p2_distance_from_center,
+            "angle_from_center": p2_angle_from_center,
+            "rounded_angle_from_center": p2_rounded_angle_from_center,
+            "length": length,
+            "line_angle" : p2_line_angle,
+            "pulse" : pulse_number,
+            "recalculated_point": recalculated_point
+        }
+        if not pulse_number in circle_rhythm_hash:
+            circle_rhythm_hash[pulse_number] = []
+        circle_rhythm_hash[pulse_number].append(note_hash_2)
+
+
+    line_count = 0
+    done = False
+    showpoint1 = draw_center_point
+    showpoint2 = measure_center_point
+
+    img.draw_line(round(showpoint1[0]), round(showpoint1[1]), round(showpoint2[0]), round(showpoint2[1]), color=(255, 255, 0))
+
+    img.draw_circle(round(draw_center_x), round(draw_center_y), 10, color=(0,255,0))
+
+
+    # SHOW RESULTS ON IMAGE
+    if draw_results:
+        # count up to N
+        for i in range(N):
+            #print(i)
+            if i in circle_rhythm_hash:
+                # loop through the notes in the hash
+                for note in circle_rhythm_hash[i]:
+                    print(note)
+                    second_point = get_second_line_point(measure_center_point, note["distance_from_center"], note["angle_from_center"])
+                    print(second_point)
+                    showpoint2 = second_point
+                    line_count += 1
+                    img.draw_line(round(draw_center_x), round(draw_center_y), round(second_point[0]), round(second_point[1]), color=(0, 255, 0))
+                    #break out of the loop
+                    #done = True
+                    #break
+                    # create a line from the center, with the rounded angle from center, and the length
+                    #img.draw_line(center_point, (center_point[0] + note["length"] * math.cos(note["rounded_angle_from_center"]), center_point[1] + note["length"] * math.sin(note["rounded_angle_from_center"])), color=(0, 255, 0))
+                    #img = sensor.snapshot()  # another snapshot to display the image in opemmv.
+
+
         img = sensor.snapshot()  # Move snapshot inside the loop
         img.crop(x_scale=.5, y_scale=.5)
 
-        triangle = get_triangle_coords(img, angle)
-        line_segments = find_lines(img)
-        for line in line_segments:
-            if line_intersects_triangle(line, triangle):
-                print("line intersects triangle")
-                img.draw_line(line.line(), color=(0, 255, 0))
-        draw_triangle(img, angle)
-        time.sleep(X / 1000)  # Wait for X seconds
+    #img.draw_line(showpoint1, showpoint2, color=(0, 255, 0))
 
+    #img = sensor.snapshot()  # another snapshot to display the image in opemmv.
 
+    # - get the angle of the line
+    # - for each point in the line:
+    # -- get the distance from the point to the center of the image
+    # -- get the angle of the point from the center of the image, rounded to the nearest 360/N
 
+    print(circle_rhythm_hash)
+    osc.send('/controls/circle_rhythm', circle_rhythm_hash)
+
+    time.sleep(5)
