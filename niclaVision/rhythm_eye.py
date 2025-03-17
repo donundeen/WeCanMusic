@@ -50,7 +50,7 @@ PASSWORD = 'WeL0veLettuce'  # Replace with your Wi-Fi password
 SERVER_IP = '10.0.0.174'
 SERVER_PORT = 7005
 
-if False:
+if True:
     SSID = 'wecanmusic_friends'  # Replace with your Wi-Fi SSID
     PASSWORD = False  # Replace with your Wi-Fi password
     SERVER_IP = '192.168.4.1'
