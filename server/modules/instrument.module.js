@@ -476,6 +476,13 @@ class Instrument {
         return qduration;
     }
 
+
+    deriveNoteLengthFromFloat(float){
+        let index = Math.floor(this.noteLengthValues.length * float);
+        return this.noteLengthValues[index];
+    }
+
+
     updateLastNoteTime(){
         let now = Date.now();
         let duration = now - this.lastNoteTime;

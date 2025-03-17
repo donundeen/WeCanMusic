@@ -2,6 +2,7 @@
 // managing the collection of (local?) instruments
 const LocalInstrument = require("./localinstrument.module");
 const UDPInstrument = require("./udpinstrument.module");
+const CircleRhythmInstrument = require("./circlerhythminstrument.module");
 const fs = require('node:fs');
 
 class Orchestra{
@@ -197,6 +198,30 @@ class Orchestra{
         }
         this.db.log("CREATING INSTRUMENT " + name);
         this.localInstruments[name] = new LocalInstrument({db:this.db});
+        this.localInstruments[name].db = this.db;
+        this.localInstruments[name].deviceName = name;
+        this.localInstruments[name].midiChannel = this.getChannel();
+        this.localInstruments[name].synth = this._synth;
+        this.localInstruments[name].midiHardwareEngine = this._midiHardwareEngine;
+        this.localInstruments[name].bpm = this._bpm;
+        this.localInstruments[name].noteList = this.noteList;
+        this.localInstruments[name].start();
+        this.localInstruments[name].makeNoteCallback = this._makeNoteCallback; 
+        
+        let props = this.persistence.getJSON(this.getPersistenceFilename(name));
+        if(props){
+            this.localInstruments[name].loadPerformanceData(props);
+        }
+
+        return this.localInstruments[name];
+    }
+
+    createCircleRhythmInstrument(name, options){
+        if(this.localInstruments[name]){
+            return this.localInstruments[name];
+        }
+        this.db.log("CREATING CircleRhythm INSTRUMENT " + name);
+        this.localInstruments[name] = new CircleRhythmInstrument({db:this.db});
         this.localInstruments[name].db = this.db;
         this.localInstruments[name].deviceName = name;
         this.localInstruments[name].midiChannel = this.getChannel();

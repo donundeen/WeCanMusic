@@ -2,6 +2,7 @@ import sensor, image, time, math
 import network  # Import network library for Wi-Fi
 #import usocket as socket  # Import socket library for UDP
 from uosc.client import Bundle, Client, create_message
+import json
 
 # image library: https://docs.openmv.io/library/omv.image.html#
 # Sensor library: https://docs.openmv.io/library/omv.sensor.html
@@ -9,7 +10,7 @@ from uosc.client import Bundle, Client, create_message
 # Configuration
 #
 bars_per_cycle = 8
-pulse_per_bar = 16 # quantitze to 16th notes
+pulse_per_bar = 8 # quantitze to 8th notes
 N = bars_per_cycle * pulse_per_bar  # Number of steps for the triangle sweep (360/N degrees)
 angle_per_pulse = 360 / N
 X = 125  # Time in milliseconds to wait between sweeps
@@ -44,15 +45,24 @@ measure_center_y = screen_height / 2
 measure_center_point = (measure_center_x, measure_center_y)
 
 # Wi-Fi Configuration
-#SSID = 'wecanmusic_friends'  # Replace with your Wi-Fi SSID
 SSID = 'JJandJsKewlPad'  # Replace with your Wi-Fi SSID
 PASSWORD = 'WeL0veLettuce'  # Replace with your Wi-Fi password
-#PASSWORD = 'WeL0veLettuce'  # Replace with your Wi-Fi password
+SERVER_IP = '10.0.0.174'
+SERVER_PORT = 7005
+
+if False:
+    SSID = 'wecanmusic_friends'  # Replace with your Wi-Fi SSID
+    PASSWORD = False  # Replace with your Wi-Fi password
+    SERVER_IP = '192.168.4.1'
 
 # Initialize Wi-Fi
+print("connecting to ", SSID, " with " , PASSWORD)
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
-wlan.connect(SSID, PASSWORD)
+if PASSWORD:
+    wlan.connect(SSID, PASSWORD)
+else:
+    wlan.connect(SSID)
 
 # Wait for connection
 while not wlan.isconnected():
@@ -63,7 +73,10 @@ print("Connected to Wi-Fi:", wlan.ifconfig())
 # Set up UDP socket
 #udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 #udp_address = ('10.0.0.174', 7005)  # Replace with the destination IP and port
-osc = Client('10.0.0.174', 7005)
+osc = Client(SERVER_IP, SERVER_PORT)
+
+osc.send('/announceCircleRhythmInstrument', "circleRhythm")
+
 
 
 def find_lines(img):
@@ -135,6 +148,7 @@ while True:
         endpoint2 = (line.x2(), line.y2())
         p1_line_angle = get_angle_between_points(endpoint1, endpoint2)
         p1_distance_from_center = get_distance_from_center(endpoint1)
+        p1_distance_from_center_scaled = p1_distance_from_center / (screen_width / 2)
         p1_angle_from_center = get_angle_from_center(endpoint1)
         p1_rounded_angle_from_center = round(p1_angle_from_center / (360 / N)) * (360 / N)
         pulse_number = get_pulse_from_angle(p1_rounded_angle_from_center)
@@ -142,21 +156,23 @@ while True:
 
         note_hash_1 = {
             "endpoint": endpoint1,
-            "other_endpoint": endpoint2,
-            "center_point": measure_center_point,
+#            "other_endpoint": endpoint2,
+#            "center_point": measure_center_point,
             "distance_from_center": p1_distance_from_center,
-            "angle_from_center": p1_angle_from_center,
-            "rounded_angle_from_center": p1_rounded_angle_from_center,
+            "distance_from_center_scaled": p1_distance_from_center_scaled,
+ #           "angle_from_center": p1_angle_from_center,
+ #           "rounded_angle_from_center": p1_rounded_angle_from_center,
             "length": length,
             "line_angle" : p1_line_angle,
             "pulse" : pulse_number,
-            "recalculated_point": recalculated_point
+#            "recalculated_point": recalculated_point
         }
         if not pulse_number in circle_rhythm_hash:
             circle_rhythm_hash[pulse_number] = []
         circle_rhythm_hash[pulse_number].append(note_hash_1)
 
         p2_distance_from_center = get_distance_from_center(endpoint2)
+        p2_distance_from_center_scaled = p2_distance_from_center / (screen_width / 2)
         p2_line_angle = get_angle_between_points(endpoint2, endpoint1)
         p2_angle_from_center = get_angle_from_center(endpoint2)
         p2_rounded_angle_from_center = round(p2_angle_from_center / (360 / N)) * (360 / N)
@@ -165,15 +181,16 @@ while True:
 
         note_hash_2 = {
             "endpoint": endpoint2,
-            "other_endpoint": endpoint1,
-            "center_point": measure_center_point,
+#            "other_endpoint": endpoint1,
+#            "center_point": measure_center_point,
             "distance_from_center": p2_distance_from_center,
-            "angle_from_center": p2_angle_from_center,
-            "rounded_angle_from_center": p2_rounded_angle_from_center,
+            "distance_from_center_scaled": p2_distance_from_center_scaled,
+#            "angle_from_center": p2_angle_from_center,
+#            "rounded_angle_from_center": p2_rounded_angle_from_center,
             "length": length,
             "line_angle" : p2_line_angle,
             "pulse" : pulse_number,
-            "recalculated_point": recalculated_point
+#            "recalculated_point": recalculated_point
         }
         if not pulse_number in circle_rhythm_hash:
             circle_rhythm_hash[pulse_number] = []
@@ -189,9 +206,8 @@ while True:
 
     img.draw_circle(round(draw_center_x), round(draw_center_y), 10, color=(0,255,0))
 
-
     # SHOW RESULTS ON IMAGE
-    if draw_results:
+    if False:
         # count up to N
         for i in range(N):
             #print(i)
@@ -223,8 +239,13 @@ while True:
     # - for each point in the line:
     # -- get the distance from the point to the center of the image
     # -- get the angle of the point from the center of the image, rounded to the nearest 360/N
+    osc.send('/circleRhythmClear',"clear")
 
     print(circle_rhythm_hash)
-    osc.send('/controls/circle_rhythm', circle_rhythm_hash)
+    # Send circle_rhythm_hash as OSC messages
+    for pulse_number, notes in circle_rhythm_hash.items():
+        for note in notes:
+            # Create a smaller OSC message with only essential data
+            osc.send('/circleRhythm', json.dumps(note))
 
     time.sleep(5)

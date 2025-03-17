@@ -720,6 +720,21 @@ udpPort.on("message", function (oscMsg) {
         instrument.start();
     });
 
+    routeFromOSC(oscMsg, "/announceCircleRhythmInstrument", function(oscMsg, address){
+        db.log("announcing circle rhythm instrument", oscMsg);
+        let value = oscMsg.simpleValue;
+        db.log(value);
+        let name = value;
+        if(value.name){
+            name = value.name;
+        }
+        let instrument = orchestra.createCircleRhythmInstrument(name, value);
+        let props = instrument.getConfigProps();
+        props.push({name: "instrType", value: "local"});
+        socket.sendMessage("addInstrument", props);
+        instrument.start();
+    });    
+
     // processing request to destroy and instruments
     routeFromOSC(oscMsg, "/removeLocalInstrument", function(oscMsg, address){
         let value = oscMsg.simpleValue;
@@ -743,10 +758,23 @@ udpPort.on("message", function (oscMsg) {
     });
 
 
-    routeFromOSC(oscMsg, "/circle_rhythm", function(oscMsg, address){
+    routeFromOSC(oscMsg, "/circleRhythm", function(oscMsg, address){
         let value = oscMsg.simpleValue;
         db.log("circle_rhythm", oscMsg);
         db.log(value);
+        let instrument = orchestra.getLocalInstrument("circleRhythm");
+        if(instrument){
+            instrument.loadHashPoint(value);
+        }
+    });
+    routeFromOSC(oscMsg, "/circleRhythmClear", function(oscMsg, address){
+        let value = oscMsg.simpleValue;
+        db.log("circle_rhythm", oscMsg);
+        db.log(value);
+        let instrument = orchestra.getLocalInstrument("circleRhythm");
+        if(instrument){
+            instrument.clearHashPoints();
+        }
     });
 
     // setting config values for instruments

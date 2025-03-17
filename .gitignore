@@ -145,3 +145,9 @@ persistence/*.json
 **/cert/key.pem
 **/cert/cert.pem
 **/cert/csr.pem
+
+
+# OpenMV project files
+!niclaVision/
+!niclaVision/**/*.py
+!niclaVision/**/*.bin
