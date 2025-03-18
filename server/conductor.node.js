@@ -770,6 +770,7 @@ udpPort.on("message", function (oscMsg) {
             instrument.loadHashPoint(point);
         }
     });
+    
     routeFromOSC(oscMsg, "/circleRhythmClear", function(oscMsg, address){
         let name = oscMsg.simpleValue;
         db.log("circle_rhythm clear", oscMsg);
