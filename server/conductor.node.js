@@ -771,10 +771,11 @@ udpPort.on("message", function (oscMsg) {
         }
     });
     routeFromOSC(oscMsg, "/circleRhythmClear", function(oscMsg, address){
-        let value = oscMsg.simpleValue;
-        db.log("circle_rhythm", oscMsg);
-        db.log(value);
-        let instrument = orchestra.getLocalInstrument("circleRhythm");
+        let name = oscMsg.simpleValue;
+        db.log("circle_rhythm clear", oscMsg);
+        db.log(name);
+
+        let instrument = orchestra.getLocalInstrument(name);
         if(instrument){
             instrument.clearHashPoints();
         }
