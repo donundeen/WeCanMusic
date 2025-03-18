@@ -15,7 +15,8 @@ N = bars_per_cycle * pulse_per_bar  # Number of steps for the triangle sweep (36
 angle_per_pulse = 360 / N
 X = 125  # Time in milliseconds to wait between sweeps
 
-circle_rhythm_hash = {}
+circle_rhythm_hash_lines = {}
+circle_rhythm_hash_circles = {}
 
 draw_results = True
 
@@ -75,19 +76,27 @@ print("Connected to Wi-Fi:", wlan.ifconfig())
 #udp_address = ('10.0.0.174', 7005)  # Replace with the destination IP and port
 osc = Client(SERVER_IP, SERVER_PORT)
 
-osc.send('/announceCircleRhythmInstrument', "circleRhythm")
+osc.send('/announceCircleRhythmInstrument', "circleRhythmL")
+osc.send('/announceCircleRhythmInstrument', "circleRhythmC")
 
 
 
 def find_lines(img):
     lines = img.find_line_segments()
-    print("finding lines")
-    print(len(lines))
     if draw_results:
         for line in lines:
-            print(line)
+            #print(line)
             img.draw_line(line.line(), color=(0, 0, 255))
     return lines
+
+def find_circles(img):
+    circles = img.find_circles(threshold = 1500)
+    if draw_results:
+        for circle in circles:
+            print("circle",circle)
+            img.draw_circle(circle.x(), circle.y(), circle.r(), color=(0, 255, 0))
+    return circles
+
 
 def get_angle(line):
     return get_angle_between_points((line.x1(), line.y1()), (line.x2(), line.y2()))
@@ -131,18 +140,15 @@ def get_second_line_point(point1, length, angle):
 
 
 while True:
-    circle_rhythm_hash = {}
+    circle_rhythm_hash_lines = {}
 
     img = sensor.snapshot()  # Move snapshot inside the loop
     img.crop(x_scale=.5, y_scale=.5)
 
-    line_segments = find_lines(img)
-
-        # for each line:
+    line_segments = find_lines(img)        # for each line:
     for line in line_segments:
-        print("line")
-        print(line)
-        img.draw_line(line.line(), color=(0, 0, 255))
+#        print("line")
+#        print(line)
         length = get_length(line)
         endpoint1 = (line.x1(), line.y1())
         endpoint2 = (line.x2(), line.y2())
@@ -167,9 +173,9 @@ while True:
             "pulse" : pulse_number,
 #            "recalculated_point": recalculated_point
         }
-        if not pulse_number in circle_rhythm_hash:
-            circle_rhythm_hash[pulse_number] = []
-        circle_rhythm_hash[pulse_number].append(note_hash_1)
+        if not pulse_number in circle_rhythm_hash_lines:
+            circle_rhythm_hash_lines[pulse_number] = []
+        circle_rhythm_hash_lines[pulse_number].append(note_hash_1)
 
         p2_distance_from_center = get_distance_from_center(endpoint2)
         p2_distance_from_center_scaled = p2_distance_from_center / (screen_width / 2)
@@ -192,9 +198,9 @@ while True:
             "pulse" : pulse_number,
 #            "recalculated_point": recalculated_point
         }
-        if not pulse_number in circle_rhythm_hash:
-            circle_rhythm_hash[pulse_number] = []
-        circle_rhythm_hash[pulse_number].append(note_hash_2)
+        if not pulse_number in circle_rhythm_hash_lines:
+            circle_rhythm_hash_lines[pulse_number] = []
+        circle_rhythm_hash_lines[pulse_number].append(note_hash_2)
 
 
     line_count = 0
@@ -202,18 +208,51 @@ while True:
     showpoint1 = draw_center_point
     showpoint2 = measure_center_point
 
-    img.draw_line(round(showpoint1[0]), round(showpoint1[1]), round(showpoint2[0]), round(showpoint2[1]), color=(255, 255, 0))
 
-    img.draw_circle(round(draw_center_x), round(draw_center_y), 10, color=(0,255,0))
+    circles = find_circles(img)        # for each line:
+    for circle in circles:
+#        print("line")
+#        print(line)
+        radius = circle.r()
+        endpoint1 = (circle.x(), circle.y())
+       
+        p1_distance_from_center = get_distance_from_center(endpoint1)
+        p1_distance_from_center_scaled = p1_distance_from_center / (screen_width / 2)
+        p1_angle_from_center = get_angle_from_center(endpoint1)
+        p1_rounded_angle_from_center = round(p1_angle_from_center / (360 / N)) * (360 / N)
+        pulse_number = get_pulse_from_angle(p1_rounded_angle_from_center)
+        recalculated_point = get_second_line_point(measure_center_point, p1_distance_from_center, p1_angle_from_center)
+
+        note_hash_1 = {
+            "endpoint": endpoint1,
+#            "other_endpoint": endpoint2,
+#            "center_point": measure_center_point,
+            "distance_from_center": p1_distance_from_center,
+            "distance_from_center_scaled": p1_distance_from_center_scaled,
+ #           "angle_from_center": p1_angle_from_center,
+ #           "rounded_angle_from_center": p1_rounded_angle_from_center,
+            "length": radius,
+            "line_angle" : circle.magnitude(),
+            "pulse" : pulse_number,
+#            "recalculated_point": recalculated_point
+        }
+        if not pulse_number in circle_rhythm_hash_circles:
+            circle_rhythm_hash_circles[pulse_number] = []
+        circle_rhythm_hash_circles[pulse_number].append(note_hash_1)
+
+
+    #img.draw_line(round(showpoint1[0]), round(showpoint1[1]), round(showpoint2[0]), round(showpoint2[1]), color=(255, 255, 0))
+
+    #img.draw_circle(round(draw_center_x), round(draw_center_y), 10, color=(0,255,0))
 
     # SHOW RESULTS ON IMAGE
     if False:
         # count up to N
         for i in range(N):
             #print(i)
-            if i in circle_rhythm_hash:
+            if i in circle_rhythm_hash_lines:
                 # loop through the notes in the hash
-                for note in circle_rhythm_hash[i]:
+                for note in circle_rhythm_hash_lines[i]:
                     print(note)
                     second_point = get_second_line_point(measure_center_point, note["distance_from_center"], note["angle_from_center"])
                     print(second_point)
@@ -239,13 +278,22 @@ while True:
     # - for each point in the line:
     # -- get the distance from the point to the center of the image
     # -- get the angle of the point from the center of the image, rounded to the nearest 360/N
-    osc.send('/circleRhythmClear',"clear")
-
-    print(circle_rhythm_hash)
-    # Send circle_rhythm_hash as OSC messages
-    for pulse_number, notes in circle_rhythm_hash.items():
+    osc.send('/circleRhythmClear',"circleRhythmL")
+    # Send circle_rhythm_hash_lines as OSC messages
+    for pulse_number, notes in circle_rhythm_hash_lines.items():
         for note in notes:
+            print("sending note")
+            print(note)
             # Create a smaller OSC message with only essential data
-            osc.send('/circleRhythm', json.dumps(note))
+            osc.send('/circleRhythm',"circleRhythmL", json.dumps(note))
+
+    osc.send('/circleRhythmClear',"circleRhythmC")
+    # Send circle_rhythm_hash_circles as OSC messages
+    for pulse_number, notes in circle_rhythm_hash_circles.items():
+        for note in notes:
+            print("sending note")
+            print(note)
+            # Create a smaller OSC message with only essential data
+            osc.send('/circleRhythm',"circleRhythmC", json.dumps(note))
 
     time.sleep(5)

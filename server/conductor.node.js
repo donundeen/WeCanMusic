@@ -762,9 +762,12 @@ udpPort.on("message", function (oscMsg) {
         let value = oscMsg.simpleValue;
         db.log("circle_rhythm", oscMsg);
         db.log(value);
-        let instrument = orchestra.getLocalInstrument("circleRhythm");
+        let name = value[0];
+        let point = value[1];
+        db.log("circle_rhythm loading point", name, point);
+        let instrument = orchestra.getLocalInstrument(name);
         if(instrument){
-            instrument.loadHashPoint(value);
+            instrument.loadHashPoint(point);
         }
     });
     routeFromOSC(oscMsg, "/circleRhythmClear", function(oscMsg, address){
