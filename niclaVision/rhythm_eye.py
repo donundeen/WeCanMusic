@@ -19,6 +19,7 @@ circle_rhythm_hash_lines = {}
 circle_rhythm_hash_circles = {}
 
 draw_results = True
+use_wifi = True
 
 max_x = 0
 max_y = 0
@@ -56,28 +57,30 @@ if True:
     PASSWORD = False  # Replace with your Wi-Fi password
     SERVER_IP = '192.168.4.1'
 
+
 # Initialize Wi-Fi
-print("connecting to ", SSID, " with " , PASSWORD)
-wlan = network.WLAN(network.STA_IF)
-wlan.active(True)
-if PASSWORD:
-    wlan.connect(SSID, PASSWORD)
-else:
-    wlan.connect(SSID)
+if use_wifi:
+    print("connecting to ", SSID, " with " , PASSWORD)
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    if PASSWORD:
+        wlan.connect(SSID, PASSWORD)
+    else:
+        wlan.connect(SSID)
 
-# Wait for connection
-while not wlan.isconnected():
-    print("not connecteD")
-    time.sleep(1)
-print("Connected to Wi-Fi:", wlan.ifconfig())
+    # Wait for connection
+    while not wlan.isconnected():
+        print("not connecteD")
+        time.sleep(1)
+    print("Connected to Wi-Fi:", wlan.ifconfig())
 
-# Set up UDP socket
-#udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#udp_address = ('10.0.0.174', 7005)  # Replace with the destination IP and port
-osc = Client(SERVER_IP, SERVER_PORT)
+    # Set up UDP socket
+    #udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #udp_address = ('10.0.0.174', 7005)  # Replace with the destination IP and port
+    osc = Client(SERVER_IP, SERVER_PORT)
 
-osc.send('/announceCircleRhythmInstrument', "circleRhythmL")
-osc.send('/announceCircleRhythmInstrument', "circleRhythmC")
+    osc.send('/announceCircleRhythmInstrument', "circleRhythmL")
+    osc.send('/announceCircleRhythmInstrument', "circleRhythmC")
 
 
 
@@ -215,7 +218,7 @@ while True:
 #        print(line)
         radius = circle.r()
         endpoint1 = (circle.x(), circle.y())
-       
+
         p1_distance_from_center = get_distance_from_center(endpoint1)
         p1_distance_from_center_scaled = p1_distance_from_center / (screen_width / 2)
         p1_angle_from_center = get_angle_from_center(endpoint1)
@@ -270,15 +273,18 @@ while True:
         img = sensor.snapshot()  # Move snapshot inside the loop
         img.crop(x_scale=.5, y_scale=.5)
 
+        time.sleep(5)
+
     #img.draw_line(showpoint1, showpoint2, color=(0, 255, 0))
 
     #img = sensor.snapshot()  # another snapshot to display the image in opemmv.
+
 
     # - get the angle of the line
     # - for each point in the line:
     # -- get the distance from the point to the center of the image
     # -- get the angle of the point from the center of the image, rounded to the nearest 360/N
-    osc.send('/circleRhythmClear',"circleRhythmL")
+    osc.send('/circleRhythmNewSet',"circleRhythmL")
     # Send circle_rhythm_hash_lines as OSC messages
     for pulse_number, notes in circle_rhythm_hash_lines.items():
         for note in notes:
@@ -286,8 +292,10 @@ while True:
             print(note)
             # Create a smaller OSC message with only essential data
             osc.send('/circleRhythm',"circleRhythmL", json.dumps(note))
+    osc.send('/circleRhythmSetDone',"circleRhythmL")
 
-    osc.send('/circleRhythmClear',"circleRhythmC")
+
+    osc.send('/circleRhythmNewSet',"circleRhythmC")
     # Send circle_rhythm_hash_circles as OSC messages
     for pulse_number, notes in circle_rhythm_hash_circles.items():
         for note in notes:
@@ -295,5 +303,6 @@ while True:
             print(note)
             # Create a smaller OSC message with only essential data
             osc.send('/circleRhythm',"circleRhythmC", json.dumps(note))
+    osc.send('/circleRhythmSetDone',"circleRhythmC")
 
-    time.sleep(5)
+    time.sleep(10)

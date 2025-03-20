@@ -770,7 +770,7 @@ udpPort.on("message", function (oscMsg) {
             instrument.loadHashPoint(point);
         }
     });
-    
+
     routeFromOSC(oscMsg, "/circleRhythmClear", function(oscMsg, address){
         let name = oscMsg.simpleValue;
         db.log("circle_rhythm clear", oscMsg);
@@ -781,6 +781,29 @@ udpPort.on("message", function (oscMsg) {
             instrument.clearHashPoints();
         }
     });
+
+    routeFromOSC(oscMsg, "/circleRhythmNewSet", function(oscMsg, address){
+        let name = oscMsg.simpleValue;
+        db.log("circle_rhythm clear", oscMsg);
+        db.log(name);
+
+        let instrument = orchestra.getLocalInstrument(name);
+        if(instrument){
+            instrument.clearHashPointBuffer();
+        }
+    });
+
+    routeFromOSC(oscMsg, "/circleRhythmSetDone", function(oscMsg, address){
+        let name = oscMsg.simpleValue;
+        db.log("circle_rhythm clear", oscMsg);
+        db.log(name);
+
+        let instrument = orchestra.getLocalInstrument(name);
+        if(instrument){
+            instrument.copyHashPointBufferToHash();
+        }
+    });
+
 
     // setting config values for instruments
     // for if a UDP message is sent to change settings on a localInstrument

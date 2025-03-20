@@ -10,6 +10,7 @@ class CircleRhythmInstrument extends LocalInstrument {
         super(options);
         this.type = "local";
         this.circleRhythmHash = {};
+        this.circleRhythmHashBuffer = {};
         this.noteScale = new DynRescale({db: this.db});
         this.durationScale = new DynRescale({db: this.db});
         this.velocityScale = new DynRescale({db: this.db});
@@ -39,6 +40,15 @@ class CircleRhythmInstrument extends LocalInstrument {
         this.circleRhythmHash = {};
     }
 
+    clearHashPointBuffer(){
+        this.circleRhythmHashBuffer = {};
+    }
+
+    copyHashPointBufferToHash(){
+        this.circleRhythmHash = this.circleRhythmHashBuffer;
+        this.circleRhythmHashBuffer = {};
+    }
+
     loadHashPoint(point){
         // given a point, add it to the circleRhythmHash
         // if the point is already in the hash, add it to the array
@@ -48,6 +58,18 @@ class CircleRhythmInstrument extends LocalInstrument {
             this.circleRhythmHash[point.pulse] = [];
         }
         this.circleRhythmHash[point.pulse].push(point);
+    }
+
+    loadHashPointBuffer(point){
+        // given a point, add it to the circleRhythmHashBuffer
+        // if the point is already in the hash, add it to the array
+        // if the point is not in the hash, create a new array with the point
+        this.db.log("loading hash point", point);
+        this.db.log("loading hash point", point);
+        if (!this.circleRhythmHashBuffer[point.pulse]) {
+            this.circleRhythmHashBuffer[point.pulse] = [];
+        }
+        this.circleRhythmHashBuffer[point.pulse].push(point);
     }
 
     getHashPoints(pulse){
