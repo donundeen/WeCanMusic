@@ -3,7 +3,7 @@ import network  # Import network library for Wi-Fi
 #import usocket as socket  # Import socket library for UDP
 from uosc.client import Bundle, Client, create_message
 import json
-
+from machine import Pin
 # image library: https://docs.openmv.io/library/omv.image.html#
 # Sensor library: https://docs.openmv.io/library/omv.sensor.html
 
@@ -18,6 +18,7 @@ X = 125  # Time in milliseconds to wait between sweeps
 circle_rhythm_hash_lines = {}
 circle_rhythm_hash_circles = {}
 
+
 draw_results = True
 use_wifi = True
 
@@ -25,6 +26,14 @@ max_x = 0
 max_y = 0
 screen_width = 240
 screen_height = 160
+
+button_read_pin = 3
+# Initialize the button pin with internal pull-up resistor
+# the code only runs when the button is pressed
+button = Pin(button_read_pin, Pin.IN, Pin.PULL_UP)  # Replace 14 with your input pin number
+always_run = False # if true, the script will run even if the button is not pressed
+
+
 
 # Initialize the camera
 sensor.reset()
@@ -143,166 +152,179 @@ def get_second_line_point(point1, length, angle):
 
 
 while True:
-    circle_rhythm_hash_lines = {}
 
-    img = sensor.snapshot()  # Move snapshot inside the loop
-    img.crop(x_scale=.5, y_scale=.5)
+    button_state = button.value()
+    if button_state == 0:
+        print("Button Pressed")
+    else:
+        print("Button Released")
 
-    line_segments = find_lines(img)        # for each line:
-    for line in line_segments:
-#        print("line")
-#        print(line)
-        length = get_length(line)
-        endpoint1 = (line.x1(), line.y1())
-        endpoint2 = (line.x2(), line.y2())
-        p1_line_angle = get_angle_between_points(endpoint1, endpoint2)
-        p1_distance_from_center = get_distance_from_center(endpoint1)
-        p1_distance_from_center_scaled = p1_distance_from_center / (screen_width / 2)
-        p1_angle_from_center = get_angle_from_center(endpoint1)
-        p1_rounded_angle_from_center = round(p1_angle_from_center / (360 / N)) * (360 / N)
-        pulse_number = get_pulse_from_angle(p1_rounded_angle_from_center)
-        recalculated_point = get_second_line_point(measure_center_point, p1_distance_from_center, p1_angle_from_center)
+    if button_state == 1 and not always_run:
+        print("Button Released")
+        time.sleep(1)
+        continue
 
-        note_hash_1 = {
-            "endpoint": endpoint1,
-#            "other_endpoint": endpoint2,
-#            "center_point": measure_center_point,
-            "distance_from_center": p1_distance_from_center,
-            "distance_from_center_scaled": p1_distance_from_center_scaled,
- #           "angle_from_center": p1_angle_from_center,
- #           "rounded_angle_from_center": p1_rounded_angle_from_center,
-            "length": length,
-            "line_angle" : p1_line_angle,
-            "pulse" : pulse_number,
-#            "recalculated_point": recalculated_point
-        }
-        if not pulse_number in circle_rhythm_hash_lines:
-            circle_rhythm_hash_lines[pulse_number] = []
-        circle_rhythm_hash_lines[pulse_number].append(note_hash_1)
-
-        p2_distance_from_center = get_distance_from_center(endpoint2)
-        p2_distance_from_center_scaled = p2_distance_from_center / (screen_width / 2)
-        p2_line_angle = get_angle_between_points(endpoint2, endpoint1)
-        p2_angle_from_center = get_angle_from_center(endpoint2)
-        p2_rounded_angle_from_center = round(p2_angle_from_center / (360 / N)) * (360 / N)
-        pulse_number = get_pulse_from_angle(p2_rounded_angle_from_center)
-        recalculated_point = get_second_line_point(measure_center_point, p2_distance_from_center, p2_angle_from_center)
-
-        note_hash_2 = {
-            "endpoint": endpoint2,
-#            "other_endpoint": endpoint1,
-#            "center_point": measure_center_point,
-            "distance_from_center": p2_distance_from_center,
-            "distance_from_center_scaled": p2_distance_from_center_scaled,
-#            "angle_from_center": p2_angle_from_center,
-#            "rounded_angle_from_center": p2_rounded_angle_from_center,
-            "length": length,
-            "line_angle" : p2_line_angle,
-            "pulse" : pulse_number,
-#            "recalculated_point": recalculated_point
-        }
-        if not pulse_number in circle_rhythm_hash_lines:
-            circle_rhythm_hash_lines[pulse_number] = []
-        circle_rhythm_hash_lines[pulse_number].append(note_hash_2)
-
-
-    line_count = 0
-    done = False
-    showpoint1 = draw_center_point
-    showpoint2 = measure_center_point
-
-
-    circles = find_circles(img)        # for each line:
-    for circle in circles:
-#        print("line")
-#        print(line)
-        radius = circle.r()
-        endpoint1 = (circle.x(), circle.y())
-
-        p1_distance_from_center = get_distance_from_center(endpoint1)
-        p1_distance_from_center_scaled = p1_distance_from_center / (screen_width / 2)
-        p1_angle_from_center = get_angle_from_center(endpoint1)
-        p1_rounded_angle_from_center = round(p1_angle_from_center / (360 / N)) * (360 / N)
-        pulse_number = get_pulse_from_angle(p1_rounded_angle_from_center)
-        recalculated_point = get_second_line_point(measure_center_point, p1_distance_from_center, p1_angle_from_center)
-
-        note_hash_1 = {
-            "endpoint": endpoint1,
-#            "other_endpoint": endpoint2,
-#            "center_point": measure_center_point,
-            "distance_from_center": p1_distance_from_center,
-            "distance_from_center_scaled": p1_distance_from_center_scaled,
- #           "angle_from_center": p1_angle_from_center,
- #           "rounded_angle_from_center": p1_rounded_angle_from_center,
-            "length": radius,
-            "line_angle" : circle.magnitude(),
-            "pulse" : pulse_number,
-#            "recalculated_point": recalculated_point
-        }
-        if not pulse_number in circle_rhythm_hash_circles:
-            circle_rhythm_hash_circles[pulse_number] = []
-        circle_rhythm_hash_circles[pulse_number].append(note_hash_1)
-
-
-    #img.draw_line(round(showpoint1[0]), round(showpoint1[1]), round(showpoint2[0]), round(showpoint2[1]), color=(255, 255, 0))
-
-    #img.draw_circle(round(draw_center_x), round(draw_center_y), 10, color=(0,255,0))
-
-    # SHOW RESULTS ON IMAGE
-    if False:
-        # count up to N
-        for i in range(N):
-            #print(i)
-            if i in circle_rhythm_hash_lines:
-                # loop through the notes in the hash
-                for note in circle_rhythm_hash_lines[i]:
-                    print(note)
-                    second_point = get_second_line_point(measure_center_point, note["distance_from_center"], note["angle_from_center"])
-                    print(second_point)
-                    showpoint2 = second_point
-                    line_count += 1
-                    img.draw_line(round(draw_center_x), round(draw_center_y), round(second_point[0]), round(second_point[1]), color=(0, 255, 0))
-                    #break out of the loop
-                    #done = True
-                    #break
-                    # create a line from the center, with the rounded angle from center, and the length
-                    #img.draw_line(center_point, (center_point[0] + note["length"] * math.cos(note["rounded_angle_from_center"]), center_point[1] + note["length"] * math.sin(note["rounded_angle_from_center"])), color=(0, 255, 0))
-                    #img = sensor.snapshot()  # another snapshot to display the image in opemmv.
-
+    if always_run or button_state == 0:
+        circle_rhythm_hash_lines = {}
 
         img = sensor.snapshot()  # Move snapshot inside the loop
         img.crop(x_scale=.5, y_scale=.5)
 
-        time.sleep(5)
+        line_segments = find_lines(img)        # for each line:
+        for line in line_segments:
+    #        print("line")
+    #        print(line)
+            length = get_length(line)
+            endpoint1 = (line.x1(), line.y1())
+            endpoint2 = (line.x2(), line.y2())
+            p1_line_angle = get_angle_between_points(endpoint1, endpoint2)
+            p1_distance_from_center = get_distance_from_center(endpoint1)
+            p1_distance_from_center_scaled = p1_distance_from_center / (screen_width / 2)
+            p1_angle_from_center = get_angle_from_center(endpoint1)
+            p1_rounded_angle_from_center = round(p1_angle_from_center / (360 / N)) * (360 / N)
+            pulse_number = get_pulse_from_angle(p1_rounded_angle_from_center)
+            recalculated_point = get_second_line_point(measure_center_point, p1_distance_from_center, p1_angle_from_center)
 
-    #img.draw_line(showpoint1, showpoint2, color=(0, 255, 0))
+            note_hash_1 = {
+                "endpoint": endpoint1,
+    #            "other_endpoint": endpoint2,
+    #            "center_point": measure_center_point,
+                "distance_from_center": p1_distance_from_center,
+                "distance_from_center_scaled": p1_distance_from_center_scaled,
+    #           "angle_from_center": p1_angle_from_center,
+    #           "rounded_angle_from_center": p1_rounded_angle_from_center,
+                "length": length,
+                "line_angle" : p1_line_angle,
+                "pulse" : pulse_number,
+    #            "recalculated_point": recalculated_point
+            }
+            if not pulse_number in circle_rhythm_hash_lines:
+                circle_rhythm_hash_lines[pulse_number] = []
+            circle_rhythm_hash_lines[pulse_number].append(note_hash_1)
 
-    #img = sensor.snapshot()  # another snapshot to display the image in opemmv.
+            p2_distance_from_center = get_distance_from_center(endpoint2)
+            p2_distance_from_center_scaled = p2_distance_from_center / (screen_width / 2)
+            p2_line_angle = get_angle_between_points(endpoint2, endpoint1)
+            p2_angle_from_center = get_angle_from_center(endpoint2)
+            p2_rounded_angle_from_center = round(p2_angle_from_center / (360 / N)) * (360 / N)
+            pulse_number = get_pulse_from_angle(p2_rounded_angle_from_center)
+            recalculated_point = get_second_line_point(measure_center_point, p2_distance_from_center, p2_angle_from_center)
+
+            note_hash_2 = {
+                "endpoint": endpoint2,
+    #            "other_endpoint": endpoint1,
+    #            "center_point": measure_center_point,
+                "distance_from_center": p2_distance_from_center,
+                "distance_from_center_scaled": p2_distance_from_center_scaled,
+    #            "angle_from_center": p2_angle_from_center,
+    #            "rounded_angle_from_center": p2_rounded_angle_from_center,
+                "length": length,
+                "line_angle" : p2_line_angle,
+                "pulse" : pulse_number,
+    #            "recalculated_point": recalculated_point
+            }
+            if not pulse_number in circle_rhythm_hash_lines:
+                circle_rhythm_hash_lines[pulse_number] = []
+            circle_rhythm_hash_lines[pulse_number].append(note_hash_2)
 
 
-    # - get the angle of the line
-    # - for each point in the line:
-    # -- get the distance from the point to the center of the image
-    # -- get the angle of the point from the center of the image, rounded to the nearest 360/N
-    osc.send('/circleRhythmNewSet',"circleRhythmL")
-    # Send circle_rhythm_hash_lines as OSC messages
-    for pulse_number, notes in circle_rhythm_hash_lines.items():
-        for note in notes:
-            print("sending note")
-            print(note)
-            # Create a smaller OSC message with only essential data
-            osc.send('/circleRhythm',"circleRhythmL", json.dumps(note))
-    osc.send('/circleRhythmSetDone',"circleRhythmL")
+        line_count = 0
+        done = False
+        showpoint1 = draw_center_point
+        showpoint2 = measure_center_point
 
 
-    osc.send('/circleRhythmNewSet',"circleRhythmC")
-    # Send circle_rhythm_hash_circles as OSC messages
-    for pulse_number, notes in circle_rhythm_hash_circles.items():
-        for note in notes:
-            print("sending note")
-            print(note)
-            # Create a smaller OSC message with only essential data
-            osc.send('/circleRhythm',"circleRhythmC", json.dumps(note))
-    osc.send('/circleRhythmSetDone',"circleRhythmC")
+        circles = find_circles(img)        # for each line:
+        for circle in circles:
+    #        print("line")
+    #        print(line)
+            radius = circle.r()
+            endpoint1 = (circle.x(), circle.y())
 
-    time.sleep(10)
+            p1_distance_from_center = get_distance_from_center(endpoint1)
+            p1_distance_from_center_scaled = p1_distance_from_center / (screen_width / 2)
+            p1_angle_from_center = get_angle_from_center(endpoint1)
+            p1_rounded_angle_from_center = round(p1_angle_from_center / (360 / N)) * (360 / N)
+            pulse_number = get_pulse_from_angle(p1_rounded_angle_from_center)
+            recalculated_point = get_second_line_point(measure_center_point, p1_distance_from_center, p1_angle_from_center)
+
+            note_hash_1 = {
+                "endpoint": endpoint1,
+    #            "other_endpoint": endpoint2,
+    #            "center_point": measure_center_point,
+                "distance_from_center": p1_distance_from_center,
+                "distance_from_center_scaled": p1_distance_from_center_scaled,
+    #           "angle_from_center": p1_angle_from_center,
+    #           "rounded_angle_from_center": p1_rounded_angle_from_center,
+                "length": radius,
+                "line_angle" : circle.magnitude(),
+                "pulse" : pulse_number,
+    #            "recalculated_point": recalculated_point
+            }
+            if not pulse_number in circle_rhythm_hash_circles:
+                circle_rhythm_hash_circles[pulse_number] = []
+            circle_rhythm_hash_circles[pulse_number].append(note_hash_1)
+
+
+        #img.draw_line(round(showpoint1[0]), round(showpoint1[1]), round(showpoint2[0]), round(showpoint2[1]), color=(255, 255, 0))
+
+        #img.draw_circle(round(draw_center_x), round(draw_center_y), 10, color=(0,255,0))
+
+        # SHOW RESULTS ON IMAGE
+        if False:
+            # count up to N
+            for i in range(N):
+                #print(i)
+                if i in circle_rhythm_hash_lines:
+                    # loop through the notes in the hash
+                    for note in circle_rhythm_hash_lines[i]:
+                        print(note)
+                        second_point = get_second_line_point(measure_center_point, note["distance_from_center"], note["angle_from_center"])
+                        print(second_point)
+                        showpoint2 = second_point
+                        line_count += 1
+                        img.draw_line(round(draw_center_x), round(draw_center_y), round(second_point[0]), round(second_point[1]), color=(0, 255, 0))
+                        #break out of the loop
+                        #done = True
+                        #break
+                        # create a line from the center, with the rounded angle from center, and the length
+                        #img.draw_line(center_point, (center_point[0] + note["length"] * math.cos(note["rounded_angle_from_center"]), center_point[1] + note["length"] * math.sin(note["rounded_angle_from_center"])), color=(0, 255, 0))
+                        #img = sensor.snapshot()  # another snapshot to display the image in opemmv.
+
+
+            img = sensor.snapshot()  # Move snapshot inside the loop
+            img.crop(x_scale=.5, y_scale=.5)
+
+            time.sleep(5)
+
+        #img.draw_line(showpoint1, showpoint2, color=(0, 255, 0))
+
+        #img = sensor.snapshot()  # another snapshot to display the image in opemmv.
+
+
+        # - get the angle of the line
+        # - for each point in the line:
+        # -- get the distance from the point to the center of the image
+        # -- get the angle of the point from the center of the image, rounded to the nearest 360/N
+        osc.send('/circleRhythmNewSet',"circleRhythmL")
+        # Send circle_rhythm_hash_lines as OSC messages
+        for pulse_number, notes in circle_rhythm_hash_lines.items():
+            for note in notes:
+                print("sending note")
+                print(note)
+                # Create a smaller OSC message with only essential data
+                osc.send('/circleRhythm',"circleRhythmL", json.dumps(note))
+        osc.send('/circleRhythmSetDone',"circleRhythmL")
+
+
+        osc.send('/circleRhythmNewSet',"circleRhythmC")
+        # Send circle_rhythm_hash_circles as OSC messages
+        for pulse_number, notes in circle_rhythm_hash_circles.items():
+            for note in notes:
+                print("sending note")
+                print(note)
+                # Create a smaller OSC message with only essential data
+                osc.send('/circleRhythm',"circleRhythmC", json.dumps(note))
+        osc.send('/circleRhythmSetDone',"circleRhythmC")
+
+        time.sleep(10)
