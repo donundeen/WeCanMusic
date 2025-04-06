@@ -1,6 +1,7 @@
 scores/
 performances/
 cert/
+persistence/
 
 rpi.conductor.config.js
 mac.conductor.config.js
