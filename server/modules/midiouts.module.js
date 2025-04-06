@@ -16,6 +16,7 @@ class MidiOuts {
         this.waitFor = [];
         if(options.waitFor){
             this.waitFor = options.waitFor;
+            console.log("waitFor", this.waitFor);
         }
 
         this.quantizeActive = false;
