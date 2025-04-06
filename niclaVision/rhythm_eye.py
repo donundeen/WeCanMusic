@@ -29,6 +29,8 @@ circle_rhythm_hash_lines = {}
 circle_rhythm_hash_circles = {}
 
 
+sleep_time = 5 # time to sleep between cycles (seconds)
+
 draw_results = True
 use_wifi = True
 
@@ -375,4 +377,4 @@ while True:
             except:
                 connect_wifi()
 
-        time.sleep(10)
+        time.sleep(sleep_time)
