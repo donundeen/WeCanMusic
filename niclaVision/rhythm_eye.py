@@ -7,6 +7,16 @@ from machine import Pin
 # image library: https://docs.openmv.io/library/omv.image.html#
 # Sensor library: https://docs.openmv.io/library/omv.sensor.html
 
+
+# LED control
+from pyb import LED
+red_led = LED(1)
+green_led = LED(2)
+blue_led = LED(3)
+#blue_led.on()
+#blue_led.off()
+
+
 # Configuration
 #
 bars_per_cycle = 8
@@ -27,7 +37,7 @@ max_y = 0
 screen_width = 240
 screen_height = 160
 
-button_read_pin = 3
+button_read_pin = "A0"
 # Initialize the button pin with internal pull-up resistor
 # the code only runs when the button is pressed
 button = Pin(button_read_pin, Pin.IN, Pin.PULL_UP)  # Replace 14 with your input pin number
@@ -61,36 +71,44 @@ PASSWORD = 'WeL0veLettuce'  # Replace with your Wi-Fi password
 SERVER_IP = '10.0.0.174'
 SERVER_PORT = 7005
 
-if True:
+if False:
     SSID = 'wecanmusic_friends'  # Replace with your Wi-Fi SSID
     PASSWORD = False  # Replace with your Wi-Fi password
     SERVER_IP = '192.168.4.1'
 
 
-# Initialize Wi-Fi
-if use_wifi:
-    print("connecting to ", SSID, " with " , PASSWORD)
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    if PASSWORD:
-        wlan.connect(SSID, PASSWORD)
-    else:
-        wlan.connect(SSID)
+wlan = None
+osc = None
+def connect_wifi():
+    global wlan
+    global osc
+    if use_wifi and (wlan is None or not wlan.isconnected()):
+        print("connecting to ", SSID, " with " , PASSWORD)
+        wlan = network.WLAN(network.STA_IF)
+        wlan.active(True)
+        if PASSWORD:
+            wlan.connect(SSID, PASSWORD)
+        else:
+            wlan.connect(SSID)
 
-    # Wait for connection
-    while not wlan.isconnected():
-        print("not connecteD")
-        time.sleep(1)
-    print("Connected to Wi-Fi:", wlan.ifconfig())
+        # Wait for connection
+        while not wlan.isconnected():
+            red_led.on()
+            print("not connecteD")
+            time.sleep(.5)
+            red_led.off()
+            time.sleep(.5)
+        print("Connected to Wi-Fi:", wlan.ifconfig())
 
-    # Set up UDP socket
-    #udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    #udp_address = ('10.0.0.174', 7005)  # Replace with the destination IP and port
-    osc = Client(SERVER_IP, SERVER_PORT)
+        # Set up UDP socket
+        #udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        #udp_address = ('10.0.0.174', 7005)  # Replace with the destination IP and port
+        osc = Client(SERVER_IP, SERVER_PORT)
+        osc.send('/announceCircleRhythmInstrument', "circleRhythmL")
+        osc.send('/announceCircleRhythmInstrument', "circleRhythmC")
 
-    osc.send('/announceCircleRhythmInstrument', "circleRhythmL")
-    osc.send('/announceCircleRhythmInstrument', "circleRhythmC")
 
+connect_wifi()
 
 
 def find_lines(img):
@@ -121,7 +139,8 @@ def get_distance_from_center(point):
     return result
 
 def get_angle_from_center(point):
-    return get_angle_between_points((measure_center_x, measure_center_y), point)
+#    return get_angle_between_points((measure_center_x, measure_center_y), point)
+    return get_angle_between_points((draw_center_x, draw_center_y), point)
 
 def get_distance_between_points(point1, point2):
     return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
@@ -149,6 +168,8 @@ def get_second_line_point(point1, length, angle):
     # round the returned point to the nearest integer
     # (𝑥2,𝑦2)=(𝑥1+𝑙⋅cos(𝑎),𝑦1+𝑙⋅sin(𝑎)).
     return (round(point1[0] + length * math.cos(math.radians(angle))), round(point1[1] + length * math.sin(math.radians(angle))))
+
+
 
 
 while True:
@@ -191,8 +212,8 @@ while True:
     #            "center_point": measure_center_point,
                 "distance_from_center": p1_distance_from_center,
                 "distance_from_center_scaled": p1_distance_from_center_scaled,
-    #           "angle_from_center": p1_angle_from_center,
-    #           "rounded_angle_from_center": p1_rounded_angle_from_center,
+               "angle_from_center": p1_angle_from_center,
+               "rounded_angle_from_center": p1_rounded_angle_from_center,
                 "length": length,
                 "line_angle" : p1_line_angle,
                 "pulse" : pulse_number,
@@ -216,8 +237,8 @@ while True:
     #            "center_point": measure_center_point,
                 "distance_from_center": p2_distance_from_center,
                 "distance_from_center_scaled": p2_distance_from_center_scaled,
-    #            "angle_from_center": p2_angle_from_center,
-    #            "rounded_angle_from_center": p2_rounded_angle_from_center,
+                "angle_from_center": p2_angle_from_center,
+                "rounded_angle_from_center": p2_rounded_angle_from_center,
                 "length": length,
                 "line_angle" : p2_line_angle,
                 "pulse" : pulse_number,
@@ -233,7 +254,7 @@ while True:
         showpoint1 = draw_center_point
         showpoint2 = measure_center_point
 
-
+        circle_rhythm_hash_circles = {}
         circles = find_circles(img)        # for each line:
         for circle in circles:
     #        print("line")
@@ -254,8 +275,8 @@ while True:
     #            "center_point": measure_center_point,
                 "distance_from_center": p1_distance_from_center,
                 "distance_from_center_scaled": p1_distance_from_center_scaled,
-    #           "angle_from_center": p1_angle_from_center,
-    #           "rounded_angle_from_center": p1_rounded_angle_from_center,
+               "angle_from_center": p1_angle_from_center,
+               "rounded_angle_from_center": p1_rounded_angle_from_center,
                 "length": radius,
                 "line_angle" : circle.magnitude(),
                 "pulse" : pulse_number,
@@ -302,29 +323,49 @@ while True:
         #img = sensor.snapshot()  # another snapshot to display the image in opemmv.
 
 
-        # - get the angle of the line
-        # - for each point in the line:
-        # -- get the distance from the point to the center of the image
-        # -- get the angle of the point from the center of the image, rounded to the nearest 360/N
-        osc.send('/circleRhythmNewSet',"circleRhythmL")
-        # Send circle_rhythm_hash_lines as OSC messages
-        for pulse_number, notes in circle_rhythm_hash_lines.items():
-            for note in notes:
-                print("sending note")
-                print(note)
-                # Create a smaller OSC message with only essential data
-                osc.send('/circleRhythm',"circleRhythmL", json.dumps(note))
-        osc.send('/circleRhythmSetDone',"circleRhythmL")
+        if use_wifi:
+            # re-announce yourself
+
+            try:
+                osc.send('/announceCircleRhythmInstrument', "circleRhythmL")
+                osc.send('/announceCircleRhythmInstrument', "circleRhythmC")
+            except:
+                connect_wifi()
 
 
-        osc.send('/circleRhythmNewSet',"circleRhythmC")
-        # Send circle_rhythm_hash_circles as OSC messages
-        for pulse_number, notes in circle_rhythm_hash_circles.items():
-            for note in notes:
-                print("sending note")
-                print(note)
-                # Create a smaller OSC message with only essential data
-                osc.send('/circleRhythm',"circleRhythmC", json.dumps(note))
-        osc.send('/circleRhythmSetDone',"circleRhythmC")
+            # - get the angle of the line
+            # - for each point in the line:
+            # -- get the distance from the point to the center of the image
+            # -- get the angle of the point from the center of the image, rounded to the nearest 360/N
+            osc.send('/circleRhythmNewSet',"circleRhythmL")
+            # Send circle_rhythm_hash_lines as OSC messages
+            for pulse_number, notes in circle_rhythm_hash_lines.items():
+                for note in notes:
+                    print("sending note")
+                    print(note)
+                    # Create a smaller OSC message with only essential data
+                    blue_led.on()
+                    osc.send('/circleRhythm',"circleRhythmL", json.dumps(note))
+                    blue_led.off()
+            try:
+                osc.send('/circleRhythmSetDone',"circleRhythmL")
+            except:
+                connect_wifi()
+
+
+            osc.send('/circleRhythmNewSet',"circleRhythmC")
+            # Send circle_rhythm_hash_circles as OSC messages
+            for pulse_number, notes in circle_rhythm_hash_circles.items():
+                for note in notes:
+                    print("sending note")
+                    print(note)
+                    # Create a smaller OSC message with only essential data
+                    blue_led.on()
+                    osc.send('/circleRhythm',"circleRhythmC", json.dumps(note))
+                    blue_led.off()
+            try:
+                osc.send('/circleRhythmSetDone',"circleRhythmC")
+            except:
+                connect_wifi()
 
         time.sleep(10)

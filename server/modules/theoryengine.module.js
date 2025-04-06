@@ -154,7 +154,7 @@ class TheoryEngine {
     runSetter(command, labelid) {
         // if there's spaces, split and run each one
         command = command.trim();
-        this.db.log("runSetter " , this.db);
+       // this.db.log("runSetter " , this.db);
         let self = this;
         if(command.match(/ /)){
             let split = command.split(" ");

@@ -767,7 +767,7 @@ udpPort.on("message", function (oscMsg) {
         db.log("circle_rhythm loading point", name, point);
         let instrument = orchestra.getLocalInstrument(name);
         if(instrument){
-            instrument.loadHashPoint(point);
+            instrument.loadHashPointBuffer(point);
         }
     });
 
@@ -779,6 +779,7 @@ udpPort.on("message", function (oscMsg) {
         let instrument = orchestra.getLocalInstrument(name);
         if(instrument){
             instrument.clearHashPoints();
+            instrument.clearHashPointBuffer();
         }
     });
 
