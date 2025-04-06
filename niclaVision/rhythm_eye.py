@@ -71,7 +71,7 @@ PASSWORD = 'WeL0veLettuce'  # Replace with your Wi-Fi password
 SERVER_IP = '10.0.0.174'
 SERVER_PORT = 7005
 
-if False:
+if True:
     SSID = 'wecanmusic_friends'  # Replace with your Wi-Fi SSID
     PASSWORD = False  # Replace with your Wi-Fi password
     SERVER_IP = '192.168.4.1'
@@ -337,7 +337,11 @@ while True:
             # - for each point in the line:
             # -- get the distance from the point to the center of the image
             # -- get the angle of the point from the center of the image, rounded to the nearest 360/N
-            osc.send('/circleRhythmNewSet',"circleRhythmL")
+            try:
+                osc.send('/circleRhythmNewSet',"circleRhythmL")
+            except:
+                connect_wifi()
+
             # Send circle_rhythm_hash_lines as OSC messages
             for pulse_number, notes in circle_rhythm_hash_lines.items():
                 for note in notes:
@@ -352,8 +356,11 @@ while True:
             except:
                 connect_wifi()
 
+            try:
+                osc.send('/circleRhythmNewSet',"circleRhythmC")
+            except:
+                connect_wifi()
 
-            osc.send('/circleRhythmNewSet',"circleRhythmC")
             # Send circle_rhythm_hash_circles as OSC messages
             for pulse_number, notes in circle_rhythm_hash_circles.items():
                 for note in notes:
