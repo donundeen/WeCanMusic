@@ -50,7 +50,7 @@ let badTinyVoices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,65
 const MidiOuts = require('./modules/midiouts.module.js');
 let midiWaitForPortnames = config.midiWaitForPortnames;
 let useMidiOut = config.useMidiOut; // whether or not to send midi values through a hardware output, via easymidi
-midiHardwareEngine = new MidiOuts({db:db, active: useMidiOut, matches: "all", waitfor : midiWaitForPortnames});
+midiHardwareEngine = new MidiOuts({db:db, active: useMidiOut, matches: "all", waitFor : midiWaitForPortnames});
 midiHardwareEngine.init();
 
 midiHardwareEngine.quantizeTime = config.quantizeTime;

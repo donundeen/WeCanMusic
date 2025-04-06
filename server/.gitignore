@@ -6,3 +6,5 @@ persistence/
 rpi.conductor.config.js
 mac.conductor.config.js
 env.config.js
+
+out.txt

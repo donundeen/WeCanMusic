@@ -177,7 +177,7 @@
     [
         0,
         31,
-        "Synthibell"
+        "Bwand2 Synthibell"
     ],
     [
         0,
@@ -212,6 +212,96 @@
     [
         0,
         42,
-        "TR-808Kit"
+        "TR-808"
+    ],
+    [
+        0,
+        43,
+        "X-S Techno-Synth 49"
+    ],
+    [
+        0,
+        44,
+        "Rock Gitaro"
+    ],
+    [
+        0,
+        45,
+        "BWand1 Phantasia"
+    ],
+    [
+        0,
+        49,
+        "Tubular Bells"
+    ],
+    [
+        0,
+        51,
+        "Ice Rain"
+    ],
+    [
+        0,
+        50,
+        "Poly Synth"
+    ],
+    [
+        0,
+        46,
+        "STEREO PIZZ"
+    ],
+    [
+        0,
+        47,
+        "church organ"
+    ],
+    [
+        0,
+        48,
+        "saron22"
+    ],
+    [
+        0,
+        57,
+        "Rubber Bass"
+    ],
+    [
+        0,
+        59,
+        "Stab Bass Strings"
+    ],
+    [
+        0,
+        60,
+        "Mono Analog Bass"
+    ],
+    [
+        0,
+        52,
+        "Sheet Bass"
+    ],
+    [
+        0,
+        53,
+        "Grungy Ramp Bass"
+    ],
+    [
+        0,
+        54,
+        "Distorted Sweep Bass"
+    ],
+    [
+        0,
+        55,
+        "Electric Slap Bass"
+    ],
+    [
+        0,
+        56,
+        "Casio VL-1 Pops"
+    ],
+    [
+        0,
+        58,
+        "Dream Hit"
     ]
 ]
