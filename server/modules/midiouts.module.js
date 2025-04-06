@@ -69,6 +69,7 @@ class MidiOuts {
             let midiOutputs = this.easyMidi.getOutputs();
             console.log("midi_outputs", midiOutputs);
             console.log("midi_inputs", this.easyMidi.getInputs());
+            console.log("waitFor", this.waitFor);
             for(let i = 0; i < midiOutputs.length; i++){
                 this.portNames.push(midiOutputs[i]);
             }
@@ -76,7 +77,7 @@ class MidiOuts {
                 waiting = false;
             }else{
                 let result = this.waitFor.filter(regex => this.portNames.some(portname => new RegExp(regex).test(portname)));
-                console.log("result", result);
+                console.log("result ", result, this.waitFor.length, result.length);
                 if(result.length == this.waitFor.length){
                     waiting = false;
                 }else{
