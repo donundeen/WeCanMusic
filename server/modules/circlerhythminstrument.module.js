@@ -48,9 +48,11 @@ class CircleRhythmInstrument extends LocalInstrument {
         this.circleRhythmHash = this.circleRhythmHashBuffer;
         // write out the hash to a file
         this.db.log("writing out hash to file", this.circleRhythmHash);
+/*
         let fs = require("fs");
         fs.writeFileSync("circleRhythmHash"+this.deviceName+".json", JSON.stringify(this.circleRhythmHash, null, 2));
         fs.writeFileSync("circleRhythmHashBuffer"+this.deviceName+".json", JSON.stringify(this.circleRhythmHashBuffer, null, 2));
+        */
         this.circleRhythmHashBuffer = {};
     }
 
