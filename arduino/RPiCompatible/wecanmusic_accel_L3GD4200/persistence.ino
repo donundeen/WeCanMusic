@@ -18,13 +18,12 @@ int midi_vol[6] = {200,200,200,200,200,200};
 
 void persistence_setup()
 {
-    Serial.println("persistence_setup")
     if (!SPIFFS.begin(true))
     {
         Serial.println("SPIFFS Mount Failed");
         return;
     }
-    delete_config_file();
+    maybe_delete_config_file();
     load_persistent_values();
 }
 
@@ -293,10 +292,9 @@ void save_persistent_values()
     serializeJson(json_config, Serial); // this jsut writes the json to Serial out
     serializeJson(json_config, configFile);
     configFile.close();
-    Serial.println("configfileclosed");
 }
 
-void delete_config_file(){
+void maybe_delete_config_file(){
   if(resetConfigFile){
     Serial.println("deleting all stored SSID credentials");
     if (!SPIFFS.begin(true)) {
@@ -304,7 +302,5 @@ void delete_config_file(){
       return;
     }  
     SPIFFS.remove("/config.json");
-  }else{
-    Serial.println("NOT deleting config file!");
   }
 }

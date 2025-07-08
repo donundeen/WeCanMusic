@@ -31,8 +31,8 @@ void sensor_loop(int vindex){
   ADCRaw[vindex] = analogRead(inputPin[vindex]);
   //ADCRaw = analogRead(sensorPin);
 
-  //Serial.println("read value");
-  //Serial.println(ADCRaw[vindex]);
+  Serial.print("read value");
+  Serial.println(ADCRaw[vindex]);
 
   firstSense[vindex] = true;   
   /*
