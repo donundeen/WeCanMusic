@@ -7,7 +7,7 @@
   config mode button - power switch --- GND | o              ---|
           config mode button ---  A0 / DAC2 | o               o | VBAT
                                   A1 / DAC1 | o               o | EN  --- power switch
-Resitance Wire (what we meaure) --- A2 / 34 | o               o | VUSB
+Resistance Wire (what we meaure) --- A2 / 34 | o               o | VUSB
                                     A3 / 39 | o               o | 13  / A12 / T4
                                     A4 / 36 | o               o | 12  / A11 / T5
                               T0 /  A5 /  4 | o               o | 27  / A10 / T7
