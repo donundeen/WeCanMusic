@@ -549,7 +549,8 @@ class TheoryEngine {
         if(this.bestNoteSetMidi){
             var output = labelid+" " + this.bestNoteSetMidi.join(" ");
     //		this.debugmsg(output);
-            this.sendBestMidiList(this.bestNoteSetMidi)
+            this.sendBestMidiList(this.bestNoteSetMidi);
+            this.currentNoteList= this.bestNoteSetMidi;
         }else{
             this.debugmsg("no best set");
         }	
@@ -701,9 +702,9 @@ class TheoryEngine {
         
     getRootedBestNoteFromInt(labelid, value, min, max) {
         
-        min = this.moveMinMax(curRootMidi, min);
-        max = this.moveMinMax(curRootMidi, max);	
-        var note = this.selectFromInt(value, bestNoteSetMidi, min, max);
+        min = this.moveMinMax(this.curRootMidi, min);
+        max = this.moveMinMax(this.curRootMidi, max);	
+        var note = this.selectFromInt(value, this.bestNoteSetMidi, min, max);
         if(!note){
             return false;
         }
@@ -792,6 +793,28 @@ class TheoryEngine {
         }
         return minmax;
     }
+
+    // based on input noteIn, find the closest note in the noteList
+    getClosestCorrectNote(noteIn){
+        let closest = noteIn;
+        if(this.currentNoteList.includes(closest)){
+            return closest;
+        }        
+        let diff = 0;
+        while (diff <= 13){
+            closest = noteIn + diff;
+            if(this.currentNoteList.includes(closest)){
+                return closest;
+            }
+            closest = noteIn - diff;
+            if(this.currentNoteList.includes(closest)){
+                return closest;
+            }
+            diff++;
+        }
+        return noteIn;
+    }   
+
 
 
 }
