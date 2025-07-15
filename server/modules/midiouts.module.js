@@ -33,6 +33,9 @@ class MidiOuts {
         this.easyMidi = require('easymidi');
 
         this.makeNoteQueue = [];
+
+        this.theoryEngine = false;
+        this.correctMidiNotes = false;
     }
     // need a way to pick just some portnames sometimes, or an array of matches.
     init(){
@@ -105,6 +108,11 @@ class MidiOuts {
 
 
     makeNote(channel, note, velocity, duration){
+        // if correctMidiNotes is true and the theoryEngine is attached, correct the input note
+        // to the closest correct midi note
+        if(this.correctMidiNotes && this.theoryEngine){
+            note = this.theoryEngine.getClosestCorrectNote(note);
+        }
         if(this.quantizeActive && this.quantizeTime){
             this.db.log("quantize makeNote", this.quantizeTime);
             this.makeNoteAddToQueue(channel, note, velocity, duration);
