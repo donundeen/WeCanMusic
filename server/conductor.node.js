@@ -949,6 +949,7 @@ theory.setMidiListCallback(function(msg){
     udpPort.send(bundle, UDPSendIP, UDPSendPort);
     // and send to local ochestra
     orchestra.allLocalInstrumentSetValue("noteList", msg);   
+    orchestra.allUDPInstrumentSetValue("noteList", msg);   
 });
 
 

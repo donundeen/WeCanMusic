@@ -18,7 +18,7 @@ int midi_vol[6] = {200,200,200,200,200,200};
 
 void persistence_setup()
 {
-    Serial.println("persistence_setup")
+    Serial.println("persistence_setup");
     if (!SPIFFS.begin(true))
     {
         Serial.println("SPIFFS Mount Failed");

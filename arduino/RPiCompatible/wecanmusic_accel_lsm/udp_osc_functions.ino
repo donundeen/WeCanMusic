@@ -61,7 +61,7 @@ void UDPListen(){
     }
     if(!bundleIN.hasError()){
       Serial.println("routing?");
-      bundleIN.route("/all/notelist", routeNotelist);
+      bundleIN.route("/all/noteList", routeNotelist);
       bundleIN.route("/all/req_ann", routeRequestAnnounce);
       char devroute[100];
       for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){

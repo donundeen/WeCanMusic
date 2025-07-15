@@ -61,7 +61,7 @@ void UDPListen(){
     }
     if(!bundleIN.hasError()){
       Serial.println("routing?");
-      bundleIN.route("/all/notelist", routeNotelist);
+      bundleIN.route("/all/noteList", routeNotelist);
       bundleIN.route("/all/req_ann", routeRequestAnnounce);
       char devroute[100];
       for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){
@@ -200,8 +200,6 @@ void routeConfig_somevar(OSCMessage &msg, int addrOffset ){  //
 void routeConfig_midi_voice(OSCMessage &msg, int addrOffset ){  //
   char address[32];
   msg.getAddress(address);
-  Serial.print("address");
-  Serial.println(address);
   int vindex = extractVindexFromRoute(address);
   String midi_voice = route_string(vindex, msg, addrOffset, "midi_voice", false);  //
   Serial.println("midi voice");
@@ -216,7 +214,6 @@ void routeConfig_midi_voice(OSCMessage &msg, int addrOffset ){  //
     midiSetChannelProgram(0, midi_program[vindex]);  //
     save_persistent_values(); // save all the values every time there's any new value. 
   }  
-  Serial.println("midi_voice saved");
   // deprecating this for bank:program
 //  midiSetChannelProgram(0, midi_voice[vindex]);  //
 }
