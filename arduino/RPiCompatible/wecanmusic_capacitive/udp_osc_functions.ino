@@ -349,7 +349,7 @@ void routeNotelist(OSCMessage &msg, int addrOffset ){
   //Serial.println(msg.getType(i));
   //Serial.println(msg.getFloat(i));
   while (msg.getType(i) == 'i'){
-    //Serial.println(msg.getInt(i));
+   /// Serial.print(msg.getInt(i));
     //Serial.print(" ");
     newnotelist[i] = msg.getInt(i);
     i++;
