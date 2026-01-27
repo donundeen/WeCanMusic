@@ -14,32 +14,22 @@
 // Pick one device type
 #define DEVICE_TYPE DEVICE_CAPACITIVE
 
+// Defaults shared across device types
+#define DEVICE_DEFAULT_WIFI_SSID "icanmusic"
+#define DEVICE_DEFAULT_WIFI_PASSWORD ""
+#define DEVICE_PRESET_IP "10.0.0.255"
+
 // Per-device defaults
 #if DEVICE_TYPE == DEVICE_CAPACITIVE
   #define DEVICE_NUM_MULTIVALUES 1
-  #define DEVICE_DEFAULT_WIFI_SSID "wecanmusic_friends"
-  #define DEVICE_DEFAULT_WIFI_PASSWORD ""
-  #define DEVICE_PRESET_IP "192.168.4.1:"
 #elif DEVICE_TYPE == DEVICE_RESISTIVE
   #define DEVICE_NUM_MULTIVALUES 1
-  #define DEVICE_DEFAULT_WIFI_SSID "wecanmusic_friends"
-  #define DEVICE_DEFAULT_WIFI_PASSWORD ""
-  #define DEVICE_PRESET_IP "192.168.4.1:"
 #elif DEVICE_TYPE == DEVICE_ACCEL_L3GD20H
   #define DEVICE_NUM_MULTIVALUES 3
-  #define DEVICE_DEFAULT_WIFI_SSID "icanmusic"
-  #define DEVICE_DEFAULT_WIFI_PASSWORD ""
-  #define DEVICE_PRESET_IP "10.0.0.255"
 #elif DEVICE_TYPE == DEVICE_ACCEL_L3GD4200
   #define DEVICE_NUM_MULTIVALUES 3
-  #define DEVICE_DEFAULT_WIFI_SSID "icanmusic"
-  #define DEVICE_DEFAULT_WIFI_PASSWORD ""
-  #define DEVICE_PRESET_IP "10.0.0.255"
 #elif DEVICE_TYPE == DEVICE_ACCEL_LSM
   #define DEVICE_NUM_MULTIVALUES 3
-  #define DEVICE_DEFAULT_WIFI_SSID "icanmusic"
-  #define DEVICE_DEFAULT_WIFI_PASSWORD ""
-  #define DEVICE_PRESET_IP "10.0.0.255"
 #else
   #error "Unknown DEVICE_TYPE. Update device_config.h."
 #endif

@@ -2,6 +2,23 @@
 /// functions that handle playing music
 /// things like timing, changerate tracking, mapping/scaling sensor data, etc, 
 
+// Forward declarations for functions used before their definitions.
+void sensor_loop();
+void sensor_loop(int vindex);
+void note_loop();
+void note_loop(int vindex);
+void changerate_loop();
+void changerate_loop(int vindex);
+float get_changerate(int vindex, int ival);
+int derive_pitch(int vindex, float val);
+int derive_velocity(int vindex, int val);
+int derive_duration(int vindex, float val);
+int derive_next_note_time();
+unsigned long updateLastNoteTime(int vindex);
+int quantizeToNoteLength(unsigned long val);
+int noteFromFloat(int vindex, double value, int min, int max);
+void sendMakeNote(int vindex, int pitch, int velocity, int duration);
+
 void sensor_setup(){
   sensor_setup_device();
   t.setInterval(sensor_loop, sensor_loop_rate);

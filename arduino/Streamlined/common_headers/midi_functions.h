@@ -27,6 +27,13 @@
 
 ////////////////////////////
 // MIDI FUNCTIONS
+void midi_setup(int vindex);
+void midiSetChannelBank(uint8_t chan, uint8_t bank);
+void midiSetChannelProgram(uint8_t chan, uint8_t program);
+void midiSetChannelVolume(uint8_t chan, uint8_t vol);
+void midiNoteOn(uint8_t chan, uint8_t n, uint8_t vel);
+void midiNoteOff(uint8_t chan, uint8_t n, uint8_t vel);
+
 void midi_setup(){
   VS1053_MIDI.begin(31250); // MIDI uses a 'strange baud rate'
   for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){

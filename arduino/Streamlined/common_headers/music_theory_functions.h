@@ -3,6 +3,10 @@
 //////////////////////////////////
 // MUSIC THEORY FUNCTIONS
 
+// Forward declarations for functions defined later in this header.
+void makeworkinglist(int vindex, int minval, int maxval);
+int moveMinMax(int vindex, int root, int minmax);
+
 void setNotelist(int* newlist, int* curlist, int size){
   Serial.println("new notelist");
   Serial.println(sizeof(newlist[0])*size);

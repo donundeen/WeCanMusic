@@ -1,4 +1,9 @@
 // handling the saving and retrieval of values that need to persist
+
+// Forward declarations for functions defined later in this header.
+void delete_config_file();
+void load_persistent_values();
+void save_persistent_values();
 /*
 persistent variables:
 

@@ -1,3 +1,6 @@
+#pragma once
+
+#include "device_config.h"
 
 //////////////////////////////
 // DEVICE-SPECIFIC CONFIG VARS
@@ -46,4 +49,8 @@ void sensor_loop(int vindex){
 // END DEVICE SPECIFIC FUNCTIONS
 /////////////////////////////
 
+
+int get_num_multivalues(){
+    return DEVICE_NUM_MULTIVALUES;
+}
 

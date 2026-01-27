@@ -1,6 +1,34 @@
 ///////////////////////////////
 // functions to handle communication with the server/conductor via UDP/OSC
 
+// Forward declarations for functions used before their definitions.
+void sendOSCUDP(int vindex, int sendVal);
+void udp_setup();
+void udp_loop();
+void UDPListen();
+void configUdp();
+void routeDeviceMsg(OSCMessage &msg, int addrOffset);
+void routeConfigVal(OSCMessage &msg, int addrOffset);
+int extractVindexFromRoute(char* address);
+void routeConfig_somevar(OSCMessage &msg, int addrOffset);
+void routeConfig_midi_voice(OSCMessage &msg, int addrOffset);
+void midi_voice_to_bank_program(String midi_voice, int & bank, int & program);
+void routeConfig_midi_bank(OSCMessage &msg, int addrOffset);
+void routeConfig_midi_program(OSCMessage &msg, int addrOffset);
+void routeConfig_midimin(OSCMessage &msg, int addrOffset);
+void routeConfig_midimax(OSCMessage &msg, int addrOffset);
+void routeConfig_midi_notelength(OSCMessage &msg, int addrOffset);
+void routeConfig_midi_vol(OSCMessage &msg, int addrOffset);
+void routeConfig_velocitycurve(OSCMessage &msg, int addrOffset);
+void routeConfig_reset(OSCMessage &msg, int addrOffset);
+void routeRequestAnnounce(OSCMessage &msg, int addrOffset);
+void routeNotelist(OSCMessage &msg, int addrOffset);
+int route_int(int vindex, OSCMessage &msg, int addrOffset, String varname);
+String route_string(int vindex, OSCMessage &msg, int addrOffset, String varname, boolean storeit);
+void announceCreation();
+void announceCreation(int vindex);
+void sendMakeNote(int vindex, int pitch, int velocity, int duration);
+
 char *UDPReceiverIP = "10.0.0.255"; // ip where UDP messages are going
 int UDPPort = 7005; // the UDP port that Max is listening on
 

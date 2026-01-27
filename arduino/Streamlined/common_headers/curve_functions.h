@@ -32,6 +32,11 @@ float curve_logdnthresh[]  = {0., 1., 0., 0.95, 0., -0.65, 1., 0., -0.65};
 //////////////////////////////////////
 // CURVE FUNCTIONS
 
+// Forward declarations so header ordering doesn't matter.
+float curvescale(float x , float inmin, float inmax, float outmin, float outmax, float curve);
+float logscale(float x, float curve);
+float expscale(float x, float curve);
+
 
 float functioncurve(float x, float curvelist[] , int length){
   // where is x in the curvelist?
