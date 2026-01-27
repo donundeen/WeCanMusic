@@ -22,13 +22,13 @@
 /////////////////////////////////////////
 #include <PeakDetection.h> // import peak/bounce detection lib
 
-PeakDetection peakDetections[6]; 
+PeakDetection peakDetections_l3gd4200[6]; 
 
 
 ////////////////////////////////
 // SENSOR OBJECT CREATION
 /* Assign a unique ID to this sensor at the same time */
-L3G gyro;
+L3G gyro_l3gd4200;
 // END OBJECT CREATION
 ///////////////////////
 
@@ -45,31 +45,31 @@ L3G gyro;
 //    case "mag.x":
 //    case "mag.y":
 //    case "mag.z":
-const int _GYROX = 1;
-const int _GYROY = 2;
-const int _GYROZ = 3;
-const int _ACCELX = 4;
-const int _ACCELY = 5;
-const int _ACCELZ = 6;
-const int _MAGX = 7;
-const int _MAGY = 8;
-const int _MAGZ = 9;
-int AccelPitchVal[6] = {_GYROX, _GYROY, _GYROZ, _ACCELX, _ACCELY, _ACCELZ}; 
-//int AccelPitchVal[6] = {_MAGX, _MAGY, _MAGZ, _ACCELX, _ACCELY, _ACCELZ}; 
+const int L3GD4200_GYROX = 1;
+const int L3GD4200_GYROY = 2;
+const int L3GD4200_GYROZ = 3;
+const int L3GD4200_ACCELX = 4;
+const int L3GD4200_ACCELY = 5;
+const int L3GD4200_ACCELZ = 6;
+const int L3GD4200_MAGX = 7;
+const int L3GD4200_MAGY = 8;
+const int L3GD4200_MAGZ = 9;
+int AccelPitchVal_l3gd4200[6] = {L3GD4200_GYROX, L3GD4200_GYROY, L3GD4200_GYROZ, L3GD4200_ACCELX, L3GD4200_ACCELY, L3GD4200_ACCELZ}; 
+//int AccelPitchVal_l3gd4200[6] = {L3GD4200_MAGX, L3GD4200_MAGY, L3GD4200_MAGZ, L3GD4200_ACCELX, L3GD4200_ACCELY, L3GD4200_ACCELZ}; 
 
 
 ////////////////////////////////////////////////////
 /////////////////////////////
 // DEVICE SPECIFIC FUNCTIONS
-void peak_setup(){
+void peak_setup_l3gd4200(){
   for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){  
-//  peakDetections[vindex].begin(32, 4, 0.3);               // sets the lag, threshold and influence
-    peakDetections[vindex].begin(48, 3, 0.4);               // sets the lag, threshold and influence
+//  peakDetections_l3gd4200[vindex].begin(32, 4, 0.3);               // sets the lag, threshold and influence
+    peakDetections_l3gd4200[vindex].begin(48, 3, 0.4);               // sets the lag, threshold and influence
   }
 }
 
 
-void sensor_setup_device(){
+void sensor_setup_device_l3gd4200(){
 
   delay(1000);
   Serial.println("setup");
@@ -81,13 +81,13 @@ void sensor_setup_device(){
 
   Wire.begin();
   /* Initialise the sensor */
-  if (!gyro.init(L3G::deviceType::device_4200D))
+  if (!gyro_l3gd4200.init(L3G::deviceType::device_4200D))
   {
     /* There was a problem detecting the L3GD20 ... check your connections */
     Serial.println("Ooops, no L3GD42000 detected ... Check your wiring!");
     while(1);
   }
-  gyro.enableDefault();
+  gyro_l3gd4200.enableDefault();
 
   /* Display some basic information on this sensor */
 }
@@ -99,20 +99,20 @@ void sensor_setup_device(){
 // - set ADCRaw[vindex] with the read sensor value
 // - set firstSense[vindex] to true
 
-void sensor_loop(int vindex){
+void sensor_loop_l3gd4200(int vindex){
 
-  gyro.read();
+  gyro_l3gd4200.read();
 //  sendOSCUDP(gyro.gyro.x, gyro.gyro.y, gyro.gyro.z, accel.acceleration.x, accel.acceleration.y, accel.acceleration.z, mag.magnetic.x,mag.magnetic.y,mag.magnetic.z, sensorVal);
 
-  switch(AccelPitchVal[vindex]){  //MULTIVALUE UPDATE REQUIRED
-    case _GYROX:
-      ADCRaw[vindex] = gyro.g.x;
+  switch(AccelPitchVal_l3gd4200[vindex]){  //MULTIVALUE UPDATE REQUIRED
+    case L3GD4200_GYROX:
+      ADCRaw[vindex] = gyro_l3gd4200.g.x;
       break;
-    case _GYROY:
-      ADCRaw[vindex] = gyro.g.y;
+    case L3GD4200_GYROY:
+      ADCRaw[vindex] = gyro_l3gd4200.g.y;
       break;
-    case _GYROZ:
-      ADCRaw[vindex] = gyro.g.z;
+    case L3GD4200_GYROZ:
+      ADCRaw[vindex] = gyro_l3gd4200.g.z;
       break;           
   }
  // this is useful to see, but creates a lot of output that makes it hard to see other messages.
@@ -132,10 +132,10 @@ void sensor_loop(int vindex){
   //delay(10); // removing when using timeouts
 }
 
-void peak_loop(int vindex){
+void peak_loop_l3gd4200(int vindex){
   // peak detection
-  peakDetections[vindex].add(ADCRaw[vindex]);           // adds a new data point
-  peaks[vindex] = peakDetections[vindex].getPeak();  
+  peakDetections_l3gd4200[vindex].add(ADCRaw[vindex]);           // adds a new data point
+  peaks[vindex] = peakDetections_l3gd4200[vindex].getPeak();  
   /*        // 0, 1 or -1
   if(peaks[vindex] == prevpeaks[vindex]){
     prevpeaks[vindex] = peaks[vindex];
@@ -144,7 +144,7 @@ void peak_loop(int vindex){
     prevpeaks[vindex] = peaks[vindex];
   }
   */
-  double filtered = peakDetections[vindex].getFilt();   // moving average
+  double filtered = peakDetections_l3gd4200[vindex].getFilt();   // moving average
 //  if(peaks[vindex] != 0){
     Serial.print(ADCRaw[vindex]);
     Serial.print(",");
@@ -162,6 +162,6 @@ void peak_loop(int vindex){
 
 
 
-int get_num_multivalues(){
-    return DEVICE_NUM_MULTIVALUES;
+int get_num_multivalues_l3gd4200(){
+    return 3;
 }

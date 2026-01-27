@@ -11,6 +11,15 @@ const bool no_network = false;
 // if we want to save the config data to local file. change to false to bypass SPIFFS stuff.
 bool shouldSaveConfig = true;
 
+//////////////////////////////
+// DEVICE TYPE RUNTIME CONFIG
+// When enabled, DIP switch bits override DEVICE_TYPE at boot.
+bool use_device_dip = true;
+const int device_dip_pin_count = 3;
+int device_dip_pins[device_dip_pin_count] = {25, 26, 27}; // change to match wiring
+// runtime-selected device type (defaults to compile-time DEVICE_TYPE)
+int device_type = DEVICE_TYPE;
+
 /* 
  *  WIFI_MODE_ON set to true to send osc data over WIFI.
  *  When this is true: 

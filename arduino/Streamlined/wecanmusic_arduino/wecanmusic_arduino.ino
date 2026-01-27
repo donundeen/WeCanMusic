@@ -75,6 +75,7 @@ void setup() {
   Serial.begin(115200);
 
   // allow device-specific override if needed
+  init_device_type_from_dip();
   NUM_MULTIVALUES = get_num_multivalues();
 
   persistence_setup();

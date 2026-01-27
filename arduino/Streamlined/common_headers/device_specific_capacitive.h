@@ -9,7 +9,7 @@
 // sensor config vars - pins
 // Just test touch pin - Touch0 is T0 which is on GPIO 4.
 // using 32 - This is GPIO #32 and also an analog input A7 on ADC #1
-int inputPin[] = {T9,T6,T8,T4, T5, T7}; //15;
+int inputPin_capacitive[] = {T9,T6,T8,T4, T5, T7}; //15;
 //int inputPin[] = {T0, T6, T9,T8,T4, T5}; //15;
 //int inputPin[] = {T4, T6, T9,T8,T4, T5}; //15;
 // t9 is pin 32
@@ -22,16 +22,16 @@ int inputPin[] = {T9,T6,T8,T4, T5, T7}; //15;
 ////////////////////////////////////////////////////
 /////////////////////////////
 // DEVICE SPECIFIC FUNCTIONS
-void sensor_setup_device(){
+void sensor_setup_device_capacitive(){
   // nothing device-specific to do here
 }
 
 // sensor_loop must:
 // - set ADCRaw[vindex] with the read sensor value
 // - set firstSense[vindex] to true
-void sensor_loop(int vindex){
+void sensor_loop_capacitive(int vindex){
   // use capacative inputPin
-  ADCRaw[vindex] = touchRead(inputPin[vindex]);
+  ADCRaw[vindex] = touchRead(inputPin_capacitive[vindex]);
   //ADCRaw = analogRead(sensorPin);
 
   //Serial.println("read value");
@@ -51,6 +51,6 @@ void sensor_loop(int vindex){
 
 
 
-int get_num_multivalues(){
-    return DEVICE_NUM_MULTIVALUES;
+int get_num_multivalues_capacitive(){
+    return 1;
 }
