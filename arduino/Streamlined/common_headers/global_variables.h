@@ -1,18 +1,6 @@
 
 
 
-///////////////////////////////
-// MUSIC PERFORMANCE VARIABLES
-int notelist[127];
-int notelistlength = 0;
-
-int workinglist[6][127]; //
-int workinglistlength[6] = {0,0,0,0,0,0}; //
-// END MUSIC PERFORMANCE VARIABLES
-///////////////////////////
-
-
-
 /////////////////////////////
 // TIMING VARIABLES 
 AsyncTimer t;
@@ -62,6 +50,19 @@ int prevChangeTime[6] = {-1, -1, -1, -1, -1, -1} ;     //
 
 int peaks[6] = {0,0,0,0,0,0};
 int prevpeaks[6] = {0,0,0,0,0,0}; // track so we don't trigger a peak twice.
+
+// Streaming processing state (debounce, smoothing, features)
+float debouncedVal[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0};
+float smoothedVal[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0};
+unsigned long lastDebounceTime[6] = {0,0,0,0,0,0};
+
+float rmsAccum[6] = {0,0,0,0,0,0};
+int rmsCount[6] = {0,0,0,0,0,0};
+float peakAbs[6] = {0,0,0,0,0,0};
+
+float velocityVal[6] = {0,0,0,0,0,0};
+float lastVelocityRaw[6] = {0,0,0,0,0,0};
+unsigned long lastVelocityTime[6] = {0,0,0,0,0,0};
 // END SENSOR PROCESSING GLOBALS
 ////////////////////////////////////
 

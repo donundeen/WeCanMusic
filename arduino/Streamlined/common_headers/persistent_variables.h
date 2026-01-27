@@ -26,17 +26,6 @@ and if you are adding new variables to change from the arduino's AP mode web pag
 
 ////////////////////////////////////////////////
 // variables you change from conductor.html
-/////////// MIDI DEFINITIONS /////////////////////
-int midi_voice[6] = {12,12,12,12,12,12}; // see define_configs // . Also update to bank/program (midi_voice is bank:program)
-int midi_bank[6] = {0,0,0,0,0,0}; //
-int midi_program[6] = {1,1,1,1,1,1}; //
-
-int rootMidi[6] = {0,0,0,0,0,0};  //
-int midimin[6] = {32,32,32,32,32,32};  //
-int midimax[6] = {100,100,100,100,100,100}; //
-int midi_notelength[6] = {7,7,7,7,7,7}; // these ints poin tot positions in the notelengths array
-int midi_vol[6] = {200,200,200,200,200,200};
-
 ///////////////////////////////////
 // Variables edited in Arduino's AP mode web page
 char wecanmusic_server_ip[40] = "10.0.0.255";

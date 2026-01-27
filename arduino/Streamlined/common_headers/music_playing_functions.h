@@ -1,200 +1,150 @@
 /////////////////////////////////
-/// functions that handle playing music
-/// things like timing, changerate tracking, mapping/scaling sensor data, etc, 
+/// functions that handle sensor streaming
+/// debounce, smoothing, downsample, quantize, and feature extraction
 
 // Forward declarations for functions used before their definitions.
 void sensor_loop();
 void sensor_loop(int vindex);
-void note_loop();
-void note_loop(int vindex);
-void changerate_loop();
-void changerate_loop(int vindex);
-float get_changerate(int vindex, int ival);
-int derive_pitch(int vindex, float val);
-int derive_velocity(int vindex, int val);
-int derive_duration(int vindex, float val);
-int derive_next_note_time();
-unsigned long updateLastNoteTime(int vindex);
-int quantizeToNoteLength(unsigned long val);
-int noteFromFloat(int vindex, double value, int min, int max);
-void sendMakeNote(int vindex, int pitch, int velocity, int duration);
+void sensor_process_loop();
+void post_sensor_sample(int vindex);
+float update_debounced(int vindex, float raw, unsigned long now);
+float update_smoothed(int vindex, float debounced);
+void update_features(int vindex, float smoothed, unsigned long now);
+float normalize_with_minmax(float val, float *minValPtr, float *maxValPtr);
+int quantize_norm(float norm);
+void sendSensorPacket(int vindex, int raw_q, int smooth_q, int rms_q, int peak_q, int vel_q);
 
 void sensor_setup(){
   sensor_setup_device();
   t.setInterval(sensor_loop, sensor_loop_rate);
+
+  int send_interval_ms = 10;
+  if(sensor_send_rate_hz > 0){
+    send_interval_ms = max(1, 1000 / sensor_send_rate_hz);
+  }
+  t.setInterval(sensor_process_loop, send_interval_ms);
+
   sensor_loop();
-//  t.setInterval(changerate_loop, 100);
-  changerate_loop();
-  note_loop();
-}
-
-
-void note_loop(){
-  for (int i = 0 ; i < NUM_MULTIVALUES; i++){
-    note_loop(i);
-  }
-
-  int rand_notelength = notelength_assortment[random(8)];
-//  int note_timeout = pulseToMS(notelengths[rand_notelength]);
-  int note_timeout = derive_next_note_time();
-//  Serial.print("noteloop Rate: ");
-//  Serial.println(note_timeout);
-//  t.setTimeout(note_loop, notelengths[noteloop_rate[0]]); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
-  t.setTimeout(note_loop, note_timeout); // but changing the mididuration in this function could make notes overlap, so creeat space between notes. Or we make this a sensor-controlled variable as well
-//pulseToMS(notelengths[midi_notelength]);
-}
-
-void note_loop(int vindex){
-  if(!firstSense[vindex]){   //
-    // sensor hasn't sensed yet, skip this
-    return;
-  }
-  changerate_loop(vindex);  //
-  char pbuf[100];
-//  sprintf(pbuf, "looppre: in:%d  min %f max %f", ADCRaw[vindex], minVal[vindex], maxVal[vindex]);
-//  Serial.println(pbuf);
-  float value = dyn_rescale(ADCRaw[vindex], &minVal[vindex], &maxVal[vindex], 0.0, 1.0);  //
- // sprintf(pbuf, "loop: in:%d scaled:%f min %f max %f", ADCRaw, value, minVal, maxVal);
-//  Serial.println(pbuf);
-  int midipitch    = derive_pitch(vindex, value);  //
-  int midivelocity = derive_velocity(vindex, ADCRaw[vindex]);  //
-  int mididuration = derive_duration(vindex, value);    //
-  sprintf(pbuf, "      in:%d scaled:%f p:%d v:%d d:%d", ADCRaw[vindex], value, midipitch, midivelocity, mididuration);
-//  Serial.println(pbuf);
-  // this will also make it monophonic:
-  if(midipitch == 0 || midivelocity == 0 || mididuration == 0){
-    return;
-  }
-  if(localSynth){
-    midiMakeNote(vindex, midipitch, midivelocity, mididuration);  //
-  }else{
-    sendMakeNote(vindex, midipitch, midivelocity, mididuration);  //
-  }
+  sensor_process_loop();
 }
 
 void sensor_loop(){
   for(int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
     sensor_loop(vindex);
+    post_sensor_sample(vindex);
   }
 }
 
-void changerate_loop(){
-  for(int i = 0; i<NUM_MULTIVALUES; i++){
-    changerate_loop(i);
+void post_sensor_sample(int vindex){
+  if(!firstSense[vindex]){
+    return;
   }
-}
-
-void changerate_loop(int vindex){   //
-  changerate[vindex] = get_changerate(vindex, ADCRaw[vindex]);  //
-}
-
-float get_changerate(int vindex, int ival){   //
-  float val = (float)ival;  //
-  char pbuf[100];
-  int millisr = millis();
-
-  if(prevChangeVal[vindex] == -1){ //
-    prevChangeVal[vindex] = val;    //
-    prevChangeTime[vindex] = millisr; //
-    return 0;
-  }
-
-  float ochange = val - prevChangeVal[vindex]; //
-  if(ochange == 0){
-    return 0;
-  }
-  int millisd = millisr - prevChangeTime[vindex];   //
-  ochange = abs(ochange);
-  // divide the change amoutn by the timeframe, so chnages in shorter timeframes count for me.
-  ochange = ochange / (float)millisd; 
-  float change = dyn_rescale(ochange, &changeMin[vindex], &changeMax[vindex], 0, 1.0);
-
-  // readjust changemin and max based on elasticMinMaxScale
-  changeMin[vindex] = changeMin[vindex] + (changeMin[vindex] * elasticMinMaxScale); //
-  changeMax[vindex] = changeMax[vindex] - (changeMax[vindex] * elasticMinMaxScale); //
-
- // Serial.println(pbuf);
-  prevChangeVal[vindex] = val;          //
-  prevChangeTime[vindex] = millisr;     //
-  sprintf(pbuf, "changerate v: %.4f pv: %.4f oc:%.4f c:%.4f minc:%.4f maxc:%.4f", val, prevChangeVal[vindex], ochange, change, changeMin[vindex], changeMax[vindex]);
-  //Serial.println(pbuf);
-  return change;
-
-}
-
-int derive_pitch(int vindex, float val){   //
-  int pitch = noteFromFloat(vindex, val, midimin[vindex], midimax[vindex]);  //
-  return pitch;
-}
-
-int derive_velocity(int vindex, int val){   //
-  int velocity = floor(127.0 * functioncurve(changerate[vindex], velocitycurve[vindex], velocitycurvelength[vindex]));  //
-  // intergrate more clever ways of handling volume. peaks? bounce? etc? 
-//  velocity = velocity * abs(peaks[vindex]);
-  return velocity;
-
-}
-
-
-int derive_duration(int vindex, float val){  //
-
- // return pulseToMS(DEFAULT_NOTELENGTH);
-
-  // midi_notelength is an index to a notelength in the array notelengths. 
-  // this way if the bpm changes, the notelength changes too 
-  // (though we don't actually have code to change bpm on the device )
-  return pulseToMS(notelengths[midi_notelength[vindex]]);
-//  return pulseToMS(N16);
-/*
-  unsigned long raw_duration = updateLastNoteTime();
-  int duration = quantizeToNoteLength(raw_duration);
-  return duration;
-*/
-}
-
-// return the time from this note to the next note being calculated and triggered.
-int derive_next_note_time(){
- //return pulseToMS(notelengths[midi_notelength[0]]  
-  return pulseToMS(DEFAULT_NOTELENGTH);
-}
-
-
-unsigned long millisecs = millis();
-unsigned long lastNoteTime[6] = {millisecs,millisecs,millisecs,millisecs,millisecs,millisecs};  //
-unsigned long updateLastNoteTime(int vindex){  //
   unsigned long now = millis();
-  unsigned long raw_duration = now - lastNoteTime[vindex];  //
-  lastNoteTime[vindex] = now;   //
-  return raw_duration;
+  float raw = ADCRaw[vindex];
+
+  float debounced = update_debounced(vindex, raw, now);
+  float smoothed = update_smoothed(vindex, debounced);
+  update_features(vindex, smoothed, now);
 }
 
-int quantizeToNoteLength(unsigned long val){
-//  int notelengths[] = {DWN, WN, HN, HN3, QN, QN3, N8, N83, N16};
-  if(val < ((unsigned long)pulseToMS(N16) +(unsigned long)pulseToMS(N83) ) /  2.0 ){
-    return pulseToMS(N16);
+float update_debounced(int vindex, float raw, unsigned long now){
+  if(debouncedVal[vindex] < 0){
+    debouncedVal[vindex] = raw;
+    lastDebounceTime[vindex] = now;
+    return debouncedVal[vindex];
   }
-  if(val < ((unsigned long)pulseToMS(N83) +(unsigned long)pulseToMS(N8) ) /  2.0 ){
-    return pulseToMS(N83);
-  }
-  if(val < ((unsigned long)pulseToMS(N8) +(unsigned long)pulseToMS(QN3) ) /  2.0 ){
-    return pulseToMS(N8);
-  }
-  if(val < ((unsigned long)pulseToMS(QN3) +(unsigned long)pulseToMS(QN) ) /  2.0 ){
-    return pulseToMS(QN3);
-  }
-  if(val < ((unsigned long)pulseToMS(QN) +(unsigned long)pulseToMS(HN3) ) /  2.0 ){
-    return pulseToMS(QN);
-  }
-  if(val < ((unsigned long)pulseToMS(HN3) +(unsigned long)pulseToMS(HN) ) /  2.0 ){
-    return pulseToMS(HN3);
-  }
-  if(val < ((unsigned long)pulseToMS(HN) +(unsigned long)pulseToMS(WN) ) /  2.0 ){
-    return pulseToMS(HN);
-  }
-  if(val < ((unsigned long)pulseToMS(WN) +(unsigned long)pulseToMS(DWN) ) /  2.0 ){
-    return pulseToMS(WN);
-  }
-  return pulseToMS(DWN);
 
+  float diff = abs(raw - debouncedVal[vindex]);
+  if(diff >= sensor_debounce_delta || (now - lastDebounceTime[vindex]) >= (unsigned long)sensor_debounce_ms){
+    debouncedVal[vindex] = raw;
+    lastDebounceTime[vindex] = now;
+  }
+  return debouncedVal[vindex];
 }
 
+float update_smoothed(int vindex, float debounced){
+  if(smoothedVal[vindex] < 0){
+    smoothedVal[vindex] = debounced;
+    return smoothedVal[vindex];
+  }
+  smoothedVal[vindex] = smoothedVal[vindex] + sensor_ema_alpha * (debounced - smoothedVal[vindex]);
+  return smoothedVal[vindex];
+}
+
+void update_features(int vindex, float smoothed, unsigned long now){
+  rmsAccum[vindex] += smoothed * smoothed;
+  rmsCount[vindex] += 1;
+
+  float absval = abs(smoothed);
+  if(absval > peakAbs[vindex]){
+    peakAbs[vindex] = absval;
+  }
+
+  if(lastVelocityTime[vindex] == 0){
+    lastVelocityTime[vindex] = now;
+    lastVelocityRaw[vindex] = smoothed;
+    velocityVal[vindex] = 0;
+    return;
+  }
+
+  unsigned long dt = max((unsigned long)1, now - lastVelocityTime[vindex]);
+  float delta = smoothed - lastVelocityRaw[vindex];
+  velocityVal[vindex] = abs(delta) / (float)dt;
+  lastVelocityRaw[vindex] = smoothed;
+  lastVelocityTime[vindex] = now;
+}
+
+void sensor_process_loop(){
+  for(int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
+    if(!firstSense[vindex]){
+      continue;
+    }
+
+    float raw = debouncedVal[vindex];
+    float smoothed = smoothedVal[vindex];
+    float raw_norm = normalize_with_minmax(raw, &minVal[vindex], &maxVal[vindex]);
+
+    float smoothed_norm = floatmap(smoothed, minVal[vindex], maxVal[vindex], 0.0, 1.0);
+    smoothed_norm = constrain(smoothed_norm, 0.0, 1.0);
+
+    float rms_raw = 0.0;
+    if(rmsCount[vindex] > 0){
+      rms_raw = sqrt(rmsAccum[vindex] / (float)rmsCount[vindex]);
+    }
+    float peak_raw = peakAbs[vindex];
+
+    float rms_norm = floatmap(rms_raw, minVal[vindex], maxVal[vindex], 0.0, 1.0);
+    rms_norm = constrain(rms_norm, 0.0, 1.0);
+
+    float peak_norm = floatmap(peak_raw, minVal[vindex], maxVal[vindex], 0.0, 1.0);
+    peak_norm = constrain(peak_norm, 0.0, 1.0);
+
+    float vel_norm = dyn_rescale(velocityVal[vindex], &changeMin[vindex], &changeMax[vindex], 0.0, 1.0);
+    vel_norm = constrain(vel_norm, 0.0, 1.0);
+
+    int raw_q = quantize_norm(raw_norm);
+    int smooth_q = quantize_norm(smoothed_norm);
+    int rms_q = quantize_norm(rms_norm);
+    int peak_q = quantize_norm(peak_norm);
+    int vel_q = quantize_norm(vel_norm);
+
+    sendSensorPacket(vindex, raw_q, smooth_q, rms_q, peak_q, vel_q);
+
+    // reset windowed features after each send
+    rmsAccum[vindex] = 0;
+    rmsCount[vindex] = 0;
+    peakAbs[vindex] = 0;
+  }
+}
+
+float normalize_with_minmax(float val, float *minValPtr, float *maxValPtr){
+  return dyn_rescale(val, minValPtr, maxValPtr, 0.0, 1.0);
+}
+
+int quantize_norm(float norm){
+  norm = constrain(norm, 0.0, 1.0);
+  if(sensor_quantize_bits <= 12){
+    return (int)round(norm * 4095.0);
+  }
+  return (int)round(norm * 32767.0);
+}

@@ -60,8 +60,6 @@
 #include "../common_headers/config_webpage.h"
 #include "../common_headers/networking_wifi_functions.h"
 #include "../common_headers/curve_functions.h"
-#include "../common_headers/midi_functions.h"
-#include "../common_headers/music_theory_functions.h"
 #include "../common_headers/udp_osc_functions.h"
 #include "../common_headers/music_playing_functions.h"
 #include "../common_headers/testing_functions.h"
@@ -87,7 +85,6 @@ void setup() {
 
   udp_setup();
 
-  midi_setup();
   test_setup();
   sensor_setup();
   announceCreation();

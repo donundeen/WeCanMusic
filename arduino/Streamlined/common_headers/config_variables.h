@@ -2,11 +2,6 @@
 // CONFIG VARS
 #include "device_config.h"
 
-// if the device has a synth/speakers attached, set this to true
-// if false, it will send a makeNote message out over the netework,
-// for the server to play.
-boolean localSynth = false;
-
 // set to true if teh config file is corrupted.
 boolean resetConfigFile = false;
 
@@ -86,6 +81,20 @@ int notelength_assortment[9] = {2,3,4,5,5,6,7,8,8}; // noteloop_rates could be r
 int sensor_loop_rate = 10;
 ////// END MUSIC PERFORMANCE VARIABLES  
 ///////////////////////////////////////
+
+/////////////////////////////
+// SENSOR STREAMING VARIABLES
+// network send rate for raw/feature data (Hz)
+int sensor_send_rate_hz = 100;
+// debounce: minimum change required to accept a new sample
+float sensor_debounce_delta = 1.0;
+// debounce: max time to hold a stable value (ms)
+int sensor_debounce_ms = 20;
+// EMA smoothing factor (0-1). Higher = less smoothing.
+float sensor_ema_alpha = 0.2;
+// quantization bits for network payload (12 or 16 recommended)
+int sensor_quantize_bits = 16;
+/////////////////////////////
 
 
 
