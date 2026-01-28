@@ -201,7 +201,7 @@ class Instrument {
         this.db.log(value);
         this.db.log("********************");
 
-        this.db.log("isntruemtn numberCruncher.setValue", value);
+        this.db.log("instrument numberCruncher.setValue", value);
         this.numberCruncher.setValue(value);
         this.numberCruncher.crunch();
         this.db.log("numberCruncher.crunch", this.numberCruncher.scaledValue);
