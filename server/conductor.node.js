@@ -808,6 +808,45 @@ udpPort.on("message", function (oscMsg) {
     });
 
 
+    /*
+processing OSC message from arduino code:
+// send sensor data packet (raw/smoothed/feature values)
+void sendSensorPacket(int vindex, int raw_q, int smooth_q, int rms_q, int peak_q, int vel_q){
+  if(WiFi.status() != WL_CONNECTED){
+    return;
+  }
+  OSCMessage oscmsg("/sensor");  
+  oscmsg.add(DEVICE_NAME[vindex])
+        .add((int32_t)raw_q)
+        .add((int32_t)smooth_q)
+        .add((int32_t)rms_q)
+        .add((int32_t)peak_q)
+        .add((int32_t)vel_q);
+  udp.beginPacket(UDPReceiverIP, UDPPort);
+  oscmsg.send(udp);
+  udp.endPacket();
+  oscmsg.empty();
+}
+
+    */
+   routeFromOSC(oscMsg, "/sensor", function(oscMsg, address){
+    let value = oscMsg.simpleValue;
+    let name = value[0];
+    let rawval = parseFloat(value[1]);
+    let smoothval = parseFloat(value[2]);
+    let rmsval = parseFloat(value[3]);
+    let peakval = parseFloat(value[4]);
+    let velval = parseFloat(value[5]);
+    let instrument = orchestra.getLocalInstrument(name);
+    if(instrument){
+        instrument.smoothValue = smoothval;
+        instrument.rmsValue = rmsval;
+        instrument.peakValue = peakval;
+        instrument.velValue = velval;
+        instrument.sensorValue = rawval;
+    }
+   });
+
     // setting config values for instruments
     // for if a UDP message is sent to change settings on a localInstrument
     // THIS NEEDS REVIEW

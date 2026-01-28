@@ -17,7 +17,13 @@ class Instrument {
         this.changeRate = false;
         this.prevChangeVal = false;
 
-    // note lists
+        // new values from sensor processing in Streamlined arduino code
+        this.smoothValue = false;
+        this.rmsValue = false;
+        this.peakValue = false;
+        this.velValue = false;
+
+        // note lists
         this._noteList = [];
         this.workingList = [];
         this._deviceName = "RENAME_ME";
@@ -82,6 +88,10 @@ class Instrument {
             {name:"deviceName", type:"s"},
             {name:"type", type:"s"},
             {name:"sensorValue", type:"f"},
+            {name:"smoothValue", type:"f"},
+            {name:"rmsValue", type:"f"},
+            {name:"peakValue", type:"f"},
+            {name:"velValue", type:"f"},
             {name:"noteList", type:"ia"},
             {name:"wecanmusicServerIp", type:"s"},
             {name:"wecanmusicPort", type:"i"},
