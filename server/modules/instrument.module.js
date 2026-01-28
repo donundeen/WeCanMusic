@@ -23,9 +23,6 @@ class Instrument {
         this.peakValue = false;
         this.velValue = false;
 
-        // note lists
-        this._noteList = [];
-        this.workingList = [];
         this._deviceName = "RENAME_ME";
 
         // networking info
@@ -37,7 +34,6 @@ class Instrument {
         this._midiBank = 0; // bank and program together select the tone.
         this._midiProgram = 1;
         this._midiChannel = 1;
-        this._rootMidi = 0;
         this._midiMin = 32;
         this._midiMax = 100;
         this._midiVol = 200; //(0-254) // sometimes we use shorter names because of arduino restrictions in OSC routes
@@ -92,7 +88,6 @@ class Instrument {
             {name:"rmsValue", type:"f"},
             {name:"peakValue", type:"f"},
             {name:"velValue", type:"f"},
-            {name:"noteList", type:"ia"},
             {name:"wecanmusicServerIp", type:"s"},
             {name:"wecanmusicPort", type:"i"},
             {name:"midiVoice", type:"s"},
@@ -101,7 +96,6 @@ class Instrument {
 //            {name:"midiChannel", type:"i"}, // i think we always want to dynamically set this.
             {name:"midiNlen", type:"i"},
             {name:"midiVol", type:"i"},
-            {name:"rootMidi", type:"i"},
             {name:"midiMin", type:"i"},
             {name:"midiMax", type:"i"},
             /* // TBD: saving of the data in these curve objects.
@@ -246,19 +240,8 @@ class Instrument {
 
    ////////////////////////
     // MUSIC FUNCTIONS
-    set noteList(notelist){
-        this._noteList = notelist;
-    }
-    get noteList(){
-        return this._noteList;
-    }
 
-    set rootMidi(root){
-        this._rootMidi = root;
-    }
-    get rootMidi(){
-        return this._rootMidi;
-    }
+
 
     set midiMax(max){
         this._midiMax = max;
