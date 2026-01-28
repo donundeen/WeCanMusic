@@ -72,6 +72,8 @@ class Instrument {
         // track the previous note, so we don't play the same note twice in a row
         this._previousPitch = 0;
         this.skipDuplicateNotes = true;
+
+        this.theoryEngine = false;
     
         // vars that might be externally set.
         // we can send this info to a server so it can set up a UI to collect those values
@@ -519,86 +521,26 @@ class Instrument {
     }
 
     noteFromFloat(value, min, max){
-        this.db.log("note from float " + value);
-        this.makeWorkingList(min, max);
-        this.db.log("working list " , this.workingList);
-        let index = Math.floor(this.workingList.length * value);
-        if(index == this.workingList.length){
-            index = this.workingList.length -1;
+        if(this.theoryEngine){
+            return this.theoryEngine.getBestNoteFromFloat(value, min, max);
         }
-        this.db.log(index);
-        let note  = this.workingList[index];// % workingList.length]
-        this.db.log("returning note " + note);
-        return note;
+
     }
 
     fixedNoteFromFloat(value){
+        if(this.theoryEngine){
+            return this.theoryEngine.getFixedBestNoteFromFloat(value, min, max);
+        }
         // in a "fixed" setup, the same float value should result in the same midi note (octave may vary), regardless of scale
         // - map the float across FULL range, from min to max
         // - move resulting value DOWN to the closest note in the scale
-        this.makeWorkingList(min, max);
-        let range = max - min;
-        let initial = min + Math.floor(range * value);
-        while(this.workingList.indexOf(initial) < 0){
-            initial--;
-        }
-        return initial;
     }
 
-    getRootedBestNoteFromFlat(value, min, max){
-        // for a "rooted" scale/chord, expand the min and max so that both min and max are the root
-        min = this.moveMinMax(this.rootMidi, min);
-        max = this.moveMinMax(this.rootMidi, max);
-
-        let note = this.noteFromFloat(value, min, max);
-        if(!note){
-            return false;
-        }
-        return note;
-    }
-
-    moveMinMax(root, minMax){
-        // for a "rooted" scale/chord, expand the min and max so that both min and max are the root
-        //		maxApi.post("getChordNoteFromFloat "+labelid + ", " + value);
-        //		maxApi.post(chordNoteSetMidi);
-        let orig = minMax;
-        let minDiff = (minMax % 12) - (root % 12);
-        let minMove = Math.abs(6 - minDiff);
-
-        if(minDiff == 0){
-            // do nothing
-        }
-        else if (minDiff < -6){
-            minDiff = -12 - minDiff;
-            minMax = minMax - minDiff;
-            //big distance, go opposite way around
-        }
-        else if (minDiff < 0){
-            // small different, go toward
-            minMax = minMax - minDiff;
-        }
-        else if(minDiff < 6){
-            minMax = minMax - minDiff;
-        }
-        else if (minDiff < 12){
-            minDiff = 12 - minDiff;
-            minMax = minMax + minDiff;
-        }
-        return minMax;
-    }
-
-    // Make a new array that's a subset of the notelist, with min and max values
-    makeWorkingList(min, max){
-        let wi = -1;
-        this.workingList = [];
-        for(let i = 0; i < this.noteList.length; i ++){
-          if(this.noteList[i] >= min && this.noteList[i] <= max){
-            wi++;
-            this.workingList[wi] = this.noteList[i];
-          }
+    getRootedBestNoteFromFloat(value, min, max){
+        if(this.theoryEngine){
+            return this.theoryEngine.getRootedBestNoteFromFloat(value, min, max);
         }
     }
-
 
     /*******************************     */
     /** END INTERNAL NOTE CREATION  FUNCTIONS   */

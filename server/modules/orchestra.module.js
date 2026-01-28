@@ -55,6 +55,8 @@ class Orchestra{
         }
 
 
+        this.theoryEngine = false;
+
     }
 
     set soundfontVoiceListFile(filename){
@@ -198,6 +200,7 @@ class Orchestra{
         }
         this.db.log("CREATING INSTRUMENT " + name);
         this.localInstruments[name] = new LocalInstrument({db:this.db});
+        this.localInstruments[name].theoryEngine = this.theoryEngine;
         this.localInstruments[name].db = this.db;
         this.localInstruments[name].deviceName = name;
         this.localInstruments[name].midiChannel = this.getChannel();
@@ -246,6 +249,7 @@ class Orchestra{
         }
         this.db.log("CREATING INSTRUMENT " + name);
         this.udpInstruments[name] = new UDPInstrument({db:this.db});
+        this.udpInstruments[name].theoryEngine = this.theoryEngine;
         this.udpInstruments[name].db = this.db;
         this.udpInstruments[name].deviceName = name;
         this.udpInstruments[name].midiChannel = this.getChannel();

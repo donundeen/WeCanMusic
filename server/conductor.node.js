@@ -290,6 +290,8 @@ orchestra.persistence = persistence;
 orchestra.soundfontFile = soundfont;
 orchestra.soundfontVoiceListFile = soundfontInstrumentList;
 
+orchestra.theoryEngine = theory;
+
 
 ///////////////////////////////
 // SETUP TRANSPORT/SCORE CONNECTION
@@ -943,7 +945,7 @@ theory.setMidiListCallback(function(msg){
         packets :[{
             address: "/all/noteList",
             args: args
-        }]
+        }]  
     }
     // send noteList to all UDP connected devices
     udpPort.send(bundle, UDPSendIP, UDPSendPort);
