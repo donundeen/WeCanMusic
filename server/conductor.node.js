@@ -39,9 +39,6 @@ if(config["bluetooth.active"]){
 }
 
 
-////////////////// CONFIG VARIABLES //////////////////////////
-let synthType = config.synthType; // tiny or fluidsynth or false
-
 ///////////////////////////////////////////////////////////////
 // midi hardware setup:
 ///////////////////////////////////////////////////////////////
@@ -270,8 +267,6 @@ transport.stopCallback = function(transportObj){
     transport.quantizeCallback = null;
 };
 
-// intialize the midi synth
-let synth = false;
 
 // soundfont file setup - needs to match what's in the fluidsynth startup script config
 let soundfont = config.soundfont;//'./soundfonts/141-Compleet bank synth.sf2'
@@ -280,10 +275,8 @@ let soundfontInstrumentList = config.soundfontInstrumentList; //'./soundfonts/14
 
 
 
-//db.testSynth(synth, bluetooth);
 //////////////////////////////////////
 // SET UP ORCHESTRA
-orchestra.synth = synth;
 orchestra.synthDeviceVoices = synthDeviceVoices;
 orchestra.midiHardwareEngine = midiHardwareEngine;
 orchestra.persistence = persistence;

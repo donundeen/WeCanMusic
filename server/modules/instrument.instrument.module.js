@@ -47,9 +47,6 @@ class Instrument {
 
         this.currentNotes = []; // need to keep track of all playing notes to to a panic stop
 
-        // set fluidSynth object
-        this.synth = false;
-
         // set hardware synth out object (easymidi)
         this.midiHardwareEngine = false;
 
@@ -347,11 +344,6 @@ class Instrument {
         this.velocityScale.reset();
         this.changeRateScale.reset();
         this._sensorValue = false;
-        if(this.synth){
-            this.synth.allNotesOff(this._midiChannel);
-            this.synth.resetAllControllers(this._midiChannel);
-            this.synth.reset();
-        }
         this.numberCruncher.reset();
     }
 
@@ -547,7 +539,6 @@ class Instrument {
     }
 
     midiMakeNote(note, velocity, duration){
-        // this.db.log(this.synth.foothing + " MAKING NOTE UDP " + this._midi_channel + " : " + note + " : " + velocity + " : " + duration);
         // note: each instrument needs its own channel, or the instrument will be the same tone.
         this.db.log("midiMakeNote : ", this._midiVol, this._midiChannel, this._midiBank, this._midiProgram,  note, velocity, duration);
         if(!Number.isFinite(note) || !Number.isFinite(velocity) || !Number.isFinite(duration)){
@@ -566,12 +557,6 @@ class Instrument {
             return;
         }
 //        this.midiSetInstrument(); // do we really need to set the bank an program for every note? seems like overkill...
-        if(this.synth){
-            this.synth
-            .noteOn(this._midiChannel, note, velocity)
-            .wait(duration)
-            .noteOff(this._midiChannel, note);
-        }
         // if there's a hardware midi device attached to this instrument
         if(this.midiHardwareEngine){
             console.log("midiHardwareEngine makeNote");
@@ -586,18 +571,6 @@ class Instrument {
     }
 
     midiSetInstrument(){
-        if(this.synth){
-            this.synth.allNotesOff(this._midiChannel);  
-            if(this.synth.goodVoices){
-                let realvoice = this.synth.goodVoices[this._midiProgram % this.synth.goodVoices.length]
-                this.synth
-                .program(this._midiChannel, realvoice)        
-
-            }else{
-                this.synth
-                .program(this._midiChannel, this._midiVoice)        
-            }
-        }
         if(this.midiHardwareEngine){
             this.midiHardwareEngine.send('cc',{
                 controller: 0,
@@ -646,16 +619,7 @@ class Instrument {
         }
     }    
 
-    // we might care about this, for mono things
-    midiNoteOn(channel, pitch, velocity){
-        this.synth
-        .noteOn(this._midiChannel, pitch, velocity);
-    }
 
-    midiNoteOff(channel, pitch){
-        this.synth
-        .noteOff(this._midiChannel, pitch);
-    }
     // END MIDI FUNCTIONS
     ////////////////////////
 

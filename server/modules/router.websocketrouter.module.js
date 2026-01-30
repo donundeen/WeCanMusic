@@ -26,14 +26,7 @@ module.exports = class WebsocketRouter {
     osc,
     UDPSendIP,
     UDPSendPort,
-    soundfont,
-
-    // legacy / optional (used only by "reset" route, which appears incomplete)
-    synthtype,
-    synth,
-    JZZ,
-    fluidpath,
-    fluidargs,
+    soundfont
   } = {}) {
     this.db = db;
     this.socket = socket;
@@ -43,18 +36,12 @@ module.exports = class WebsocketRouter {
     this.orchestra = orchestra;
     this.transport = transport;
     this.midiHardwareEngine = midiHardwareEngine;
-
     this.udpPort = udpPort;
     this.osc = osc;
     this.UDPSendIP = UDPSendIP;
     this.UDPSendPort = UDPSendPort;
     this.soundfont = soundfont;
 
-    this.synthtype = synthtype;
-    this.synth = synth;
-    this.JZZ = JZZ;
-    this.fluidpath = fluidpath;
-    this.fluidargs = fluidargs;
 
     this._boundOnMessage = null;
   }
@@ -248,20 +235,6 @@ module.exports = class WebsocketRouter {
     this._routeFromWebsocket(msg, "reset", (text) => {
       db.log("~~~~~~~~~~~~~~~~`RESETTING EVERYTHING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~`");
       // reset a bunch of stuff.
-      // the synth:
-      //        synth.stop();
-      if (this.synthtype == "FLUID") {
-        this.synth.close();
-        this.synth = false;
-        this.synth = this.JZZ.synth.Fluid({
-          path: this.fluidpath,
-          sf: soundfont,
-          args: this.fluidargs,
-        });
-        orchestra.synth = this.synth;
-        orchestra.allUDPInstrumentSetValue("synth", this.synth);
-        orchestra.allLocalInstrumentSetValue("synth", this.synth);
-      }
       // midiHardwareEngine
       orchestra.midiHardwareEngine.send("reset");
     });
