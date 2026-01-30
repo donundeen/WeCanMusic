@@ -1,8 +1,8 @@
 //orchestra.module.js
 // managing the collection of (local?) instruments
-const LocalInstrument = require("./localinstrument.module");
-const UDPInstrument = require("./udpinstrument.module");
-const CircleRhythmInstrument = require("./circlerhythminstrument.module");
+const LocalInstrument = require("./instrument.localinstrument.module");
+const UDPInstrument = require("./instrument.udpinstrument.module");
+const CircleRhythmInstrument = require("./instrument.circlerhythminstrument.module");
 const fs = require('node:fs');
 
 class Orchestra{

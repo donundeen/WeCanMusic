@@ -1,4 +1,4 @@
-Instrument = require("./instrument.module");
+Instrument = require("./instrument.instrument.module");
 
 class LocalInstrument extends Instrument {
 

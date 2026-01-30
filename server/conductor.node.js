@@ -9,10 +9,10 @@ const fs = require('node:fs');
 ////////////////////////
 // LOAD MAIN CONFIG FILE
 const merge = require('deepmerge')
-let envConfig = require("./env.config.js");
+let config = require("./configs/conductor.config.js");
+let envConfig = require("./configs/env.config.js");
 let env = envConfig.env;
-let config = require("./conductor.config.js");
-let machineConfig = require("./"+env+".conductor.config.js");
+let machineConfig = require("./configs/"+env+".conductor.config.js");
 config.env = env;
 config = {...config, ...machineConfig, ...envConfig};
 
@@ -26,6 +26,9 @@ db.trace = false;
 db.log("starting","now",[1,2,3]);
 db.log(config);
 
+
+/////////////////////////////////////
+// set up bluetooth module, if we're using it
 let bluetooth = false;
 if(config["bluetooth.active"]){
     Bluetooth = require('./modules/bluetooth.module.js');
@@ -34,12 +37,10 @@ if(config["bluetooth.active"]){
     bluetooth.deviceID = config["bluetooth.deviceID"]; 
     bluetooth.keepUp();
 }
+
+
 ////////////////// CONFIG VARIABLES //////////////////////////
 let synthType = config.synthType; // tiny or fluidsynth or false
-// tiny can't handle too many notes at once, and some don't sound good:
-let badTinyVoices = [6,7,8,22,23,24,40,41,42,43,44,55,56,57,59,60,61,62,63,64,65,66,67,68,69,71,72, 84, 90, 105,110,118,119,120,121,122,123,124,125,126,127];
-
-
 
 ///////////////////////////////////////////////////////////////
 // midi hardware setup:
@@ -75,8 +76,6 @@ if(useHTTPS){
 }
 
 let defaultWebpage = config.defaultWebpage; //"conductor.html";
-
-
 
 // defining some useful curves for tweaking instrument values. used by both the localinstrument and arduino instruments
 // they are named for easier communication with the arduino devices over osc
@@ -271,7 +270,7 @@ transport.stopCallback = function(transportObj){
     transport.quantizeCallback = null;
 };
 
-// intialize the midi synth (fluid or tiny)
+// intialize the midi synth
 let synth = false;
 
 // soundfont file setup - needs to match what's in the fluidsynth startup script config

@@ -2,7 +2,7 @@ const DynRescale = require("./dynRescale.module");
 const FunctionCurve = require("./functionCurve.module");
 const NoteNumberCruncher = require("./notenumbercruncher.module");
 
-const LocalInstrument = require("./localinstrument.module");
+const LocalInstrument = require("./instrument.localinstrument.module");
 
 class CircleRhythmInstrument extends LocalInstrument {
     constructor(options) {

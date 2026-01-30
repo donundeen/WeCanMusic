@@ -1,5 +1,5 @@
 
-Instrument = require("./instrument.module");
+Instrument = require("./instrument.instrument.module");
 
 class UDPInstrument extends Instrument {
 
