@@ -18,7 +18,6 @@ class Orchestra{
         this.udpInstruments = {};
         this.allChannels =  [0,1,2,3,4,5,6,7,8,9,10];
         this.channelPool = [0,1,2,3,4,5,6,7,8,9,10];
-        this._synth = false; // fluidsynth object
         this._midiHardwareEngine = false; // easymidi object
         this._bpm = 120;
 
@@ -102,12 +101,6 @@ class Orchestra{
 
     get bpm(){
         return this._bpm;
-    }
-
-    set synth(synth){
-        this._synth = synth;
-        this.allLocalInstrumentSetValue("synth", this._synth);
-        this.allUDPInstrumentSetValue("synth", this._synth);
     }
 
     set midiHardwareEngine(engine){
@@ -204,7 +197,6 @@ class Orchestra{
         this.localInstruments[name].db = this.db;
         this.localInstruments[name].deviceName = name;
         this.localInstruments[name].midiChannel = this.getChannel();
-        this.localInstruments[name].synth = this._synth;
         this.localInstruments[name].midiHardwareEngine = this._midiHardwareEngine;
         this.localInstruments[name].bpm = this._bpm;
         this.localInstruments[name].noteList = this.noteList;
@@ -228,7 +220,6 @@ class Orchestra{
         this.localInstruments[name].db = this.db;
         this.localInstruments[name].deviceName = name;
         this.localInstruments[name].midiChannel = this.getChannel();
-        this.localInstruments[name].synth = this._synth;
         this.localInstruments[name].midiHardwareEngine = this._midiHardwareEngine;
         this.localInstruments[name].bpm = this._bpm;
         this.localInstruments[name].noteList = this.noteList;
@@ -253,7 +244,6 @@ class Orchestra{
         this.udpInstruments[name].db = this.db;
         this.udpInstruments[name].deviceName = name;
         this.udpInstruments[name].midiChannel = this.getChannel();
-        this.udpInstruments[name].synth = this._synth;
         this.udpInstruments[name].midiHardwareEngine = this._midiHardwareEngine;
         this.udpInstruments[name].bpm = this._bpm;
         this.udpInstruments[name].noteList = this.noteList;

@@ -27,103 +27,6 @@ db.log("starting","now",[1,2,3]);
 db.log(config);
 
 
-/////////////////////////////////////
-// set up bluetooth module, if we're using it
-let bluetooth = false;
-if(config["bluetooth.active"]){
-    Bluetooth = require('./modules/bluetooth.module.js');
-    bluetooth = new Bluetooth();
-    bluetooth.active = config["bluetooth.active"];
-    bluetooth.deviceID = config["bluetooth.deviceID"]; 
-    bluetooth.keepUp();
-}
-
-
-///////////////////////////////////////////////////////////////
-// midi hardware setup:
-///////////////////////////////////////////////////////////////
-
-const MidiOuts = require('./modules/midiouts.module.js');
-let midiWaitForPortnames = config.midiWaitForPortnames;
-let useMidiOut = config.useMidiOut; // whether or not to send midi values through a hardware output, via easymidi
-midiHardwareEngine = new MidiOuts({db:db, active: useMidiOut, matches: "all", waitFor : midiWaitForPortnames});
-midiHardwareEngine.init();
-
-midiHardwareEngine.quantizeTime = config.quantizeTime;
-
-
-
-
-let bpm = 120; // this should eventually be configurable as a performance variable in the UI
-
-// defining some note lengths
-let scoreName = config.scoreName; //"simplescore.txt";
-let UDPSendIP = config.UDPSendIP; //"10.0.0.255";
-//let UDPSendIP = "10.0.0.131";
-let UDPSendPort = config.UDPSendPort;//7004;
-let UDPListenPort = config.UDPListenPort;//7005;
-
-
-let useHTTPS = config.useHTTPS;
-let websocketPort = config.websocketPort;
-let webserverPort = config.webserverPort;
-if(useHTTPS){
-    websocketPort = config.httpsWebsocketPort;
-    webserverPort = config.httpsWebserverPort;
-}
-
-let defaultWebpage = config.defaultWebpage; //"conductor.html";
-
-// defining some useful curves for tweaking instrument values. used by both the localinstrument and arduino instruments
-// they are named for easier communication with the arduino devices over osc
-let curveCollection = {
-    str8up : [0., 0., 0., 1., 1., 0.], // 1
-    str8dn : [0., 1., 0., 1., 0., 0.], // 2
-    logup : [0., 0., 0., 1., 1., -0.65], // 3
-    logdn : [0., 1., 0., 1., 0., -0.65], // 4 not sure if this is right
-    str8upthresh : [0., 0., 0., 0.05, 0., 0., 1., 1., 0.], // 5 
-    str8dnthresh : [0., 1., 0., 0.95, 0., 0., 1., 0., 0., 1., 0., 0.], // 6
-    logupthresh : [0., 0., 0., 0.05, 0., 0., 1., 1., -0.65], // 7
-    logdnthresh : [0., 1., 0., 0.95, 0., -0.65, 1., 0., -0.65] //8
-}
-
-// we should get these values from the instruments themselves when we can
-let synthDeviceVoices = {
-    "thread1" : [0,10],
-    "thread2" : [0,11],
-    "thread3" : [0,12],
-    "thread4" : [0,13],
-    "thread5" : [0,14],
-    "thread6" : [0,15],
-    "thread7" : [0,16],
-    "thread8" : [0,17],
-    "thread9" : [0,18],
-    "thread10" : [0,19],
-    "RENAME_ME" : [0,20]
-}
-
-
-//////////////////////////////////////////////////////////////////
-///// Defining Note Length Names /////////////////////////////////
-///// the order needs to match the order in the arduino code 
-let  noteLengths = ["WN", "HN", "HN3", "QN", "QN3", "N8", "N83", "N16"];
-
-let noteLengthNames = ["Whole", "Half","Half Triplet","Quarter","Quarter Triplet","Eighth","Eighth Triplet","Sixteenth"];
-
-////////////////// END CONFIG VARIABLES //////////////////////////
-
-
-/// SET UP OSC SERVER - SENDS AND RECIEVES MESSAGES FROM DEVICES
-var osc = require("osc");
-var udpPort = new osc.UDPPort({
-    localAddress: "0.0.0.0",
-    localPort: UDPListenPort, // this port for listening
-    broadcast: true,
-    metadata: true
-});
-
-udpPort.open();
-
 
 /////////////////////////////////////
 // SET UP THE MODULE OBJECTS
@@ -148,35 +51,124 @@ const OscRouter = require("./modules/router.oscrouter.module.js");
 // websocketrouter encapsulates routing of inbound websocket messages
 const WebsocketRouter = require("./modules/router.websocketrouter.module.js");
 
-db.log("starting");
-
 // initialize the modules
 let orchestra = new Orchestra({db:db});
 let transport  = new Transport({db:db});
 let score  = new ScoreReader({db:db});
 let theory = new TheoryEngine({db:db});
-let socket =  new SocketServer({db:db});
 let persistence = new Persistence({db:db});
-socket.useHTTPS = useHTTPS;
-socket.websocketPort  = websocketPort;
-socket.webserverPort  = webserverPort;
-socket.defaultWebpage = defaultWebpage;
+let socket =  new SocketServer({db:db});
+let performance = new Performance({db:db});
+let statusMelodies = new StatusMelodies({db:db});
 
 
-performance = new Performance({db:db});
-statusMelodies = new StatusMelodies({db:db});
+
+db.log("starting");
+
+
+
+/////////////////////////////////////
+// set up bluetooth module, if we're using it
+let bluetooth = false;
+if(config["bluetooth.active"]){
+    Bluetooth = require('./modules/bluetooth.module.js');
+    bluetooth = new Bluetooth();
+    bluetooth.active = config["bluetooth.active"];
+    bluetooth.deviceID = config["bluetooth.deviceID"]; 
+    bluetooth.keepUp();
+}
+
+
+///////////////////////////////////////////////////////////////
+// midi hardware setup:
+///////////////////////////////////////////////////////////////
+const MidiOuts = require('./modules/midiouts.module.js');
+let midiWaitForPortnames = config.midiWaitForPortnames;
+let useMidiOut = config.useMidiOut; // whether or not to send midi values through a hardware output, via easymidi
+midiHardwareEngine = new MidiOuts({db:db, active: useMidiOut, matches: "all", waitFor : midiWaitForPortnames});
+midiHardwareEngine.init();
+midiHardwareEngine.quantizeTime = config.quantizeTime;
+
+
+///////////////////////////////////////////////////////////////
+/// SET UP OSC SERVER - SENDS AND RECIEVES MESSAGES FROM DEVICES
+var osc = require("osc");
+var udpPort = new osc.UDPPort({
+    localAddress: "0.0.0.0",
+    localPort: config.UDPListenPort,
+    broadcast: true,
+    metadata: true
+});
+udpPort.open();
+
+
+///////////////////////////////////////////////////////////////
+// SET UP THE SOCKET SERVER FOR THE WEB PAGE
+socket.useHTTPS = config.useHTTPS;
+if(config.useHTTPS){
+    socket.websocketPort  = config.httpsWebsocketPort;
+    socket.webserverPort  = config.httpsWebserverPort;
+}else{
+    socket.websocketPort  = config.websocketPort;
+    socket.webserverPort  = config.webserverPort;
+}
+socket.defaultWebpage = config.defaultWebpage;
+
+
+////////////////////////////////////////
+// WEBSOCKET HANDLING MESSAGES FROM THE WEBPAGE
+// when the websocket gets a message, send it where it needs to go
+websocketRouter = new WebsocketRouter({
+    db: db,
+    socket: socket,
+    theory: theory,
+    score: score,
+    performance: performance,
+    orchestra: orchestra,
+    transport: transport,
+    midiHardwareEngine: midiHardwareEngine,
+    udpPort: udpPort,
+    osc: osc,
+    UDPSendIP: config.UDPSendIP,
+    UDPSendPort: config.UDPSendPort,
+    soundfont: config.soundfont
+});
+websocketRouter.attach();
+
+
+///////////////////////////////////////////////////////////////
+// OSC ROUTING SETUP
+/////////////////////////////////////////////////////////////////
+// set up OSC routing (moved out of this file)
+oscRouter = new OscRouter({
+    db: db,
+    udpPort: udpPort,
+    orchestra: orchestra,
+    performance: performance,
+    statusMelodies: statusMelodies,
+    transport: transport,
+    socket: socket
+});
+oscRouter.attach();
+
+
+///////////////////////////////////////////////////////////////
+// SET UP THE STATUS MELODIES OBJECT WITH LINKS TO OTHER OBJECTS
 statusMelodies.midiHardwareEngine = midiHardwareEngine;
 
 
-// config score obect
-score.setScoreDir(config.scoreDir);
-
-// set up performance object with links to other objeccts
+///////////////////////////////////////////////////////////////
+//  PERFORMANCE OBJECT SETUP
+///////////////////////////////////////////////////////////////
 performance.performanceDir = config.performanceDir;
 performance.score = score;
 performance.transport = transport;
 performance.orchestra = orchestra;
-// set up listeners/callbacks for score, transport, and orchestra
+
+
+///////////////////////////////////////////////////////////////
+// SCORE OBJECT SETUP
+///////////////////////////////////////////////////////////////
 score.performanceUpdateCallback = function(scoreObj){
     // send messages to webpage
     let data = {scoreName : scoreObj.scoreFilename,
@@ -190,17 +182,21 @@ score.performancePropUpdateCallback = function(scoreObj, propName, propType, pro
     db.log("score performancePropUpdateCallback");
     
 };
-transport.performanceUpdateCallback = function(transportObj){
-    db.log("transport.performanceUpdateCallback")
-
-    //send message to webpage?
-    //restart transport? not sure....
-};
-transport.performancePropUpdateCallback =function(transportobj, propname, proptype, propvalue ){
-    db.log("transport.performancePropUpdateCallback") 
-};
+// when score produces a messages, send it to the theory engine
+score.setMessageCallback(function(msg){
+    theory.runSetter(msg, "fromScore");
+});
 
 
+///////////////////////////////////////////////////////////////
+// ORCHESTRA OBJECT SETUP
+//////////////////////////////////////
+orchestra.synthDeviceVoices = config.synthDeviceVoices;
+orchestra.midiHardwareEngine = midiHardwareEngine;
+orchestra.persistence = persistence;
+orchestra.soundfontFile = config.soundfont;;
+orchestra.soundfontVoiceListFile = config.soundfontInstrumentList;
+orchestra.theoryEngine = theory;
 
 orchestra.performanceUpdateCallback = function(instrument, perfData){
     db.log("instrument.performanceUpdateCallback")
@@ -238,14 +234,44 @@ orchestra.performancePropUpdateCallback = function(instrument, propName, propTyp
                 args: args
             }]
         }
-        db.log("sending udp message " + address, args, UDPSendIP, UDPSendPort);
+        db.log("sending udp message " + address, args, config.UDPSendIP, config.UDPSendPort);
         // send prop to all devices, but route will only be accepted by the one with the same name 
-        udpPort.send(bundle, UDPSendIP, UDPSendPort);
+        udpPort.send(bundle, config.UDPSendIP, config.UDPSendPort);
     }    
-
     // send prop and value over OSC to the device, one value at a times
 };
 
+// some things to do whenever an instrument makes a note
+// send the data to the webpage to display
+orchestra.makeNoteCallback = function(instr, pitch, velocity, duration){
+    let deviceName = instr.deviceName;
+
+
+    // tell the webpage what devices played what note, so it can update the UI
+    // NOTE: this might eat up a lot of network, so we could take it out.
+    // it's just useful to show that an instrument is still active
+    let dataObj = {deviceName: deviceName, 
+                    pitch: pitch, 
+                    velocity: velocity,
+                    duration: duration}
+    db.log("sending message", dataObj)
+    socket.sendMessage("makeNote", dataObj );
+}
+
+
+
+///////////////////////////////////////////////////////////////
+// TRANSPORT SETUP
+/////////////////////////////////////////////////////////////////
+transport.performanceUpdateCallback = function(transportObj){
+    db.log("transport.performanceUpdateCallback")
+
+    //send message to webpage?
+    //restart transport? not sure....
+};
+transport.performancePropUpdateCallback =function(transportobj, propname, proptype, propvalue ){
+    db.log("transport.performancePropUpdateCallback") 
+};
 
 // setting up quantization in instruments on transport start, 
 // disable on transport stop
@@ -266,27 +292,6 @@ transport.stopCallback = function(transportObj){
     transport.quantizeTime = null;
     transport.quantizeCallback = null;
 };
-
-
-// soundfont file setup - needs to match what's in the fluidsynth startup script config
-let soundfont = config.soundfont;//'./soundfonts/141-Compleet bank synth.sf2'
-let soundfontInstrumentList = config.soundfontInstrumentList; //'./soundfonts/141-Compleet bank synth.sf2.voicelist.json'
-
-
-
-
-//////////////////////////////////////
-// SET UP ORCHESTRA
-orchestra.synthDeviceVoices = synthDeviceVoices;
-orchestra.midiHardwareEngine = midiHardwareEngine;
-orchestra.persistence = persistence;
-orchestra.soundfontFile = soundfont;
-orchestra.soundfontVoiceListFile = soundfontInstrumentList;
-orchestra.theoryEngine = theory;
-
-
-///////////////////////////////
-// SETUP TRANSPORT/SCORE CONNECTION
 // tell the score to do smomething when a beat happens
 // send a data over websockets with the transport info
 transport.setBeatCallback(function(beatCount, bar, beat, transport){
@@ -296,73 +301,9 @@ transport.setBeatCallback(function(beatCount, bar, beat, transport){
 });
 
 
-////////////////////////////////////////
-// SCORE/THEORY CONNECTION
-// when score produces a messages, send it to the theory engine
-score.setMessageCallback(function(msg){
-    theory.runSetter(msg, "fromScore");
-});
-
-// set up the theory engine with any initial messages from the config
-// this way there can be a default theory state before any messages are received
-config.initialTheoryMsgs.forEach(function(msg){
-    theory.runSetter(msg, "fromConfig");
-});
-
-
-////////////////////////////////////////
-// HANDLING MESSAGES FROM THE WEBPAGE
-// when the websocket gets a message, send it where it needs to go
-websocketRouter = new WebsocketRouter({
-    db: db,
-    socket: socket,
-    theory: theory,
-    score: score,
-    performance: performance,
-    orchestra: orchestra,
-    transport: transport,
-    midiHardwareEngine: midiHardwareEngine,
-    udpPort: udpPort,
-    osc: osc,
-    UDPSendIP: UDPSendIP,
-    UDPSendPort: UDPSendPort,
-    soundfont: soundfont
-});
-websocketRouter.attach();
-
-
-
-// set up OSC routing (moved out of this file)
-oscRouter = new OscRouter({
-    db: db,
-    udpPort: udpPort,
-    orchestra: orchestra,
-    performance: performance,
-    statusMelodies: statusMelodies,
-    transport: transport,
-    socket: socket
-});
-oscRouter.attach();
-
-
-// some things to do whenever an instrument makes a note
-// send the data to the webpage to display
-orchestra.makeNoteCallback = function(instr, pitch, velocity, duration){
-    let deviceName = instr.deviceName;
-
-
-    // tell the webpage what devices played what note, so it can update the UI
-    // NOTE: this might eat up a lot of network, so we could take it out.
-    // it's just useful to show that an instrument is still active
-    let dataObj = {deviceName: deviceName, 
-                    pitch: pitch, 
-                    velocity: velocity,
-                    duration: duration}
-    db.log("sending message", dataObj)
-    socket.sendMessage("makeNote", dataObj );
-}
-
-
+///////////////////////////////////////////////////////////////
+// THEORY ENGINE SETUP
+/////////////////////////////////////////////////////////////////
 // when the theory engine produces a list of notes,
 // send it out over udp (to networked devices)
 // also send it to local instruments in the orchestra
@@ -378,13 +319,18 @@ theory.setMidiListCallback(function(msg){
         }]  
     }
     // send noteList to all UDP connected devices
-    udpPort.send(bundle, UDPSendIP, UDPSendPort);
+    udpPort.send(bundle, config.UDPSendIP, config.UDPSendPort);
     // and send to local ochestra
     orchestra.allLocalInstrumentSetValue("noteList", msg);   
     orchestra.allUDPInstrumentSetValue("noteList", msg);   
 });
 
 
+///////////////////////////////////////////////////////////////
+// some randome functions that maybe aren't needed anymore
+/////////////////////////////////////////////////////////////////
+
+/// FLUIDSYNTH SETUP
 function setSoundfontFile(filename){
     // copy this file to common_soundfont file
 
@@ -421,14 +367,25 @@ function resetFluidSynth(){
 }
 
 
+///////////////////////////////////////////////////////////////
+// STARTING THE CONDUCTOR
+/////////////////////////////////////////////////////////////////
+
 //////////////////////////////////////
 // setting things up and starting
 // set the bpm in the transport and the orchestra
-transport.updateBpm(bpm);
-orchestra.allLocalInstrumentSetValue("bpm", bpm);
+// set up the theory engine with any initial messages from the config
+// this way there can be a default theory state before any messages are received
+config.initialTheoryMsgs.forEach(function(msg){
+    theory.runSetter(msg, "fromConfig");
+});
+
+
+transport.updateBpm(config.bpm);
+orchestra.allLocalInstrumentSetValue("bpm", config.bpm);
 
 // set the name of the score
-score.scoreFilename = scoreName;
+score.scoreFilename = config.scoreName;
 
 // start the socket server and the web server
 //socket.startExpressWebServer();
@@ -447,9 +404,9 @@ setTimeout(function(){
     }
 
     db.log("+++++++++++++++++++++++++++++++++++++++");
-    db.log("+++++++++++sending udp message /all/req_ann", args, UDPSendIP, UDPSendPort);
+    db.log("+++++++++++sending udp message /all/req_ann", args, config.UDPSendIP, config.UDPSendPort);
     // send "requestannounce" to all active devices, so they'll re-send their announce message
-    udpPort.send(bundle, UDPSendIP, UDPSendPort);
+    udpPort.send(bundle, config.UDPSendIP, config.UDPSendPort);
 },2000);
 
 // open the score file, 

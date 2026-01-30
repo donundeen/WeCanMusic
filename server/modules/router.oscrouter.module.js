@@ -19,7 +19,7 @@ module.exports = class OscRouter {
     orchestra,
     performance,
     statusMelodies,
-    trans,
+    transport,
     socket,
   } = {}) {
     this.db = db;
@@ -28,7 +28,7 @@ module.exports = class OscRouter {
     this.orchestra = orchestra;
     this.performance = performance;
     this.statusMelodies = statusMelodies;
-    this.trans = trans;
+    this.transport = transport;
     this.socket = socket;
 
     this._boundOnMessage = null;
@@ -62,7 +62,7 @@ module.exports = class OscRouter {
     const orchestra = this.orchestra;
     const performance = this.performance;
     const statusMelodies = this.statusMelodies;
-    const trans = this.trans;
+    const transport = this.transport;
     const socket = this.socket;
     const db = this.db;
 
@@ -149,9 +149,9 @@ module.exports = class OscRouter {
       performance.performanceFile = name;
       performance.loadPerformance(name, function () {
         statusMelodies.playPerformanceChange();
-        trans.stop();
-        trans.reset();
-        trans.start();
+        transport.stop();
+        transport.reset();
+        transport.start();
       });
 
       socket.sendMessage("performancename", name);
@@ -181,9 +181,9 @@ module.exports = class OscRouter {
       performance.performanceFile = performanceObj.filename;
       performance.loadPerformance(performanceObj.filename, function () {
         statusMelodies.playPerformanceChange();
-        trans.stop();
-        trans.reset();
-        trans.start();
+        transport.stop();
+        transport.reset();
+        transport.start();
       });
       socket.sendMessage("performancename", performanceObj.filename);
     });
