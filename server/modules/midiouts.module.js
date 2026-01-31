@@ -76,6 +76,7 @@ class MidiOuts {
     getMidiPortnames(){
 
         let waiting = true;
+        this.portNames = [];
         while(waiting){
             let midiOutputs = this.easyMidi.getOutputs();
             console.log("midi_outputs", midiOutputs);
@@ -96,7 +97,7 @@ class MidiOuts {
                 }
             }
         }
-        console.log("portnames", this.portNames);
+        console.log("portnames", this.portNames, this.midiHardwareEngines.length);
         return this.portNames;
     }
 
