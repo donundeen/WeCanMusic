@@ -169,6 +169,7 @@ performance.orchestra = orchestra;
 ///////////////////////////////////////////////////////////////
 // SCORE OBJECT SETUP
 ///////////////////////////////////////////////////////////////
+score.scoreDir = config.scoreDir;
 score.performanceUpdateCallback = function(scoreObj){
     // send messages to webpage
     let data = {scoreName : scoreObj.scoreFilename,
