@@ -39,6 +39,17 @@ class MidiOuts {
     }
     // need a way to pick just some portnames sometimes, or an array of matches.
     init(){
+        this.scanAndAddMidiPorts();
+        this.send("reset");
+
+        // check every 5 seconds for new ports
+        setInterval(()=>{
+            this.scanAndAddMidiPorts();
+        }, 5000);
+    }
+
+
+    scanAndAddMidiPorts(){
         this.getMidiPortnames();
 
         console.log(typeof this.matches);
@@ -47,11 +58,8 @@ class MidiOuts {
             this.portNames = this.filterPortnames(this.matches);
             console.log("filtered portnames", this.portNames);
         }
-
         this.initMidiHardwareEngines();
-        this.send("reset");
     }
-
 
     send(message){
         for(let engine of this.midiHardwareEngines){
