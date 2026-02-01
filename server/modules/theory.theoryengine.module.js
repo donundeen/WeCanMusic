@@ -1,5 +1,6 @@
 const teoria = require("teoria");
 const teoriaChordProgression = require('teoria-chord-progression');
+const MidiNoteList = require("./theory.midinotelist.module.js");
 
  /*
 
@@ -77,7 +78,7 @@ class TheoryEngine {
             "B",	//11
         ];
 
-        this.currentNoteList = [43, 47, 49];
+        this.currentNoteListMidi = new MidiNoteList([43, 47, 49], false, {db: this.db});
 
         this.curNote = false;
         this.curScale = false;
@@ -88,18 +89,14 @@ class TheoryEngine {
         this.curChord = false;
         this.curChordName = false;
 
-        this.scaleNoteSet = false;
-        this.scaleNoteSetMidi = false;
-        this.weightedScaleNoteSet = false;
-        this.weightedScaleNoteSetMidi = false;
-        this.chordNoteSet = false;
-        this.chordNoteSetMidi = false;
+        this.scaleNoteSetMidi = new MidiNoteList([], false, {db: this.db});
+        this.weightedScaleNoteSetMidi = new MidiNoteList([], false, {db: this.db});
+        this.chordNoteSetMidi = new MidiNoteList([], false, {db: this.db});
 
         // some system might not want to think about the difference between "chords" and "scales" as teoria defines them. He're we'll just store whichever was the MOST RECENT note set created, either scale or chord.
         this.curBestSetChordOrScale = false;
         this.curBestSetName = false;
-        this.bestNoteSet = false;
-        this.bestNoteSetMidi = false;
+        this.bestNoteSetMidi = new MidiNoteList([], false, {db: this.db});
 
         this.outputCallback = false;
         this.midiListCallback = false;
@@ -126,14 +123,12 @@ class TheoryEngine {
     }
 
     bestSetIsChord() {
-        this.bestNoteSet = this.chordNoteSet;
         this.bestNoteSetMidi = this.chordNoteSetMidi;
         this.curBestSetName = this.curChordName;
         this.getBestNoteMidiList();
     }
 
     bestSetIsScale() {
-        this.bestNoteSet = this.scaleNoteSet;
         this.bestNoteSetMidi = this.scaleNoteSetMidi;
         this.curBestSetName = this.curScaleName;
         this.getBestNoteMidiList();
@@ -153,7 +148,7 @@ class TheoryEngine {
     runSetter(command, labelid) {
         // if there's spaces, split and run each one
         command = command.trim();
-       // this.db.log("runSetter " , this.db);
+        this.db.log("runSetter " , command);
         let self = this;
         if(command.match(/ /)){
             let split = command.split(" ");
@@ -181,20 +176,22 @@ class TheoryEngine {
             this.setChordDiatonic(parseInt(position), parseInt(size));
             this.bestSetIsChord();
         }else{
+            this.db.log("trying ::: " , command);
+
             let result = this.tryChord(command);
             if(!result){
-                this.db.log("no command match for "+command);
+                this.db.log("no command match for :: ",command);
             }
         }
     }
 
     tryChord(command) {
-        this.debugmsg("trying " + command);
+        this.db.log("trying " , command);
         try{
             this.setChord(command);
             this.bestSetIsChord();
         }catch(e){
-            this.debugmsg("chord set error " + e);
+            this.db.log("chord set error " , e);
             return false;
         }
         return true;
@@ -389,14 +386,6 @@ class TheoryEngine {
 
     getChordNotes() {
         if(this.curChord){
-            /*
-            this.debugmsg("getChordNotes");
-            this.debugmsg(curChord.simple());
-            this.debugmsg(curChordName);
-            this.debugmsg(curChord.name);
-            */
-    //		this.debugmsg(curChord.name.toLowerCase().replace(curChord.root.toString(true),""));
-    //			this.debugmsg(curChord.root.toString(true));
             return this.curChord.simple();
         }
     }
@@ -404,41 +393,12 @@ class TheoryEngine {
     createScaleSet() {
         this.debugmsg("creating scale set ");
         this.debugmsg("creating scale set ");
-        this.scaleNoteSet = [];
-        this.scaleNoteSetMidi = [];
         var notes = this.curScale.notes();
         this.curRootMidi = this.curScale.tonic.midi() % 12;
 
-        for(var i = 0; i < notes.length; i++){
-            var note = notes[i];
-            this.debugmsg(note.toString());
-            this.debugmsg(note.midi() % 12);
-            var midiroot = note.midi() % 12
-            for(var octave = 0; octave <= 12; octave++){
-                var midi = (octave * 12) + midiroot
-                if(midi <= 128){
-                    var newnote = teoria.note.fromMIDI(midi);
-                    this.scaleNoteSet.push(newnote);
-                    this.scaleNoteSetMidi.push(parseInt(newnote.midi()));
-                }
-            }
-        }
-        this.scaleNoteSetMidi.sort(function(a,b){
-            return a - b;
-        });
-        
-        this.scaleNoteSet.sort(function(a,b){
-            return (a.midi() - b.midi());
-        });
-
-        this.debugmsg(this.scaleNoteSetMidi);
-
-        /*
-        this.scaleNoteSet.map(function(item){
-            this.debugmsg(item.toString());
-        });
-        */
-        this.getScaleNoteMidiList();
+        this.scaleNoteSetMidi = new MidiNoteList(false, false, {db: this.db});
+        this.scaleNoteSetMidi.addTeoriaNoteFullRangeList(notes);
+        this.scaleNoteSetMidi.setRootNote(this.curRootMidi);
         
         this.createWeightedScaleSet();	
     }
@@ -446,39 +406,13 @@ class TheoryEngine {
 
     createChordSet() {
     //	this.debugmsg("creating chord set ");
-        this.chordNoteSet = [];
-        this.chordNoteSetMidi = []
+        this.chordNoteSetMidi = new MidiNoteList(false, false, {db: this.db});
         var notes = this.curChord.notes();
         this.curRootMidi = this.curChord.root.midi() % 12;
-        for(var i = 0; i < notes.length; i++){
-            var note = notes[i];
-    //		this.debugmsg(note.toString());
-    //		this.debugmsg(note.midi() % 12);
-            var midiroot = note.midi() % 12
-            for(var octave = 0; octave <= 12; octave++){
-                var midi = (octave * 12) + midiroot
-                if(midi <= 128){
-                    var newnote = teoria.note.fromMIDI(midi);
-                    this.chordNoteSet.push(newnote);
-                    this.chordNoteSetMidi.push(parseInt(newnote.midi()));
-                }
-            }
-        }
-        this.chordNoteSetMidi.sort(function(a,b){
-            return a - b;
-        });
-        
-        this.chordNoteSet.sort(function(a,b){
-            return (a.midi() - b.midi());
-        });
+        this.chordNoteSetMidi.addTeoriaNoteFullRangeList(notes);
+        this.chordNoteSetMidi.setRootNote(this.curRootMidi);
 
         this.debugmsg(this.chordNoteSetMidi);
-
-        this.chordNoteSet.map((function(item){
-            this.debugmsg(item.toString());
-        }).bind(this));
-
-        this.getChordNoteMidiList();
         
         this.createWeightedScaleSet();
     }
@@ -486,48 +420,12 @@ class TheoryEngine {
 
     // make a scaleset that has duplicates of chord notes, so chord notes are more likely
     createWeightedScaleSet() {
-        if(this.chordNoteSet  && this.chordNoteSetMidi && this.scaleNoteSet && this.scaleNoteSetMidi){
-            this.weightedScaleNoteSet = this.scaleNoteSet.concat(this.chordNoteSet);
-            this.weightedScaleNoteSetMidi = this.scaleNoteSetMidi.concat(this.chordNoteSetMidi);
-            this.weightedScaleNoteSetMidi.sort(function(a,b){
-                return a - b;
-            });
-        
-            this.weightedScaleNoteSet.sort(function(a,b){
-                return (a.midi() - b.midi());
-            });	
+        if(this.chordNoteSetMidi &&  this.scaleNoteSetMidi){
+            this.weightedScaleNoteSetMidi = this.scaleNoteSetMidi.copy();
+            this.weightedScaleNoteSetMidi.concat(this.chordNoteSetMidi);
+            this.weightedScaleNoteSetMidi.sortNoteList();
+            this.weightedScaleNoteSetMidi.setRootNote(this.curRootMidi);
         }
-    }
-
-
-    getScaleNoteMidiList(labelid) {
-        if(!labelid){
-            labelid = "scaleNoteMidiList";
-        }
-        if(this.scaleNoteSetMidi){
-            var output = labelid+" " + this.scaleNoteSetMidi.join(" ");
-    //		this.debugmsg(output);
-            this.sendOutput(output);
-            return this.scaleNoteSetMidi;
-        }else{
-            this.debugmsg("no scale set");
-        }
-        
-    }
-
-    getWeightedScaleNoteMidiList(labelid) {
-        if(!labelid){
-            labelid = "weightedScaleNoteMidiList";
-        }
-        if(this.weightedScaleNoteSetMidi){
-            var output = labelid+" " + this.weightedScaleNoteSetMidi.join(" ");
-    //		this.debugmsg(output);
-            this.sendOutput(output);
-            return this.weightedScaleNoteSetMidi;
-        }else{
-            this.debugmsg("no weighted scale set");
-        }
-        
     }
 
     getChordNoteMidiList(labelid) {
@@ -535,10 +433,10 @@ class TheoryEngine {
             labelid = "chordNoteMidiList";
         }
         if(this.chordNoteSetMidi){
-            var output = labelid+" " + this.chordNoteSetMidi.join(" ");
+            var output = labelid+" " + this.chordNoteSetMidi.getNoteList().join(" ");
     //		this.debugmsg(output);
             this.sendOutput(output)
-            return this.chordNoteSetMidi;
+            return this.chordNoteSetMidi.getNoteList();
         }else{
             this.debugmsg("no chord set");
         }	
@@ -549,29 +447,24 @@ class TheoryEngine {
             labelid = "bestNoteMidiList";
         }
         if(this.bestNoteSetMidi){
-            var output = labelid+" " + this.bestNoteSetMidi.join(" ");
+            var output = labelid+" " + this.bestNoteSetMidi.getNoteList().join(" ");
     //		this.debugmsg(output);
-            this.sendBestMidiList(this.bestNoteSetMidi);
-            this.currentNoteList= this.bestNoteSetMidi;
+            this.sendBestMidiList(this.bestNoteSetMidi.getNoteList());
+            this.currentNoteListMidi = this.bestNoteSetMidi.copy();
         }else{
             this.debugmsg("no best set");
         }	
     }
 
-
-
     noteList() {
-        var output = "noteList " +   this.currentNoteList.join(" ");
-    //	this.debugmsg(output);
-
-        this.sendOutput(output)//+ currentNoteList.join(" "));
-        return this.currentNoteList;
+        var output = "noteList " +   this.currentNoteListMidi.getNoteList().join(" ");
+        this.sendOutput(output)
+        return this.currentNoteListMidi.getNoteList();
     }
-
 
     getScaleNoteFromFloat(labelid, value, min, max) {
 
-        var note = this.selectFromFloat(value, this.scaleNoteSetMidi, min, max);
+        var note = this.scaleNoteSetMidi.getNoteFromFloat(value, min, max);
         if(!note){
             this.debugmsg("no note");
             this.debugmsg("getScaleNoteFromFloat");
@@ -588,7 +481,7 @@ class TheoryEngine {
 
     getWeightedScaleNoteFromFloat(labelid, value, min, max) {
 
-        var note = this.selectFromFloat(value, this.weightedScaleNoteSetMidi, min, max);
+        var note = this.weightedScaleNoteSetMidi.getNoteFromFloat(value, min, max);
         if(!note){
             return false;
         }
@@ -598,7 +491,7 @@ class TheoryEngine {
     }
 
     getScaleNoteFromInt(labelid, value, min, max) {
-        var note = this.selectFromInt(value, this.scaleNoteSetMidi, min, max);
+        var note = this.scaleNoteSetMidi.getNoteFromInt(value, min, max);
         if(!note){
             return false;
         }
@@ -607,7 +500,7 @@ class TheoryEngine {
     }
 
     getWeightedScaleNoteFromInt(labelid, value, min, max) {
-        var note = this.selectFromInt(value, this.weightedScaleNoteSetMidi, min, max);
+        var note = this.weightedScaleNoteSetMidi.getNoteFromInt(value, min, max);
         if(!note){
             return false;
         }
@@ -618,7 +511,7 @@ class TheoryEngine {
     getChordNoteFromFloat(labelid, value, min, max) {
     //		this.debugmsg("getChordNoteFromFloat "+labelid + ", " + value);
     //		this.debugmsg(chordNoteSetMidi);
-        var note = this.selectFromFloat(value, this.chordNoteSetMidi, min, max);
+        var note = this.chordNoteSetMidi.getNoteFromFloat(value, min, max);
     //	this.debugmsg("note " + note);
         if(!note){
             return false;
@@ -629,7 +522,7 @@ class TheoryEngine {
     }
 
     getChordNoteFromInt(labelid, value, min, max) {
-        var note = this.selectFromInt(value, this.chordNoteSetMidi, min, max);
+        var note = this.chordNoteSetMidi.getNoteFromInt(value, min, max);
         if(!note){
             return false;
         }
@@ -641,7 +534,7 @@ class TheoryEngine {
     getBestNoteFromFloat(value, min, max) {
         //		this.debugmsg("getChordNoteFromFloat "+labelid + ", " + value);
         //		this.debugmsg(chordNoteSetMidi);
-        var note = this.selectFromFloat(value, this.bestNoteSetMidi, min, max);
+        var note = this.bestNoteSetMidi.getNoteFromFloat(value, min, max);
         //	this.debugmsg("note " + note);
         if(!note){
             return false;
@@ -650,7 +543,7 @@ class TheoryEngine {
     }
         
     getBestNoteFromInt(value, min, max) {
-        var note = this.selectFromInt(value, this.bestNoteSetMidi, min, max);
+        var note = this.bestNoteSetMidi.getNoteFromInt(value, min, max);
         if(!note){
             return false;
         }
@@ -658,13 +551,7 @@ class TheoryEngine {
     }
 
     getRootedBestNoteFromFloat(value, min, max) {
-        // for a "rooted" scale/chord, expand the min and max so that both min and max are the root
-        //		this.debugmsg(chordNoteSetMidi);
-        min = this.moveMinMax(this.curRootMidi, min);
-        max = this.moveMinMax(this.curRootMidi, max);
-        //this.debugmsg("newminmax  "+ min +", " + max) ;
-
-        var note = this.selectFromFloat(value, this.bestNoteSetMidi, min, max);
+        var note = this.bestNoteSetMidi.getRootedNoteFromFloat(value, min, max);
         //	this.debugmsg("note " + note);
         if(!note){
             return false;
@@ -674,9 +561,7 @@ class TheoryEngine {
 
         
     getRootedBestNoteFromInt(value, min, max) {
-        min = this.moveMinMax(this.curRootMidi, min);
-        max = this.moveMinMax(this.curRootMidi, max);	
-        var note = this.selectFromInt(value, this.bestNoteSetMidi, min, max);
+        var note = this.bestNoteSetMidi.getRootedNoteFromInt(value, min, max);
         if(!note){
             return false;
         }
@@ -686,15 +571,8 @@ class TheoryEngine {
         
     getFixedBestNoteFromFloat(value, min, max) {
     // in a "fixed" setup, the same float value should result in the same midi note (octave may vary), regardless of scale
-    // - map the float across FULL range, from min to max
-    // - move resulting value DOWN to the closest note in the scale
-        //		this.debugmsg("getFixededBestNoteFromFloat "+labelid + ", " + value + " , "+ min +", " + max) ;
-        //		this.debugmsg(chordNoteSetMidi);
-    //	min = moveMinMax(curRootMidi, min);
-    //	max = moveMinMax(curRootMidi, max);
-    //	this.debugmsg("newminmax  "+ min +", " + max) ;
 
-        var note = this.selectFixedFromFloat(value, this.bestNoteSetMidi, min, max);
+        var note = this.bestNoteSetMidi.getFixedNoteFromFloat(value, min, max);
         //	this.debugmsg("note " + note);
         if(!note){
             return false;
@@ -705,9 +583,7 @@ class TheoryEngine {
         
     getRootedBestNoteFromInt(value, min, max) {
         
-        min = this.moveMinMax(this.curRootMidi, min);
-        max = this.moveMinMax(this.curRootMidi, max);	
-        var note = this.selectFromInt(value, this.bestNoteSetMidi, min, max);
+        var note = this.bestNoteSetMidi.getRootedNoteFromInt(value, min, max);
         if(!note){
             return false;
         }   
@@ -715,104 +591,9 @@ class TheoryEngine {
     }
 
 
-    selectFixedFromFloat(value, theList, min, max) {
-    // in a "fixed" setup, the same float value should result in the same midi note (octave may vary), regardless of scale
-    // - map the float across FULL range, from min to max
-    // - move resulting value DOWN to the closest note in the scale
-
-        if(!theList){
-            return false;
-        }
-
-        let range = max - min;
-        let initial = min + Math.floor(range * value);
-        while(theList.indexOf(initial) < 0){
-            initial--;
-        }
-        return initial;
-    }
-
-
-
-    selectFromFloat(value, theList, min, max) {
-        if(!theList){
-            return false;
-        }
-
-        var workingList = theList.filter(function(note){
-            if(note >= min && note <= max){
-                return true;
-            }
-            return false;
-        });
-    //	this.debugmsg(workingList);
-        var index = Math.floor(workingList.length * value);
-        var note  = workingList[index];// % workingList.length];
-    //	this.debugmsg(note);	
-        return note;
-    }
-
-
-    selectFromInt(value, theList, min, max) {
-        if(!theList){
-            return false;
-        }
-        var workingList = theList.filter(function(note){
-            if(note >= min && note <= max){
-                return true;
-            }
-            return false;
-        });
-    //	this.debugmsg(workingList);
-        var note  = workingList[value % workingList.length];
-    //	this.debugmsg(note);	
-        return note;
-    }
-
-
-    moveMinMax(root, minmax) {
-        // for a "rooted" scale/chord, expand the min and max so that both min and max are the root
-        let orig = minmax;
-        let mindiff = (minmax % 12) - (root % 12);
-        let minmove = Math.abs(6 - mindiff);
-
-        if(mindiff == 0){
-            // do nothing
-        }else if (mindiff < -6){
-            mindiff = -12 - mindiff;
-            minmax = minmax - mindiff
-            //big distance, go opposite way around
-        }else if (mindiff < 0){
-            // small different, go toward
-            minmax = minmax - mindiff
-        }else if(mindiff < 6){
-            minmax = minmax - mindiff
-        }else if (mindiff < 12){
-            mindiff = 12 - mindiff;
-            minmax = minmax + mindiff
-        }
-        return minmax;
-    }
-
     // based on input noteIn, find the closest note in the noteList
     getClosestCorrectNote(noteIn){
-        let closest = noteIn;
-        if(this.currentNoteList.includes(closest)){
-            return closest;
-        }        
-        let diff = 0;
-        while (diff <= 13){
-            closest = noteIn + diff;
-            if(this.currentNoteList.includes(closest)){
-                return closest;
-            }
-            closest = noteIn - diff;
-            if(this.currentNoteList.includes(closest)){
-                return closest;
-            }
-            diff++;
-        }
-        return noteIn;
+        return this.currentNoteListMidi.getClosestCorrectNote(noteIn);
     }   
 
 }

@@ -35,7 +35,7 @@ const Transport    = require("./modules/transport.module.js");
 // Score reader outputs messages at timed intervals
 const ScoreReader  = require("./modules/scorereader.module.js");
 // thoeryEngine generates lists of notes from theory terms (eg A MINORPENTATONIC)
-const TheoryEngine = require("./modules/theoryengine.module.js");
+const TheoryEngine = require("./modules/theory.theoryengine.module.js");
 // socketServer is the web page that gets control messages
 const SocketServer = require("./modules/socketserver.module.js");
 // performance saves and restores settings that might change per performance, song, etc
