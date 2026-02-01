@@ -104,16 +104,6 @@ class TheoryEngine {
         this.debugmode = false;
     }
 
-    setOutputCallback(callback) {
-        this.outputCallback = callback;
-    }
-
-    sendOutput(msg) {
-        if (this.outputCallback) {
-            this.outputCallback(msg);
-        }
-    }
-
     setMidiListCallback(callback) {
         this.midiListCallback = callback;
     }
@@ -434,8 +424,6 @@ class TheoryEngine {
         }
         if(this.chordNoteSetMidi){
             var output = labelid+" " + this.chordNoteSetMidi.getNoteList().join(" ");
-    //		this.debugmsg(output);
-            this.sendOutput(output)
             return this.chordNoteSetMidi.getNoteList();
         }else{
             this.debugmsg("no chord set");
@@ -457,8 +445,6 @@ class TheoryEngine {
     }
 
     noteList() {
-        var output = "noteList " +   this.currentNoteListMidi.getNoteList().join(" ");
-        this.sendOutput(output)
         return this.currentNoteListMidi.getNoteList();
     }
 
@@ -475,7 +461,6 @@ class TheoryEngine {
     //	this.debugmsg("getScaleNoteFromFloat");
     //	this.debugmsg(scaleNoteSetMidi.join(" "));	
     //	this.debugmsg("sending " + labelid + " " + note);
-        this.sendOutput(labelid+ " " + note);
         return note;
     }
 
@@ -486,7 +471,6 @@ class TheoryEngine {
             return false;
         }
     //	this.debugmsg("sending " + labelid + " " + note);
-        this.sendOutput(labelid+ " " + note);
         return note;
     }
 
@@ -495,7 +479,6 @@ class TheoryEngine {
         if(!note){
             return false;
         }
-        this.sendOutput(labelid+ " " + note);
         return note;
     }
 
@@ -504,7 +487,6 @@ class TheoryEngine {
         if(!note){
             return false;
         }
-        this.sendOutput(labelid+ " " + note);
         return note;
     }
 
@@ -516,7 +498,6 @@ class TheoryEngine {
         if(!note){
             return false;
         }
-        this.sendOutput(labelid+ " " + note);
         return note;
         
     }
@@ -526,7 +507,6 @@ class TheoryEngine {
         if(!note){
             return false;
         }
-        this.sendOutput(labelid+ " " + note);
         return note;
     }
 
