@@ -135,7 +135,7 @@ class TheoryEngine {
     }
 
     // setter commands
-    runSetter(command, labelid) {
+    runSetter(command) {
         // if there's spaces, split and run each one
         command = command.trim();
         this.db.log("runSetter " , command);
@@ -187,87 +187,6 @@ class TheoryEngine {
         return true;
     }
 
-    runGetter(command, labelid) {
-        // - s0.[0-9]+(Min-Max) : (float val btw 0.0 and 1.0) get the scale note at the position in the scale represented by the float, between the Min and Max MIDI values
-        // - c0.[0-9]+(Min-Max) : (float val btw 0.0 and 1.0) get the chord note at the position in the scale represented by the float, between the Min and Max MIDI values
-        // - w0.[0-9]+(Min-Max) : (float val btw 0.0 and 1.0) get the note at the position in the weighted scale  represented by the float, between the Min and Max MIDI values
-        // - s[0-9]+(min-Max) : get the note at that index in the list of scale notes, btw Min and Max. Loops around to bottom.
-        // - c[0-9]+(min-Max) : get the note at that index in the list of chord notes, btw Min and Max. Loops around to bottom.
-        // - w[0-9]+(min-Max) : get the note at that index in the list of weighted scale notes, btw Min and Max. Loops around to bottom.
-        
-        command = command.toLowerCase();
-
-        var matches = command.match(/([bscwrf])([0-9]*\.?[0-9]+)\(([0-9]+)-([0-9]+)\)/);
-    //	this.debugmsg(matches); //
-        if(!matches){
-    //		this.debugmsg("no command match for "+command);
-            return;
-        }
-        var sc = matches[1];
-        var intfl = "int";
-        if(matches[2].match(/\./)){
-            var intfl = "float";
-        }
-    //	this.debugmsg(intfl);
-        var value = parseFloat(matches[2]);
-    //	this.debugmsg(value);
-        
-        var min = parseInt(matches[3]);
-        var max = parseInt(matches[4]);
-    //	this.debugmsg("min: " + min);
-    //	this.debugmsg("max: " + max);
-        
-        if(sc == "s"){
-            if(intfl == "int"){
-                this.getScaleNoteFromInt(labelid, value, min, max);
-            }
-            if(intfl == "float"){
-                this.getScaleNoteFromFloat(labelid, value, min, max);
-            }		
-        }
-        if(sc == "c"){
-            if(intfl == "int"){
-                this.getChordNoteFromInt(labelid, value, min, max);
-            }
-            if(intfl == "float"){
-                this.getChordNoteFromFloat(labelid, value, min, max);
-            }		
-        }
-        if(sc == "b"){
-            if(intfl == "int"){
-                this.getBestNoteFromInt(labelid, value, min, max);
-            }
-            if(intfl == "float"){
-                this.getBestNoteFromFloat(labelid, value, min, max);
-            }		
-        }	
-        if(sc == "w"){
-            if(intfl == "int"){
-                this.getWeightedScaleNoteFromInt(labelid, value, min, max);
-            }
-            if(intfl == "float"){
-                this.getWeightedScaleNoteFromFloat(labelid, value, min, max);
-            }		
-        }
-        if(sc == "r"){
-            if(intfl == "int"){
-                this.getRootedBestNoteFromInt(labelid, value, min, max);
-            }
-            if(intfl == "float"){
-                this.getRootedBestNoteFromFloat(labelid, value, min, max);
-            }		
-        }
-
-        if(sc == "f"){
-            if(intfl == "int"){
-                this.getFixedBestNoteFromInt(labelid, value, min, max);
-            }
-            if(intfl == "float"){
-                this.getFixedBestNoteFromFloat(labelid, value, min, max);
-            }		
-        }	
-
-    }
 
     transpose(theinterval) {
         if(!theinterval){
@@ -365,11 +284,6 @@ class TheoryEngine {
 
     getScaleNotes() {
         if(this.curScale){
-            /*
-            this.debugmsg("getScaleNotes");
-            this.debugmsg(curScaleName);
-            this.debugmsg(curScale.simple());
-            */
             return this.curScale.simple();
         }
     }
@@ -419,27 +333,22 @@ class TheoryEngine {
         }
     }
 
-    getChordNoteMidiList(labelid) {
-        if(!labelid){
-            labelid = "chordNoteMidiList";
-        }
+    getChordNoteMidiList() {
+
         if(this.chordNoteSetMidi){
-            var output = labelid+" " + this.chordNoteSetMidi.getNoteList().join(" ");
             return this.chordNoteSetMidi.getNoteList();
         }else{
             this.debugmsg("no chord set");
         }	
     }
 
-    getBestNoteMidiList(labelid) {
-        if(!labelid){
-            labelid = "bestNoteMidiList";
-        }
+    getBestNoteMidiList() {
+
         if(this.bestNoteSetMidi){
-            var output = labelid+" " + this.bestNoteSetMidi.getNoteList().join(" ");
     //		this.debugmsg(output);
             this.sendBestMidiList(this.bestNoteSetMidi.getNoteList());
             this.currentNoteListMidi = this.bestNoteSetMidi.copy();
+            return this.currentNoteListMidi.getNoteList();
         }else{
             this.debugmsg("no best set");
         }	
@@ -449,33 +358,24 @@ class TheoryEngine {
         return this.currentNoteListMidi.getNoteList();
     }
 
-    getScaleNoteFromFloat(labelid, value, min, max) {
-
+    getScaleNoteFromFloat(value, min, max) {
         var note = this.scaleNoteSetMidi.getNoteFromFloat(value, min, max);
         if(!note){
-            this.debugmsg("no note");
-            this.debugmsg("getScaleNoteFromFloat");
-    //		this.debugmsg(scaleNoteSetMidi.join(" "));	
-            this.debugmsg("sending " + labelid + " " + note);		 
+ 
             return false;
         }
-    //	this.debugmsg("getScaleNoteFromFloat");
-    //	this.debugmsg(scaleNoteSetMidi.join(" "));	
-    //	this.debugmsg("sending " + labelid + " " + note);
         return note;
     }
 
-    getWeightedScaleNoteFromFloat(labelid, value, min, max) {
-
+    getWeightedScaleNoteFromFloat(value, min, max) {
         var note = this.weightedScaleNoteSetMidi.getNoteFromFloat(value, min, max);
         if(!note){
             return false;
         }
-    //	this.debugmsg("sending " + labelid + " " + note);
         return note;
     }
 
-    getScaleNoteFromInt(labelid, value, min, max) {
+    getScaleNoteFromInt(value, min, max) {
         var note = this.scaleNoteSetMidi.getNoteFromInt(value, min, max);
         if(!note){
             return false;
@@ -483,7 +383,7 @@ class TheoryEngine {
         return note;
     }
 
-    getWeightedScaleNoteFromInt(labelid, value, min, max) {
+    getWeightedScaleNoteFromInt(value, min, max) {
         var note = this.weightedScaleNoteSetMidi.getNoteFromInt(value, min, max);
         if(!note){
             return false;
@@ -491,11 +391,8 @@ class TheoryEngine {
         return note;
     }
 
-    getChordNoteFromFloat(labelid, value, min, max) {
-    //		this.debugmsg("getChordNoteFromFloat "+labelid + ", " + value);
-    //		this.debugmsg(chordNoteSetMidi);
+    getChordNoteFromFloat(value, min, max) {
         var note = this.chordNoteSetMidi.getNoteFromFloat(value, min, max);
-    //	this.debugmsg("note " + note);
         if(!note){
             return false;
         }
@@ -503,7 +400,7 @@ class TheoryEngine {
         
     }
 
-    getChordNoteFromInt(labelid, value, min, max) {
+    getChordNoteFromInt(value, min, max) {
         var note = this.chordNoteSetMidi.getNoteFromInt(value, min, max);
         if(!note){
             return false;
@@ -513,7 +410,6 @@ class TheoryEngine {
 
 
     getBestNoteFromFloat(value, min, max) {
-        //		this.debugmsg("getChordNoteFromFloat "+labelid + ", " + value);
         //		this.debugmsg(chordNoteSetMidi);
         var note = this.bestNoteSetMidi.getNoteFromFloat(value, min, max);
         //	this.debugmsg("note " + note);
@@ -551,10 +447,8 @@ class TheoryEngine {
         
         
     getFixedBestNoteFromFloat(value, min, max) {
-    // in a "fixed" setup, the same float value should result in the same midi note (octave may vary), regardless of scale
-
+        // in a "fixed" setup, the same float value should result in the same midi note (octave may vary), regardless of scale
         var note = this.bestNoteSetMidi.getFixedNoteFromFloat(value, min, max);
-        //	this.debugmsg("note " + note);
         if(!note){
             return false;
         }
@@ -563,7 +457,6 @@ class TheoryEngine {
 
         
     getRootedBestNoteFromInt(value, min, max) {
-        
         var note = this.bestNoteSetMidi.getRootedNoteFromInt(value, min, max);
         if(!note){
             return false;
