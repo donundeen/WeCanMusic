@@ -5,6 +5,7 @@ class MidiNoteList {
         this.db = options.db || false;   
         this.midiNoteList = noteList || [];
         this.rootNote = rootNote || false;
+        this.allowDuplicates = options.allowDuplicates || false;
     }
 
     reset(){
@@ -94,6 +95,11 @@ class MidiNoteList {
         this.midiNoteList.sort(function(a,b){
             return a - b;
         });
+        if(!this.allowDuplicates){
+            this.midiNoteList = this.midiNoteList.filter(function(note, index, self){
+                return self.indexOf(note) === index;
+            });
+        }
     }
 
     getNoteList(){

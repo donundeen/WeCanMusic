@@ -90,7 +90,7 @@ class TheoryEngine {
         this.curChordName = false;
 
         this.scaleNoteSetMidi = new MidiNoteList([], false, {db: this.db});
-        this.weightedScaleNoteSetMidi = new MidiNoteList([], false, {db: this.db});
+        this.weightedScaleNoteSetMidi = new MidiNoteList([], false, {db: this.db, allowDuplicates: true});
         this.chordNoteSetMidi = new MidiNoteList([], false, {db: this.db});
 
         // some system might not want to think about the difference between "chords" and "scales" as teoria defines them. He're we'll just store whichever was the MOST RECENT note set created, either scale or chord.
@@ -412,6 +412,7 @@ class TheoryEngine {
     createWeightedScaleSet() {
         if(this.chordNoteSetMidi &&  this.scaleNoteSetMidi){
             this.weightedScaleNoteSetMidi = this.scaleNoteSetMidi.copy();
+            this.weightedScaleNoteSetMidi.allowDuplicates = true;
             this.weightedScaleNoteSetMidi.concat(this.chordNoteSetMidi);
             this.weightedScaleNoteSetMidi.sortNoteList();
             this.weightedScaleNoteSetMidi.setRootNote(this.curRootMidi);
