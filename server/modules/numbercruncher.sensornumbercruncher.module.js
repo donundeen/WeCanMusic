@@ -78,6 +78,8 @@ class SensorNumberCruncher {
         this.velocityFloat = this.changeRateCurve.mapValue(scaledChangeRate);
         this.prevSensorValue = this.sensorValue;
         this.prevChangeTime = now;
+
+        this.db.log("sensorNumberCruncher.crunched", this.pitchFloat, this.velocityFloat);
     }
 }
 

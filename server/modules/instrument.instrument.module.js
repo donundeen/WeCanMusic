@@ -464,7 +464,6 @@ class Instrument {
     }
 
     deriveDuration(){
-        this.db.log("deriveDuration", this.midiNlen, this.noteLengthValues);
         return this.noteLengthValues[this.midiNlen];
 
         // the apprach below doesn't work so great.
