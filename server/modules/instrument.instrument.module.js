@@ -1,6 +1,7 @@
 const DynRescale = require("./dynRescale.module");
 const FunctionCurve = require("./functionCurve.module");
-const NoteNumberCruncher = require("./notenumbercruncher.module");
+const SensorNumberCruncher = require("./numbercruncher.sensornumbercruncher.module");
+//const NoteNumberCruncher = require("./numbercruncher.notenumbercruncher.module");
 
 class Instrument {
 
@@ -13,7 +14,7 @@ class Instrument {
         this.type = "local";
 
     // input values
-        this._sensorValue = false;;
+        this._sensorValue = false;
         this.changeRate = false;
         this.prevChangeVal = false;
 
@@ -107,7 +108,8 @@ class Instrument {
         this.lastNoteTime = Date.now();
         this.setNoteLengths();
         this.getConfigProps();
-        this.numberCruncher = new NoteNumberCruncher({db: this.db});
+//        this.numberCruncher = new NoteNumberCruncher({db: this.db});
+        this.numberCruncher = new SensorNumberCruncher({db: this.db});
 
     }
 
@@ -206,7 +208,14 @@ class Instrument {
         this.db.log("********************");
 
         this.db.log("instrument numberCruncher.setValue", value);
-        this.numberCruncher.setValue(value);
+        this.numberCruncher.setSensorValues({
+            sensorValue: value,
+            smoothValue: this.smoothValue,
+            rmsValue: this.rmsValue,
+            peakValue: this.peakValue,
+            velValue: this.velValue
+        });
+
         this.numberCruncher.crunch();
         this.db.log("numberCruncher.crunch", this.numberCruncher.scaledValue);
         this._sensorValue = value;
@@ -445,7 +454,7 @@ class Instrument {
     }
 
     derivePitch(){
-        let pitch = this.noteFromFloat(this.numberCruncher.scaledValue, this.midiMin, this.midiMax);
+        let pitch = this.noteFromFloat(this.numberCruncher.pitchFloat, this.midiMin, this.midiMax);
         return pitch;
     }
 

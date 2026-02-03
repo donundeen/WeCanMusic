@@ -321,11 +321,11 @@ module.exports = class OscRouter {
       let velval = parseFloat(value[5]);
       let instrument = orchestra.getLocalInstrument(name);
       if (instrument) {
+        instrument.sensorValue = rawval;
         instrument.smoothValue = smoothval;
         instrument.rmsValue = rmsval;
         instrument.peakValue = peakval;
         instrument.velValue = velval;
-        instrument.sensorValue = rawval;
       }else{
         db?.log?.("sensor", name, value, "no UDP instrument found");
       }
