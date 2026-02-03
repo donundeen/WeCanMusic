@@ -3,6 +3,7 @@ class Debugging {
         this.active = false;
         this.show_levels = [1]; // debug levels to show. hide the others.
         this.trace = false; // if you should do a console.trace with the log statement
+        this.filter = false;
     }
 
     show(levels) {
@@ -22,7 +23,25 @@ class Debugging {
     }
 
     log(text) {
-        this.logl(1, ...arguments);
+        // if there is no filter, or the filter is in the text, log the message   
+        // text is a string, or maybe an array of strings or ints and objects
+        // or it might be a function , in which case it should fail the filter, 
+        // but print if there is no filter
+        if(typeof text == "function"){
+            !this.filter ? this.logl(1, text) : null;
+            return;
+        }
+        if(Array.isArray(text)){
+            text = text.join(" ");
+        }   else if(typeof text == "object"){
+            text = JSON.stringify(text);
+        } else if(typeof text == "number"){
+            !this.filter ? this.logl(1, text) : null;
+            return;
+        }
+        if(!this.filter || (text && text.includes(this.filter))){
+            this.logl(1, ...arguments);
+        }
     }
 
     // log w category or level information, so we can conditionally display certain log info and not other

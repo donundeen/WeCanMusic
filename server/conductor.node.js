@@ -23,8 +23,20 @@ const Debugging = require('./modules/debugging.module.js');
 db = new Debugging();
 db.active = config["db.active"];
 db.trace = false;
-db.log("starting","now",[1,2,3]);
-db.log(config);
+//db.log("starting","now",[1,2,3]);
+//db.log(config);
+
+// check for a filter in the config: only show messages that match.
+if(config["db.filter"]){
+    db.filter = config["db.filter"];
+}
+// check for filter in the command line
+// the format is --filter filter_string
+console.log("process.argv", process.argv);
+if(process.argv.includes("--filter")){
+    db.filter = process.argv[process.argv.indexOf("--filter") + 1];
+    console.log("filter set to", db.filter);
+}
 
 
 
