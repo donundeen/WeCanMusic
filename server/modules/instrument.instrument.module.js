@@ -193,6 +193,7 @@ class Instrument {
     // what to do when a new sensor value is received. Need to trigger a note here
     set sensorValue(value){
         // might be a number or an OSC-formatted value message
+        this.db.log("instrument.sensorValue", value);
         if(typeof value == "number"){
             value = value;
         }else if(Array.isArray(value) && value.length > 0 && Object.hasOwn(value[0], "value")){
@@ -540,7 +541,7 @@ class Instrument {
 
     midiMakeNote(note, velocity, duration){
         // note: each instrument needs its own channel, or the instrument will be the same tone.
-        this.db.log("midiMakeNote : ", this._midiVol, this._midiChannel, this._midiBank, this._midiProgram,  note, velocity, duration);
+        this.db.log("midiMakeNote : ",  note, velocity, duration, this._midiVol, this._midiChannel, this._midiBank, this._midiProgram);
         if(!Number.isFinite(note) || !Number.isFinite(velocity) || !Number.isFinite(duration)){
             this.db.log("bad midi values, returning");
             return;

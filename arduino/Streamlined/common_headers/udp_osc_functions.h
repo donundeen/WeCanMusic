@@ -292,7 +292,7 @@ void announceCreation(int vindex){
     char ipbuffer[20];
     thisarduinoip.toCharArray(ipbuffer, 20);
     Serial.println(ipbuffer);
-    OSCMessage oscmsg("/announceUDPInstrument");  
+    OSCMessage oscmsg("/announceInstrument");  
     oscmsg.add(DEVICE_NAME[vindex]);
  //   udp.beginPacket(UDPReceiverIP, UDPPort);
     udp.beginPacket(UDPReceiverIP, 7005); // this needs to get set in a config somehwere...

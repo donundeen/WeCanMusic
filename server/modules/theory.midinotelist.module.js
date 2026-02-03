@@ -114,6 +114,14 @@ class MidiNoteList {
         return this.rootNote;
     }
 
+    getNoteFromFloat(value, min, max) {
+        return this.selectFromFloat(value, this.midiNoteList, min, max);
+    }
+
+    getNoteFromInt(value, min, max) {
+        return this.selectFromInt(value, this.midiNoteList, min, max);
+    }
+
     getRootedNoteFromFloat(value, min, max) {
         // for a "rooted" scale/chord, expand the min and max so that both min and max are the root
         //		this.debugmsg(chordNoteSetMidi);

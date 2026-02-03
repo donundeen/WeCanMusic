@@ -62,6 +62,8 @@ int AccelPitchVal_l3gd20h[6] = {L3GD20H_GYROX, L3GD20H_GYROY, L3GD20H_GYROZ, L3G
 ////////////////////////////////////////////////////
 /////////////////////////////
 // DEVICE SPECIFIC FUNCTIONS
+void displaySensorDetails_l3gd20h(void);
+
 void peak_setup_l3gd20h(){
   for(int vindex = 0; vindex < NUM_MULTIVALUES; vindex++){  
 //  peakDetections_l3gd20h[vindex].begin(32, 4, 0.3);               // sets the lag, threshold and influence

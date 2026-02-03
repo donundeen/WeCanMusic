@@ -95,6 +95,7 @@ class NoteNumberCruncher {
     }
 
     deriveVelocityFloat(){
+        this.db.log("deriveVelocityFloat", this.changeRate);
         this.velocityFloat = this.velocityCurve.mapValue(this.changeRate);
     }
 

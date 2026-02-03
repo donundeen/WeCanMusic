@@ -411,6 +411,7 @@ class TheoryEngine {
 
     getBestNoteFromFloat(value, min, max) {
         //		this.debugmsg(chordNoteSetMidi);
+        this.db.log(this.bestNoteSetMidi);
         var note = this.bestNoteSetMidi.getNoteFromFloat(value, min, max);
         //	this.debugmsg("note " + note);
         if(!note){

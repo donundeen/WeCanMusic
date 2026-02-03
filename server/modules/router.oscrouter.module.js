@@ -210,6 +210,23 @@ module.exports = class OscRouter {
       instrument.start();
     });
 
+
+    // local and thenew udo instrumets basically the same.
+    this._routeFromOSC(oscMsg, "/announceInstrument", function (oscMsg) {
+      db?.log?.("announcing local instrument", oscMsg);
+      let value = oscMsg.simpleValue;
+      db?.log?.(value);
+      let name = value;
+      if (value?.name) {
+        name = value.name;
+      }
+      let instrument = orchestra.createLocalInstrument(name, value);
+      let props = instrument.getConfigProps();
+      props.push({ name: "instrType", value: "local" });
+      socket.sendMessage("addInstrument", props);
+      instrument.start();
+    });
+
     this._routeFromOSC(oscMsg, "/announceCircleRhythmInstrument", function (oscMsg) {
       db?.log?.("announcing circle rhythm instrument", oscMsg);
       let value = oscMsg.simpleValue;
@@ -296,6 +313,7 @@ module.exports = class OscRouter {
     this._routeFromOSC(oscMsg, "/sensor", function (oscMsg) {
       let value = oscMsg.simpleValue;
       let name = value[0];
+      db?.log?.("sensor", name, value);
       let rawval = parseFloat(value[1]);
       let smoothval = parseFloat(value[2]);
       let rmsval = parseFloat(value[3]);
@@ -308,6 +326,8 @@ module.exports = class OscRouter {
         instrument.peakValue = peakval;
         instrument.velValue = velval;
         instrument.sensorValue = rawval;
+      }else{
+        db?.log?.("sensor", name, value, "no UDP instrument found");
       }
     });
 
