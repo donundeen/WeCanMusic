@@ -47,7 +47,7 @@ class SocketServer {
   }
 
   startWebAndSocketServer(){
-    this.db.log("trying to start web and websocket servers...");
+    this.db?.log?.("trying to start web and websocket servers...");
 
     // Initialize the Express app
     const express = require('express');
@@ -71,9 +71,9 @@ class SocketServer {
         key:fs.readFileSync(path.join(__dirname,'./../cert/key.pem')),
         cert:fs.readFileSync(path.join(__dirname,'./../cert/cert.pem'))
       };
-      console.log("ssl certs found, using https");
+      this.db?.log?.("ssl certs found, using https");
     }catch(e){
-      console.log("no ssl certs found, using http");
+      this.db?.log?.("no ssl certs found, using http");
     }
 
     const server = http.createServer(options, this.expressApp);
@@ -82,7 +82,7 @@ class SocketServer {
     server.listen(this.webserverPort, () => {
       const address = server.address(); // Get the address of the HTTP server
       const port = address.port; // Extract the port      
-      console.log(`HTTP server is listening on port ${port}`);
+      this.db?.log?.(`HTTP server is listening on port ${port}`);
     });
 
     // Serve static files from the "public" directory
@@ -106,32 +106,32 @@ class SocketServer {
     let self = this;
 
     this.socketServer.on("error", function(e) {
-        console.log("socketServer error", e);
+        this.db?.log?.("socketServer error", e);
     });
 
     this.socketServer.on('listening', function() {
         const address = server.address(); // Get the address of the HTTP server
         const port = address.port; // Extract the port
-        console.log("WebSocket server is listening on port " + port);
+        this.db?.log?.("WebSocket server is listening on port " + port);
     });
 
     this.socketServer.on('connection', (function(socket) {
-      console.log("socket connection estblished");
+      this.db?.log?.("socket connection estblished");
       this.sockets.push(socket);
-      this.db.log("STARTED websockets");
-//      this.db.log(this.socketserver);
+      this.db?.log?.("STARTED websockets");
+//      this.db?.log?.(this.socketserver);
 
       // When you receive a message, send that message to every socket.
       socket.on('message', (function(msg) {
         //this.socketserver.onmessage = function(msg) {
-            this.db.log("got message");
+            this.db?.log?.("got message");
           //this.sockets.forEach(s => s.send(msg)); // send back out - we don't need to do this
-      //  	this.db.log(msg);
-      //	  this.db.log("Got message " + msg.toString());
+      //  	this.db?.log?.(msg);
+      //	  this.db?.log?.("Got message " + msg.toString());
           //this is messages FROM the web page
-          this.db.log(msg.toString());
+          this.db?.log?.(msg.toString());
           let newmsg = JSON.parse(msg.toString());          
-          this.db.log(newmsg);
+          this.db?.log?.(newmsg);
         this.messageReceived(newmsg);
       }).bind(this));
 

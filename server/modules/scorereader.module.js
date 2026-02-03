@@ -34,8 +34,8 @@ class ScoreReader  {
         // extract performanceProps data, 
         // set internally, 
         // and do any announcing you need to do
-        this.db.log("scoreReader loadPErformanceDAta");
-        this.db.log(perfData);
+        this.db?.log?.("scoreReader loadPErformanceDAta");
+        this.db?.log?.(perfData);
         for(let i = 0; i < this.performanceProps.length; i++){
             this[this.performanceProps[i].name] = perfData[this.performanceProps[i].name];
             if(this.performancePropUpdateCallback){
@@ -82,7 +82,7 @@ class ScoreReader  {
 
     writeScore(callback){
         let fullPath = this.scoreDir + "/" + this.scoreFilename;
-        this.db.log("writing score", this.scoreFilename, this.scoreText, this.scoreDir, fullPath);
+        this.db?.log?.("writing score", this.scoreFilename, this.scoreText, this.scoreDir, fullPath);
         fs.writeFile(fullPath, this.scoreText, err => {
             if (err) {
                 console.error(err);
@@ -95,7 +95,7 @@ class ScoreReader  {
 
     onBeat(beatCount, bar, beat, transport){
 //        db.log("score beat");
-        this.db.log(beatCount + ": " + bar + ":" + beat);
+        this.db?.log?.(beatCount + ": " + bar + ":" + beat);
 //        db.log(this.scoreText);
         let rstring = "(^|\r|\n|\r\n)"+bar+":"+beat+" (.*)($|\r|\n|\r\n)";
 //        db.log(rstring);
@@ -104,7 +104,7 @@ class ScoreReader  {
 //        db.log(matches);
         for(let match of matches){
             let msg = match[2];
-            this.db.log(match[2]);
+            this.db?.log?.(match[2]);
             let splits = msg.split(" ");
             for (let split of splits){
                 this.processMessage(split, transport);

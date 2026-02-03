@@ -11,12 +11,13 @@ class MidiOuts {
         this.matches = "all";
         if(options.matches){
             this.matches = options.matches;
-        }
+        }   
+        this.db?.log?.("matches", this.matches);
 
         this.waitFor = [];
         if(options.waitFor){
             this.waitFor = options.waitFor;
-            console.log("waitFor", this.waitFor);
+            this.db?.log?.("waitFor", this.waitFor);
         }
 
         this.quantizeActive = false;
@@ -52,11 +53,11 @@ class MidiOuts {
     scanAndAddMidiPorts(){
         this.getMidiPortnames();
 
-        console.log(typeof this.matches);
+        this.db?.log?.(typeof this.matches);
         if(typeof this.matches == "object"){
-            console.log("filtering portnames", this.portNames, this.matches);
+            this.db?.log?.("filtering portnames", this.portNames, this.matches);
             this.portNames = this.filterPortnames(this.matches);
-            console.log("filtered portnames", this.portNames);
+            this.db?.log?.("filtered portnames", this.portNames);
         }
         this.initMidiHardwareEngines();
     }
@@ -79,9 +80,9 @@ class MidiOuts {
         this.portNames = [];
         while(waiting){
             let midiOutputs = this.easyMidi.getOutputs();
-            console.log("midi_outputs", midiOutputs);
-            console.log("midi_inputs", this.easyMidi.getInputs());
-            console.log("waitFor", this.waitFor);
+            this.db?.log?.("midi_outputs", midiOutputs);
+            this.db?.log?.("midi_inputs", this.easyMidi.getInputs());
+            this.db?.log?.("waitFor", this.waitFor);
             for(let i = 0; i < midiOutputs.length; i++){
                 this.portNames.push(midiOutputs[i]);
             }
@@ -89,15 +90,15 @@ class MidiOuts {
                 waiting = false;
             }else{
                 let result = this.waitFor.filter(regex => this.portNames.some(portname => new RegExp(regex).test(portname)));
-                console.log("result ", result, this.waitFor.length, result.length);
+                this.db?.log?.("result ", result, this.waitFor.length, result.length);
                 if(result.length == this.waitFor.length){
                     waiting = false;
                 }else{
-                    this.db.log("waiting for portnames", this.waitFor, "result", result);
+                    this.db?.log?.("waiting for portnames", this.waitFor, "result", result);
                 }
             }
         }
-        console.log("portnames", this.portNames, this.midiHardwareEngines.length);
+        this.db?.log?.("portnames", this.portNames, this.midiHardwareEngines.length);
         return this.portNames;
     }
 
@@ -123,10 +124,10 @@ class MidiOuts {
             note = this.theoryEngine.getClosestCorrectNote(note);
         }
         if(this.quantizeActive && this.quantizeTime){
-            this.db.log("quantize makeNote", this.quantizeTime);
+            this.db?.log?.("quantize makeNote", this.quantizeTime);
             this.makeNoteAddToQueue(channel, note, velocity, duration);
         }else{
-            this.db.log("no quantize makeNote");
+            this.db?.log?.("no quantize makeNote");
             this.makeNoteNow(channel, note, velocity, duration);
         }
     }   
@@ -160,7 +161,7 @@ class MidiOuts {
         if(!this.processingQueue){
             this.processingQueue = true;
             for(let item of this.makeNoteQueue){
-                this.db.log("processing makeNoteQueue item", item);
+                this.db?.log?.("processing makeNoteQueue item", item);
                 this.makeNoteNow(item.channel, item.note, item.velocity, item.duration);
             }
             this.makeNoteQueue = [];

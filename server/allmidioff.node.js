@@ -11,4 +11,4 @@ midiOuts = new MidiOuts({db:db, active: useMidiOut, matches: "all", waitFor : ["
 midiOuts.init();
 midiOuts.send("reset");
 
-console.log("all off");
+db.log("all off");

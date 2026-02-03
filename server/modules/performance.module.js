@@ -74,7 +74,7 @@ class Performance {
         }
 
         let fullPath = this.performanceDir + "/" + this.performanceFile;
-        this.db.log("writing perf file", this.performanceDir, this.performanceFile, perfData, fullPath);
+        this.db?.log?.("writing perf file", this.performanceDir, this.performanceFile, perfData, fullPath);
         fs.writeFile(fullPath, JSON.stringify(perfData, null, "  "), err => {
             if (err) {
                 console.error(err);
@@ -106,7 +106,7 @@ class Performance {
             let orchestraData = perfData.orchestra;
             // send the data to the respective objects, 
             // they should know what to do with it.
-            this.db.log("perfomance loadPerformanceDAta");
+            this.db?.log?.("perfomance loadPerformanceDAta");
             this.score.loadPerformanceData(scoreData);
             this.transport.loadPerformanceData(transportData);
             this.orchestra.loadPerformanceData(orchestraData);

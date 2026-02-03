@@ -11,11 +11,11 @@ class Bluetooth {
     }
 
     init() {
-        this.db.log("bluetooth init 1");
+        this.db?.log?.("bluetooth init 1");
 
         if (!this.active) return;
 
-        this.db.log("bluetooth init");
+        this.db?.log?.("bluetooth init");
         this.blue = require("bluetoothctlwe");
         this.blue.Bluetooth();
     }
@@ -27,24 +27,24 @@ class Bluetooth {
         function deviceCheckAndConnect(options, callback) {
             exec("pacmd list-sinks", (error, stdout, stderr) => {
                 if (error) {
-                    this.db.log(`exec error: ${error.message}`);
+                    this.db?.log?.(`exec error: ${error.message}`);
                 }
                 if (stderr) {
-                    this.db.log(`exec stderr: ${stderr}`);
+                    this.db?.log?.(`exec stderr: ${stderr}`);
                 }
                 if (stdout) {
                     if (stdout.includes("module-bluez5-device")) {
-                        this.db.log("headphones found");
+                        this.db?.log?.("headphones found");
                     } else {
-                        this.db.log("headphones not found, connecting");
+                        this.db?.log?.("headphones not found, connecting");
                         exec("/usr/bin/bluetoothctl connect " + self.deviceID, (error, stdout, stderr) => {
                             if (error) {
-                                this.db.log(`exec error: ${error.message}`);
+                                this.db?.log?.(`exec error: ${error.message}`);
                             }
                             if (stderr) {
-                                this.db.log(`exec stderr: ${stderr}`);
+                                this.db?.log?.(`exec stderr: ${stderr}`);
                             }
-                            this.db.log(`exec stdout ${stdout}`);
+                            this.db?.log?.(`exec stdout ${stdout}`);
                         });
                     }
                 }
@@ -65,12 +65,12 @@ class Bluetooth {
         if (!this.blue) { this.init(); }
 
         var hasBluetooth = this.blue.checkBluetoothController();
-        this.db.log('system has bluetooth controller:' + hasBluetooth);
+        this.db?.log?.('system has bluetooth controller:' + hasBluetooth);
 
         this.blue.on(this.blue.bluetoothEvents.device, function (devices) {
-            this.db.log('devices:' + JSON.stringify(devices, null, 2));
+            this.db?.log?.('devices:' + JSON.stringify(devices, null, 2));
             deviceFound = devices.filter((d) => { return d.mac = this.deviceID })[0];
-            this.db.log(deviceFound);
+            this.db?.log?.(deviceFound);
         });
 
         if (hasBluetooth) {
@@ -78,36 +78,36 @@ class Bluetooth {
 
             function waitForHeadphones(options, callback) {
                 if (self.deviceID) {
-                    this.db.log("connected to headphones " + self.deviceID);
+                    this.db?.log?.("connected to headphones " + self.deviceID);
                     exec("bluetoothctl connect " + self.deviceID, (error, stdout, stderr) => {
                         if (error) {
-                            this.db.log(`exec error: ${error.message}`);
+                            this.db?.log?.(`exec error: ${error.message}`);
                         }
                         if (stderr) {
-                            this.db.log(`exec stderr: ${stderr}`);
+                            this.db?.log?.(`exec stderr: ${stderr}`);
                         }
                     });
                 }
 
                 exec("pacmd list-sinks", (error, stdout, stderr) => {
                     if (error) {
-                        this.db.log(`exec error: ${error.message}`);
+                        this.db?.log?.(`exec error: ${error.message}`);
                     }
                     if (stderr) {
-                        this.db.log(`exec stderr: ${stderr}`);
+                        this.db?.log?.(`exec stderr: ${stderr}`);
                     }
                     if (stdout.includes("module-bluez5-device")) {
-                        this.db.log("headphones found");
+                        this.db?.log?.("headphones found");
                         callback();
                     } else {
-                        this.db.log("headphones not found");
+                        this.db?.log?.("headphones not found");
                         setTimeout(function () { waitForHeadphones(options, callback) }, 1000);
                     }
                 });
             }
 
             waitForHeadphones({}, function () {
-                this.db.log("^&^&^&^&^&^&^&^&^&^&&^&^&^&^ CONNECTED");
+                this.db?.log?.("^&^&^&^&^&^&^&^&^&^&&^&^&^&^ CONNECTED");
             });
         }
     }

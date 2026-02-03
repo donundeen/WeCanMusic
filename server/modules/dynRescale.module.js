@@ -12,20 +12,20 @@ class DynRescale {
 
     
     scale(inval, outmin, outmax){
-        this.db.log("scaling " + this.name + " " + inval);
-        this.db.log(this.min +" , "+this.max);
+        this.db?.log?.("scaling " + this.name + " " + inval);
+        this.db?.log?.(this.min +" , "+this.max);
         // do thje math
         if(this.min === false || inval < this.min){
-            this.db.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< setting min " + inval);
+            this.db?.log?.("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< setting min " + inval);
             this.min = inval;
         }
         if(this.max === false || inval > this.max){
-            this.db.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setting max " + inval);
+            this.db?.log?.(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setting max " + inval);
             this.max = inval;
         }
-        this.db.log(this.min +" , "+this.max);
+        this.db?.log?.(this.min +" , "+this.max);
         let mapped = this.floatMap(inval, this.min, this.max, outmin, outmax);
-        this.db.log("mapped " + mapped);
+        this.db?.log?.("mapped " + mapped);
         return mapped;
     }
 
@@ -46,12 +46,12 @@ class DynRescale {
     }
 
     floatMap(inValue, inMin, inMax, outMin, outMax){
-        this.db.log("floatMap : " + inValue + " : " + inMin + " : " + inMax);
+        this.db?.log?.("floatMap : " + inValue + " : " + inMin + " : " + inMax);
         // assume all values are 0-1
         let inRange = inMax - inMin;
-        this.db.log(inRange);
+        this.db?.log?.(inRange);
         if(inRange == 0){
-            this.db.log("0 range, returning outMin " +outMin);
+            this.db?.log?.("0 range, returning outMin " +outMin);
             //bad division, just return the outMin
             return outMin;
         }

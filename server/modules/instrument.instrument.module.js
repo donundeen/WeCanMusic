@@ -104,7 +104,7 @@ class Instrument {
         ];
 
 
-        this.db.log("CONSTRUCTING");
+        this.db?.log?.("CONSTRUCTING");
         this.lastNoteTime = Date.now();
         this.setNoteLengths();
         this.getConfigProps();
@@ -151,7 +151,7 @@ class Instrument {
     }
 
     set midiVoice(voice){
-        this.db.log("setting midiVoice ", voice);
+        this.db?.log?.("setting midiVoice ", voice);
         let split = voice.split(":");
         let bank = 0;
         let program = 1;
@@ -195,19 +195,19 @@ class Instrument {
     // what to do when a new sensor value is received. Need to trigger a note here
     set sensorValue(value){
         // might be a number or an OSC-formatted value message
-        this.db.log("instrument.sensorValue", value);
+        this.db?.log?.("instrument.sensorValue", value);
         if(typeof value == "number"){
             value = value;
         }else if(Array.isArray(value) && value.length > 0 && Object.hasOwn(value[0], "value")){
             value = value[0].value;
         }else{
-            this.db.log("!!!!!!!!!!!!!! ");
-            this.db.log("don't know what value is " + Array.isArray(value) + " : " + value.length);
+            this.db?.log?.("!!!!!!!!!!!!!! ");
+            this.db?.log?.("don't know what value is " + Array.isArray(value) + " : " + value.length);
         }
-        this.db.log(value);
-        this.db.log("********************");
+        this.db?.log?.(value);
+        this.db?.log?.("********************");
 
-        this.db.log("instrument numberCruncher.setValue", value);
+        this.db?.log?.("instrument numberCruncher.setValue", value);
         this.numberCruncher.setSensorValues({
             sensorValue: value,
             smoothValue: this.smoothValue,
@@ -217,10 +217,10 @@ class Instrument {
         });
 
         this.numberCruncher.crunch();
-        this.db.log("numberCruncher.crunch", this.numberCruncher.scaledValue);
+        this.db?.log?.("numberCruncher.crunch", this.numberCruncher.scaledValue);
         this._sensorValue = value;
         this.deriveChangeRate(this._sensorValue);
-        this.db.log("derive_changerate", this.changeRate);
+        this.db?.log?.("derive_changerate", this.changeRate);
         this.noteTrigger();
     }
 
@@ -229,7 +229,7 @@ class Instrument {
     }
 
     set midiChannel(channel){
-        this.db.log("changing midi channel to " + channel);
+        this.db?.log?.("changing midi channel to " + channel);
         this._midiChannel = channel;
     }
     get midiChannel(){
@@ -303,22 +303,22 @@ class Instrument {
     }
 
     loadPerformanceData(perfData){
-        this.db.log("instrument loadPerformanceData");
+        this.db?.log?.("instrument loadPerformanceData");
         // extract configProps data, 
         // set internally, 
         // and do any announcing you need to do
         for(let i = 0; i < this.configProps.length; i++){
             // maybe we don't want ALL of these fields sent over udp as updates.
-//            this.db.log("Setting " , this.configProps[i].name,  perfData[this.configProps[i].name]);
+//            this.db?.log?.("Setting " , this.configProps[i].name,  perfData[this.configProps[i].name]);
             this[this.configProps[i].name] = perfData[this.configProps[i].name];
             if(this.performancePropUpdateCallback){
                 this.performancePropUpdateCallback(this, this.configProps[i].name, this.configProps[i].type, this[this.configProps[i].name] )
             }            
         }
-        this.db.log("calling insrt performanceUpdateCallback?", this.performanceUpdateCallback);
+        this.db?.log?.("calling insrt performanceUpdateCallback?", this.performanceUpdateCallback);
 
         if(this.performanceUpdateCallback){
-            this.db.log("calling insrt performanceUpdateCallback!")
+            this.db?.log?.("calling insrt performanceUpdateCallback!")
             this.performanceUpdateCallback(this, perfData);
         }
     } 
@@ -349,7 +349,7 @@ class Instrument {
     /******************************* */     
 
     resetInstrument(){
-        this.db.log("RESETTING LOCAL---------------------------------------");
+        this.db?.log?.("RESETTING LOCAL---------------------------------------");
         this.inputScale.reset();
         this.velocityScale.reset();
         this.changeRateScale.reset();
@@ -431,9 +431,9 @@ class Instrument {
         if(this.running === false){            
             return false;
         }
-        this.db.log("sensor value " + this.sensorValue);
+        this.db?.log?.("sensor value " + this.sensorValue);
         let value        = this.inputScale.scale(this.sensorValue,0,1);
-        this.db.log("scaled value is " + value);
+        this.db?.log?.("scaled value is " + value);
         let midiPitch    = this.derivePitch(value);
         let midiVelocity = this.deriveVelocity();
         let midiDuration = this.deriveDuration();
@@ -549,29 +549,29 @@ class Instrument {
 
     midiMakeNote(note, velocity, duration){
         // note: each instrument needs its own channel, or the instrument will be the same tone.
-        this.db.log("midiMakeNote : ",  note, velocity, duration, this._midiVol, this._midiChannel, this._midiBank, this._midiProgram);
+        this.db?.log?.("midiMakeNote : ",  note, velocity, duration, this._midiVol, this._midiChannel, this._midiBank, this._midiProgram);
         if(!Number.isFinite(note) || !Number.isFinite(velocity) || !Number.isFinite(duration)){
-            this.db.log("bad midi values, returning");
+            this.db?.log?.("bad midi values, returning");
             return;
         }
         if(!this.skipDuplicateNotes || note != this._previousPitch ){
         }else{
-            this.db.log("skipping duplicate note " + note);
+            this.db?.log?.("skipping duplicate note " + note);
             return;
         }
         this._previousPitch = note;
 
         if(velocity == 0){
-            this.db.log("no volume, no note");
+            this.db?.log?.("no volume, no note");
             return;
         }
 //        this.midiSetInstrument(); // do we really need to set the bank an program for every note? seems like overkill...
         // if there's a hardware midi device attached to this instrument
         if(this.midiHardwareEngine){
-            console.log("midiHardwareEngine makeNote");
+            this.db?.log?.("midiHardwareEngine makeNote");
             this.midiHardwareEngine.makeNote(this._midiChannel, note, velocity, duration);
         }else{
-            this.db.log("NNNNNNNNNNNNNNNo hardware engine");
+            this.db?.log?.("NNNNNNNNNNNNNNNo hardware engine");
         }
 
         if(this.makeNoteCallback){
@@ -596,13 +596,13 @@ class Instrument {
 
     midiSetBankProgram(){
         if(this.midiHardwareEngine){
-            this.db.log(this._midiBank);
+            this.db?.log?.(this._midiBank);
             this.midiHardwareEngine.send('cc',{
                 controller: 0,
                 value: this._midiBank, 
                 channel: this._midiChannel
             }); 
-            this.db.log(this._midiProgram);
+            this.db?.log?.(this._midiProgram);
             this.midiHardwareEngine.send('program',{
                 number: this._midiProgram, 
                 channel: this._midiChannel
@@ -617,14 +617,14 @@ class Instrument {
         }
         // control change value to set volume.
         if(this.midiHardwareEngine){
-            this.db.log("setting volume to ", this._midiVol, "channel " , this._midiChannel);
+            this.db?.log?.("setting volume to ", this._midiVol, "channel " , this._midiChannel);
             this.midiHardwareEngine.send('cc',{
                 controller: 7,
                 value: this._midiVol, // the volume, 
                 channel: this._midiChannel
             });         
         }else{
-            this.db.log("no hardware engine, setting volume to ", this._midiVol, "channel " , this._midiChannel);
+            this.db?.log?.("no hardware engine, setting volume to ", this._midiVol, "channel " , this._midiChannel);
         }
     }    
 

@@ -112,7 +112,7 @@ module.exports = class WebsocketRouter {
       // get voicelist and send as socket.sendMessage("voicelist", voicelist);
       orchestra.soundfontFile = soundfont;
       orchestra.getVoiceList(function (voiceList) {
-        console.log("sending voiceList", voiceList);
+        db?.log?.( "sending voiceList", voiceList);
         socket.sendMessage("voiceList", voiceList); //  transport.start();
       });
     });
@@ -124,13 +124,13 @@ module.exports = class WebsocketRouter {
     });
 
     this._routeFromWebsocket(msg, "savePerformance", function (msg) {
-      db.log(msg);
+      db?.log?.(msg);
       let filename = msg.performanceName;
 
       performance.performanceFile = filename;
 
       performance.savePerformance(filename, function (performance) {
-        db.log("performance written");
+        db?.log?.( "performance written");
         performance.getPerformanceList(function (list) {
           socket.sendMessage("performanceList", list);
         });
@@ -142,14 +142,14 @@ module.exports = class WebsocketRouter {
       score.scoreFilename = msg;
       score.openScore(function (scoreText) {
         let data = { scoreName: score.scoreFilename, text: scoreText };
-        db.log("sending score data", data);
+        db?.log?.( "sending score data", data);
         socket.sendMessage("score", data); //  trans.start();
       });
     });
 
     // savescore sends a name and content to be saved on the server
     this._routeFromWebsocket(msg, "saveScore", function (msg) {
-      db.log(msg);
+      db?.log?.(msg);
       let filename = msg.scoreName;
       let scoreText = msg.text;
       let dir = score.scoreDir;
@@ -159,10 +159,10 @@ module.exports = class WebsocketRouter {
       score.scoreText = scoreText;
 
       score.writeScore(function (scoreobj) {
-        db.log("score written");
+        db?.log?.( "score written");
         score.openScore(function (scoreText) {
           let data = { scoreName: score.scoreFilename, text: scoreText };
-          db.log("sending score data", data);
+          db?.log?.( "sending score data", data);
           socket.sendMessage("score", data); //  transport.start();
         });
         // send the scorelist

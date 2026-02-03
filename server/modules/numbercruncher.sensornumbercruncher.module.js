@@ -79,7 +79,7 @@ class SensorNumberCruncher {
         this.prevSensorValue = this.sensorValue;
         this.prevChangeTime = now;
 
-        this.db.log("sensorNumberCruncher.crunched", this.pitchFloat, this.velocityFloat);
+        this.db?.log?.("sensorNumberCruncher.crunched", this.pitchFloat, this.velocityFloat);
     }
 }
 

@@ -126,7 +126,7 @@ class TheoryEngine {
 
     debugmsg(msg) {
         if (this.debugmode) {
-            this.db.log(msg);
+            this.db?.log?.(msg);
         }
     }
 
@@ -138,11 +138,11 @@ class TheoryEngine {
     runSetter(command) {
         // if there's spaces, split and run each one
         command = command.trim();
-        this.db.log("runSetter " , command);
+        this.db?.log?.("runSetter " , command);
         let self = this;
         if(command.match(/ /)){
             let split = command.split(" ");
-            this.db.log("split " , this.db);
+            this.db?.log?.("split " , this.db);
             split.forEach(function(com){
                 self.db.log("com " , com);
                 self.runSetter(com.trim());
@@ -166,22 +166,22 @@ class TheoryEngine {
             this.setChordDiatonic(parseInt(position), parseInt(size));
             this.bestSetIsChord();
         }else{
-            this.db.log("trying ::: " , command);
+            this.db?.log?.("trying ::: " , command);
 
             let result = this.tryChord(command);
             if(!result){
-                this.db.log("no command match for :: ",command);
+                this.db?.log?.("no command match for :: ",command);
             }
         }
     }
 
     tryChord(command) {
-        this.db.log("trying " , command);
+        this.db?.log?.("trying " , command);
         try{
             this.setChord(command);
             this.bestSetIsChord();
         }catch(e){
-            this.db.log("chord set error " , e);
+            this.db?.log?.("chord set error " , e);
             return false;
         }
         return true;
@@ -190,7 +190,7 @@ class TheoryEngine {
 
     transpose(theinterval) {
         if(!theinterval){
-            this.db.log("no interval");
+            this.db?.log?.("no interval");
             return;
         }
     //	this.debugmsg("now note");
@@ -198,8 +198,8 @@ class TheoryEngine {
             try{
                 this.curNote = this.curNote.interval(theinterval);
             }catch(e){
-                this.db.log("error transposing "+ theinterval);
-                this.db.log(JSON.stringify(e, null, "  "));
+                this.db?.log?.("error transposing "+ theinterval);
+                this.db?.log?.(JSON.stringify(e, null, "  "));
             }
         }
     //	this.debugmsg("now scale");
@@ -208,8 +208,8 @@ class TheoryEngine {
                 this.curScale = this.curNote.scale(this.curScaleName);
                 this.createScaleSet();
             }catch(e){
-                this.db.log("error transposing scale "+ theinterval);
-                this.db.log(JSON.stringify(e, null, "  "));
+                this.db?.log?.("error transposing scale "+ theinterval);
+                this.db?.log?.(JSON.stringify(e, null, "  "));
             }
         }
     //	this.debugmsg("now chord");
@@ -219,8 +219,8 @@ class TheoryEngine {
                 this.curChordName = this.curChord.name.toLowerCase().replace(this.curChord.root.toString(true),"");
                 this.createChordSet();
             }catch(e){
-                this.db.log("error transposing chord "+ theinterval);
-                this.db.log(JSON.stringify(e, null, "  "));
+                this.db?.log?.("error transposing chord "+ theinterval);
+                this.db?.log?.(JSON.stringify(e, null, "  "));
             }
         }
 
@@ -411,7 +411,7 @@ class TheoryEngine {
 
     getBestNoteFromFloat(value, min, max) {
         //		this.debugmsg(chordNoteSetMidi);
-        this.db.log(this.bestNoteSetMidi);
+        this.db?.log?.(this.bestNoteSetMidi);
         var note = this.bestNoteSetMidi.getNoteFromFloat(value, min, max);
         //	this.debugmsg("note " + note);
         if(!note){

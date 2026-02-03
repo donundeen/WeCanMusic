@@ -56,7 +56,7 @@ module.exports = class OscRouter {
   _onMessage(oscMsg) {
     // when an OSC messages comes in
     if (this.db?.log) {
-      this.db.log("An OSC message just arrived!", oscMsg);
+      this.db?.log?.("An OSC message just arrived!", oscMsg);
     }
 
     const orchestra = this.orchestra;
@@ -91,9 +91,9 @@ module.exports = class OscRouter {
       }
       let midiVoice = midiBank + ":" + midiProgram;
       // legacy debug prints kept as-is
-      console.log(db);
+      db?.log?.(db);
       let instrument = orchestra.createUDPInstrument(name, value);
-      console.log(db);
+      db?.log?.(db);
       db?.log?.(midiVoice, midiBank, midiProgram);
       orchestra.udpInstrumentSetValue(name, "midiVoice", midiVoice);
       orchestra.udpInstrumentSetValue(name, "midiBank", midiBank);

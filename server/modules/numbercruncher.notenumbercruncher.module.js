@@ -48,10 +48,10 @@ class NoteNumberCruncher {
     }
 
     setValue(value){
-        this.db.log("notenumbercrunchersetValue", value);
+        this.db?.log?.("notenumbercrunchersetValue", value);
         this.rawValue = value;
         this.scaledValue = this.inputScale.scale(value, 0, 1);
-        this.db.log("notenumbercruncher. got scaledValue", this.scaledValue);
+        this.db?.log?.("notenumbercruncher. got scaledValue", this.scaledValue);
     }
 
     crunch(){
@@ -66,7 +66,7 @@ class NoteNumberCruncher {
     processChangeRate(){
 
         if(this.firstRead){ //
-            this.db.log("notenumbercruncher. changeRate firstRead");
+            this.db?.log?.("notenumbercruncher. changeRate firstRead");
             this.prevValue = this.rawValue;    //
             this.prevChangeTime = Date.now(); //
             this.changeRate = 0;
@@ -74,16 +74,16 @@ class NoteNumberCruncher {
         }
 
         let millis = Date.now();
-        this.db.log("notenumbercruncher. millis", millis.toString(), this.prevChangeTime.toString());
+        this.db?.log?.("notenumbercruncher. millis", millis.toString(), this.prevChangeTime.toString());
         let millisDiff = millis - this.prevChangeTime;
-        this.db.log("values ", this.rawValue, this.prevValue);
+        this.db?.log?.("values ", this.rawValue, this.prevValue);
         let ochange = Math.abs(this.rawValue - this.prevValue);
         if(ochange > 0){
-            this.db.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            this.db?.log?.("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
-        this.db.log("notenumbercruncher. ochange", ochange, millisDiff);
+        this.db?.log?.("notenumbercruncher. ochange", ochange, millisDiff);
         let change = ochange / millisDiff;
-        this.db.log("notenumbercruncher. change", change);
+        this.db?.log?.("notenumbercruncher. change", change);
         this.changeRate = this.changeRateScale.scale(change, 0, 1);
         this.prevChangeTime = millis;
         this.prevValue = this.rawValue;
@@ -95,7 +95,7 @@ class NoteNumberCruncher {
     }
 
     deriveVelocityFloat(){
-        this.db.log("deriveVelocityFloat", this.changeRate);
+        this.db?.log?.("deriveVelocityFloat", this.changeRate);
         this.velocityFloat = this.velocityCurve.mapValue(this.changeRate);
     }
 

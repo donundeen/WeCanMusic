@@ -12,11 +12,11 @@ class MaxTheoryBridge {
     runSetter(command, labelid) {
         // if there's spaces, split and run each one
         command = command.trim();
-        this.db.log("runSetter " , command);
+        this.db?.log?.("runSetter " , command);
         let self = this;
         if(command.match(/ /)){
             let split = command.split(" ");
-            this.db.log("split " , this.db);
+            this.db?.log?.("split " , this.db);
             split.forEach(function(com){
                 self.db.log("com " , com);
                 self.runSetter(com.trim());
@@ -40,11 +40,11 @@ class MaxTheoryBridge {
             this.setChordDiatonic(parseInt(position), parseInt(size));
             this.bestSetIsChord();
         }else{
-            this.db.log("trying ::: " , command);
+            this.db?.log?.("trying ::: " , command);
 
             let result = this.tryChord(command);
             if(!result){
-                this.db.log("no command match for :: ",command);
+                this.db?.log?.("no command match for :: ",command);
             }
         }
     }

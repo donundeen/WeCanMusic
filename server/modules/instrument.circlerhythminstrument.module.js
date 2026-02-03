@@ -16,7 +16,7 @@ class CircleRhythmInstrument extends LocalInstrument {
         this.velocityScale = new DynRescale({db: this.db});
         this.numPulses = 8 * 8;
         this.pulse = 0;
-        this.db.log("stting CircleRhythmInstrument");
+        this.db?.log?.("stting CircleRhythmInstrument");
         let self = this;
         setInterval(function(){
             self.playNextPulse();
@@ -47,7 +47,7 @@ class CircleRhythmInstrument extends LocalInstrument {
     copyHashPointBufferToHash(){
         this.circleRhythmHash = this.circleRhythmHashBuffer;
         // write out the hash to a file
-        this.db.log("writing out hash to file", this.circleRhythmHash);
+        this.db?.log?.("writing out hash to file", this.circleRhythmHash);
 /*
         let fs = require("fs");
         fs.writeFileSync("circleRhythmHash"+this.deviceName+".json", JSON.stringify(this.circleRhythmHash, null, 2));
@@ -60,7 +60,7 @@ class CircleRhythmInstrument extends LocalInstrument {
         // given a point, add it to the circleRhythmHash
         // if the point is already in the hash, add it to the array
         // if the point is not in the hash, create a new array with the point
-        this.db.log("loading hash point", point);
+        this.db?.log?.("loading hash point", point);
         if (!this.circleRhythmHash[point.pulse]) {
             this.circleRhythmHash[point.pulse] = [];
         }
@@ -71,8 +71,8 @@ class CircleRhythmInstrument extends LocalInstrument {
         // given a point, add it to the circleRhythmHashBuffer
         // if the point is already in the hash, add it to the array
         // if the point is not in the hash, create a new array with the point
-        this.db.log("loading hash point", point);
-        this.db.log("loading hash point", point);
+        this.db?.log?.("loading hash point", point);
+        this.db?.log?.("loading hash point", point);
         if (!this.circleRhythmHashBuffer[point.pulse]) {
             this.circleRhythmHashBuffer[point.pulse] = [];
         }
@@ -96,9 +96,9 @@ class CircleRhythmInstrument extends LocalInstrument {
     }
 
     playPulse(pulse){
-        this.db.log("playing pulse", pulse);
+        this.db?.log?.("playing pulse", pulse);
         let points = this.getHashPoints(pulse);
-        this.db.log("points", points);
+        this.db?.log?.("points", points);
         if(!points){
             return;
         }

@@ -41,7 +41,7 @@ class StatusMelodies  {
                 value: this.midiBank, 
                 channel: this.midiChannel
             }); 
-  //          this.db.log(this._midi_program);
+  //          this.db?.log?.(this._midi_program);
             this.midiHardwareEngine.send('program',{
                 number: this.midiProgram, 
                 channel: this.midiChannel

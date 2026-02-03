@@ -60,7 +60,7 @@ class Transport {
     }
 
     updateBpm(bpm) {
-        this.db.log("set bpm " + bpm);
+        this.db?.log?.("set bpm " + bpm);
         this.bpm = bpm;
         this.setNoteLengths();
     }
@@ -94,7 +94,7 @@ class Transport {
         if (this.beatCallback) {
             this.beatCallback(this.beatCount, this.bar, this.beat, this);
         } else {
-//            this.db.log("no callback");
+//            this.db?.log?.("no callback");
         }
     }
 
@@ -108,11 +108,11 @@ class Transport {
     start() {
         if (!this.interval) {
             if (this.noteLengths.QN) {
-                this.db.log("Starting " + this.noteLengths.QN);
+                this.db?.log?.("Starting " + this.noteLengths.QN);
                 this.interval = setInterval((function () { this.onBeat(); }).bind(this), this.noteLengths.QN);
             } else {
-                this.db.log("no BPM set");
-                this.db.log(this);
+                this.db?.log?.("no BPM set");
+                this.db?.log?.(this);
             }
         }
         if (this.startCallback) {
