@@ -94,14 +94,14 @@ class ScoreReader  {
     }
 
     onBeat(beatCount, bar, beat, transport){
-//        db.log("score beat");
+//        db?.log?.( "score beat");
         this.db?.log?.(beatCount + ": " + bar + ":" + beat);
-//        db.log(this.scoreText);
+//        db?.log?.(this.scoreText);
         let rstring = "(^|\r|\n|\r\n)"+bar+":"+beat+" (.*)($|\r|\n|\r\n)";
-//        db.log(rstring);
+//        db?.log?.(rstring);
         let regex = new RegExp(rstring, "g");
         let matches =  [...this.scoreText.matchAll(regex)];
-//        db.log(matches);
+//        db?.log?.(matches);
         for(let match of matches){
             let msg = match[2];
             this.db?.log?.(match[2]);

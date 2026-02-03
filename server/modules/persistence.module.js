@@ -28,7 +28,7 @@ class Persistence  {
             let data = JSON.parse(datastring);        
             return data;
         }catch(e){
-            console.log("file load error ", e);
+            this.db?.log?.( "file load error ", e);
             return false;
         }
     }
@@ -37,10 +37,10 @@ class Persistence  {
         let path = this.generateFilename(name);
         try {
             writeFileSync(path, JSON.stringify(json, null, 2), 'utf8');
-            console.log('Data successfully saved to disk');
+            this.db?.log?.( 'Data successfully saved to disk');
             return true;
         } catch (error) {
-            console.log('An error has occurred ', error);
+            this.db?.log?.( 'An error has occurred ', error);
             return false;
         }
     }

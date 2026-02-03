@@ -233,7 +233,7 @@ module.exports = class WebsocketRouter {
 
     // reset resets the synth and midi engine (not sure this has been tested)
     this._routeFromWebsocket(msg, "reset", (text) => {
-      db.log("~~~~~~~~~~~~~~~~`RESETTING EVERYTHING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~`");
+      db?.log?.( "~~~~~~~~~~~~~~~~`RESETTING EVERYTHING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~`");
       // reset a bunch of stuff.
       // midiHardwareEngine
       orchestra.midiHardwareEngine.send("reset");
@@ -243,7 +243,7 @@ module.exports = class WebsocketRouter {
     // instrval gets a varname and a value, and updates the instrument's variables accordingly
     this._routeFromWebsocket(msg, "instrVal", function (data) {
       // send config messages to instruments
-      db.log("instrVal update");
+      db?.log?.( "instrVal update");
       let deviceName = data.id;
       let prop = data.var;
       let mappedProp = orchestra.configPropMap[prop];
@@ -253,13 +253,13 @@ module.exports = class WebsocketRouter {
       let value = data.val;
       let instrType = data.instrType;
       if (instrType == "local") {
-        db.log("setting local instr value", deviceName, prop, value);
+        db?.log?.( "setting local instr value", deviceName, prop, value);
         orchestra.localInstrumentSetValue(deviceName, prop, value);
       } else if (instrType == "udp") {
         // set locally in orchestra AND remotely on device.
         orchestra.udpInstrumentSetValue(deviceName, prop, value);
-        db.log("set udp instr value");
-        db.log(msg);
+        db?.log?.( "set udp instr value");
+        db?.log?.(msg);
         // sending UDP message to remote instruments
         let type = "s";
         if (typeof value == "number") {
@@ -277,7 +277,7 @@ module.exports = class WebsocketRouter {
             },
           ],
         };
-        db.log("sending udp message " + address, args, UDPSendIP, UDPSendPort);
+        db?.log?.("sending udp message " + address, args, UDPSendIP, UDPSendPort);
         // send device prop to all UDP connected devices
         udpPort.send(bundle, UDPSendIP, UDPSendPort);
       }
