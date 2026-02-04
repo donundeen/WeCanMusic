@@ -30,13 +30,10 @@ void sensor_setup_device_resistive(){
 // - set ADCRaw[vindex] with the read sensor value
 // - set firstSense[vindex] to true
 void sensor_loop_resistive(int vindex){
-  // use capacative inputPin
-  ADCRaw[vindex] = analogRead(inputPin_resistive[vindex]);
-  //ADCRaw = analogRead(sensorPin);
-
-  Serial.print("read value");
-  Serial.println(ADCRaw[vindex]);
-
+  float r = (float)analogRead(inputPin_resistive[vindex]);
+  if(!IS_SENTINEL_RAW(r)){
+    ADCRaw[vindex] = r;
+  }
   firstSense[vindex] = true;   
   /*
   if(!no_network){

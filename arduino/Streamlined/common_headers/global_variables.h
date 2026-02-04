@@ -42,6 +42,9 @@ float elasticMinMaxScale = .005; // if true, then the min and max values used fo
 
 ////////////////////////////////////
 // SENSOR PROCESSING GLOBALS
+// 32-bit int sentinel range: don't process or send these (e.g. INT32_MAX from failed reads).
+#define IS_SENTINEL_RAW(r) ((r) >= 2.0e9f || (r) <= -2.0e9f)
+
 bool firstSense[6] = {false, false, false, false, false, false}; //
 float ADCRaw[6] = {-1, -1, -1, -1, -1, -1};          //. ALSO rename to sensorInputVal or something
 float changerate[6] = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0}; //

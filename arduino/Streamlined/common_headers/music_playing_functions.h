@@ -43,10 +43,13 @@ void post_sensor_sample(int vindex){
   if(!firstSense[vindex]){
     return;
   }
-  // Use raw sample to update debounce, smoothing, and feature state.
   unsigned long now = millis();
   float raw = ADCRaw[vindex];
+  if(IS_SENTINEL_RAW(raw)){
+    return;  // don't process sentinel values
+  }
 
+  // Use raw sample to update debounce, smoothing, and feature state.
   float debounced = update_debounced(vindex, raw, now);
   float smoothed = update_smoothed(vindex, debounced);
   update_features(vindex, smoothed, now);
@@ -109,8 +112,10 @@ void sensor_process_loop(){
     if(!firstSense[vindex]){
       continue;
     }
-
     float raw = debouncedVal[vindex];
+    if(IS_SENTINEL_RAW(raw)){
+      continue;  // don't send sentinel values
+    }
     float smoothed = smoothedVal[vindex];
     // Keep min/max dynamic for raw channel.
     float raw_norm = normalize_with_minmax(raw, &minVal[vindex], &maxVal[vindex]);

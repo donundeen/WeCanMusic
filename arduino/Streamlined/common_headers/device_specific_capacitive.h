@@ -30,13 +30,10 @@ void sensor_setup_device_capacitive(){
 // - set ADCRaw[vindex] with the read sensor value
 // - set firstSense[vindex] to true
 void sensor_loop_capacitive(int vindex){
-  // use capacative inputPin
-  ADCRaw[vindex] = touchRead(inputPin_capacitive[vindex]);
-  //ADCRaw = analogRead(sensorPin);
-
-  //Serial.println("read value");
-  //Serial.println(ADCRaw[vindex]);
-
+  float r = touchRead(inputPin_capacitive[vindex]);
+  if(!IS_SENTINEL_RAW(r)){
+    ADCRaw[vindex] = r;
+  }
   firstSense[vindex] = true;   
   /*
   if(!no_network){

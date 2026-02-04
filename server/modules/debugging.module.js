@@ -3,7 +3,8 @@ class Debugging {
         this.active = false;
         this.show_levels = [1]; // debug levels to show. hide the others.
         this.trace = false; // if you should do a console.trace with the log statement
-        this.filter = false;
+        this.filter = false; // if you should filter the message if it matches the filter
+        this.filterout = false; // if you should filter out the message if it matches the filter
     }
 
     show(levels) {
@@ -23,6 +24,7 @@ class Debugging {
     }
 
     log(text) {
+        if (!this.active) { return; }
         // if there is no filter, or the filter is in the text, log the message   
         // text is a string, or maybe an array of strings or ints and objects
         // or it might be a function , in which case it should fail the filter, 
@@ -40,6 +42,9 @@ class Debugging {
             return;
         }
         if(!this.filter || (text && text.includes(this.filter))){
+            if(this.filterout && (text && text.includes(this.filterout))){
+                return;
+            }
             this.logl(1, ...arguments);
         }
     }

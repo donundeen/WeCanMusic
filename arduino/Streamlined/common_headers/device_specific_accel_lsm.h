@@ -317,34 +317,38 @@ void sensor_loop_lsm(int vindex){
 
 //  sendOSCUDP(gyro.gyro.x, gyro.gyro.y, gyro.gyro.z, accel.acceleration.x, accel.acceleration.y, accel.acceleration.z, mag.magnetic.x,mag.magnetic.y,mag.magnetic.z, sensorVal);
 
+  float val = 0.0f;
   switch(AccelPitchVal_lsm[vindex]){  //MULTIVALUE UPDATE REQUIRED
     case LSM_GYROX:
-      ADCRaw[vindex] = gyro.gyro.x;
+      val = gyro.gyro.x;
       break;
     case LSM_GYROY:
-      ADCRaw[vindex] = gyro.gyro.y;
+      val = gyro.gyro.y;
       break;
     case LSM_GYROZ:
-      ADCRaw[vindex] = gyro.gyro.z;
+      val = gyro.gyro.z;
       break;
     case LSM_ACCELX:
-      ADCRaw[vindex] = accel.acceleration.x;
+      val = accel.acceleration.x;
       break;
     case LSM_ACCELY:
-      ADCRaw[vindex] = accel.acceleration.y;
-      break;      
+      val = accel.acceleration.y;
+      break;
     case LSM_ACCELZ:
-      ADCRaw[vindex] = accel.acceleration.z;
+      val = accel.acceleration.z;
       break;
     case LSM_MAGX:
-      ADCRaw[vindex] = mag.magnetic.x;
+      val = mag.magnetic.x;
       break;
     case LSM_MAGY:
-      ADCRaw[vindex] = mag.magnetic.y;
-      break;            
+      val = mag.magnetic.y;
+      break;
     case LSM_MAGZ:
-      ADCRaw[vindex] = mag.magnetic.z;
-      break;               
+      val = mag.magnetic.z;
+      break;
+  }
+  if(!IS_SENTINEL_RAW(val)){
+    ADCRaw[vindex] = val;
   }
  // this is useful to see, but creates a lot of output that makes it hard to see other messages.
 //  Serial.println("read value");

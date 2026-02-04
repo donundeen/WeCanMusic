@@ -18,7 +18,7 @@ class MaxTheoryBridge {
             let split = command.split(" ");
             this.db?.log?.("split " , this.db);
             split.forEach(function(com){
-                self.db.log("com " , com);
+                self.db?.log?.( "com " , com);
                 self.runSetter(com.trim());
             });
             return;

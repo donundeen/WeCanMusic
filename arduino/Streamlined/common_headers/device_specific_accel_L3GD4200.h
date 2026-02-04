@@ -104,16 +104,20 @@ void sensor_loop_l3gd4200(int vindex){
   gyro_l3gd4200.read();
 //  sendOSCUDP(gyro.gyro.x, gyro.gyro.y, gyro.gyro.z, accel.acceleration.x, accel.acceleration.y, accel.acceleration.z, mag.magnetic.x,mag.magnetic.y,mag.magnetic.z, sensorVal);
 
+  float val = 0.0f;
   switch(AccelPitchVal_l3gd4200[vindex]){  //MULTIVALUE UPDATE REQUIRED
     case L3GD4200_GYROX:
-      ADCRaw[vindex] = gyro_l3gd4200.g.x;
+      val = gyro_l3gd4200.g.x;
       break;
     case L3GD4200_GYROY:
-      ADCRaw[vindex] = gyro_l3gd4200.g.y;
+      val = gyro_l3gd4200.g.y;
       break;
     case L3GD4200_GYROZ:
-      ADCRaw[vindex] = gyro_l3gd4200.g.z;
-      break;           
+      val = gyro_l3gd4200.g.z;
+      break;
+  }
+  if(!IS_SENTINEL_RAW(val)){
+    ADCRaw[vindex] = val;
   }
  // this is useful to see, but creates a lot of output that makes it hard to see other messages.
 //  Serial.println("read value");
