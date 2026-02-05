@@ -1,6 +1,7 @@
 const DynRescale = require("./dynRescale.module");
 const FunctionCurve = require("./functionCurve.module");
 const SensorNumberCruncher = require("./numbercruncher.sensornumbercruncher.module");
+const SensorStream = require("./stream.sensorstream.module");
 //const NoteNumberCruncher = require("./numbercruncher.notenumbercruncher.module");
 
 class Instrument {
@@ -110,6 +111,7 @@ class Instrument {
         this.getConfigProps();
 //        this.numberCruncher = new NoteNumberCruncher({db: this.db});
         this.numberCruncher = new SensorNumberCruncher({db: this.db});
+        this.sensorStream = new SensorStream({db: this.db});
 
     }
 
@@ -217,6 +219,11 @@ class Instrument {
         });
 
         this.numberCruncher.crunch();
+
+
+        this.sensorStream.push(value);
+
+        this.db?.log?.("sensorStream.push", this.sensorStream.raw, this.sensorStream.smoothed, this.sensorStream.rateOfChange, this.sensorStream.peak, this.sensorStream.spaceBetweenPeaks, this.sensorStream.rms, this.sensorStream.peakAmplitude);
         this.db?.log?.("numberCruncher.crunch", this.numberCruncher.scaledValue);
         this._sensorValue = value;
         this.deriveChangeRate(this._sensorValue);
@@ -431,12 +438,13 @@ class Instrument {
         if(this.running === false){            
             return false;
         }
-        this.db?.log?.("sensor value " + this.sensorValue);
-        let value        = this.inputScale.scale(this.sensorValue,0,1);
-        this.db?.log?.("scaled value is " + value);
-        let midiPitch    = this.derivePitch(value);
+        let midiPitch    = this.derivePitch();
         let midiVelocity = this.deriveVelocity();
         let midiDuration = this.deriveDuration();
+        if(midiPitch === false || midiVelocity === false || midiDuration === false){
+            this.db?.log?.("noteTrigger false values", midiPitch, midiVelocity, midiDuration);
+            return false;
+        }
         this.midiMakeNote(midiPitch, midiVelocity, midiDuration);
        
     }
@@ -454,12 +462,14 @@ class Instrument {
     }
 
     derivePitch(){
-        let pitch = this.noteFromFloat(this.numberCruncher.pitchFloat, this.midiMin, this.midiMax);
+//        let pitch = this.noteFromFloat(this.numberCruncher.pitchFloat, this.midiMin, this.midiMax);
+        let pitch = this.noteFromFloat(this.sensorStream.scaledValue, this.midiMin, this.midiMax);
         return pitch;
     }
 
     deriveVelocity(){
-        let velocity = Math.floor(127.0 * this.numberCruncher.velocityFloat);
+//        let velocity = Math.floor(127.0 * this.numberCruncher.velocityFloat);
+        let velocity = Math.floor(127.0 * this.sensorStream.rateOfChange);
         return velocity;
     }
 

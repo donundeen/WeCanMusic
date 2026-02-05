@@ -32,10 +32,10 @@ if(config["db.filter"]){
 }
 // check for filter in the command line
 // the format is --filter filter_string
-console.log("process.argv", process.argv);
+db.log("process.argv", process.argv);
 if(process.argv.includes("--filter")){
     db.filter = process.argv[process.argv.indexOf("--filter") + 1];
-    console.log("filter set to", db.filter);
+    db.log("filter set to", db.filter);
 }
 
 
@@ -356,14 +356,14 @@ function resetFluidSynth(){
     
     exec("systemctl --user restart fluidsynth.service", (error, stdout, stderr) => {
         if (error) {
-            console.log(`error: ${error.message}`);
+            db.log(`error: ${error.message}`);
             return;
         }
         if (stderr) {
-            console.log(`stderr: ${stderr}`);
+            db.log(`stderr: ${stderr}`);
             return;
         }
-        console.log(`stdout: ${stdout}`);
+        db.log(`stdout: ${stdout}`);
     });
     setTimeout(function(){
         let midiFound = false;
