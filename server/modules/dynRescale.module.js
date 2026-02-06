@@ -11,16 +11,23 @@ class DynRescale {
     }
 
     
-    scale(inval, outmin, outmax){
+    scale(inval, outmin, outmax, shrinkRatio){
         this.db?.log?.("scaling " + this.name + " " + inval);
         this.db?.log?.(this.min +" , "+this.max);
         // do the math
+        if (this.min !== false && this.max !== false && this.min !== this.max && shrinkRatio != null && shrinkRatio > 0) {
+            // nope, ratio is based on the the range, not the min and max
+            const range = this.max - this.min;
+            const shrinkAmount = range * shrinkRatio;
+            if(shrinkAmount > 0 && this.min + shrinkAmount < this.max - shrinkAmount){
+                this.min = this.min + shrinkAmount;
+                this.max = this.max - shrinkAmount;
+            }
+        }
         if(this.min === false || inval < this.min){
-            this.db?.log?.("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< setting min " + inval);
             this.min = inval;
         }
         if(this.max === false || inval > this.max){
-            this.db?.log?.(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setting max " + inval);
             this.max = inval;
         }
         this.db?.log?.(this.min +" , "+this.max);
@@ -29,7 +36,7 @@ class DynRescale {
         return mapped;
     }
 
-    cappedScale(inval, outmin, outmax, capratio){
+    cappedScale(inval, outmin, outmax, capratio, shrinkRatio){
         if (capratio == null || capratio <= 1) capratio = 1.5;
         this.db?.log?.("crunch cappedScale " + this.name + " " + inval + " capratio " + capratio);
         this.db?.log?.(this.min + " , " + this.max);
@@ -40,7 +47,16 @@ class DynRescale {
             this.db?.log?.("crunch cappedScale first read, min=max=" + inval);
             return outmin;
         }
-        const range = this.max - this.min;
+        // if shrinkratio is set, shrink the range by the shrinkratio
+        let range = this.max - this.min;
+
+        if (shrinkRatio != null && shrinkRatio > 0) {
+            // nope, ratio is based on the the range, not the min and max
+            const shrinkAmount = range * shrinkRatio;
+            this.min = this.min + shrinkAmount;
+            this.max = this.max - shrinkAmount;
+            range = this.max - this.min;
+        }
         const nudge = range * capratio;
         const highBound = this.max + nudge;
         const lowBound = this.min - nudge;

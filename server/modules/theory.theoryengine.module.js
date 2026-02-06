@@ -126,7 +126,7 @@ class TheoryEngine {
 
     debugmsg(msg) {
         if (this.debugmode) {
-            this.db?.log?.(msg);
+       //     this.db?.log?.(msg);
         }
     }
 
@@ -142,9 +142,7 @@ class TheoryEngine {
         let self = this;
         if(command.match(/ /)){
             let split = command.split(" ");
-            this.db?.log?.("split " , this.db);
             split.forEach(function(com){
-                self.db?.log?.( "com " , com);
                 self.runSetter(com.trim());
             });
             return;
@@ -410,8 +408,6 @@ class TheoryEngine {
 
 
     getBestNoteFromFloat(value, min, max) {
-        //		this.debugmsg(chordNoteSetMidi);
-        this.db?.log?.(this.bestNoteSetMidi);
         var note = this.bestNoteSetMidi.getNoteFromFloat(value, min, max);
         //	this.debugmsg("note " + note);
         if(!note){

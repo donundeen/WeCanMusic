@@ -223,8 +223,6 @@ class Instrument {
 
         this.sensorStream.push(value);
 
-        this.db?.log?.("sensorStream.push", this.sensorStream.raw, this.sensorStream.smoothed, this.sensorStream.rateOfChange, this.sensorStream.peak, this.sensorStream.spaceBetweenPeaks, this.sensorStream.rms, this.sensorStream.peakAmplitude);
-        this.db?.log?.("numberCruncher.crunch", this.numberCruncher.scaledValue);
         this._sensorValue = value;
         this.deriveChangeRate(this._sensorValue);
         this.db?.log?.("derive_changerate", this.changeRate);
@@ -432,17 +430,22 @@ class Instrument {
     }
 
     noteTrigger(){
-        if(this.sensorValue === false){         
+        
+        if(this.sensorValue === false){    
+            this.db?.log?.("stream:noteTrigger sensorValue false");
             return false;
         }
-        if(this.running === false){            
+        if(this.running === false){    
+            this.db?.log?.("stream:noteTrigger running false");
             return false;
         }
+            
         let midiPitch    = this.derivePitch();
         let midiVelocity = this.deriveVelocity();
         let midiDuration = this.deriveDuration();
+        this.db?.log?.("stream: noteTrigger midiPitch, midiVelocity, midiDuration", midiPitch, midiVelocity, midiDuration);
         if(midiPitch === false || midiVelocity === false || midiDuration === false){
-            this.db?.log?.("noteTrigger false values", midiPitch, midiVelocity, midiDuration);
+            this.db?.log?.("stream: noteTrigger false values", midiPitch, midiVelocity, midiDuration);
             return false;
         }
         this.midiMakeNote(midiPitch, midiVelocity, midiDuration);
