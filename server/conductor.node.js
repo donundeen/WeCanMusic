@@ -16,6 +16,23 @@ let machineConfig = require("./configs/"+env+".conductor.config.js");
 config.env = env;
 config = {...config, ...machineConfig, ...envConfig};
 
+
+// load config variables from the command line -- any arguments that match existing config variables will override the config file
+// format is --variable value
+process.argv.forEach(arg => {
+    if(arg.startsWith("--") && config[arg.slice(2)]){
+        console.log("overriding config variable", arg.slice(2), "with", process.argv[process.argv.indexOf(arg) + 1]);
+        // treat "false" or true as boolean values
+        if(process.argv[process.argv.indexOf(arg) + 1] == "false"){
+            config[arg.slice(2)] = false;
+        }else if(process.argv[process.argv.indexOf(arg) + 1] == "true"){
+            config[arg.slice(2)] = true;
+        }else{
+            config[arg.slice(2)] = process.argv[process.argv.indexOf(arg) + 1];
+        }
+    }
+});
+
 ////////////////////////////////
 // LOAD DEBUGGING FRAMEWORK
 const Debugging = require('./modules/debugging.module.js');
