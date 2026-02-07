@@ -65,7 +65,7 @@ class SensorNumberCruncher {
         this.rmsValue = values.rmsValue;
         this.peakValue = values.peakValue;
         this.velValue = values.velValue;
-        this.db?.log?.( "crunch setSensorValues", this.sensorValue, this.smoothValue, this.rmsValue, this.peakValue, this.velValue);
+     //   this.db?.log?.( "crunch setSensorValues", this.sensorValue, this.smoothValue, this.rmsValue, this.peakValue, this.velValue);
         // 32-bit INT_MAX/MIN are often sent as error/sentinel by firmware; skip this frame and keep previous value
         this.crunch();
     }
@@ -73,9 +73,9 @@ class SensorNumberCruncher {
     crunch(){
         // DynRescale sensor value to 0–1, then curve → pitchFloat
         this.scaledValue = this.sensorScale.scale(this.sensorValue, 0, 1);
-        this.db?.log?.( "crunch scaledValue", this.scaledValue, this.sensorScale.min, this.sensorScale.max);
+//        this.db?.log?.( "crunch scaledValue", this.scaledValue, this.sensorScale.min, this.sensorScale.max);
         this.pitchFloat = this.sensorCurve.mapValue(this.scaledValue);
-        this.db?.log?.( "crunch pitchFloat", this.pitchFloat);
+  //      this.db?.log?.( "crunch pitchFloat", this.pitchFloat);
         // Rate of change of sensorValue → velocityFloat
         const now = Date.now();
         if (this.firstRead) {
@@ -86,19 +86,19 @@ class SensorNumberCruncher {
             return;
         }
         const dt = now - this.prevChangeTime;
-        this.db?.log?.( "crunch dt", dt);
+   //     this.db?.log?.( "crunch dt", dt);
         const change = Math.abs(this.sensorValue - this.prevSensorValue);
-        this.db?.log?.( "crunch change", change);
+     //   this.db?.log?.( "crunch change", change);
         const changeRate = dt > 0 ? change / dt : 0;
-        this.db?.log?.( "crunch changeRate", changeRate);
+     //   this.db?.log?.( "crunch changeRate", changeRate);
         const scaledChangeRate = this.changeRateScale.cappedScale(changeRate, 0, 1, .25);
-        this.db?.log?.( "crunch scaledChangeRate", scaledChangeRate, this.changeRateScale.min, this.changeRateScale.max);
+       // this.db?.log?.( "crunch scaledChangeRate", scaledChangeRate, this.changeRateScale.min, this.changeRateScale.max);
         this.velocityFloat = this.changeRateCurve.mapValue(scaledChangeRate);
-        this.db?.log?.( "crunch velocityFloat", this.velocityFloat);
+       // this.db?.log?.( "crunch velocityFloat", this.velocityFloat);
         this.prevSensorValue = this.sensorValue;
         this.prevChangeTime = now;
 
-        this.db?.log?.("crunch sensorNumberCruncher.crunched", this.pitchFloat, this.velocityFloat);
+    //    this.db?.log?.("crunch sensorNumberCruncher.crunched", this.pitchFloat, this.velocityFloat);
     }
 }
 
