@@ -6,9 +6,10 @@ After=network.target
 [Service]
 Type=simple
 PIDFile=/var/run/wecanmusic.pid
+WorkingDirectory=/home/pi/wecanmusic/server
 Restart=on-failure
 RestartSec=4
-ExecStart=/home/pi/wecanmusic/server/runwecanmusic.sh
+ExecStart=/usr/bin/taskset -c 2 /usr/bin/node conductor.node.js
 
 [Install]
 WantedBy=default.target
