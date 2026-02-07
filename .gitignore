@@ -136,6 +136,8 @@ node_modules
 .DS_Store
 *.sf2
 **/*.sf2
+*.sf2.voicelist.json
+**/*.sf2.voicelist.json 
 
 
 **/env.config.js
