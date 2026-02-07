@@ -12,8 +12,6 @@ class DynRescale {
 
     
     scale(inval, outmin, outmax, shrinkRatio){
-        this.db?.log?.("scaling " + this.name + " " + inval);
-        this.db?.log?.(this.min +" , "+this.max);
         // do the math
         if (this.min !== false && this.max !== false && this.min !== this.max && shrinkRatio != null && shrinkRatio > 0) {
             // nope, ratio is based on the the range, not the min and max
@@ -30,9 +28,7 @@ class DynRescale {
         if(this.max === false || inval > this.max){
             this.max = inval;
         }
-        this.db?.log?.(this.min +" , "+this.max);
         let mapped = this.floatMap(inval, this.min, this.max, outmin, outmax);
-        this.db?.log?.("mapped " + mapped);
         return mapped;
     }
 
