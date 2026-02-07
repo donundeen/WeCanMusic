@@ -111,6 +111,7 @@ class Instrument {
         this.getConfigProps();
 //        this.numberCruncher = new NoteNumberCruncher({db: this.db});
         this.numberCruncher = new SensorNumberCruncher({db: this.db});
+
         this.sensorStream = new SensorStream({db: this.db});
 
     }
@@ -206,10 +207,10 @@ class Instrument {
             this.db?.log?.("!!!!!!!!!!!!!! ");
             this.db?.log?.("don't know what value is " + Array.isArray(value) + " : " + value.length);
         }
-        this.db?.log?.(value);
+//        this.db?.log?.(value);
         this.db?.log?.("********************");
 
-        this.db?.log?.("instrument numberCruncher.setValue", value);
+        this.db?.log?.("instrument sensorStream.push", value);
         this.numberCruncher.setSensorValues({
             sensorValue: value,
             smoothValue: this.smoothValue,
@@ -218,14 +219,11 @@ class Instrument {
             velValue: this.velValue
         });
 
-        this.numberCruncher.crunch();
-
+    //    this.numberCruncher.crunch();
 
         this.sensorStream.push(value);
 
         this._sensorValue = value;
-        this.deriveChangeRate(this._sensorValue);
-        this.db?.log?.("derive_changerate", this.changeRate);
         this.noteTrigger();
     }
 
@@ -454,14 +452,6 @@ class Instrument {
 
     sensorLoop(){
         // process the recieved sensor_value
-    }
-
-    deriveChangeRate(val){
-        // derive the changerate
-
-        this.changeRate = this.numberCruncher.changeRate;
-        return this.changeRate;
-
     }
 
     derivePitch(){

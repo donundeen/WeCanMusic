@@ -53,7 +53,6 @@ class SensorNumberCruncher {
     }
 
     setSensorValues(values){
-        this.db?.log?.( "crunch ****************************");
         const INT32_MAX = 2147483647;
         const INT32_MIN = -2147483648;
         if (values.sensorValue >= INT32_MAX || values.sensorValue <= INT32_MIN) {
