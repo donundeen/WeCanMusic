@@ -11,6 +11,7 @@ const path = require("path");
 
 // is USBDRIVE the name for the usb drive?
 // let's assume name of drive is WECANMUSIC
+
 const usbSoundfontsDir = path.join("/media/pi/WECANMUSIC/wecanmusic/server/soundfonts");
 const soundfontsDir = config.soundfontDir;
 
