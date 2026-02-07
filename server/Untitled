@@ -1,0 +1,9 @@
+#!/bin/bash
+# cd into the wecanmusic server directory and run the copy_soundfonts_from_usb.node.js script
+cd /home/pi/wecanmusic/server
+node copy_soundfonts_from_usb.node.js
+
+
+
+
+
