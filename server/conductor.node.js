@@ -21,7 +21,7 @@ config = {...config, ...machineConfig, ...envConfig};
 // format is --variable value
 process.argv.forEach(arg => {
     console.log("arg", arg);
-    if(arg.startsWith("--") && config[arg.slice(2)]){
+    if(arg.startsWith("--") && config[arg.slice(1)]){
         console.log("overriding config variable", arg.slice(2), "with", process.argv[process.argv.indexOf(arg) + 1]);
         // treat "false" or true as boolean values
         if(process.argv[process.argv.indexOf(arg) + 1] == "false"){
