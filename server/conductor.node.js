@@ -20,6 +20,7 @@ config = {...config, ...machineConfig, ...envConfig};
 // load config variables from the command line -- any arguments that match existing config variables will override the config file
 // format is --variable value
 process.argv.forEach(arg => {
+    console.log("arg", arg);
     if(arg.startsWith("--") && config[arg.slice(2)]){
         console.log("overriding config variable", arg.slice(2), "with", process.argv[process.argv.indexOf(arg) + 1]);
         // treat "false" or true as boolean values
