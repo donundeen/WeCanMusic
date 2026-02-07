@@ -432,20 +432,20 @@ class Instrument {
     noteTrigger(){
         
         if(this.sensorValue === false){    
-            this.db?.log?.("stream:noteTrigger sensorValue false");
+    //        this.db?.log?.("stream:noteTrigger sensorValue false");
             return false;
         }
         if(this.running === false){    
-            this.db?.log?.("stream:noteTrigger running false");
+    //        this.db?.log?.("stream:noteTrigger running false");
             return false;
         }
             
         let midiPitch    = this.derivePitch();
         let midiVelocity = this.deriveVelocity();
         let midiDuration = this.deriveDuration();
-        this.db?.log?.("stream: noteTrigger midiPitch, midiVelocity, midiDuration", midiPitch, midiVelocity, midiDuration);
+   //     this.db?.log?.("stream: noteTrigger midiPitch, midiVelocity, midiDuration", midiPitch, midiVelocity, midiDuration);
         if(midiPitch === false || midiVelocity === false || midiDuration === false){
-            this.db?.log?.("stream: noteTrigger false values", midiPitch, midiVelocity, midiDuration);
+    //        this.db?.log?.("stream: noteTrigger false values", midiPitch, midiVelocity, midiDuration);
             return false;
         }
         this.midiMakeNote(midiPitch, midiVelocity, midiDuration);
@@ -569,22 +569,22 @@ class Instrument {
         }
         if(!this.skipDuplicateNotes || note != this._previousPitch ){
         }else{
-            this.db?.log?.("skipping duplicate note " + note);
+    //        this.db?.log?.("skipping duplicate note " + note);
             return;
         }
         this._previousPitch = note;
 
         if(velocity == 0){
-            this.db?.log?.("no volume, no note");
+    //        this.db?.log?.("no volume, no note");
             return;
         }
 //        this.midiSetInstrument(); // do we really need to set the bank an program for every note? seems like overkill...
         // if there's a hardware midi device attached to this instrument
         if(this.midiHardwareEngine){
-            this.db?.log?.("midiHardwareEngine makeNote");
+    //        this.db?.log?.("midiHardwareEngine makeNote");
             this.midiHardwareEngine.makeNote(this._midiChannel, note, velocity, duration);
         }else{
-            this.db?.log?.("NNNNNNNNNNNNNNNo hardware engine");
+    //        this.db?.log?.("NNNNNNNNNNNNNNNo hardware engine");
         }
 
         if(this.makeNoteCallback){
@@ -609,13 +609,13 @@ class Instrument {
 
     midiSetBankProgram(){
         if(this.midiHardwareEngine){
-            this.db?.log?.(this._midiBank);
+    //        this.db?.log?.(this._midiBank);
             this.midiHardwareEngine.send('cc',{
                 controller: 0,
                 value: this._midiBank, 
                 channel: this._midiChannel
             }); 
-            this.db?.log?.(this._midiProgram);
+    //        this.db?.log?.(this._midiProgram);
             this.midiHardwareEngine.send('program',{
                 number: this._midiProgram, 
                 channel: this._midiChannel
@@ -630,14 +630,14 @@ class Instrument {
         }
         // control change value to set volume.
         if(this.midiHardwareEngine){
-            this.db?.log?.("setting volume to ", this._midiVol, "channel " , this._midiChannel);
+    //        this.db?.log?.("setting volume to ", this._midiVol, "channel " , this._midiChannel);
             this.midiHardwareEngine.send('cc',{
                 controller: 7,
                 value: this._midiVol, // the volume, 
                 channel: this._midiChannel
             });         
         }else{
-            this.db?.log?.("no hardware engine, setting volume to ", this._midiVol, "channel " , this._midiChannel);
+    //        this.db?.log?.("no hardware engine, setting volume to ", this._midiVol, "channel " , this._midiChannel);
         }
     }    
 
