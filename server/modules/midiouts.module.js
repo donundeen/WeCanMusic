@@ -75,13 +75,23 @@ class MidiOuts {
     }
 
     getMidiPortnames(){
-
         let waiting = true;
         this.portNames = [];
         while(waiting){
-            let midiOutputs = this.easyMidi.getOutputs();
-            this.db?.log?.("midi_outputs", midiOutputs);
-            this.db?.log?.("midi_inputs", this.easyMidi.getInputs());
+            let midiOutputs;
+            try {
+                midiOutputs = this.easyMidi.getOutputs();
+                this.db?.log?.("midi_outputs", midiOutputs);
+                try {
+                    this.db?.log?.("midi_inputs", this.easyMidi.getInputs());
+                } catch (inputErr) {
+                    this.db?.log?.("midi_inputs (unavailable)", inputErr.message);
+                }
+            } catch (err) {
+                this.db?.log?.("MIDI port enumeration failed (ALSA/RtMidi)", err.message);
+                this.portNames = [];
+                return this.portNames;
+            }
             this.db?.log?.("waitFor", this.waitFor);
             for(let i = 0; i < midiOutputs.length; i++){
                 this.portNames.push(midiOutputs[i]);
@@ -111,7 +121,11 @@ class MidiOuts {
     initMidiHardwareEngines(){
         for(let portname of this.portNames){
             if(this.midiHardwareEngines.filter(engine => engine.name == portname).length == 0){
-                this.midiHardwareEngines.push(new this.easyMidi.Output(portname));
+                try {
+                    this.midiHardwareEngines.push(new this.easyMidi.Output(portname));
+                } catch (err) {
+                    this.db?.log?.("MIDI output open failed", portname, err.message);
+                }
             }
         }
     }
