@@ -1,3 +1,3 @@
 #!/bin/bash
 
-~/jjup.sh; git pull; ~/hotspotup.sh; node conductor.node.js
+systemctl --user stop  wecanmusic.service; git pull;  systemctl restart fluidsynth.service; systemctl start wecanmusic.service

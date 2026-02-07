@@ -5,6 +5,7 @@ var config = {
     "bluetooth.active" : false,
     "bluetooth.deviceID" :  "40:EF:4C:6F:C8:45", //relay: 40:EF:4C:6F:C8:45, oontz 74:F0:F0:AB:D5:21
     "playerState" : "play", // stop or play
+    "soundfontDir" : "./soundfonts",
     "soundfont" : "./soundfonts/DayOfTheDeadSF.sf2",
     "commonSoundfont" : "./soundfonts/FluidSynthDefaultSoundfont.sf2", // the file that the soundfont file in use gets copied to. 
     "soundfontInstrumentList" : "./soundfonts/DayOfTheDeadSF.sf2.voicelist.json",
