@@ -6,7 +6,8 @@ div{
     display: flex;
     width: 95%;
     height: 95%;
-    margin: auto;
+    margin-left: 0;
+    margin-right: auto;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 1em;
@@ -18,6 +19,9 @@ div{
 
 .column1{
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .column2{
@@ -37,9 +41,8 @@ div{
 
 .buttonSet {
     display: flex;
-/*    width: 65%;*/
     max-height: 50px;
-    justify-content: center;   
+    justify-content: flex-start;
 }
 
 .buttonSet .item{
