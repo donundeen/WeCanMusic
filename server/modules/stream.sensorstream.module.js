@@ -68,6 +68,8 @@ module.exports = class SensorStream {
     this.gapScale.name = "gapScale"; // for logging
     this.rmsScale = new DynRescale({ db: this.db, capRatio: options.rmsScaleCapRatio, shrinkRatio: options.rmsScaleShrinkRatio });
     this.rmsScale.name = "rmsScale"; // for logging
+    this.peakAmplitudeScale = new DynRescale({ db: this.db, capRatio: options.peakAmplitudeScaleCapRatio, shrinkRatio: options.peakAmplitudeScaleShrinkRatio });
+    this.peakAmplitudeScale.name = "peakAmplitudeScale"; // for logging
 
     // ----- Config: curves -----
     this.scaledValueCurveOptions = options.scaledValueCurveOptions || [0., 0.0, 0., 1.0, 1.0, 0.0];
@@ -236,6 +238,7 @@ module.exports = class SensorStream {
     this.changeRateScale.reset();
     this.gapScale.reset();
     this.rmsScale.reset();
+    this.peakAmplitudeScale.reset();
     this.scaledValue = 0;
     this.smoothed = 0;
     this.changeRate = 0;
