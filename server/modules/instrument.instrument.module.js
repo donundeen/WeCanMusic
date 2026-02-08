@@ -70,8 +70,6 @@ class Instrument {
         this.configProps = [
             {name:"deviceName", type:"s"},
             {name:"type", type:"s"},
-            {name:"wecanmusicServerIp", type:"s"},
-            {name:"wecanmusicPort", type:"i"},
             {name:"midiVoice", type:"s"},
             {name:"midiBank", type:"i"},
             {name:"midiProgram", type:"i"},
