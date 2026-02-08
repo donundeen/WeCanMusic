@@ -1,6 +1,6 @@
 const DynRescale = require("./dynRescale.module");
 const FunctionCurve = require("./functionCurve.module");
-const NoteNumberCruncher = require("./numbercruncher.notenumbercruncher.module");
+const NoteNumberCruncher = require("./oldModules/numbercruncher.notenumbercruncher.module");
 
 const LocalInstrument = require("./instrument.localinstrument.module");
 

@@ -24,12 +24,15 @@ const DynRescale = require("./dynRescale.module");
 const FunctionCurve = require("./functionCurve.module");
 
 module.exports = class SensorStream {
-  constructor(options = {}) {
+  constructor(options = {}, config) {
+
+    // combine options and config.sensorStream
+    options = {...options, ...config.sensorStream};
     this.db = options.db || false;
 
+    this.config = config;
+
     // ----- Config: scaling & outliers -----
-    /** Cap ratio for raw and for rate-of-change (nudge = range * capRatio). Use cappedScale so one crazy value doesn't blow min/max. */
-    this.capRatio = options.capRatio != null ? options.capRatio : 0.1;
     /** If set, inputs with value >= this or <= sentinelMin are ignored (e.g. 2e9 for INT32_MAX). */
     this.sentinelHigh = options.sentinelHigh != null ? options.sentinelHigh : 2e9;
     this.sentinelLow = options.sentinelLow != null ? options.sentinelLow : -2e9;
@@ -57,14 +60,37 @@ module.exports = class SensorStream {
     this.maxGapMs = options.maxGapMs != null ? options.maxGapMs : 2000;
 
     // ----- Internal state -----
-    this._rawScale = new DynRescale({ db: this.db });
-    this._rawScale.name = "rawScale";
-    this._rateScale = new DynRescale({ db: this.db });
-    this._rateScale.name = "rateScale";
-    this._gapScale = new DynRescale({ db: this.db });
-    this._gapScale.name = "gapScale";
+    this.rawScale = new DynRescale({ db: this.db, capRatio: options.rawScaleCapRatio, shrinkRatio: options.rawScaleShrinkRatio });
+    this.rawScale.name = "rawScale"; // for logging
+    this.changeRateScale = new DynRescale({ db: this.db, capRatio: options.changeRateScaleCapRatio, shrinkRatio: options.changeRateScaleShrinkRatio });
+    this.changeRateScale.name = "changeRateScale"; // for logging
+    this.gapScale = new DynRescale({ db: this.db, capRatio: options.gapScaleCapRatio, shrinkRatio: options.gapScaleShrinkRatio });
+    this.gapScale.name = "gapScale"; // for logging
 
-    this._rateCurve = new FunctionCurve({dir:"up",lowerThreshold:0,upperThreshold:1,logScale:-0.65}, {db: this.db});
+    // ----- Config: curves -----
+    this.scaledValueCurveOptions = options.scaledValueCurveOptions || [0., 0.0, 0., 1.0, 1.0, 0.0];
+    this.smoothedCurveOptions = options.smoothedCurveOptions || [0., 0.0, 0., 1.0, 1.0, 0.0];
+    this.changeRateCurveOptions = options.changeRateCurveOptions || {dir:"up",lowerThreshold:0,upperThreshold:1,logScale:-0.65};
+    this.peakCurveOptions = options.peakCurveOptions || [0., 0.0, 0., 1.0, 1.0, 0.0];
+    this.spaceBetweenPeaksCurveOptions = options.spaceBetweenPeaksCurveOptions || [0., 0.0, 0., 1.0, 1.0, 0.0];
+    this.rmsCurveOptions = options.rmsCurveOptions || [0., 0.0, 0., 1.0, 1.0, 0.0];
+    this.peakAmplitudeCurveOptions = options.peakAmplitudeCurveOptions || [0., 0.0, 0., 1.0, 1.0, 0.0];
+
+    /** Curve for scaled value (0–1). */
+    this.scaledValueCurve = new FunctionCurve(this.scaledValueCurveOptions, {db:this.db});
+    /** Curve for smoothed value (0–1). */
+    this.smoothedCurve = new FunctionCurve(this.smoothedCurveOptions, {db:this.db});
+    /** Curve for rate of change (0–1). */
+    this.rateOfChangeCurve = new FunctionCurve(this.rateOfChangeCurveOptions, {db: this.db});
+    /** Curve for peak (0–1). */
+    this.peakCurve = new FunctionCurve(this.peakCurveOptions, {db:this.db});
+    /** Curve for space between peaks (0–1). */
+    this.spaceBetweenPeaksCurve = new FunctionCurve(this.spaceBetweenPeaksCurveOptions, {db:this.db});
+    /** Curve for rms (0–1). */
+    this.rmsCurve = new FunctionCurve(this.rmsCurveOptions, {db:this.db});
+    /** Curve for peak amplitude (0–1). */
+    this.peakAmplitudeCurve = new FunctionCurve(this.peakAmplitudeCurveOptions, {db:this.db});
+
     this._firstRead = true;
     this._prevRaw = null;
     this._prevScaledValue = null;
@@ -84,6 +110,8 @@ module.exports = class SensorStream {
     this.spaceBetweenPeaks = 0;  // 0 = just had a peak, 1 = long time since peak
     this.rms = 0;             // rolling RMS of recent values (scaled 0–1)
     this.peakAmplitude = 0;   // height of last peak (scaled 0–1)
+
+
   }
 
   /**
@@ -103,9 +131,9 @@ module.exports = class SensorStream {
       this._prevRaw = v;
       this._prevTime = t;
       this._smoothedRaw = v;
-      this._rawScale.reset();
-      this._rateScale.reset();
-      this._gapScale.reset();
+      this.rawScale.reset();
+      this.changeRateScale.reset();
+      this.gapScale.reset();
       this._firstRead = false;
       this._buffer = [v];
       this.scaledValue = 0;
@@ -119,8 +147,8 @@ module.exports = class SensorStream {
     }
 
     // ----- Raw scaled 0–1 (capped to avoid outlier blowing range) -----
-    const rawScaled = this._rawScale.cappedScale(v, 0, 1, this.capRatio);
-    this.scaledValue = rawScaled;
+    const rawScaled = this.rawScale.cappedScale(v, 0, 1);
+    this.scaledValue = this.scaledValueCurve.mapValue(rawScaled);
 
     // ----- Buffer for windowed smoothing, RMS, peak lookback -----
     this._buffer.push(v);
@@ -134,14 +162,13 @@ module.exports = class SensorStream {
     } else {
       this._smoothedRaw = this.smoothingAlpha * v + (1 - this.smoothingAlpha) * this._smoothedRaw;
     }
-    this.smoothed = this._rawScale.cappedScale(this._smoothedRaw, 0, 1, this.capRatio);
+    this.smoothed = this.smoothedCurve.mapValue(this.rawScale.cappedScale(this._smoothedRaw, 0, 1));
 
     // ----- Rate of change (delta per ms), scaled 0–1 -----
     const dt = Math.max(t - this._prevTime, this.minDtMs);
     const delta = Math.abs(this.scaledValue - this._prevScaledValue);
     const rate = delta / dt;
-    this.rateOfChange = this._rateScale.cappedScale(rate, 0, 1, this.capRatio);
-    this.rateOfChange = this._rateCurve.mapValue(this.rateOfChange);
+    this.rateOfChange = this.changeRateCurve.mapValue(this.changeRateScale.cappedScale(rate, 0, 1));
 
     // ----- Peak detection -----
     this.peak = 0;
@@ -162,14 +189,14 @@ module.exports = class SensorStream {
 
     // ----- Space between peaks: time since last peak, scaled 0–1 -----
     const gapMs = this._lastPeakTime == null ? this.maxGapMs : Math.min(t - this._lastPeakTime, this.maxGapMs);
-    this.spaceBetweenPeaks = this._gapScale.cappedScale(gapMs, 0, 1, this.capRatio);
+    this.spaceBetweenPeaks = this.gapScale.cappedScale(gapMs, 0, 1);
 
     // ----- RMS of recent raw (optional gestural) -----
     if (this._buffer.length >= 2) {
       const mean = this._buffer.reduce((a, b) => a + b, 0) / this._buffer.length;
       const sq = this._buffer.reduce((acc, x) => acc + (x - mean) ** 2, 0);
       const rmsRaw = Math.sqrt(sq / this._buffer.length);
-      this.rms = this._rawScale.cappedScale(rmsRaw, 0, 1, this.capRatio);
+      this.rms = this.rmsScale.cappedScale(rmsRaw, 0, 1);
     } else {
       this.rms = this.scaledValue;
     }
@@ -202,9 +229,9 @@ module.exports = class SensorStream {
     this._lastPeakValue = null;
     this._rising = false;
     this._buffer = [];
-    this._rawScale.reset();
-    this._rateScale.reset();
-    this._gapScale.reset();
+    this.rawScale.reset();
+    this.changeRateScale.reset();
+    this.gapScale.reset();
     this.scaledValue = 0;
     this.smoothed = 0;
     this.rateOfChange = 0;

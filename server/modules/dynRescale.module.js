@@ -5,6 +5,8 @@ class DynRescale {
         this.max = false;
         this.db = false;
         this.name = false;
+        this.capRatio = options.capRatio || 1.5;
+        this.shrinkRatio = options.shrinkRatio || false;
         if(options.db){
             this.db = options.db;
         }
@@ -13,6 +15,7 @@ class DynRescale {
     
     scale(inval, outmin, outmax, shrinkRatio){
         // do the math
+        shrinkRatio = shrinkRatio || this.shrinkRatio;
         if (this.min !== false && this.max !== false && this.min !== this.max && shrinkRatio != null && shrinkRatio > 0) {
             // nope, ratio is based on the the range, not the min and max
             const range = this.max - this.min;
@@ -33,7 +36,9 @@ class DynRescale {
     }
 
     cappedScale(inval, outmin, outmax, capratio, shrinkRatio){
-        if (capratio == null || capratio <= 1) capratio = 1.5;
+        capratio = capratio || this.capRatio;
+        shrinkRatio = shrinkRatio || this.shrinkRatio;
+        if (capratio == null || capratio <= 1) capratio = this.defaultCapRatio;
         // First read: set range to this value
         if (this.min === false || this.max === false) {
             this.min = inval;

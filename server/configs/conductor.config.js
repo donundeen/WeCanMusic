@@ -27,7 +27,26 @@ var config = {
     "useHttps" : false,
     "httpsWebsocketPort" : 443,
     "httpsWebserverPort" : 443,
-    "quantizeTime" : ["N16", "N83"],// or array of note length names ("QN, N16, N83, etc")
+    "quantizeTime" : ["N16", "N83"],
+    "sensorStream" : {
+        "scaledValueCurveOptions" : [0., 0.0, 0., 1.0, 1.0, 0.0],
+        "smoothedCurveOptions" : [0., 0.0, 0., 1.0, 1.0, 0.0],
+        "rateOfChangeCurveOptions" : {dir:"up",lowerThreshold:0,upperThreshold:1,logScale:-0.65},
+        "peakCurveOptions" : [0., 0.0, 0., 1.0, 1.0, 0.0],
+        "spaceBetweenPeaksCurveOptions" : [0., 0.0, 0., 1.0, 1.0, 0.0],
+        "rmsCurveOptions" : [0., 0.0, 0., 1.0, 1.0, 0.0],
+        "peakAmplitudeCurveOptions" : [0., 0.0, 0., 1.0, 1.0, 0.0],
+        "rawScaleCapRatio" : 1.5,
+        "rawScaleShrinkRatio" : false,
+        "changeRateScaleCapRatio" : 1.5,
+        "changeRateScaleShrinkRatio" : .001,
+        "gapScaleCapRatio" : 1.5,
+        "gapScaleShrinkRatio" : false,
+        "rmsScaleCapRatio" : 1.5,
+        "rmsScaleShrinkRatio" : false,
+        "peakAmplitudeScaleCapRatio" : 1.5,
+        "peakAmplitudeScaleShrinkRatio" : false,
+    },// or array of note length names ("QN, N16, N83, etc")
     "performanceList" : [
         {
             "fileName" : "blessingWand",

@@ -7,8 +7,10 @@ const fs = require('node:fs');
 
 class Orchestra{
 
-    constructor(options){
+    constructor(options, config){
         this.db = false;
+
+        this.config = config;
 
         if(options.db){
             this.db = options.db;
@@ -192,7 +194,7 @@ class Orchestra{
             return this.localInstruments[name];
         }
         this.db?.log?.("CREATING INSTRUMENT " + name);
-        this.localInstruments[name] = new LocalInstrument({db:this.db});
+        this.localInstruments[name] = new LocalInstrument({db:this.db}, this.config);
         this.localInstruments[name].theoryEngine = this.theoryEngine;
         this.localInstruments[name].db = this.db;
         this.localInstruments[name].deviceName = name;
@@ -216,7 +218,7 @@ class Orchestra{
             return this.localInstruments[name];
         }
         this.db?.log?.("CREATING CircleRhythm INSTRUMENT " + name);
-        this.localInstruments[name] = new CircleRhythmInstrument({db:this.db});
+        this.localInstruments[name] = new CircleRhythmInstrument({db:this.db}, this.config);
         this.localInstruments[name].db = this.db;
         this.localInstruments[name].deviceName = name;
         this.localInstruments[name].midiChannel = this.getChannel();
@@ -239,7 +241,7 @@ class Orchestra{
             return this.udpInstruments[name];
         }
         this.db?.log?.("CREATING INSTRUMENT " + name);
-        this.udpInstruments[name] = new UDPInstrument({db:this.db});
+        this.udpInstruments[name] = new UDPInstrument({db:this.db}, this.config);
         this.udpInstruments[name].theoryEngine = this.theoryEngine;
         this.udpInstruments[name].db = this.db;
         this.udpInstruments[name].deviceName = name;

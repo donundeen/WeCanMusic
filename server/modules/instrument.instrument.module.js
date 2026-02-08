@@ -1,13 +1,13 @@
 const DynRescale = require("./dynRescale.module");
 const FunctionCurve = require("./functionCurve.module");
-const SensorNumberCruncher = require("./numbercruncher.sensornumbercruncher.module");
 const SensorStream = require("./stream.sensorstream.module");
-//const NoteNumberCruncher = require("./numbercruncher.notenumbercruncher.module");
 
 class Instrument {
 
-    constructor(options) {
+    constructor(options, config) {
         this.db = false;
+        this.config = config;
+
         if(options.db){
             this.db = options.db;
         }
@@ -26,10 +26,6 @@ class Instrument {
         this.velValue = false;
 
         this._deviceName = "RENAME_ME";
-
-        // networking info
-        this._wecanmusicServerIp = "10.0.0.174";
-        this._wecanmusicPort = "7002";
 
         // midi vars    
         this._midiVoice = "0:1"; // in format bank:program, when this is set, parse and set bank and program
@@ -51,14 +47,6 @@ class Instrument {
 
         // set hardware synth out object (easymidi)
         this.midiHardwareEngine = false;
-
-        // velocity curve starts as a straight line
-        this._velocityCurve = new FunctionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
-        this._changeRateCurve = new FunctionCurve([0., 0.0, 0., 1.0, 1.0, 0.0], {db:this.db});
-        // dyn rescaling
-        this.inputScale = new DynRescale({db:this.db});
-        this.changeRateScale = new DynRescale({db:this.db});
-        this.velocityScale = new DynRescale({db:this.db});
 
         this.lastNoteTime = Date.now();
 
@@ -109,10 +97,8 @@ class Instrument {
         this.lastNoteTime = Date.now();
         this.setNoteLengths();
         this.getConfigProps();
-//        this.numberCruncher = new NoteNumberCruncher({db: this.db});
-        this.numberCruncher = new SensorNumberCruncher({db: this.db});
 
-        this.sensorStream = new SensorStream({db: this.db});
+        this.sensorStream = new SensorStream({db: this.db}, this.config);
 
     }
 
@@ -125,20 +111,7 @@ class Instrument {
         this.resetInstrument();
     }
 
-    set velocityCurve(curve){
-        this._velocityCurve.curveList = curve;
-    }
 
-    get velocityCurve(){
-        return this._velocityCurve;
-    }
-
-    set changeRateCurve(curve){
-        this._changeRateCurve.curveList = curve;
-    }
-    get changeRateCurve(){
-        return this._changeRateCurve;
-    }
 
     set bpm(bpm){
         this._bpm = bpm;
@@ -211,15 +184,6 @@ class Instrument {
         this.db?.log?.("********************");
 
         this.db?.log?.("instrument sensorStream.push", value);
-        this.numberCruncher.setSensorValues({
-            sensorValue: value,
-            smoothValue: this.smoothValue,
-            rmsValue: this.rmsValue,
-            peakValue: this.peakValue,
-            velValue: this.velValue
-        });
-
-    //    this.numberCruncher.crunch();
 
         this.sensorStream.push(value);
 
@@ -353,11 +317,8 @@ class Instrument {
 
     resetInstrument(){
         this.db?.log?.("RESETTING LOCAL---------------------------------------");
-        this.inputScale.reset();
-        this.velocityScale.reset();
-        this.changeRateScale.reset();
         this._sensorValue = false;
-        this.numberCruncher.reset();
+        this.sensorStream.reset();
     }
 
     /******************************* */
@@ -455,13 +416,11 @@ class Instrument {
     }
 
     derivePitch(){
-//        let pitch = this.noteFromFloat(this.numberCruncher.pitchFloat, this.midiMin, this.midiMax);
         let pitch = this.noteFromFloat(this.sensorStream.scaledValue, this.midiMin, this.midiMax);
         return pitch;
     }
 
     deriveVelocity(){
-//        let velocity = Math.floor(127.0 * this.numberCruncher.velocityFloat);
         let velocity = Math.floor(127.0 * this.sensorStream.rateOfChange);
         return velocity;
     }

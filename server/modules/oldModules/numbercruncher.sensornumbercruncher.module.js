@@ -1,5 +1,5 @@
-const DynRescale = require("./dynRescale.module");
-const FunctionCurve = require("./functionCurve.module");
+const DynRescale = require("../dynRescale.module");
+const FunctionCurve = require("../functionCurve.module");
 
 class SensorNumberCruncher {
     constructor(options){
