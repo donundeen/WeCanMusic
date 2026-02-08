@@ -3,15 +3,36 @@ div{
 }
 
 .container{
-    display:flex;
+    display: flex;
     width: 95%;
     height: 95%;
     margin: auto;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1em;
 }
 
 .column{
-    border:1 px solid red;
+    border: 1px solid red;
+}
+
+.column1{
+    flex-shrink: 0;
+}
+
+.column2{
+    flex: 1;
+    min-width: 0;
+}
+
+.scoreEditor {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.scoreEditor .score {
+    margin-left: 0;
+    margin-right: auto;
 }
 
 .buttonSet {
@@ -64,16 +85,20 @@ div{
 }
 
 .instruments{
-    display:flex;
+    display: flex;
     flex-wrap: wrap;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5em;
+    align-content: flex-start;
 }
 
 .instrument {
     border: 1px solid black;
     border-radius: 10px;
     overflow: hidden;
+    min-width: 280px;
+    max-width: 380px;
+    flex: 1 1 280px;
 }
 
 .instrument-header {
