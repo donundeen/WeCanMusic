@@ -12,7 +12,7 @@
 #define DEVICE_ACCEL_LSM 5
 
 // Pick one device type
-#define DEVICE_TYPE DEVICE_CAPACITIVE
+#define DEVICE_TYPE DEVICE_ACCEL_L3GD20H
 
 // Defaults shared across device types
 #define DEVICE_DEFAULT_WIFI_SSID "icanmusic"

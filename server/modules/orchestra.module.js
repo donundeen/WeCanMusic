@@ -194,16 +194,17 @@ class Orchestra{
             return this.localInstruments[name];
         }
         this.db?.log?.("CREATING INSTRUMENT " + name);
-        this.localInstruments[name] = new LocalInstrument({db:this.db}, this.config);
-        this.localInstruments[name].theoryEngine = this.theoryEngine;
-        this.localInstruments[name].db = this.db;
-        this.localInstruments[name].deviceName = name;
-        this.localInstruments[name].midiChannel = this.getChannel();
-        this.localInstruments[name].midiHardwareEngine = this._midiHardwareEngine;
-        this.localInstruments[name].bpm = this._bpm;
-        this.localInstruments[name].noteList = this.noteList;
+        this.localInstruments[name] = new LocalInstrument({
+            db:this.db,
+            makeNoteCallback: this._makeNoteCallback,
+            bpm: this._bpm,
+            noteList: this.noteList,
+            midiChannel: this.getChannel(),
+            midiHardwareEngine: this._midiHardwareEngine,
+            theoryEngine: this.theoryEngine,
+            deviceName: name
+        }, this.config);
         this.localInstruments[name].start();
-        this.localInstruments[name].makeNoteCallback = this._makeNoteCallback; 
         
         let props = this.persistence.getJSON(this.getPersistenceFilename(name));
         if(props){

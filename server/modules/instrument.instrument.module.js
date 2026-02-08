@@ -5,12 +5,18 @@ const SensorStream = require("./stream.sensorstream.module");
 class Instrument {
 
     constructor(options, config) {
-        this.db = false;
         this.config = config;
 
-        if(options.db){
-            this.db = options.db;
-        }
+        this.db = options.db? options.db : false;
+        this.makeNoteCallback = options.makeNoteCallback? options.makeNoteCallback : false;
+        this._bpm = options.bpm? options.bpm : 120;
+        this.noteList = options.noteList? options.noteList : [];
+        this._midiChannel = options.midiChannel? options.midiChannel : 1;
+        this.midiHardwareEngine = options.midiHardwareEngine? options.midiHardwareEngine : false;
+        this.theoryEngine = options.theoryEngine? options.theoryEngine : false;
+        this._deviceName = options.deviceName? options.deviceName : "RENAME_ME";
+        this.persistence = options.persistence? options.persistence : false;
+
         this._type = "local";
         this.type = "local";
 
@@ -45,25 +51,14 @@ class Instrument {
 
         this.currentNotes = []; // need to keep track of all playing notes to to a panic stop
 
-        // set hardware synth out object (easymidi)
-        this.midiHardwareEngine = false;
-
         this.lastNoteTime = Date.now();
 
-        // timing for different common note values.
-        this._bpm = 120;
-
         this.running = false;
-
-        // instr, pitch, velocity, duration
-        this.makeNoteCallback = false;
 
         // track the previous note, so we don't play the same note twice in a row
         this._previousPitch = 0;
         this.skipDuplicateNotes = true;
 
-        this.theoryEngine = false;
-    
         // vars that might be externally set.
         // we can send this info to a server so it can set up a UI to collect those values
         // maybe array of objects?

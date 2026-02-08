@@ -207,7 +207,6 @@ module.exports = class OscRouter {
       let props = instrument.getConfigProps();
       props.push({ name: "instrType", value: "local" });
       socket.sendMessage("addInstrument", props);
-      instrument.start();
     });
 
 
@@ -321,19 +320,18 @@ module.exports = class OscRouter {
       let velval = parseFloat(value[5]);
       let instrument = orchestra.getLocalInstrument(name);
       if (instrument) {
-        instrument.sensorValue = rawval;
         instrument.smoothValue = smoothval;
         instrument.rmsValue = rmsval;
         instrument.peakValue = peakval;
         instrument.velValue = velval;
+        instrument.sensorValue = rawval;
       }else{
-        db?.log?.("sensor", name, value, "no UDP instrument found");
+        db?.log?.("sensor", name, value, "no local instrument found");
         // we need to create a new instrument here
         let instrument = orchestra.createLocalInstrument(name, value);
         let props = instrument.getConfigProps();
         props.push({ name: "instrType", value: "local" });
         socket.sendMessage("addInstrument", props);
-        instrument.start();
       }
     });
 
