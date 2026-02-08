@@ -421,7 +421,7 @@ class Instrument {
     }
 
     deriveVelocity(){
-        let velocity = Math.floor(127.0 * this.sensorStream.rateOfChange);
+        let velocity = Math.floor(127.0 * this.sensorStream.changeRate);
         return velocity;
     }
 
