@@ -18,8 +18,8 @@ div{
 }
 
 .column1{
-    flex: 0 1 auto;
-    max-width: calc(100% - 320px - 1em);
+    flex: 0 1 55%;
+    max-width: calc(100% - 600px - 1em);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -27,7 +27,7 @@ div{
 }
 
 .column2{
-    flex: 1 1 300px;
+    flex: 1 1 40%;
     min-width: 300px;
 }
 
