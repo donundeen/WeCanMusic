@@ -26,8 +26,8 @@ const FunctionCurve = require("./functionCurve.module");
 module.exports = class SensorStream {
   constructor(options = {}, config) {
 
-    // combine options and config.sensorStream
-    options = {...options, ...config.sensorStream};
+    // combine options and config.sensorStream (config may be undefined)
+    options = {...options, ...(config && config.sensorStream)};
     this.db = options.db || false;
 
     this.config = config;

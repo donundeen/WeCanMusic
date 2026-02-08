@@ -81,7 +81,7 @@ const OscRouter = require("./modules/router.oscrouter.module.js");
 const WebsocketRouter = require("./modules/router.websocketrouter.module.js");
 
 // initialize the modules
-let orchestra = new Orchestra({db:db});
+let orchestra = new Orchestra({db:db}, config);
 let transport  = new Transport({db:db});
 let score  = new ScoreReader({db:db});
 let theory = new TheoryEngine({db:db});
@@ -111,7 +111,7 @@ if(config["bluetooth.active"]){
 ///////////////////////////////////////////////////////////////
 // midi hardware setup:
 ///////////////////////////////////////////////////////////////
-const MidiOuts = require('./modules/midiouts.module.js');
+const MidiOuts = require('./modules/midi.midiouts.module.js');
 let midiWaitForPortnames = config.midiWaitForPortnames;
 let useMidiOut = config.useMidiOut; // whether or not to send midi values through a hardware output, via easymidi
 midiHardwareEngine = new MidiOuts({db:db, active: useMidiOut, matches: "all", waitFor : midiWaitForPortnames});
@@ -384,7 +384,7 @@ function resetFluidSynth(){
     });
     setTimeout(function(){
         let midiFound = false;
-        const MidiOuts = require('./modules/midiouts.module.js');
+        const MidiOuts = require('./modules/midi.midiouts.module.js');
         let useMidiOut = config.useMidiOut; // whether or not to send midi values through a hardware output, via easymidi
         midiHardwareEngine = new MidiOuts({db:db, active: useMidiOut});
         midiHardwareEngine.init();
