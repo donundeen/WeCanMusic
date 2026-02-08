@@ -15,9 +15,9 @@
 #define DEVICE_TYPE DEVICE_CAPACITIVE
 
 // Defaults shared across device types
-#define DEVICE_DEFAULT_WIFI_SSID "icanmusic"
+#define DEVICE_DEFAULT_WIFI_SSID "wecanmusic"
 #define DEVICE_DEFAULT_WIFI_PASSWORD ""
-#define DEVICE_PRESET_IP "10.0.0.255"
+#define DEVICE_PRESET_IP "192.168.1.147"
 
 // Per-device defaults
 #if DEVICE_TYPE == DEVICE_CAPACITIVE

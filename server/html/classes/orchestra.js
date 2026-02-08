@@ -83,6 +83,10 @@ class Orchestra {
         console.log("copying");
         let self = this;
         let instr = $(".copyMe").clone(true,true).removeClass("copyMe").show().attr("id",id).appendTo(this.orchestraDivSelector);
+        instr.addClass("collapsed");
+        $(instr).find(".instrument-header").on("click", function(e) {
+            $(e.currentTarget).closest(".instrument").toggleClass("collapsed");
+        });
         //***** Setting up instrument nodes,  */
         let midiMin = optionsObject.midiMin  ? optionsObject.midiMin : 32;
         let midiMax = optionsObject.midiMax  ? optionsObject.midiMax : 100;

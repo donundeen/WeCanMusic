@@ -66,12 +66,69 @@ div{
 .instruments{
     display:flex;
     flex-wrap: wrap;
-
+    flex-direction: column;
+    gap: 0.5em;
 }
+
 .instrument {
     border: 1px solid black;
     border-radius: 10px;
-    padding: .5em;
+    overflow: hidden;
+}
+
+.instrument-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1em;
+    padding: 0.5em 0.75em;
+    background: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    user-select: none;
+}
+
+.instrument-header:hover {
+    background: #e5e5e5;
+}
+
+.instrument-header-name,
+.instrument-header-makenote {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+}
+
+.instrument-header-name { font-weight: bold; }
+
+.instrument-header-makenote label,
+.instrument-header-name label {
+    margin: 0;
+    font-weight: normal;
+    color: #555;
+}
+
+.instrument-header-chevron {
+    margin-left: auto;
+    font-size: 0.75em;
+    transition: transform 0.2s ease;
+}
+
+.instrument.collapsed .instrument-header-chevron {
+    transform: rotate(-90deg);
+}
+
+.instrument-body {
+    padding: 0.5em 0.75em;
+    background: #fff;
+}
+
+.instrument.collapsed .instrument-body {
+    display: none;
+}
+
+.instrument.copyMe {
+    display: none !important;
 }
 
 

@@ -60,48 +60,46 @@
         <div class="column column2">
             <div class="instruments" id="orchestraDiv">
 
-                <div class="instrument copyMe">
-                    <div class="deviceName"><label>Name:</label><span>DEFAULT_BAD</span></div>
-                    <div class="instrIp"><label>IP:</label><span>10.0.0.xxx</span></div>
-                    <div class="sensorVal"><label>Sensor:</label><span></span></div>
-                    <div class="makeNote"><label>Makenote:</label><span></span></div>
-                    <div class="midiChannelController">
-                        <label >MIDI Channel:</label>
-                        <input type=text class="channelDisplay" >
-                        <div class="midiChannel"></div>
+                <div class="instrument copyMe collapsed">
+                    <div class="instrument-header">
+                        <span class="instrument-header-name deviceName"><label>Name:</label><span>DEFAULT_BAD</span></span>
+                        <span class="instrument-header-makenote makeNote"><label>Makenote:</label><span></span></span>
+                        <span class="instrument-header-chevron" aria-hidden="true">▼</span>
                     </div>
-                    <!--
-                    <div class="midi-voice-controller">
-                        <label >MIDI Voice:</label>
-                        <input type=text class="voice_display">
-                        <div class="midi-voice"></div>
-                    </div>
-                -->
-                    <div class="midiVoiceController">
-                        <label >MIDI Voice:</label>
-                        <select class="voiceDisplay" name="midiVoice">
-                          <option value="">voices not loaded</option>
-                        </select>
-                        <div class="midiVoice"></div>
-                    </div>
+                    <div class="instrument-body">
+                        <div class="instrIp"><label>IP:</label><span>10.0.0.xxx</span></div>
+                        <div class="sensorVal"><label>Sensor:</label><span></span></div>
+                        <div class="midiChannelController">
+                            <label >MIDI Channel:</label>
+                            <input type=text class="channelDisplay" >
+                            <div class="midiChannel"></div>
+                        </div>
+                        <div class="midiVoiceController">
+                            <label >MIDI Voice:</label>
+                            <select class="voiceDisplay" name="midiVoice">
+                              <option value="">voices not loaded</option>
+                            </select>
+                            <div class="midiVoice"></div>
+                        </div>
 
-                    <div class="midiRangeController">
-                        <label >MIDI Range:</label>
-                        <input type=text class="rangeDisplay" readonly>
-                        <div class="midiRange"></div>
-                    </div>
-                    <div class="midiNoteLengthController">
-                        <label >Notelength:</label>
-                        <input type=text class="noteLengthDisplay" readonly>
-                        <div class="midiNoteLength"></div>
-                    </div>
-                    <div class="midiVolumeController">
-                        <label >Volume:</label>
-                        <input type=text class="volumeDisplay" readonly>
-                        <div class="midiVolume"></div>
-                    </div>
+                        <div class="midiRangeController">
+                            <label >MIDI Range:</label>
+                            <input type=text class="rangeDisplay" readonly>
+                            <div class="midiRange"></div>
+                        </div>
+                        <div class="midiNoteLengthController">
+                            <label >Notelength:</label>
+                            <input type=text class="noteLengthDisplay" readonly>
+                            <div class="midiNoteLength"></div>
+                        </div>
+                        <div class="midiVolumeController">
+                            <label >Volume:</label>
+                            <input type=text class="volumeDisplay" readonly>
+                            <div class="midiVolume"></div>
+                        </div>
 
-                    <div class="resetButton"><button>RESET</button></div>
+                        <div class="resetButton"><button>RESET</button></div>
+                    </div>
                 </div>
 
               
