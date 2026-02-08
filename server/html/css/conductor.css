@@ -49,11 +49,21 @@ div{
 .scoreEditor {
     display: flex;
     justify-content: flex-start;
+    width: 100%;
 }
 
 .scoreEditor .score {
     margin-left: 0;
     margin-right: auto;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.column1 .scoreEditor,
+.column1 .scoreEditor .score {
+    width: 100%;
+    max-width: 100%;
 }
 
 .buttonSet {
@@ -69,11 +79,21 @@ div{
     padding: .5em;
     text-align: center;
 }
-.scorePerfSelection{
-    height:fit-content;
-    margin-bottom: 1em;
-
+.performanceManager{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 1em;
+    width: 100%;
 }
+
+.scorePerfSelection{
+    flex: 1 1 0;
+    min-width: 0;
+    height: fit-content;
+    margin-bottom: 0;
+}
+
 .scorePerfSelection .item{
     padding:unset;
     padding-top: .1em;
