@@ -70,11 +70,6 @@ class Instrument {
         this.configProps = [
             {name:"deviceName", type:"s"},
             {name:"type", type:"s"},
-            {name:"sensorValue", type:"f"},
-            {name:"smoothValue", type:"f"},
-            {name:"rmsValue", type:"f"},
-            {name:"peakValue", type:"f"},
-            {name:"velValue", type:"f"},
             {name:"wecanmusicServerIp", type:"s"},
             {name:"wecanmusicPort", type:"i"},
             {name:"midiVoice", type:"s"},
@@ -89,7 +84,6 @@ class Instrument {
             {name:"velocitycurve", type:"fa"},
             {name:"changeratecurve", type:"fa"},
             */
-            {name:"bpm", type:"i"},        
         ];
 
 
