@@ -23,10 +23,19 @@ div{
 .column1{
     flex: 1 1 55%;
     max-width: calc(100% - 600px - 1em);
-    min-width: 200px;
+    min-width: fit-content;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+}
+
+#transportDiv{
+    min-width: max-content;
+}
+
+.column1 .scoreEditor,
+.column1 .performanceManager{
+    min-width: 0;
 }
 
 .column2{
