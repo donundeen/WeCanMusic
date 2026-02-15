@@ -224,7 +224,7 @@ score.setMessageCallback(function(msg){
 orchestra.synthDeviceVoices = config.synthDeviceVoices;
 orchestra.midiHardwareEngine = midiHardwareEngine;
 orchestra.persistence = persistence;
-orchestra.soundfontFile = config.soundfont;;
+orchestra.soundfontFile = config.soundfont;
 orchestra.soundfontVoiceListFile = config.soundfontInstrumentList;
 orchestra.theoryEngine = theory;
 
@@ -411,8 +411,8 @@ config.initialTheoryMsgs.forEach(function(msg){
 });
 
 
-transport.updateBpm(config.bpm);
-orchestra.allLocalInstrumentSetValue("bpm", config.bpm);
+transport.updateBpm(config.conductor.bpm);
+orchestra.allLocalInstrumentSetValue("bpm", config.conductor.bpm);
 
 // set the name of the score
 score.scoreFilename = config.scoreName;

@@ -37,7 +37,6 @@ class Instrument {
         this._midiVoice = "0:1"; // in format bank:program, when this is set, parse and set bank and program
         this._midiBank = 0; // bank and program together select the tone.
         this._midiProgram = 1;
-        this._midiChannel = 1;
         this._midiMin = 32;
         this._midiMax = 100;
         this._midiVol = 200; //(0-254) // sometimes we use shorter names because of arduino restrictions in OSC routes

@@ -1,7 +1,9 @@
 
 var config = {
     "db.active" : true,
-    "bpm" : 120,
+    "conductor" : {
+        "bpm" : 120,
+    },
     "bluetooth.active" : false,
     "bluetooth.deviceID" :  "40:EF:4C:6F:C8:45", //relay: 40:EF:4C:6F:C8:45, oontz 74:F0:F0:AB:D5:21
     "playerState" : "play", // stop or play
