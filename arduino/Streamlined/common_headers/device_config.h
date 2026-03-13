@@ -10,9 +10,10 @@
 #define DEVICE_ACCEL_L3GD20H 3
 #define DEVICE_ACCEL_L3GD4200 4
 #define DEVICE_ACCEL_LSM 5
+#define DEVICE_ADS1220 6
 
 // Pick one device type
-#define DEVICE_TYPE DEVICE_CAPACITIVE
+#define DEVICE_TYPE DEVICE_ADS1220
 
 // Defaults shared across device types
 #define DEVICE_DEFAULT_WIFI_SSID "wecanmusic"
@@ -30,6 +31,8 @@
   #define DEVICE_NUM_MULTIVALUES 3
 #elif DEVICE_TYPE == DEVICE_ACCEL_LSM
   #define DEVICE_NUM_MULTIVALUES 3
+#elif DEVICE_TYPE == DEVICE_ADS1220
+  #define DEVICE_NUM_MULTIVALUES 1
 #else
   #error "Unknown DEVICE_TYPE. Update device_config.h."
 #endif
