@@ -203,6 +203,7 @@ module.exports = class OscRouter {
       if (value?.name) {
         name = value.name;
       }
+      db?.log?.("name", name);
       let instrument = orchestra.createLocalInstrument(name, value);
       let props = instrument.getConfigProps();
       props.push({ name: "instrType", value: "local" });
