@@ -232,6 +232,7 @@ class Instrument {
     /******************************* */
     getConfigProps(){
         this.populateConfigProps();
+        this.db?.log?.("configProps", this.configProps);
         return this.configProps;
     }
 
