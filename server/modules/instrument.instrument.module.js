@@ -233,6 +233,7 @@ class Instrument {
     getConfigProps(){
         this.populateConfigProps();
         this.db?.log?.("configProps", this.configProps);
+        this.db?.log?.("deviceName", this.deviceName);
         return this.configProps;
     }
 
