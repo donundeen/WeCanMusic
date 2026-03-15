@@ -270,10 +270,12 @@ class Instrument {
         for(let i = 0; i < this.configProps.length; i++){
             // maybe we don't want ALL of these fields sent over udp as updates.
 //            this.db?.log?.("Setting " , this.configProps[i].name,  perfData[this.configProps[i].name]);
-            this[this.configProps[i].name] = perfData[this.configProps[i].name];
-            if(this.performancePropUpdateCallback){
-                this.performancePropUpdateCallback(this, this.configProps[i].name, this.configProps[i].type, this[this.configProps[i].name] )
-            }            
+            if(perfData[this.configProps[i].name]){
+                this[this.configProps[i].name] = perfData[this.configProps[i].name];
+                if(this.performancePropUpdateCallback){
+                    this.performancePropUpdateCallback(this, this.configProps[i].name, this.configProps[i].type, this[this.configProps[i].name] )
+                }            
+            }
         }
         this.db?.log?.("calling insrt performanceUpdateCallback?", this.performanceUpdateCallback);
 
