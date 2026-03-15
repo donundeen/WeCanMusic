@@ -263,7 +263,7 @@ class Instrument {
     }
 
     loadPerformanceData(perfData){
-        this.db?.log?.("instrument loadPerformanceData");
+        this.db?.log?.("instrument loadPerformanceData", perfData);
         // extract configProps data, 
         // set internally, 
         // and do any announcing you need to do
