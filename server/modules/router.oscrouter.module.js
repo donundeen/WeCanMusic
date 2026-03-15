@@ -198,7 +198,7 @@ module.exports = class OscRouter {
     this._routeFromOSC(oscMsg, "/announceLocalInstrument", function (oscMsg) {
       db?.log?.("announcing local instrument", oscMsg);
       let value = oscMsg.simpleValue;
-      db?.log?.(value);
+      db?.log?.("value", value);
       let name = value;
       if (value?.name) {
         name = value.name;
