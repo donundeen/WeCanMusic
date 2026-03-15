@@ -196,7 +196,7 @@ module.exports = class OscRouter {
     // announcing local instruments to create them in the orchestra
     // NOTE: all localInstrument stuff is broken, needs updating
     this._routeFromOSC(oscMsg, "/announceLocalInstrument", function (oscMsg) {
-      db?.log?.("announcing local instrument", oscMsg);
+      db?.log?.("announcing local instrument : ", oscMsg);
       let value = oscMsg.simpleValue;
       db?.log?.("value", value);
       let name = value;
@@ -215,11 +215,12 @@ module.exports = class OscRouter {
     this._routeFromOSC(oscMsg, "/announceInstrument", function (oscMsg) {
       db?.log?.("announcing local instrument", oscMsg);
       let value = oscMsg.simpleValue;
-      db?.log?.(value);
+      db?.log?.("value", value);
       let name = value;
       if (value?.name) {
         name = value.name;
       }
+      db?.log?.("name", name);
       let instrument = orchestra.createLocalInstrument(name, value);
       let props = instrument.getConfigProps();
       props.push({ name: "instrType", value: "local" });
