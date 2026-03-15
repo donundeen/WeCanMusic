@@ -93,6 +93,7 @@ class Performance {
         // load the performance file and extract the data
         // load the json
         this.performanceFile = name;
+        this.db?.log?.("loading performance file " + name);
         let perfData = false; // load it here
         let self = this;
         fs.readFile(self.performanceDir + "/" + self.performanceFile, 'utf8', (err, perfData) => {
