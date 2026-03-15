@@ -96,6 +96,7 @@ class Instrument {
     }
 
     set deviceName(name){
+        this.db?.log?.("setting deviceName " + name);
         this._deviceName = name;
     }
 
