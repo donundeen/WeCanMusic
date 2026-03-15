@@ -193,7 +193,7 @@ class Orchestra{
         this.db?.log?.("creating local instrument " + name);
         if(this.localInstruments[name]){
             this.db?.log?.("instrument already exists, returning existing instrument " + name);
-            this.db?.log?.("options", this.localInstruments[name].getConfigProps());
+            this.db?.log?.("options:: ", this.localInstruments[name].getConfigProps());
             return this.localInstruments[name];
         }
         this.db?.log?.("CREATING INSTRUMENT " + name);
