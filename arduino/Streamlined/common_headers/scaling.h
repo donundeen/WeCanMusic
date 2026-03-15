@@ -26,7 +26,7 @@ float floatmap(float in, float inmin, float inmax, float outmin, float outmax){
 
 
 float dyn_rescale(float inval, float *minVal, float *maxVal, float tomin, float tomax){
-  char pbuf[100];
+  char pbuf[128];
   if(inval < *minVal){
     *minVal = inval;
   }
@@ -35,7 +35,7 @@ float dyn_rescale(float inval, float *minVal, float *maxVal, float tomin, float 
   }
 
   float mapped = constrain(floatmap(inval, *minVal, *maxVal, tomin, tomax), tomin, tomax);
-  sprintf(pbuf, "dyn: in:%f min:%f max:%f tomin:%f tomax:%f out:%f", inval, *minVal, *maxVal, tomin, tomax, mapped);
+  snprintf(pbuf, sizeof(pbuf), "dyn: in:%f min:%f max:%f tomin:%f tomax:%f out:%f", inval, *minVal, *maxVal, tomin, tomax, mapped);
  // Serial.println(pbuf);
   if(mapped == -1){
 

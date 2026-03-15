@@ -41,10 +41,10 @@ class Debugging {
             !this.filter ? this.logl(1, text) : null;
             return;
         }
+        if(this.filterout && (text && text.includes(this.filterout))){
+            return;
+        }        
         if(!this.filter || (text && text.includes(this.filter))){
-            if(this.filterout && (text && text.includes(this.filterout))){
-                return;
-            }
             this.logl(1, ...arguments);
         }
     }

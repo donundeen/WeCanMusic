@@ -111,18 +111,17 @@ void config_webpage_setup() {
 
 
   for (int vindex = 0 ; vindex < NUM_MULTIVALUES; vindex++){
-    char vindexchar[2];
+    char vindexchar[4];
     String str = String(vindex);
     Serial.println(vindex);
-    str.toCharArray(vindexchar, 2);
-    strcpy(DEVICE_NAME[vindex], this_device_name);
+    str.toCharArray(vindexchar, sizeof(vindexchar));
+    strncpy(DEVICE_NAME[vindex], this_device_name, 16);
+    DEVICE_NAME[vindex][16] = '\0';
+    strncat(DEVICE_NAME[vindex], "_", 2);
+    strncat(DEVICE_NAME[vindex], vindexchar, 3);
     Serial.println(DEVICE_NAME[vindex]);
-    strcat(DEVICE_NAME[vindex], "_");
-    strcat(DEVICE_NAME[vindex], vindexchar);
     Serial.println(DEVICE_ID[vindex]);
-    strcpy(DEVICE_ID[vindex], "/");
-    strcat(DEVICE_ID[vindex], DEVICE_NAME[vindex]);
-    strcat(DEVICE_ID[vindex], DEVICE_ID_SUFFIX);
+    snprintf(DEVICE_ID[vindex], sizeof(DEVICE_ID[vindex]), "/%s%s", DEVICE_NAME[vindex], DEVICE_ID_SUFFIX);
     Serial.println("\tDEVICE_ID : " + String(DEVICE_ID[vindex]) + " : "+ this_device_name);
   }
 

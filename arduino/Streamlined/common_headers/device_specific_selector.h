@@ -7,6 +7,7 @@
 #include "device_specific_resistive.h"
 #include "device_specific_accel_L3GD20H.h"
 #include "device_specific_accel_L3GD4200.h"
+#include "device_specific_ads1220.h"
 #include "device_specific_accel_lsm.h"
 
 // Read DIP switches (pullups) and map to device_type.
@@ -45,6 +46,9 @@ void sensor_setup_device(){
     case DEVICE_ACCEL_LSM:
       sensor_setup_device_lsm();
       break;
+    case DEVICE_ADS1220:
+      sensor_setup_device_ads1220();
+      break;
     default:
       sensor_setup_device_capacitive();
       break;
@@ -67,6 +71,9 @@ void sensor_loop(int vindex){
       break;
     case DEVICE_ACCEL_LSM:
       sensor_loop_lsm(vindex);
+      break;
+    case DEVICE_ADS1220:
+      sensor_loop_ads1220(vindex);
       break;
     default:
       sensor_loop_capacitive(vindex);

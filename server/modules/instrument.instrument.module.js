@@ -31,8 +31,6 @@ class Instrument {
         this.peakValue = false;
         this.velValue = false;
 
-        this._deviceName = "RENAME_ME";
-
         // midi vars    
         this._midiVoice = "0:1"; // in format bank:program, when this is set, parse and set bank and program
         this._midiBank = 0; // bank and program together select the tone.
@@ -97,7 +95,13 @@ class Instrument {
         this.resetInstrument();
     }
 
+    set deviceName(name){
+        this._deviceName = name;
+    }
 
+    get deviceName(){
+        return this._deviceName;
+    }
 
     set bpm(bpm){
         this._bpm = bpm;
