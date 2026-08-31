@@ -40,13 +40,54 @@ class MidiOuts {
 
         this._alsaFailedAt = 0;
         this._alsaBackoffMs = 15000;
+        this._pollMs = 500;
     }
-    // need a way to pick just some portnames sometimes, or an array of matches.
+
+    _sleep(ms){
+        const { execSync } = require("child_process");
+        try {
+            execSync(`sleep ${ms / 1000}`, { stdio: "ignore" });
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    _hasWaitFor(){
+        return Array.isArray(this.waitFor) && this.waitFor.length > 0 && this.waitFor !== "all";
+    }
+
+    _waitForMatches(){
+        if (!this._hasWaitFor()) return [];
+        return this.waitFor.filter(regex => this.portNames.some(portname => new RegExp(regex).test(portname)));
+    }
+
+    _requiredPortsReady(){
+        if (!this._hasWaitFor()) return true;
+        if (this._waitForMatches().length !== this.waitFor.length) return false;
+        return this.waitFor.every(regex =>
+            this.midiHardwareEngines.some(engine => new RegExp(regex).test(engine.name))
+        );
+    }
+
+    // Blocks until specified waitFor ports have appeared and been added.
     init(){
-        this.scanAndAddMidiPorts();
+        if (this._hasWaitFor()) {
+            this.db?.log?.("init waiting for MIDI ports", this.waitFor);
+            while (!this._requiredPortsReady()) {
+                this.scanAndAddMidiPorts();
+                if (this._requiredPortsReady()) break;
+                this.db?.log?.("waiting for portnames", this.waitFor, "have", this.portNames);
+                const waitMs = (this._alsaFailedAt && (Date.now() - this._alsaFailedAt) < this._alsaBackoffMs)
+                    ? this._alsaBackoffMs
+                    : this._pollMs;
+                this._sleep(waitMs);
+            }
+            this.db?.log?.("init found required MIDI ports", this.portNames);
+        } else {
+            this.scanAndAddMidiPorts();
+        }
         this.send("reset");
 
-        // check every 5 seconds for new ports
         setInterval(()=>{
             this.scanAndAddMidiPorts();
         }, 5000);
