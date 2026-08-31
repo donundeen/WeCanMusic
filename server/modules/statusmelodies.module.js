@@ -36,6 +36,8 @@ class StatusMelodies  {
 
     playNotes(series, volume, duration, spacing){
         if(this.midiHardwareEngine){
+            this.db?.log?.(`StatusMelodies: playing notes ${series} on channel ${this.midiChannel} with bank ${this.midiBank} and program ${this.midiProgram}`);
+            this.db?.log?.(this.midiHardwareEngine);
             this.midiHardwareEngine.send('cc',{
                 controller: 0,
                 value: this.midiBank, 
