@@ -47,6 +47,8 @@ class StatusMelodies  {
                 channel: this.midiChannel
             }); 
             this.playNoteInSeries(series, 0, volume, duration, spacing );
+        }else{
+            this.db?.log?.(`StatusMelodies: midiHardwareEngine not found`);
         }
     }
 
