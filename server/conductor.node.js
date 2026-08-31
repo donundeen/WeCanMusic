@@ -442,6 +442,7 @@ setTimeout(function(){
 // open the score file, 
 // and when it's open, run the score (if the config file says so)
 score.openScore(function(){    
+    db.log("score.openScore PLAYREADY");
     statusMelodies.playReady();
     if(config.playerState == "play"){
         transport.start();
