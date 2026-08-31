@@ -1,7 +1,7 @@
 [Unit]
 Description=service to run the wecanmusic system, starting with conductor.node.js
 Documentation=https://github.com/donundeen/wecanmusicprojects
-After=network.target
+After=network.target sound.target
 
 [Service]
 Type=simple

@@ -441,6 +441,7 @@ setTimeout(function(){
 
 // open the score file, 
 // and when it's open, run the score (if the config file says so)
+// make sure the midiHardwareEngine is initialized before trying to open the score
 score.openScore(function(){    
     db.log("score.openScore PLAYREADY");
     statusMelodies.playReady();

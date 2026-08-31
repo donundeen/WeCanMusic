@@ -37,6 +37,9 @@ class MidiOuts {
 
         this.theoryEngine = false;
         this.correctMidiNotes = false;
+
+        this._alsaFailedAt = 0;
+        this._alsaBackoffMs = 15000;
     }
     // need a way to pick just some portnames sometimes, or an array of matches.
     init(){
@@ -75,37 +78,29 @@ class MidiOuts {
     }
 
     getMidiPortnames(){
-        let waiting = true;
         this.portNames = [];
-        while(waiting){
-            let midiOutputs;
-            try {
-                midiOutputs = this.easyMidi.getOutputs();
-                this.db?.log?.("midi_outputs", midiOutputs);
-                try {
-                    this.db?.log?.("midi_inputs", this.easyMidi.getInputs());
-                } catch (inputErr) {
-                    this.db?.log?.("midi_inputs (unavailable)", inputErr.message);
-                }
-            } catch (err) {
-                this.db?.log?.("MIDI port enumeration failed (ALSA/RtMidi)", err.message);
-                this.portNames = [];
-                return this.portNames;
-            }
-            this.db?.log?.("waitFor", this.waitFor);
-            for(let i = 0; i < midiOutputs.length; i++){
-                this.portNames.push(midiOutputs[i]);
-            }
-            if(this.waitFor == "all"){
-                waiting = false;
-            }else{
-                let result = this.waitFor.filter(regex => this.portNames.some(portname => new RegExp(regex).test(portname)));
-                this.db?.log?.("result ", result, this.waitFor.length, result.length);
-                if(result.length == this.waitFor.length){
-                    waiting = false;
-                }else{
-                    this.db?.log?.("waiting for portnames", this.waitFor, "result", result);
-                }
+        if (this._alsaFailedAt && (Date.now() - this._alsaFailedAt) < this._alsaBackoffMs) {
+            return this.portNames;
+        }
+        let midiOutputs;
+        try {
+            midiOutputs = this.easyMidi.getOutputs();
+            this._alsaFailedAt = 0;
+            this.db?.log?.("midi_outputs", midiOutputs);
+        } catch (err) {
+            this._alsaFailedAt = Date.now();
+            this.db?.log?.("MIDI port enumeration failed (ALSA/RtMidi)", err.message);
+            return this.portNames;
+        }
+        this.db?.log?.("waitFor", this.waitFor);
+        for(let i = 0; i < midiOutputs.length; i++){
+            this.portNames.push(midiOutputs[i]);
+        }
+        if(this.waitFor && this.waitFor !== "all" && Array.isArray(this.waitFor) && this.waitFor.length > 0){
+            let result = this.waitFor.filter(regex => this.portNames.some(portname => new RegExp(regex).test(portname)));
+            this.db?.log?.("result ", result, this.waitFor.length, result.length);
+            if(result.length !== this.waitFor.length){
+                this.db?.log?.("waiting for portnames", this.waitFor, "result", result);
             }
         }
         this.db?.log?.("portnames", this.portNames, this.midiHardwareEngines.length);
