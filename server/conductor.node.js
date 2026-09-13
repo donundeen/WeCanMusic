@@ -300,6 +300,7 @@ orchestra.makeNoteCallback = function(instr, pitch, velocity, duration){
             }]  
         }
         // send noteList to all UDP connected devices
+        db.log("sending makeNote over UDP", args);
         udpPort.send(bundle, config.UDPSendIP, config.UDPSendPort);        
     }
 }
