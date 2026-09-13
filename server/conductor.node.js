@@ -291,7 +291,7 @@ orchestra.makeNoteCallback = function(instr, pitch, velocity, duration){
     if(config.UDPSendMidiMakenote){
         // send the makenote message to all UDP connected devices
         // format is /makenote/channel/note/velocity/duration
-        let address = "/makenote";
+        let address = "/makeNote";
         let bundle = {
             timeTag: osc.timeTag(1),
             packets :[{
