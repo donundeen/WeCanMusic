@@ -299,7 +299,7 @@ orchestra.makeNoteCallback = function(instr, pitch, velocity, duration){
                 args: [{type: "i", value: deviceChannel}, {type: "i", value: pitch}, {type: "i", value: velocity}, {type: "i", value: duration}]
             }]  
         }
-        // send noteList to all UDP connected devices
+        // send makenote message to all UDP connected devices
         db.log("sending makeNote over UDP", bundle);
         udpPort.send(bundle, config.UDPSendIP, config.UDPSendPort);        
     }
@@ -357,16 +357,19 @@ transport.setBeatCallback(function(beatCount, bar, beat, transport){
 theory.setMidiListCallback(function(msg){
     //db.log("theory output ");
     //db.log(msg);
-    let args = msg.map(function(x) {return {type: "i", value: parseInt(x)};});
-    let bundle = {
-        timeTag: osc.timeTag(1),
-        packets :[{
-            address: "/all/noteList",
-            args: args
-        }]  
+    if(config.UDPSendNoteList){
+        let args = msg.map(function(x) {return {type: "i", value: parseInt(x)};});
+        let address = "/noteList";
+        let bundle = {
+            timeTag: osc.timeTag(1),
+            packets :[{
+                address: address,
+                args: args
+            }]  
+        }
+        // send noteList to all UDP connected devices
+        udpPort.send(bundle, config.UDPSendIP, config.UDPSendPort);
     }
-    // send noteList to all UDP connected devices
-    udpPort.send(bundle, config.UDPSendIP, config.UDPSendPort);
     // and send to local ochestra
     orchestra.allLocalInstrumentSetValue("noteList", msg);   
     orchestra.allUDPInstrumentSetValue("noteList", msg);   
