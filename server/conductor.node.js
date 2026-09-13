@@ -273,8 +273,10 @@ orchestra.performancePropUpdateCallback = function(instrument, propName, propTyp
 
 // some things to do whenever an instrument makes a note
 // send the data to the webpage to display
+// also send to listening devices via UDP if the config says so
 orchestra.makeNoteCallback = function(instr, pitch, velocity, duration){
     let deviceName = instr.deviceName;
+    let deviceChannel = instr.midiChannel;
 
 
     // tell the webpage what devices played what note, so it can update the UI
@@ -286,6 +288,20 @@ orchestra.makeNoteCallback = function(instr, pitch, velocity, duration){
                     duration: duration}
     db.log("sending message", dataObj)
     socket.sendMessage("makeNote", dataObj );
+    if(config.UDPSendMidiMakenote){
+        // send the makenote message to all UDP connected devices
+        // format is /makenote/channel/note/velocity/duration
+        let address = "/makenote/"+deviceChannel+"/"+pitch+"/"+velocity+"/"+duration;
+        let bundle = {
+            timeTag: osc.timeTag(1),
+            packets :[{
+                address: address,
+                args: [{type: "i", value: deviceChannel}, {type: "i", value: pitch}, {type: "i", value: velocity}, {type: "i", value: duration}]
+            }]  
+        }
+        // send noteList to all UDP connected devices
+        udpPort.send(bundle, config.UDPSendIP, config.UDPSendPort);        
+    }
 }
 
 

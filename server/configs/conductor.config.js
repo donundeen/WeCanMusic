@@ -17,6 +17,8 @@ var config = {
     "initialTheoryMsgs" : ["C M"],
     "defaultWebpage" : "jamalong.html",
     "useMidiOut" : true,
+    "UDPSendMidiMakenote" : true,
+    "UDPSendMidiNote" : true,
     "midiOutPortname" : "all", /// "all" to use all ports, or an array of regex matches to check against the portnames
     "midiWaitForPortnames" : ["FLUID"], // make SURE these ports are all present before starting the conductor
     "fluidPath" : '/usr/bin/fluidsynth', // OS-specific, overrider in [mac/rpi].conductor.config.js
